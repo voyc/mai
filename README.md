@@ -1,2 +1,2 @@
 # mai.voyc
-Learn Thai Language
+Thai Language School
