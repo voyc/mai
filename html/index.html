@@ -11,7 +11,9 @@
 		<link href='minimal/minimal.css' rel='stylesheet' type='text/css'></link>
 		<link href='minimal/theme/mahagony.css' rel='stylesheet' type='text/css'></link>
 		<link href='icon/icon.css' rel='stylesheet' type='text/css'></link>
+		<link href='jslib/chat.css' rel='stylesheet' type='text/css'></link>
 		<link href='css/mai.css' rel='stylesheet' type='text/css'></link>
+		<link href='thai/keyboard.css' rel='stylesheet' type='text/css'></link>
 		<script src="js/namespace.js"></script>
 		<script src="js/mai.js"></script>
 		<script src="js/view.js"></script>
@@ -31,6 +33,8 @@
 		<script src="jslib/session.js"></script>
 		<script src="jslib/cookie.js"></script>
 		<script src="jslib/browserhistory.js"></script>
+		<script src="jslib/chat.js"></script>
+		<script src="thai/keyboard2.js"></script>
 <?php } else { ?>
 <!--<remove>
 		<script src='min.js'></script>
@@ -68,14 +72,14 @@
 		<section id='content-container'>
 			<section class='narrative' id='content-home'>
 				<h1>Home</h1>
-				<h2>mai.voyc - Learn Thai Language</h2>
+				<h2>mai.voyc - Thai Language School</h2>
 			</section>
 			<section hidden class='narrative' id='content-about'>
 				<h1>About</h1>
 				<img src='i/naiyana_headshot.jpg' id='headshot' />
 				<p>Sawat dii ka.</p>
 				<p>My name is Naiyana Kraisiri.</p>
-				<p>I live in Thailand.  I love my country and my people.  We are gentle and generous.  I want to share our culture with you.  The best way for you to truly understand the Thai way is to know our language.</p>
+				<p>I live in Thailand.  I love my country and my people.  I want to share our culture with you.  The best way for you to truly understand the Thai way is to know our language.</p>
 				<p>And so this website is my gift to you, to help you understand our language and our ways.</p>
 			</section>
 			<section hidden class='narrative' id='content-profile'>
@@ -90,7 +94,13 @@
 					</p>
 				</form>
 			</section>
+			<section hidden class='narrative' id='content-keyboard'>
+				<h1>Keyboard</h1>
+				<section id='keyboard'></section>
+			</section>
 		</section>
+
+		<section id='chatcontainer'></section>
 		
 		<!---- modeless dialogs ----------------------------------------->
 		<nav initially hidden class='panel popup leftnav blu' id='leftnav-dialog'>
@@ -99,6 +109,9 @@
 			<p><button close class='anchor' nav='home'     >Home</button></p>
 			<p><button close class='anchor' nav='about'    >About</button></p>
 			<p><button close class='anchor' nav='profile'  >User Profile</button></p>
+			<p><button close class='anchor' nav='keyboard' >Keyboard</button></p>
+			<p><button close class='anchor' nav='alphabet' >Alphabet</button></p>
+			<p><button close class='anchor' nav='signs1'   >Signs One</button></p>
 		</nav>
 		<aside initially hidden class='panel popup dropdown blu' id='settings-dialog'>
 			<div close class='closex'>&times;</div>

@@ -21,6 +21,7 @@ voyc.View.prototype.setup = function () {
 	this.observer.subscribe('about-requested'        ,'view' ,function(note) { self.drawPage('about');   });
 	this.observer.subscribe('account-requested'      ,'view' ,function(note) { self.drawPage('account'); });
 	this.observer.subscribe('profile-requested'      ,'view' ,function(note) { self.drawPage('profile'); self.clearProfileForm(); });
+	this.observer.subscribe('keyboard-requested'      ,'view' ,function(note) { self.drawPage('keyboard'); });
 }
 
 /**
@@ -67,6 +68,7 @@ voyc.View.prototype.drawPage = function(pageid) {
 	voyc.hide('content-home'   );
 	voyc.hide('content-about'  );
 	voyc.hide('content-profile');
+	voyc.hide('content-keyboard');
 	voyc.show('content-'+pageid);
 }
 

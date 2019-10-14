@@ -113,4 +113,25 @@ voyc.Mai.prototype.onSetProfileReceived = function(note) {
 /* on startup */
 window.addEventListener('load', function(evt) {
 	voyc.mai = new voyc.Mai();
+
+	voyc.chat = new voyc.Chat();
+	voyc.chat.setup(document.getElementById('chatcontainer'));
+	voyc.idhost = voyc.chat.addUser('Naiyana', true, false);
+	voyc.idstudent = voyc.chat.addUser('Gregory', false, true);
+	voyc.idcoach = voyc.chat.addUser('Pin', false, true);
+
+	voyc.observer = new voyc.Observer();
+	voyc.observer.subscribe( "ChatPost", 'tester', function(note) {
+		console.log('on post');
+		if (note.payload.userid != voyc.idhost) {
+			if (note.payload.msg == 'yes' || note.payload.msg == 'no') {
+				voyc.chat.post(voyc.idhost, 'OK');
+			}
+		}
+	});
+
+	voyc.chat.post(voyc.idhost, 'Good morning, John.');
+	voyc.chat.post(voyc.idstudent, 'Hi Teacher.');
+	voyc.chat.post(voyc.idcoach, 'Hello student.');
+	voyc.chat.post(voyc.idhost, 'Are you ready to begin?', ['yes', 'no']);
 }, false);
