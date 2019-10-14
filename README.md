@@ -1,2 +1,2 @@
-# model
-AJAX application framework
+# mai.voyc
+Learn Thai Language

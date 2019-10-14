@@ -26,3 +26,7 @@
 #settings-dialog td:last-child {
 	max-width:4cm;
 }
+#headshot {
+	float:right;
+	height:140px;
+}

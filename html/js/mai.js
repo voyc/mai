@@ -1,15 +1,15 @@
 /**
-	class voyc.Model
+	class voyc.Mai
 	@constructor
 	A singleton object
 */
-voyc.Model = function () {
-	if (voyc.Model._instance) return voyc.Model._instance;
-	voyc.Model._instance = this;
+voyc.Mai = function () {
+	if (voyc.Mai._instance) return voyc.Mai._instance;
+	voyc.Mai._instance = this;
 	this.setup();
 }
 
-voyc.Model.prototype.setup = function () {
+voyc.Mai.prototype.setup = function () {
 	this.observer = new voyc.Observer();
 	new voyc.View();
 	new voyc.User();
@@ -20,29 +20,29 @@ voyc.Model.prototype.setup = function () {
 	var self = this;
 	new voyc.BrowserHistory('name', function(pageid) {
 		var event = pageid.split('-')[0];
-		self.observer.publish(event+'-requested', 'model', {page:pageid});
+		self.observer.publish(event+'-requested', 'mai', {page:pageid});
 	});
 
 	// server communications
 	var url = '/svc/';
 	if (window.location.origin == 'file://') {
-		url = 'http://model.hagstrand.com/svc';  // for local testing
+		url = 'http://mai.hagstrand.com/svc';  // for local testing
 	}
 	this.comm = new voyc.Comm(url, 'acomm', 2, true);
 
 	// attach app events
 	var self = this;
-	this.observer.subscribe('profile-requested'   ,'model' ,function(note) { self.onProfileRequested    (note); });
-	this.observer.subscribe('profile-submitted'   ,'model' ,function(note) { self.onProfileSubmitted    (note); });
-	this.observer.subscribe('setprofile-posted'   ,'model' ,function(note) { self.onSetProfilePosted    (note); });
-	this.observer.subscribe('setprofile-received' ,'model' ,function(note) { self.onSetProfileReceived  (note); });
-	this.observer.subscribe('getprofile-received' ,'model' ,function(note) { self.onGetProfileReceived  (note); });
+	this.observer.subscribe('profile-requested'   ,'mai' ,function(note) { self.onProfileRequested    (note); });
+	this.observer.subscribe('profile-submitted'   ,'mai' ,function(note) { self.onProfileSubmitted    (note); });
+	this.observer.subscribe('setprofile-posted'   ,'mai' ,function(note) { self.onSetProfilePosted    (note); });
+	this.observer.subscribe('setprofile-received' ,'mai' ,function(note) { self.onSetProfileReceived  (note); });
+	this.observer.subscribe('getprofile-received' ,'mai' ,function(note) { self.onGetProfileReceived  (note); });
 
-	this.observer.publish('setup-complete', 'model', {});
+	this.observer.publish('setup-complete', 'mai', {});
 	//(new voyc.3).nav('home');
 }
 
-voyc.Model.prototype.onProfileRequested = function(note) {
+voyc.Mai.prototype.onProfileRequested = function(note) {
 	var svcname = 'getprofile';
 	var data = {};
 	data['si'] = voyc.getSessionId();
@@ -53,12 +53,12 @@ voyc.Model.prototype.onProfileRequested = function(note) {
 		if (!ok) {
 			response = { 'status':'system-error'};
 		}
-		self.observer.publish('getprofile-received', 'model', response);
+		self.observer.publish('getprofile-received', 'mai', response);
 	});
-	this.observer.publish('getprofile-posted', 'model', {});
+	this.observer.publish('getprofile-posted', 'mai', {});
 }
 
-voyc.Model.prototype.onGetProfileReceived = function(note) {
+voyc.Mai.prototype.onGetProfileReceived = function(note) {
 	var response = note.payload;
 	if (response['status'] == 'ok') {
 		console.log('getprofile success');
@@ -71,7 +71,7 @@ voyc.Model.prototype.onGetProfileReceived = function(note) {
 	}
 }
 
-voyc.Model.prototype.onProfileSubmitted = function(note) {
+voyc.Mai.prototype.onProfileSubmitted = function(note) {
 	var svcname = 'setprofile';
 	var inputs = note.payload.inputs;
 
@@ -89,7 +89,7 @@ voyc.Model.prototype.onProfileSubmitted = function(note) {
 			response = { 'status':'system-error'};
 		}
 
-		self.observer.publish('setprofile-received', 'model', response);
+		self.observer.publish('setprofile-received', 'mai', response);
 
 		if (response['status'] == 'ok') {
 			console.log('setprofile success' + response['message']);
@@ -99,18 +99,18 @@ voyc.Model.prototype.onProfileSubmitted = function(note) {
 		}
 	});
 
-	this.observer.publish('setprofile-posted', 'model', {});
+	this.observer.publish('setprofile-posted', 'mai', {});
 }
 
-voyc.Model.prototype.onSetProfilePosted = function(note) {
+voyc.Mai.prototype.onSetProfilePosted = function(note) {
 	console.log('setprofile posted');
 }
 
-voyc.Model.prototype.onSetProfileReceived = function(note) {
+voyc.Mai.prototype.onSetProfileReceived = function(note) {
 	console.log('setprofile received');
 }
 
 /* on startup */
 window.addEventListener('load', function(evt) {
-	voyc.model = new voyc.Model();
+	voyc.mai = new voyc.Mai();
 }, false);
