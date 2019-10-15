@@ -49,7 +49,7 @@ function setprofile() {
 	$name = 'query-profile';
 	$sql = "select id from mai.profile where userid = $1";
 	$params = array($userid);
-	$result = execSql($conn, $name, $sql, $params, true);
+	$result = execSql($conn, $name, $sql, $params, false);
 	if ($result) {
 		$row = pg_fetch_array($result, 0, PGSQL_ASSOC);
 		$profileid = $row['id'];
