@@ -116,7 +116,7 @@ window.addEventListener('load', function(evt) {
 
 	voyc.chat = new voyc.Chat();
 	voyc.chat.setup(document.getElementById('chatcontainer'));
-	voyc.idhost = voyc.chat.addUser('Naiyana', true, false);
+	voyc.idhost = voyc.chat.addUser('Sam', true, false);
 	voyc.idstudent = voyc.chat.addUser('Gregory', false, true);
 	voyc.idcoach = voyc.chat.addUser('Pin', false, true);
 

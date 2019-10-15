@@ -7,8 +7,6 @@ voyc.Keyboard = function() {
 	if (voyc.Keyboard._instance) return voyc.Keyboard._instance;
 	else voyc.Keyboard._instance = this;
 
-//	this.rownames = ['', 'Middle&nbsp;Class', 'High&nbsp;Class', 'Low&nbsp;Class', 'Sonorant', 'Sanskrit', 'Digit'];
-//	this.rowtags  = ['', 'mid', 'high', 'low', 'sonorant', 'sanskrit', 'digit'];
 	this.buffer = [];  // array of keys to the alphabet table
 	this.typing = false;
 	this.alphabet = {};  // table will be loaded dynamically from ./alphabet/th.js file
@@ -18,7 +16,7 @@ voyc.Keyboard = function() {
 }
 
 voyc.Keyboard.configdefault = {	
-	mode: 'typewriter',  // typewriter or learning
+	mode: 'learning',  // typewriter or learning
 	showtranslit: 'off',  // on or off
 }
 
@@ -93,6 +91,7 @@ voyc.Keyboard.prototype = {
 		sanal += '<tr><td><td class="hdr pool" tag="digit">Digit</td></tr>';
 		sanal += '<tr><td><td class="hdr pool" tag="consonant">Consonant</td></tr>';
 		sanal += '<tr><td><td class="hdr pool" tag="vowel">Vowel</td></tr>';
+		sanal += '<tr><td><td class="hdr pool" tag="homekeys">Home Keys</td></tr>';
 		sanal += '</table></fieldset></td>';
 		sanal += '<td>';
 		sanal += '<button id="practice" >Flash</button>';
@@ -105,7 +104,7 @@ voyc.Keyboard.prototype = {
 		var s = '<div id="keypad"><table>';
 
 		// typing
-		s += '<tr id="typing"><td colspan="16" class="noborder">' + skybd + '</td></tr>';
+		s += '<tr id="typing" hidden><td colspan="16" class="noborder">' + skybd + '</td></tr>';
 
 		// first row: consonant, ending, vowel
 //		s += '<tr class="colhdrrow"><td class="noborder"></td><td class="hdr" colspan="7">Consonant</td><td class="hdr" colspan="6">Vowel</td><td class="hdr"></td></tr>';
