@@ -26,7 +26,7 @@ voyc.Mai.prototype.setup = function () {
 	// server communications
 	var url = '/svc/';
 	if (window.location.origin == 'file://') {
-		url = 'http://mai.hagstrand.com/svc';  // for local testing
+		url = 'http://mai.voyc.com/svc';  // for local testing
 	}
 	this.comm = new voyc.Comm(url, 'acomm', 2, true);
 
