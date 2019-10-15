@@ -173,22 +173,3 @@ _/-         shift punctuation
 ๆฯ               symbols
 ฿               shift symbols
 */
-
-
-โ๋ฏษฆศฤซ    shift home keys
-ฑ๊ฮ?        shift index finger
-ฎณฉฒ        shift middle finger
-"ฯ)ฬ           shift ring finger
-๐ญ(ฦ          shift pinkie
-ฌ็ธํฺ์             shift center
-.ฐ,        shift pinkie reach
-ู฿             shift high index finger
-๑๒๓๔๕๖๗๘๙    shift digits
-
-
-()ฺ.,"%+    punctuation
-_/-         shift punctuation
-
-ๆฯ               symbols
-฿               shift symbols
-*/

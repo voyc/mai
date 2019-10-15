@@ -19,7 +19,10 @@ create table mai.profile (
 create table mai.vocab (
 	id serial primary key,
 	userid integer,
+	language char(2),
 	type char(1),
 	word varchar(100),
-	state char(1)
+	state char(1),
+	recency datetime,
+	mastery integer
 );
