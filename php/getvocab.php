@@ -35,11 +35,6 @@ function getvocab() {
 	$userid = $row['id'];
 
 	// read vocab for logged-in user
-	$word = '';
-	$type = '';
-	$state = '';
-	$mastery = '';
-	$recency = 0;
 	$name = 'query-vocab';
 	$sql = "select word, type, state, mastery, recency from mai.vocab where userid = $1";
 	$params = array($userid);
@@ -54,8 +49,6 @@ function getvocab() {
         for ($i=0; $i<$numrows; $i++) {
                 $row = pg_fetch_array($result, $i, PGSQL_ASSOC);
                 $vocab = array();
-                $vote[] = intval(substr($row['votes'], 0, 7));
-		$row = pg_fetch_array($result, 0, PGSQL_ASSOC);
 		$vocab['w'] = $row['word'];
 		$vocab['t'] = $row['type'];
 		$vocab['s'] = $row['state'];
