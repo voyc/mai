@@ -30,3 +30,7 @@
 	float:right;
 	height:140px;
 }
+footer {
+	position:fixed;
+	bottom:0px;
+}

@@ -16,8 +16,6 @@ voyc.Sam.prototype.setup = function() {
 	//voyc.sengen = new voyc.SenGen();
 	this.idhost = this.chat.addUser('Sam', true, false);
 	
-	
-	
 	this.observer = new voyc.Observer();
 	var self = this;
 	this.observer.subscribe( "ChatPost", 'sam', function(note) {
@@ -92,7 +90,7 @@ voyc.Sam.prototype.setVocab = function(msg) {
 		var w = c[i].split(/\s/);
 		var word = w[1];
 		var value = w[2];
-		r += voyc.vocab.set(word,value);
+		r += this.vocab.set(word,value);
 	}
 	return r;
 }
@@ -109,7 +107,7 @@ voyc.Sam.prototype.getVocab = function(msg) {
 	var status = w[2];
 	if (word == 'all') {
 		status = (status == 'all') ? '' : status;
-		var list = voyc.vocab.getlist(status);
+		var list = this.vocab.getlist(status);
 		for (var i=0; i<list.length; i++) {
 			e = list[i];
 			var s = e.w + '\t' + e.s;
@@ -117,7 +115,7 @@ voyc.Sam.prototype.getVocab = function(msg) {
 		}
 	}
 	else {
-		var e = voyc.vocab.get(word);
+		var e = this.vocab.get(word);
 		if (e) {
 			var s = word + '\t' + e.s;
 			r.push(s);
