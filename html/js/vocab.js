@@ -11,16 +11,16 @@
 		}
 **/
 voyc.Vocab = function() {
-        var url = '/svc/';
-        if (window.location.origin == 'file://') {
-                url = 'http://mai.voyc.com/svc';  // for local testing
-        }
-        this.comm = new voyc.Comm(url, 'acomm', 2, true);
+	var url = '/svc/';
+	if (window.location.origin == 'file://') {
+		url = 'http://mai.voyc.com/svc';  // for local testing
+	}
+	this.comm = new voyc.Comm(url, 'acomm', 2, true);
 
 	this.observer = new voyc.Observer();
 	var self = this;
-        this.observer.subscribe('login-received'   ,'user' ,function(note) { self.onLoginReceived   (note);});
-        this.observer.subscribe('relogin-received'   ,'user' ,function(note) { self.onLoginReceived   (note);});
+	this.observer.subscribe('login-received'   ,'user' ,function(note) { self.onLoginReceived   (note);});
+	this.observer.subscribe('relogin-received'   ,'user' ,function(note) { self.onLoginReceived   (note);});
 	this.observer.subscribe('getvocab-received'   ,'user' ,function(note) { self.onVocabReceived   (note);});
 	
 	this.language = 'th';
@@ -29,14 +29,8 @@ voyc.Vocab = function() {
 }
 
 voyc.Vocab.prototype.onLoginReceived = function(note) {
-	this.retrieve();
-	if (!this.vocab) {
-		this.vocab = {
-			lang: this.language,
-			recency: Date.now(),
-			list: []
-		};
-	}
+	this.vocab = this.retrieve();
+	this.readServer();
 }
 
 voyc.Vocab.prototype.onVocabReceived = function(note) {
@@ -45,7 +39,7 @@ voyc.Vocab.prototype.onVocabReceived = function(note) {
 
 	function findInServerList(word) {
 		for (var i=0; i<serverList.length; i++) {
-			if (serverList[i].word == word) {
+			if (serverList[i].w == word) {
 				return serverList[i];
 			}
 		}
@@ -113,14 +107,15 @@ voyc.Vocab.prototype.prepDirtyBatch = function() {
 
 voyc.Vocab.prototype.updateServer = function(dirtyBatch) {
 	var svcname = 'setvocab';
-	if (dirtyBatch <= 0) {
+	if (dirtyBatch.length <= 0) {
 		return;
 	}
+	var list = JSON.stringify(dirtyBatch);
 
 	// build data array of name/value pairs from user input
 	var data = {};
 	data['si'] = voyc.getSessionId();
-	data['list'] = dirtyBatch;
+	data['list'] = list;
 	data['language' ] = this.language;
 
 	// call svc
@@ -133,7 +128,7 @@ voyc.Vocab.prototype.updateServer = function(dirtyBatch) {
 		self.observer.publish('setvocab-received', 'mai', response);
 
 		if (response['status'] == 'ok') {
-			console.log('setvocab success' + response['message']);
+			console.log('setvocab success');
 		}
 		else {
 			console.log('setvocab failed');
@@ -161,7 +156,7 @@ voyc.Vocab.prototype.readServer = function() {
 		self.observer.publish('getvocab-received', 'mai', response);
 
 		if (response['status'] == 'ok') {
-			console.log('getvocab success' + response['message']);
+			console.log('getvocab success');
 		}
 		else {
 			console.log('getvocab failed');
@@ -177,8 +172,15 @@ voyc.Vocab.prototype.store = function() {
 }
 
 voyc.Vocab.prototype.retrieve = function() {
-	this.vocab = JSON.parse(localStorage.getItem('vocab'));
-	this.readServer();
+	var vocab = JSON.parse(localStorage.getItem('vocab'));
+	if (!vocab) {
+		vocab = {
+			lang: this.language,
+			recency: Date.now(),
+			list: []
+		};
+	}
+	return vocab;
 }
 
 /**
@@ -248,7 +250,8 @@ voyc.Vocab.prototype.finger = function(word, recency) {
 		e.r = recency;
 	}
 	else {
-		console.log(['finger vocab word not found', word]);
+		if (voyc.analyticLogging) 
+			console.log(['finger vocab word not found', word]);
 	}
 	this.store();
 }

@@ -10,10 +10,46 @@ voyc.Sam = function(chat) {
 	this.setup();
 }
 
+var lesson1 = ['ด','่','ก','า','ห','ส','ฟ','ว']; // 1    home keys
+voyc.Sam.prototype.runLesson = function() {
+	/*
+	 	show question
+		receive answer
+		show followup question
+		receive answer
+		show followup question
+		receive answer
+		score
+		next question
+		loop
+
+		speak
+		listen
+		speak
+		listen
+		loop
+
+		listen
+		react
+		loop
+
+		onready
+			show question
+		onanswer
+			record answer
+			show followup question
+		onfinalanswer
+			score
+			next question
+			show question
+
+	*/
+}
+
 voyc.Sam.prototype.setup = function() {
 	this.vocab = new voyc.Vocab();
-	//voyc.dictionary = new voyc.Dictionary();
-	//voyc.sengen = new voyc.SenGen();
+	voyc.dictionary = new voyc.Dictionary();
+	voyc.sengen = new voyc.SenGen(this.vocab);
 	this.idhost = this.chat.addUser('Sam', true, false);
 	
 	this.observer = new voyc.Observer();
@@ -39,6 +75,26 @@ voyc.Sam.prototype.onLoginReceived = function(note) {
 	//this.chat.post(this.idhost, voyc.sengen.genSentence({pattern:'@hello'}), ['สวัสดี']);
 }
 
+/*
+state
+	brand new
+		are you ready for your first lesson?
+	active
+		current lesson
+	drill in progress
+
+	lesson in progress
+
+other
+	coach present: yes/no
+	logged in: yes/no
+
+groups
+	language
+	online marketing
+	technology, javascript, php, ajax
+*/
+
 voyc.Sam.prototype.reply = function(o) {
 	var w = o.msg.split(/\s+/);
 	switch(w[0]) {
@@ -60,7 +116,12 @@ voyc.Sam.prototype.reply = function(o) {
 		case 'yes':
 		case 'again':
 			var r = voyc.sengen.genSentence(this.req);
-			this.chat.post(this.idhost, r[0], ['again']);
+			if (r.length > 0) {
+				this.chat.post(this.idhost, r[0], ['again']);
+			}
+			else {
+				this.chat.post(this.idhost, "Try a lesson first");
+			}
 			break;
 		case 'translate':
 			var s = o.msg.substr(10);
