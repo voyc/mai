@@ -14,7 +14,9 @@ writeHeader();
 
 $supported_svcs = array(
 	'getprofile',
-	'setprofile'
+	'setprofile',
+	'setvocab',
+	'getvocab'
 );
 
 function validateSvc($taint) {

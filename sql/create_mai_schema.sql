@@ -1,9 +1,3 @@
-/* 
-This SQL is designed for postgres.
-
-After creating this schema, execute the GRANT statements found in the comments section of the config.php file.
-*/
-
 /* drop schema mai cascade; */
 create schema mai;
 
@@ -23,6 +17,6 @@ create table mai.vocab (
 	type char(1),
 	word varchar(100),
 	state char(1),
-	recency datetime,
+	recency bigint,
 	mastery integer
 );
