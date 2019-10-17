@@ -54,7 +54,7 @@ voyc.Sam.prototype.setup = function() {
 	
 	this.observer = new voyc.Observer();
 	var self = this;
-	this.observer.subscribe( "ChatPost", 'sam', function(note) {
+	this.observer.subscribe( "chat-posted", 'sam', function(note) {
 		console.log('on post');
 		if (note.payload.userid != self.idhost) {
 			self.reply(note.payload);
