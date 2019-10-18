@@ -64,7 +64,7 @@ voyc.Sam.prototype.setup = function() {
 	voyc.dictionary = new voyc.Dictionary();
 	voyc.sengen = new voyc.SenGen(this.vocab);
 	this.idhost = this.chat.addUser('Sam', true, false);
-	
+
 	this.observer = new voyc.Observer();
 	var self = this;
 	this.observer.subscribe( "chat-posted", 'sam', function(note) {
@@ -75,6 +75,8 @@ voyc.Sam.prototype.setup = function() {
 	});
 	this.observer.subscribe('login-received'   ,'user' ,function(note) { self.onLoginReceived   (note);});
 	this.observer.subscribe('relogin-received' ,'user' ,function(note) { self.onLoginReceived   (note);});
+	this.observer.subscribe('restart-anonymous','user' ,function(note) { self.onAnonymous       (note);});
+	this.observer.subscribe('logout-received'  ,'user' ,function(note) { self.onLogoutReceived  (note);});
 	
 	//var e = document.getElementById('facecontainer');
 	//voyc.face = new PokerFace(e);
@@ -87,12 +89,19 @@ voyc.Sam.prototype.scoreLesson = function(scores) {
 }
 
 voyc.Sam.prototype.onLoginReceived = function(note) {
-	var x = (new voyc.User).username
-	this.idguest = this.chat.addUser('John', false, true);
-	this.chat.post(this.idhost, "Hello " + note.payload.uname);
-	//this.chat.post(this.idhost, voyc.sengen.genSentence({pattern:'@hello'}), ['สวัสดี']);
+	this.idguest = this.chat.addUser(note.payload.uname, false, true);
+	this.chat.post(this.idhost, "Welcome back, " + note.payload.uname);
+	this.chat.post(this.idhost, "Are you ready to begin?", ["start"]);
 }
 
+voyc.Sam.prototype.onLogoutReceived = function(note) {
+	this.chat.post(this.idhost, "Goodbye.");
+}
+
+voyc.Sam.prototype.onAnonymous = function(note) {
+	this.chat.post(this.idhost, "Welcome to mai.voyc, the Online Language School.", []);
+	this.chat.post(this.idhost, "Please login or register to begin.", []);
+}
 /*
 state
 	brand new

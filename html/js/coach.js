@@ -13,6 +13,8 @@ voyc.Coach = function(chat) {
         this.setup();
 	this.lesson = {};
 	this.ndxQuestion = 0;
+	this.ndxPart = 0;
+	this.dictEntry = {};
 }
 
 voyc.Coach.prototype.setup = function() {
@@ -24,13 +26,6 @@ voyc.Coach.prototype.drill = function(lesson,callback) {
 	this.ndxQuestion = -1;
 	this.scoringCallback = callback;
 	this.nextQuestion();
-}
-
-voyc.Coach.prototype.nextQuestion = function() {
-	var next = this.choose();
-	var s = this.lesson.questions[next];
-	this.chat.post(this.idguest, s, ['low class', 'middle class', 'high class']);
-	this.ndxQuestion = next;
 }
 
 voyc.Coach.prototype.choose = function() {
@@ -51,21 +46,83 @@ voyc.Coach.prototype.choose = function() {
 	return chosen;
 } 
 
+voyc.Coach.prototype.nextQuestion = function() {
+	this.ndxQuestion = this.choose();
+	this.key = this.lesson.questions[this.ndxQuestion];
+	this.dictEntry = this.readDictionary(this.key);
+	this.chat.post(this.idguest, this.key, []);
+}
+
+voyc.strp = {
+	c:"consonant",
+	v:"vowel",
+	t:"tone mark"
+}
+voyc.strm = {
+	s:"short",
+	o:"long",
+	m:"middle class",
+	l:"low class",
+	h:"high class"
+}
+
+voyc.Coach.prototype.reply = function(o) {
+	var b = this.checkAnswer(o);
+	if (!b) {
+		var s = "Nope. Try again.";
+		this.chat.post(this.idguest, s, []);
+		this.chat.post(this.idguest, this.key, []);
+	}
+	else {
+		this.scoreAnswer(b);
+		var s = "Correct!  " + this.key + "  " + voyc.strp[this.dictEntry.p] + ", " + voyc.strm[this.dictEntry.m] + ", sound: " + this.dictEntry.e;
+		this.chat.post(this.idguest, s, []);
+		this.nextQuestion();
+	}
+}
+/*
 voyc.Coach.prototype.reply = function(o) {
 	var b = this.checkAnswer(o);
 	this.scoreAnswer(b);
+	switch (this.ndxPart) {
+		case 0:
+			if (this.dictEntry.p == 'c') {
+				var s = "consonant.  What class?";
+				this.chat.post(this.idguest, s, ['low class', 'middle class', 'high class']);
+			}
+			if (this.dictEntry.p == 'v') {
+				var s = "vowel.  Short or long?";
+				this.chat.post(this.idguest, s, ['short', 'long']);
+			}
+			if (this.dictEntry.p == 't') {
+				this.nextQuestion();
+			}
+			this.ndxPart++;
+			break;
+		case 1:
+			var s = "How does it sound?";
+			this.chat.post(this.idguest, s, ['correct', 'not quite']);
+			this.ndxPart++;
+			break;
+		case 2:
+			this.nextQuestion();
+			break;
+	}
 }
-
+*/
 voyc.Coach.prototype.checkAnswer = function(o) {
 	// get dictionary entry
 	// if consonant, ask what class
 	// if vowel, ask if long or short
 	// if tone mark, don't ask
-	return (o.msg == this.lesson[this.ndxQuestion]);
+	return (o.msg == this.lesson.questions[this.ndxQuestion]);
 }
 
 voyc.Coach.prototype.scoreAnswer = function(bool) {
-	this.nextQuestion();
+}
+
+voyc.Coach.prototype.readDictionary = function(key) {
+	return voyc.dictionary.lookup(key)[0];
 }
 
 /*
