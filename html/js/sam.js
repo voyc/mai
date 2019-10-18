@@ -8,10 +8,18 @@ voyc.Sam = function(chat) {
 	this.chat = chat;
 	this.req = {};
 	this.setup();
+	this.lesson = false;
 }
 
-var lesson1 = ['ด','่','ก','า','ห','ส','ฟ','ว']; // 1    home keys
-voyc.Sam.prototype.runLesson = function() {
+voyc.lesson1 = {
+	section: 'keyboard',
+	sequence: 1,
+	name: 'home keys',
+	algorithm: 'sequential',
+	questions: ['ด','่','ก','า','ห','ส','ฟ','ว']
+};
+
+voyc.Sam.prototype.startLesson = function() {
 	/*
 	 	show question
 		receive answer
@@ -44,6 +52,11 @@ voyc.Sam.prototype.runLesson = function() {
 			show question
 
 	*/
+	var self = this;
+	this.lesson = voyc.lesson1;
+	this.coach.drill(voyc.lesson1, function(scores) {
+		self.scoreLesson();
+	});
 }
 
 voyc.Sam.prototype.setup = function() {
@@ -66,6 +79,11 @@ voyc.Sam.prototype.setup = function() {
 	//var e = document.getElementById('facecontainer');
 	//voyc.face = new PokerFace(e);
 	//voyc.face.load();
+	this.coach = new voyc.Coach(this.chat);
+}
+
+voyc.Sam.prototype.scoreLesson = function(scores) {
+	console.log("scoring");
 }
 
 voyc.Sam.prototype.onLoginReceived = function(note) {
@@ -96,10 +114,17 @@ groups
 */
 
 voyc.Sam.prototype.reply = function(o) {
+	if (this.lesson) {
+		return this.coach.reply(o);
+	}
+
 	var w = o.msg.split(/\s+/);
 	switch(w[0]) {
 		case 'no':
 			this.chat.post(this.idhost, 'OK');
+			break;
+		case 'start':
+			this.startLesson();
 			break;
 		case 'set':
 			var r = this.setVocab(o.msg);
