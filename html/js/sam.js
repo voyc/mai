@@ -2,7 +2,12 @@
 	class Sam
 	singleton
 
-	Sam is the AI who will interact with the user.
+	Sam interacts with student and coach,
+	and manages the student's study.
+
+	Sam is short for Samantha, 
+	the AI character played by Scarlett Johannson
+	in the 2013 Spike Jonez movie "Her".
 **/
 voyc.Sam = function(chat) {
 	this.chat = chat;
@@ -15,26 +20,34 @@ voyc.lesson1 = {
 	section: 'keyboard',
 	sequence: 1,
 	name: 'home keys',
-	algorithm: 'progressive',   // 'sequential',
-	questions: ['ด','่','ก','า','ห','ส','ฟ','ว']
+	algorithm: 'progressive',
+	initialShuffle: false,
+	workSize:3,
+	cards: ['ด','่','ก','า','ห','ส','ฟ','ว']
 };
 
-voyc.lessonx = {
+voyc.lesson2 = {
 	section: 'keyboard',
-	sequence: 1,
-	name: 'home keys',
-	algorithm: 'progressive',  //'sequential',
+	sequence: 2,
+	name: 'index finger',
+	algorithm: 'progressive',
 	initialShuffle: false,
-	workingSize:3,
-	questions: ['ด','่','ก','า','ห','ส','ฟ','ว']
+	workSize:4,
+	cards: ['พ','ี','อ','ท']
 };
 
 voyc.Sam.prototype.startLesson = function() {
 	var self = this;
-	this.lesson = voyc.lesson1;
-	this.coach.drill(voyc.lesson1, function(scores) {
-		self.reportScores();
+	this.lesson = voyc.lesson2;
+	this.lee.drill(this.lesson, function(scores) {
+		self.reportScores(scores);
 	});
+}
+
+voyc.Sam.prototype.endDrill = function() {
+	this.lesson = false;
+	this.chat.changeHost('Sam');
+	this.chat.post(this.idhost, 'Good job.  Let\'s try some words.  Ready?', ['yes', 'no']);
 }
 
 voyc.Sam.prototype.setup = function() {
@@ -59,11 +72,19 @@ voyc.Sam.prototype.setup = function() {
 	//var e = document.getElementById('facecontainer');
 	//voyc.face = new PokerFace(e);
 	//voyc.face.load();
-	this.coach = new voyc.Coach(this.chat);
+	this.lee = new voyc.Lee(this.chat, this.observer);
 }
 
 voyc.Sam.prototype.reportScores = function(scores) {
 	console.log("report scores");
+	if (scores === false) {
+		this.endDrill();
+		return;
+	}
+	for (var i=0; i<scores.length; i++) {
+		var score = scores[i];
+		this.vocab.set(score.key, score.state, score.ccnt);
+	}
 }
 
 voyc.Sam.prototype.onLoginReceived = function(note) {
@@ -91,7 +112,7 @@ state
 	lesson in progress
 
 other
-	coach present: yes/no
+	lee present: yes/no
 	logged in: yes/no
 
 groups
@@ -102,7 +123,7 @@ groups
 
 voyc.Sam.prototype.reply = function(o) {
 	if (this.lesson) {
-		return this.coach.reply(o);
+		return this.lee.reply(o);
 	}
 
 	var w = o.msg.split(/\s+/);
@@ -163,7 +184,7 @@ voyc.Sam.prototype.setVocab = function(msg) {
 		var w = c[i].split(/\s/);
 		var word = w[1];
 		var value = w[2];
-		r += this.vocab.set(word,value);
+		r += this.vocab.set(word,value,0);
 	}
 	return r;
 }

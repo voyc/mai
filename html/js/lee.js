@@ -1,41 +1,45 @@
 /**
-	class Coach
+	class Lee
 	singleton
 
-	Coach conducts the lesson drills.
-	A drill is a series of questions and answers.
-	The drill continues until the student is getting all the answers correct.
+	Lee conducts the drills.
+	A drill is a series of cards.  Flash cards.
+	The drill continues until the student masters all the cards.
 
-	setup - only one line
-	drill - start lesson: priming pull, nextQuestion
-	choose - choose next question per algorithm
-	countState - utility
-	pull - not used
-	nextQuestion - calls choose, readDictionary
-	reply - calls checkAnswer, scoreAnswer, nextQuestion
-	checkAnswer - right or wrong?
-	scoreAnswer - inc counts, call promote
-	promote - change state w to m 
-	readDictionary - one line call to dictionary.lookup
+	Lee is named after R Lee Avery, 
+	the actor who played Drill Sargeant Hartman 
+	in the 1987 Stanley Kubrick Movie "Full Metal Jacket".
 
-	todo
+	structure:
+		drill - start lesson: priming nextCard
+		choose - choose next card per algorithm
+		countState - utility
+		nextCard - calls choose, readDictionary
+		reply - calls checkAnswer, scoreAnswer, nextCard
+		checkAnswer - right or wrong?
+		scoreAnswer - inc counts, call promote
+		promote - change state w to m 
+		readDictionary - one line call to dictionary.lookup
+
+	todo:
 		finished lesson
-		report scores
-		store vocab
+		x report scores
+		x store vocab
 		collect
 		next lesson
 
 
 **/
-voyc.Coach = function(chat) {
+voyc.Lee = function(chat,observer) {
 	this.chat = chat;
-	this.idguest = 1;
-	this.setup();
+	this.observer = observer;
+	this.idhost = 1;
 	this.lesson = {};
-	this.ndxQuestion = 0;
+	this.ndxCard = 0;
 	this.key = '';
 	this.dictEntry = {};
 	this.reportCallback = false;
+	this.lastReportRecency = 0;
 	this.scores = [];
 	this.setting = {
 		isAutoScore:true,
@@ -55,23 +59,19 @@ voyc.Coach = function(chat) {
 	}
 }
 
-voyc.Coach.prototype.setup = function() {
-	this.observer = new voyc.Observer();
-}
-
-voyc.Coach.prototype.drill = function(lesson,callback) {
+voyc.Lee.prototype.drill = function(lesson,callback) {
 	this.lesson = lesson;
-	this.ndxQuestion = -1;
+	this.ndxCard = -1;
 	this.reportCallback = callback;
-	for (var i=0; i<this.lesson.questions.length; i++) {
-		var q = this.lesson.questions[i];
+	this.chat.changeHost('Lee');
+	for (var i=0; i<this.lesson.cards.length; i++) {
+		var q = this.lesson.cards[i];
 		this.scores.push({ndx:i, key:q, acnt:0, ccnt:0, pct:0, recency:0, state:'u', consecutive:0});
 	}
-	this.pull();
-	this.nextQuestion();
+	this.nextCard();
 }
 
-voyc.Coach.prototype.choose = function() {
+voyc.Lee.prototype.choose = function() {
 	var chosen = false;
 	function incr(n,m) {
 		var r = n+1;
@@ -82,8 +82,8 @@ voyc.Coach.prototype.choose = function() {
 	}
 	switch(this.lesson.algorithm) {
 		case 'sequential':
-			//chosen = this.ndxQuestion + 1;
-			chosen = incr(this.ndxQuestion, this.lesson.questions.length);
+			//chosen = this.ndxCard + 1;
+			chosen = incr(this.ndxCard, this.lesson.cards.length);
 			break;
 		case 'progressive':
 			var cntw = this.countState('w');
@@ -137,7 +137,7 @@ voyc.Coach.prototype.choose = function() {
 	return chosen;
 } 
 
-voyc.Coach.prototype.countState = function(state) {
+voyc.Lee.prototype.countState = function(state) {
 	var cnt = 0;
 	for (var i=0; i<this.scores.length; i++) {
 		var score = this.scores[i];
@@ -147,32 +147,17 @@ voyc.Coach.prototype.countState = function(state) {
 	}
 	return cnt;
 }
-voyc.Coach.prototype.pull = function() {
-return;
-	// fill workset to minimum
-	var numU = this.countState('u');
-	var numW = this.countState('w');
-	for (var i=0; i<this.scores.length; i++) {
-		var score = this.scores[i];
-		if (score.state == 'u') {
-			if (numW < this.setting.optSizeWork) {
-				score.state = 'w';
-				numU--;
-				numW++;
-			}
-		}
-	}
-}
 
-voyc.Coach.prototype.nextQuestion = function() {
-	this.ndxQuestion = this.choose();
-	if (this.ndxQuestion === false) {
-		this.chat.post(this.idguest, "Finished.  Congratulations!", []);
+voyc.Lee.prototype.nextCard = function() {
+	this.ndxCard = this.choose();
+	if (this.ndxCard === false) {
+		this.chat.post(this.idhost, "Finished.", []);
+		this.reportCallback(false);
 		return;
 	}
-	this.key = this.lesson.questions[this.ndxQuestion];
+	this.key = this.lesson.cards[this.ndxCard];
 	this.dictEntry = this.readDictionary(this.key);
-	this.chat.post(this.idguest, this.key, []);
+	this.chat.post(this.idhost, this.key, []);
 }
 
 voyc.strp = {
@@ -188,27 +173,27 @@ voyc.strm = {
 	h:"high class"
 }
 
-voyc.Coach.prototype.reply = function(o) {
+voyc.Lee.prototype.reply = function(o) {
 	var b = this.checkAnswer(o);
 	this.scoreAnswer(b);
 	if (!b) {
 		var s = "Nope. Try again.";
-		this.chat.post(this.idguest, s, []);
-		this.chat.post(this.idguest, this.key, []);
+		this.chat.post(this.idhost, s, []);
+		this.chat.post(this.idhost, this.key, []);
 	}
 	else {
 		var s = "Correct!  " + this.key + "  " + voyc.strp[this.dictEntry.p] + ", " + voyc.strm[this.dictEntry.m] + ", sound: " + this.dictEntry.e;
-		this.chat.post(this.idguest, s, []);
-		this.nextQuestion();
+		this.chat.post(this.idhost, s, []);
+		this.nextCard();
 	}
 }
 
-voyc.Coach.prototype.checkAnswer = function(o) {
-	return (o.msg == this.lesson.questions[this.ndxQuestion]);
+voyc.Lee.prototype.checkAnswer = function(o) {
+	return (o.msg == this.lesson.cards[this.ndxCard]);
 }
 
-voyc.Coach.prototype.scoreAnswer = function(bool) {
-	var score = this.scores[this.ndxQuestion];
+voyc.Lee.prototype.scoreAnswer = function(bool) {
+	var score = this.scores[this.ndxCard];
 	score.acnt++;
 	if (bool) {
 		score.ccnt++;
@@ -220,10 +205,22 @@ voyc.Coach.prototype.scoreAnswer = function(bool) {
 	score.pct = Math.floor(score.ccnt/score.acnt*100);
 	score.recency = Date.now();
 	this.promote(score);
-	this.pull();
+	this.report();
 }
 
-voyc.Coach.prototype.promote = function (score) {
+voyc.Lee.prototype.report = function() {
+	var report = [];
+	for (var i=0; i<this.scores.length; i++) {
+		var score = this.scores[i];
+		if (score.recency > this.lastReportRecency) {
+			report.push(score);
+		}
+	}
+	this.lastReportRecency = Date.now();
+	this.reportCallback(report);
+}
+
+voyc.Lee.prototype.promote = function (score) {
 	if (!this.setting['isAutoPromote'])
 		return false;
 
@@ -249,7 +246,7 @@ voyc.Coach.prototype.promote = function (score) {
 	return promoted;
 }
 
-voyc.Coach.prototype.readDictionary = function(key) {
+voyc.Lee.prototype.readDictionary = function(key) {
 	return voyc.dictionary.lookup(key)[0];
 }
 

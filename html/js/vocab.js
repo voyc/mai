@@ -85,7 +85,7 @@ voyc.Vocab.prototype.setDirty = function() {
 	if (!this.timerid) {
 		var self = this;
 		this.timerid = setTimeout( function() {
-			self.updateServer(self.prepDirtyBatch);
+			self.updateServer(self.prepDirtyBatch());
 			self.timerid = null;
 		}, (10*1000));
 	}
@@ -101,8 +101,7 @@ voyc.Vocab.prototype.prepDirtyBatch = function() {
 		}
 	}
 	this.vocab.recency = newrecency;
-	var s = JSON.stringify(dirtyBatch);
-	return s;
+	return dirtyBatch;
 }
 
 voyc.Vocab.prototype.updateServer = function(dirtyBatch) {
@@ -207,15 +206,16 @@ voyc.Vocab.prototype.get = function(word) {
 	@input {string} state
 	@return {number} count of new entries inserted
 **/	
-voyc.Vocab.prototype.set = function(word, state) {
+voyc.Vocab.prototype.set = function(word, state, mastery) {
 	var r = 0;
 	var e = this.get(word);
 	if (e) {
 		e.s = state;
 		e.r = Date.now();
+		e.m = e.m + mastery;
 	}
 	else {
-		this.vocab.list.push({w:word,s:state,r:Date.now(),m:0});
+		this.vocab.list.push({w:word,s:state,r:Date.now(),m:mastery});
 		r++;
 	}
 	this.store();
