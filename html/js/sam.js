@@ -15,47 +15,25 @@ voyc.lesson1 = {
 	section: 'keyboard',
 	sequence: 1,
 	name: 'home keys',
-	algorithm: 'sequential',
+	algorithm: 'progressive',   // 'sequential',
+	questions: ['ด','่','ก','า','ห','ส','ฟ','ว']
+};
+
+voyc.lessonx = {
+	section: 'keyboard',
+	sequence: 1,
+	name: 'home keys',
+	algorithm: 'progressive',  //'sequential',
+	initialShuffle: false,
+	workingSize:3,
 	questions: ['ด','่','ก','า','ห','ส','ฟ','ว']
 };
 
 voyc.Sam.prototype.startLesson = function() {
-	/*
-	 	show question
-		receive answer
-		show followup question
-		receive answer
-		show followup question
-		receive answer
-		score
-		next question
-		loop
-
-		speak
-		listen
-		speak
-		listen
-		loop
-
-		listen
-		react
-		loop
-
-		onready
-			show question
-		onanswer
-			record answer
-			show followup question
-		onfinalanswer
-			score
-			next question
-			show question
-
-	*/
 	var self = this;
 	this.lesson = voyc.lesson1;
 	this.coach.drill(voyc.lesson1, function(scores) {
-		self.scoreLesson();
+		self.reportScores();
 	});
 }
 
@@ -84,8 +62,8 @@ voyc.Sam.prototype.setup = function() {
 	this.coach = new voyc.Coach(this.chat);
 }
 
-voyc.Sam.prototype.scoreLesson = function(scores) {
-	console.log("scoring");
+voyc.Sam.prototype.reportScores = function(scores) {
+	console.log("report scores");
 }
 
 voyc.Sam.prototype.onLoginReceived = function(note) {
