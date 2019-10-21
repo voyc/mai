@@ -13,41 +13,41 @@ voyc.lessons = [
 
 	},{
 		section: 'keyboard',
-		name: 'index finger',
+		name: 'index middle finger',
 		sequence: 2,
 		algorithm: 'progressive',
 		initialShuffle: false,
-		workSize:4,
+		workSize:3,
 		phases:['drill','collect'],
-		cards: ['พ','ี','อ','ท']
+		cards: ['พ','ี','อ','ท','ำ','ร','แ','ม'] 
 	},{
+//		section: 'keyboard',
+//		name: 'middle finger',
+//		sequence: 3,
+//		algorithm: 'progressive',
+//		initialShuffle: false,
+//		workSize:4,
+//		phases:['drill','collect'],
+//		cards: ['ำ','ร','แ','ม'] 
+//	},{
 		section: 'keyboard',
-		name: 'middle finger',
-		sequence: 3,
-		algorithm: 'progressive',
-		initialShuffle: false,
-		workSize:4,
-		phases:['drill','collect'],
-		cards: ['ำ','ร','แ','ม'] 
-	},{
-		section: 'keyboard',
-		name: 'ring finger',
+		name: 'ring finger pinkie',
 		sequence: 4,
 		algorithm: 'progressive',
 		initialShuffle: false,
-		workSize:4,
+		workSize:3,
 		phases:['drill','collect'],
-		cards: ['ไ','น','ป','ใ']
+		cards: ['ไ','น','ป','ใ','ๆ','ย','ผ','ฝ']
 	},{
-		section: 'keyboard',
-		name: 'pinkie',
-		sequence: 5,
-		algorithm: 'progressive',
-		initialShuffle: false,
-		workSize:4,
-		phases:['drill','collect'],
-		cards: ['ๆ','ย','ผ','ฝ']
-	},{
+//		section: 'keyboard',
+//		name: 'pinkie',
+//		sequence: 5,
+//		algorithm: 'progressive',
+//		initialShuffle: false,
+//		workSize:4,
+//		phases:['drill','collect'],
+//		cards: ['ๆ','ย','ผ','ฝ']
+//	},{
 		section: 'keyboard',
 		name: 'index finger center',
 		sequence: 6,

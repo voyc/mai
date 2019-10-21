@@ -59,6 +59,7 @@ voyc.Lee.prototype.drill = function(lesson,callback) {
 	this.chat.changeHost('Lee');
 
 	// create the scores array
+	this.scores = [];
 	for (var i=0; i<this.lesson.cards.length; i++) {
 		var q = this.lesson.cards[i];
 		var dict = this.readDictionary(q);
@@ -156,6 +157,7 @@ voyc.Lee.prototype.nextCard = function() {
 	this.key = this.lesson.cards[this.ndxCard];
 	this.dictEntry = this.readDictionary(this.key);
 	this.chat.post(this.idhost, this.key, []);
+	console.log('next card: ' + this.key);
 }
 
 voyc.strp = {
@@ -185,7 +187,10 @@ voyc.Lee.prototype.reply = function(o) {
 			s = "<b>" + this.key + "</b>  " + voyc.strp[this.dictEntry.p] + ", " + voyc.strm[this.dictEntry.m] + ", sound: " + this.dictEntry.e;
 		}
 		else if (this.dictEntry.g == 'o') {
-			s = "<b>" + this.key + "</b>  " + ", translate: " + this.dictEntry.e;
+			s = "<b>" + this.key + "</b>  " + voyc.r + "<sup>" + this.dictEntry.o + "</sup>  " + this.dictEntry.e;
+		}
+		else if (this.dictEntry.g == 't') {
+			s = "<b>" + this.key + "</b>  tone mark";
 		}
 		this.chat.post(this.idhost, s, ['right', 'wrong']);
 		this.nextCard();

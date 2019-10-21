@@ -19,11 +19,13 @@
 		custom drills
 		review sessions
 		
-		store lesson and state in vocab incl db
-		let Sam pick the next best lesson
 		draw list of lessons, highlighted by state
 		let user pick a lesson
 		
+		at end of phase 2, end the lesson
+		write lesson to vocab state m
+		start new lesson
+		when doing words, add a phase to reverse direction
 **/
 voyc.Sam = function(chat) {
 	this.chat = chat;
@@ -62,12 +64,13 @@ voyc.Sam.prototype.setup = function() {
 
 voyc.Sam.prototype.onGetVocabReceived = function() {
 	this.noam = new voyc.Noam(voyc.dictionary, this.vocab.vocab.list);
-	this.lessonid = this.chooseLesson();
+	//this.lessonid = this.chooseLesson();
 }
 
 voyc.Sam.prototype.chooseLesson = function() {
 	// take the lowest lessonid with state of w or u
-	var lessonid = 0;
+	var lessonid = false;
+	var highm = false;
 	for (var i=0; i<this.vocab.vocab.list.length; i++) {
 		vocab = this.vocab.vocab.list[i];
 		if (vocab.t != 'l') {
@@ -77,13 +80,27 @@ voyc.Sam.prototype.chooseLesson = function() {
 			lessonid = i;
 			break;
 		}
+		if (vocab.s == 'm') {
+			highm = i;
+		}
+	}
+	if (lessonid === false) {
+		if (highm !== false) {
+			lessonid = highm + 1;
+		}
+		else {
+			lessonid = 0;
+		}
 	}
 	return lessonid;
 }
 
 voyc.Sam.prototype.startLesson = function(lessonid) {
 	this.lessonid = lessonid || this.chooseLesson();
-	this.vocab.set(this.lessonid, 'l','w',0);
+	var v = this.vocab.get(this.lessonid);
+	if (v.s == 'u') {
+		this.vocab.set(this.lessonid, 'l','w',0);
+	}
 	this.phase = 0;
 	var phase = voyc.lessons[this.lessonid].phases[this.phase];
 	if (phase == 'drill') {
@@ -131,7 +148,10 @@ voyc.Sam.prototype.collect = function() {
 }
 voyc.Sam.prototype.endLesson = function() {
 	this.chat.changeHost('Sam');
-	this.chat.post(this.idhost, 'Good job.  Let\'s try some words.  Ready?', ['yes', 'no']);
+	this.converseState = 'endlesson';
+	this.vocab.set(this.lessonid, 'l','m',1);
+	this.chat.post(this.idhost, 'Congratulations.  You have completed the lesson.');
+	this.chat.post(this.idhost, 'Continue with next lesson?', ['yes', 'no']);
 }
 
 voyc.Sam.prototype.reportScores = function(scores) {
@@ -209,6 +229,10 @@ voyc.Sam.prototype.reply = function(o) {
 			this.req.target = voyc.cloneArray(w);
 			this.req.target.splice(0,1);
 		case 'yes':
+			if (this.converseState == 'endlesson') {
+				this.startLesson();
+			}
+			break;
 		case 'again':
 			var r = voyc.sengen.genSentence(this.req);
 			if (r.length > 0) {

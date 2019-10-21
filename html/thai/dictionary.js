@@ -18,6 +18,8 @@ voyc.Dictionary.prototype.load = function() {
 }
 
 voyc.Dictionary.prototype.isEnglish = function(s) {
+	if (typeof(s) == 'undefined')
+		debugger;
 	return (s.match(/^[ \?\-A-Za-z0-9]*$/));
 }
 
