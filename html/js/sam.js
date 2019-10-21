@@ -8,46 +8,29 @@
 	Sam is short for Samantha, 
 	the AI character played by Scarlett Johannson
 	in the 2013 Spike Jonez movie "Her".
+
+	todo:
+		parse.collect()
+		start phase two  of lesson
+		lesson schedule
+			sections
+			lessons
+			drills
+		custom drills
+		review sessions
+		
+		store lesson and state in vocab incl db
+		let Sam pick the next best lesson
+		draw list of lessons, highlighted by state
+		let user pick a lesson
+		
 **/
 voyc.Sam = function(chat) {
 	this.chat = chat;
 	this.req = {};
 	this.setup();
-	this.lesson = false;
-}
-
-voyc.lesson1 = {
-	section: 'keyboard',
-	sequence: 1,
-	name: 'home keys',
-	algorithm: 'progressive',
-	initialShuffle: false,
-	workSize:3,
-	cards: ['ด','่','ก','า','ห','ส','ฟ','ว']
-};
-
-voyc.lesson2 = {
-	section: 'keyboard',
-	sequence: 2,
-	name: 'index finger',
-	algorithm: 'progressive',
-	initialShuffle: false,
-	workSize:4,
-	cards: ['พ','ี','อ','ท']
-};
-
-voyc.Sam.prototype.startLesson = function() {
-	var self = this;
-	this.lesson = voyc.lesson2;
-	this.lee.drill(this.lesson, function(scores) {
-		self.reportScores(scores);
-	});
-}
-
-voyc.Sam.prototype.endDrill = function() {
-	this.lesson = false;
-	this.chat.changeHost('Sam');
-	this.chat.post(this.idhost, 'Good job.  Let\'s try some words.  Ready?', ['yes', 'no']);
+	this.lessonid = 0;  // for now, lessonid is the ndx into the voyc.lessons array
+	this.drillInProgress = false;
 }
 
 voyc.Sam.prototype.setup = function() {
@@ -68,11 +51,87 @@ voyc.Sam.prototype.setup = function() {
 	this.observer.subscribe('relogin-received' ,'user' ,function(note) { self.onLoginReceived   (note);});
 	this.observer.subscribe('restart-anonymous','user' ,function(note) { self.onAnonymous       (note);});
 	this.observer.subscribe('logout-received'  ,'user' ,function(note) { self.onLogoutReceived  (note);});
+	this.observer.subscribe('getvocab-received','user' ,function(note) { self.onGetVocabReceived(note);});
 	
 	//var e = document.getElementById('facecontainer');
 	//voyc.face = new PokerFace(e);
 	//voyc.face.load();
+	//
 	this.lee = new voyc.Lee(this.chat, this.observer);
+}
+
+voyc.Sam.prototype.onGetVocabReceived = function() {
+	this.noam = new voyc.Noam(voyc.dictionary, this.vocab.vocab.list);
+	this.lessonid = this.chooseLesson();
+}
+
+voyc.Sam.prototype.chooseLesson = function() {
+	// take the lowest lessonid with state of w or u
+	var lessonid = 0;
+	for (var i=0; i<this.vocab.vocab.list.length; i++) {
+		vocab = this.vocab.vocab.list[i];
+		if (vocab.t != 'l') {
+			continue;
+		}
+		if (vocab.s == 'w' || vocab.s == 'u') {
+			lessonid = i;
+			break;
+		}
+	}
+	return lessonid;
+}
+
+voyc.Sam.prototype.startLesson = function(lessonid) {
+	this.lessonid = lessonid || this.chooseLesson();
+	this.vocab.set(this.lessonid, 'l','w',0);
+	this.phase = 0;
+	var phase = voyc.lessons[this.lessonid].phases[this.phase];
+	if (phase == 'drill') {
+		this.startDrill(voyc.lessons[this.lessonid]);
+	}
+}
+
+voyc.Sam.prototype.startDrill = function(lesson) {
+	var self = this;
+	this.drillInProgress = true;
+	this.lee.drill(lesson, function(scores) {
+		self.reportScores(scores);
+	});
+}
+
+voyc.Sam.prototype.endDrill = function() {
+	this.chat.changeHost('Sam');
+	this.drillInProgress = false;
+	var lesson = voyc.lessons[this.lessonid];
+	this.phase++;
+	if (this.phase < lesson.phases.length) { 
+		var phase = lesson.phases[this.phase];
+		if (phase == 'collect') {
+			this.converseState = 'collect';
+			this.chat.post(this.idhost, 'Good job.  Let\'s try some words using these letters.  Ready?', ['collect']);
+		}
+	}
+	else {
+		this.endLesson();
+	}
+}
+
+voyc.Sam.prototype.collect = function() {
+	var lesson = {
+		algorithm:'progressive',
+		workSize:4,
+		cards:[]
+	}
+	var collection = this.noam.collect();
+	for (var i=0; i<collection.length; i++) {
+		var w = collection[i];
+		lesson.cards.push(w.t);
+	}
+	this.startDrill(lesson);
+}
+voyc.Sam.prototype.endLesson = function() {
+	this.chat.changeHost('Sam');
+	this.chat.post(this.idhost, 'Good job.  Let\'s try some words.  Ready?', ['yes', 'no']);
 }
 
 voyc.Sam.prototype.reportScores = function(scores) {
@@ -83,14 +142,14 @@ voyc.Sam.prototype.reportScores = function(scores) {
 	}
 	for (var i=0; i<scores.length; i++) {
 		var score = scores[i];
-		this.vocab.set(score.key, score.state, score.ccnt);
+		this.vocab.set(score.key, score.type, score.state, score.ccnt);
 	}
 }
 
 voyc.Sam.prototype.onLoginReceived = function(note) {
 	this.idguest = this.chat.addUser(note.payload.uname, false, true);
 	this.chat.post(this.idhost, "Welcome back, " + note.payload.uname);
-	this.chat.post(this.idhost, "Are you ready to begin?", ["start"]);
+	this.chat.post(this.idhost, "Are you ready to begin?", ["start",'collect']);
 }
 
 voyc.Sam.prototype.onLogoutReceived = function(note) {
@@ -122,7 +181,7 @@ groups
 */
 
 voyc.Sam.prototype.reply = function(o) {
-	if (this.lesson) {
+	if (this.drillInProgress) {
 		return this.lee.reply(o);
 	}
 
@@ -133,6 +192,9 @@ voyc.Sam.prototype.reply = function(o) {
 			break;
 		case 'start':
 			this.startLesson();
+			break;
+		case 'collect':
+			this.collect();
 			break;
 		case 'set':
 			var r = this.setVocab(o.msg);

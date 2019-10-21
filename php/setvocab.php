@@ -50,15 +50,15 @@ function setvocab() {
 		$recency = $m->r;
 		$mastery = $m->m;
 		$state = $m->s;
+		$type = $m->t;
         	Log::write(LOG_WARNING, 'write: ' . $word);
 	
 		// attempt to read vocab record
 		$language = 'th';
-		$type = 'w';
 		$vocabid = 0;
 		$name = 'query-vocab';
-		$sql = "select id from mai.vocab where userid = $1 and word = $2 and language = $3";
-		$params = array($userid, $word, $language);
+		$sql = "select id from mai.vocab where userid = $1 and word = $2 and language = $3 and type = $4";
+		$params = array($userid, $word, $language, $type);
 		$result = execSql($conn, $name, $sql, $params, false);
 		if ($result) {
 			$row = pg_fetch_array($result, 0, PGSQL_ASSOC);

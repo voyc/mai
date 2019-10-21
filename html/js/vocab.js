@@ -74,7 +74,7 @@ voyc.Vocab.prototype.onVocabReceived = function(note) {
 	for (var i=0; i<serverList.length; i++) {
 		var m = findInLocalList(serverList[i].w);
 		if (!m) {
-			localList.push(m);
+			localList.push(serverList[i]);
 		}
 	}
 	this.updateServer(dirtyBatch);
@@ -206,7 +206,7 @@ voyc.Vocab.prototype.get = function(word) {
 	@input {string} state
 	@return {number} count of new entries inserted
 **/	
-voyc.Vocab.prototype.set = function(word, state, mastery) {
+voyc.Vocab.prototype.set = function(word, type, state, mastery) {
 	var r = 0;
 	var e = this.get(word);
 	if (e) {
@@ -215,7 +215,7 @@ voyc.Vocab.prototype.set = function(word, state, mastery) {
 		e.m = e.m + mastery;
 	}
 	else {
-		this.vocab.list.push({w:word,s:state,r:Date.now(),m:mastery});
+		this.vocab.list.push({w:word,t:type,s:state,r:Date.now(),m:mastery});
 		r++;
 	}
 	this.store();

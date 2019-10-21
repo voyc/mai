@@ -21,14 +21,6 @@
 		promote - change state w to m 
 		readDictionary - one line call to dictionary.lookup
 
-	todo:
-		finished lesson
-		x report scores
-		x store vocab
-		collect
-		next lesson
-
-
 **/
 voyc.Lee = function(chat,observer) {
 	this.chat = chat;
@@ -61,13 +53,19 @@ voyc.Lee = function(chat,observer) {
 
 voyc.Lee.prototype.drill = function(lesson,callback) {
 	this.lesson = lesson;
+	this.setting.optSizeWork = lesson.workSize;
 	this.ndxCard = -1;
 	this.reportCallback = callback;
 	this.chat.changeHost('Lee');
+
+	// create the scores array
 	for (var i=0; i<this.lesson.cards.length; i++) {
 		var q = this.lesson.cards[i];
-		this.scores.push({ndx:i, key:q, acnt:0, ccnt:0, pct:0, recency:0, state:'u', consecutive:0});
+		var dict = this.readDictionary(q);
+		this.scores.push({ndx:i, key:q, type:dict.g, acnt:0, ccnt:0, pct:0, recency:0, state:'u', consecutive:0});
 	}
+
+	// choose the first card
 	this.nextCard();
 }
 
@@ -182,8 +180,14 @@ voyc.Lee.prototype.reply = function(o) {
 		this.chat.post(this.idhost, this.key, []);
 	}
 	else {
-		var s = "Correct!  " + this.key + "  " + voyc.strp[this.dictEntry.p] + ", " + voyc.strm[this.dictEntry.m] + ", sound: " + this.dictEntry.e;
-		this.chat.post(this.idhost, s, []);
+		var s = '';
+		if (this.dictEntry.g == 'g' ) {
+			s = "<b>" + this.key + "</b>  " + voyc.strp[this.dictEntry.p] + ", " + voyc.strm[this.dictEntry.m] + ", sound: " + this.dictEntry.e;
+		}
+		else if (this.dictEntry.g == 'o') {
+			s = "<b>" + this.key + "</b>  " + ", translate: " + this.dictEntry.e;
+		}
+		this.chat.post(this.idhost, s, ['right', 'wrong']);
 		this.nextCard();
 	}
 }
