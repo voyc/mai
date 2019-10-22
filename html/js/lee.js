@@ -184,13 +184,13 @@ voyc.Lee.prototype.reply = function(o) {
 	else {
 		var s = '';
 		if (this.dictEntry.g == 'g' ) {
-			s = "<b>" + this.key + "</b>  " + voyc.strp[this.dictEntry.p] + ", " + voyc.strm[this.dictEntry.m] + ", sound: " + this.dictEntry.e;
+			s = this.key + "  " + voyc.strp[this.dictEntry.p] + ", " + voyc.strm[this.dictEntry.m] + ", sound: " + this.dictEntry.e;
 		}
 		else if (this.dictEntry.g == 'o') {
-			s = "<b>" + this.key + "</b>  " + voyc.r + "<sup>" + this.dictEntry.o + "</sup>  " + this.dictEntry.e;
+			s = this.key + "  " + voyc.r + "<sup>" + this.dictEntry.o + "</sup>  " + this.dictEntry.e;
 		}
 		else if (this.dictEntry.g == 't') {
-			s = "<b>" + this.key + "</b>  tone mark";
+			s = this.key + "  tone mark";
 		}
 		this.chat.post(this.idhost, s, ['right', 'wrong']);
 		this.nextCard();
