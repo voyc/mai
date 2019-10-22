@@ -28,8 +28,8 @@ table {
 <!--
 <script src='alphabet.js'></script>
 <script src='alphabetData.js'></script>
-<script src='vowelPatterns.js'></script>
 -->
+<script src='thai/vowelPatterns.js'></script>
 <script src='jslib/utils.js'></script>
 <script src='jslib/comm.js'></script>
 <script src='jslib/observer.js'></script>
@@ -121,8 +121,10 @@ window.addEventListener('load', function() {
 		var words = input.split(/\n/);
 		for (var w in words) {
 			var word = words[w];
-			var tone = voyc.parseWord(word).tone;
-			s += '<tr><td>'+word+'</td><td>'+tone+'</td><td><button onclick=parseWordDetail("'+word+'")>Detail</button></td></tr>';
+			var t = voyc.parseWord(word);
+			var num = t.num;
+			var tone = t.tone;
+			s += '<tr><td>'+word+'</td><td>'+num+'</td><td>'+tone+'</td><td><button onclick=parseWordDetail("'+word+'")>Detail</button></td></tr>';
 		}
 		s += '</table>';
 		document.getElementById('content').innerHTML = s;
@@ -133,7 +135,7 @@ window.addEventListener('load', function() {
 		s += '<table>';
 		s += '<tr><td>Num</td><td>Input</td><td>Matched</td><td>NotMatched</td></tr>';
 
-		voyc.dictionary.iterate(function(m,j) {
+		dict.iterate(function(m,j) {
 			if (m.t == 'ไมตรี') {
 			//	debugger;
 			}
@@ -169,6 +171,17 @@ window.addEventListener('load', function() {
 		});
 
 		s += '</table>';
+		document.getElementById('content').innerHTML = s;
+	});
+
+	voyc.$('special').addEventListener('click', function() {
+		var s = '';
+		dict.iterate(function(m,j) {
+			if (m.g == 'o') {
+				var a = voyc.noam.parseWord(m.t);
+				s += "update table mai.thaidict set numsyllables="+a.num+" where thai = '"+m.t+"';<br/>";
+			}
+		});
 		document.getElementById('content').innerHTML = s;
 	});
 
@@ -232,6 +245,7 @@ function parseWordDetail(word) {
 <button id='btn-parse-area'>Parse</button>
 <button id='btn-collect'>Collect</button>
 <button id='parseWord'>Parse Word</button>
+<button id='special'>Special</button>
 <div id='detail'>this is the detail window</div>
 <div id='content'></div>
 &#9676

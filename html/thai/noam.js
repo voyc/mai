@@ -13,6 +13,7 @@
 voyc.Noam = function(dictionary,vocab) {
 	this.dictionary = dictionary;
 	this.vocab = vocab;
+	voyc.vowelPatternsInit();
 }
 
 /**
@@ -187,7 +188,7 @@ voyc.parse = function(input) {
 			phrase book - like dictionary, maybe part of dictionary
 			rules - shortname to longname
 */
-voyc.parseWord = function(input, returnDetails) {
+voyc.Noam.prototype.parseWord = function(input, returnDetails) {
 	returnDetails = returnDetails || false;
 	var word = input;
 
@@ -224,12 +225,15 @@ voyc.parseWord = function(input, returnDetails) {
 		}
 	}
 	var numMatches = matchedPatterns.length;
+	if (!numMatches) {
+		return {tone:'', num:0, syllables:0};
+	}
 
 	// sort matched patterns by index and length, both ascending
 	matchedPatterns.sort(function(a,b) {
 		var x = a.index - b.index;
 		if (x == 0) {
-			(a.end - a.begin) - (b.end - b.end);
+			(a.end - a.begin) - (b.end - b.begin);
 		}
 		return x;
 	});
@@ -336,7 +340,9 @@ voyc.parseWord = function(input, returnDetails) {
 	}
 	var winner = chains[c];
 	var numSyllables = winner.syllables.length;
+	return {tone:tone, num:numSyllables, syllables:winner.syllables};
 
+	
 	// Actually, there should be one and only one syllable with 0 orphans.
 	// If not, developer intervention is required.
 	if (winner.numOrphanGlyphs != 0) {
