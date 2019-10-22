@@ -179,7 +179,7 @@ window.addEventListener('load', function() {
 		dict.iterate(function(m,j) {
 			if (m.g == 'o') {
 				var a = voyc.noam.parseWord(m.t);
-				s += "update table mai.thaidict set numsyllables="+a.num+" where thai = '"+m.t+"';<br/>";
+				s += "update mai.thaidict set numsyllables="+a.num+" where thai = '"+m.t+"';<br/>";
 			}
 		});
 		document.getElementById('content').innerHTML = s;
