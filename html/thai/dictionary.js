@@ -11,10 +11,10 @@ voyc.Dictionary = function() {
 }
 
 voyc.Dictionary.prototype.load = function() {
-	this.dict = voyc.dict2;
-	this.dict.sort(function(a,b) {
-		return a.t.localeCompare(b.t);
-	});
+	this.dict = voyc.dict;
+//	this.dict.sort(function(a,b) {
+//		return a.t.localeCompare(b.t);
+//	});
 }
 
 voyc.Dictionary.prototype.isEnglish = function(s) {

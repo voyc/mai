@@ -23,10 +23,10 @@ table {
 <script>var voyc = {};</script>
 <script src='thai/noam.js'></script>
 <script src='thai/dictionary.js'></script>
-<script src='thai/dict2.js'></script>
+<script src='thai/dict.js'></script>
 <script src='js/vocab.js'></script>
+<script src='thai/alphabet.js'></script>
 <!--
-<script src='alphabet.js'></script>
 <script src='alphabetData.js'></script>
 -->
 <script src='thai/vowelPatterns.js'></script>
@@ -174,14 +174,40 @@ window.addEventListener('load', function() {
 		document.getElementById('content').innerHTML = s;
 	});
 
+	//voyc.$('special').addEventListener('click', function() {
+	//	var s = '';
+	//	dict.iterate(function(m,j) {
+	//		if (m.g == 'o') {
+	//			var a = voyc.noam.parseWord(m.t);
+	//			s += "update mai.thaidict set numsyllables="+a.num+" where thai = '"+m.t+"';<br/>";
+	//		}
+	//	});
+	//	document.getElementById('content').innerHTML = s;
+	//});
+
 	voyc.$('special').addEventListener('click', function() {
 		var s = '';
+		var acnt = 0;
+		var ccnt = 0;
 		dict.iterate(function(m,j) {
-			if (m.g == 'o') {
-				var a = voyc.noam.parseWord(m.t);
-				s += "update mai.thaidict set numsyllables="+a.num+" where thai = '"+m.t+"';<br/>";
+			if (m.g == 'o' && m.n == 1 && m.ns == 1) {
+				var m = voyc.noam.parseSyllable(m.t);
+				//s += m.t+'\t'+m.m+'\t'+m.vp+'\t'+m.lc+'\t'+m.fc+'\t'+m.tm+'\t'+m.tn+'\t'+m.tl+'\t'+m.tl+'<sup>'+m.tn+'</sup>' +'<br/>';
+				//s += m.t +'<br/>';
+				s += "update mai.thaidict set vowelpattern='"+m.vp+"'";
+				s += ",leadingconsonant='"+m.lc+"'";
+				s += ",finalconsonant='"+m.fc+"'";
+				s += ",tonemark='"+m.tm+"'";
+				s += ",tone='"+m.tn+"'";
+				s += ",translit='"+m.tl+"'";
+				s += " where thai='"+m.t +"';<br/>";
+				if (m.status) {
+				    ccnt++;
+				}
+				acnt++;
 			}
 		});
+		s = ccnt + " of " + acnt + '<br/>' + s;
 		document.getElementById('content').innerHTML = s;
 	});
 

@@ -14,6 +14,7 @@ voyc.Noam = function(dictionary,vocab) {
 	this.dictionary = dictionary;
 	this.vocab = vocab;
 	voyc.vowelPatternsInit();
+	this.alphabet = new voyc.Alphabet(dictionary);
 }
 
 /**
@@ -40,7 +41,7 @@ voyc.Noam.prototype.collect = function() {
 	var self = this;
 	this.dictionary.iterate(function(dict,n) {
 		if (dict.g == 'g') {
-			return;
+			return false;
 		}
 		var t = dict.t;
 		var tlen = t.length;
@@ -371,31 +372,181 @@ voyc.Noam.prototype.parseWord = function(input, returnDetails) {
 		}
 
 		// apply tone rules
-		syl.tone = false;
+		syl.tn = false;
 		var maiaek = '่';
 		var maitoh = '้';
 		var maidtree = '๊';
 		var maidtawaa = '๋';
 		var leadingConsonantMeta = voyc.alphabet.lookup(syl.leadingConsonant)[0];
 		var vowelMeta = voyc.vowelPatterns[syl.patternIndex];
-		if (leadingConsonantMeta.m == 'm' && syl.ending == 'live') syl.tone = 'M', syl.rules.push('mid-class live: M');
-		if (leadingConsonantMeta.m == 'm' && syl.ending == 'dead') syl.tone = 'L', syl.rules.push('mid-class dead: L');
-		if (leadingConsonantMeta.m == 'm' && syl.toneMark == maiaek) syl.tone = 'L', syl.rules.push('mid-class mai eak: L');
-		if (leadingConsonantMeta.m == 'm' && syl.toneMark == maitoh) syl.tone = 'F', syl.rules.push('mid-class mai toh: F');
-		if (leadingConsonantMeta.m == 'h' && syl.ending == 'live') syl.tone = 'R', syl.rules.push('high-class live: R');
-		if (leadingConsonantMeta.m == 'h' && syl.ending == 'dead') syl.tone = 'L', syl.rules.push('high-class dead: L');
-		if (leadingConsonantMeta.m == 'h' && syl.toneMark == maiaek) syl.tone = 'L', syl.rules.push('high-class mai eak: L');
-		if (leadingConsonantMeta.m == 'h' && syl.toneMark == maitoh) syl.tone = 'F', syl.rules.push('high-class mai toh: F');
-		if (leadingConsonantMeta.m == 'l' && syl.ending == 'live') syl.tone = 'M', syl.rules.push('low-class live: M');
-		if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 's') syl.tone = 'H', syl.rules.push('low-class dead short: H');
-		if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 'l') syl.tone = 'F', syl.rules.push('low-class dead long: F');
-		if (leadingConsonantMeta.m == 'l' && syl.toneMark == maiaek) syl.tone = 'F', syl.rules.push('low-class mai eak: F');
-		if (leadingConsonantMeta.m == 'l' && syl.toneMark == maitoh) syl.tone = 'H', syl.rules.push('low-class mai toh: H');
-		if (!syl.tone) 
+		if (leadingConsonantMeta.m == 'm' && syl.ending == 'live') syl.tn = 'M', syl.rules.push('mid-class live: M');
+		if (leadingConsonantMeta.m == 'm' && syl.ending == 'dead') syl.tn = 'L', syl.rules.push('mid-class dead: L');
+		if (leadingConsonantMeta.m == 'm' && syl.tm == maiaek) syl.tn = 'L', syl.rules.push('mid-class mai eak: L');
+		if (leadingConsonantMeta.m == 'm' && syl.tm == maitoh) syl.tn = 'F', syl.rules.push('mid-class mai toh: F');
+		if (leadingConsonantMeta.m == 'h' && syl.ending == 'live') syl.tn = 'R', syl.rules.push('high-class live: R');
+		if (leadingConsonantMeta.m == 'h' && syl.ending == 'dead') syl.tn = 'L', syl.rules.push('high-class dead: L');
+		if (leadingConsonantMeta.m == 'h' && syl.tm == maiaek) syl.tn = 'L', syl.rules.push('high-class mai eak: L');
+		if (leadingConsonantMeta.m == 'h' && syl.tm == maitoh) syl.tn = 'F', syl.rules.push('high-class mai toh: F');
+		if (leadingConsonantMeta.m == 'l' && syl.ending == 'live') syl.tn = 'M', syl.rules.push('low-class live: M');
+		if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 's') syl.tn = 'H', syl.rules.push('low-class dead short: H');
+		if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 'l') syl.tn = 'F', syl.rules.push('low-class dead long: F');
+		if (leadingConsonantMeta.m == 'l' && syl.tm == maiaek) syl.tn = 'F', syl.rules.push('low-class mai eak: F');
+		if (leadingConsonantMeta.m == 'l' && syl.tm == maitoh) syl.tn = 'H', syl.rules.push('low-class mai toh: H');
+		if (!syl.tn) 
 			debugger;
 
-		tone += syl.tone;
+		tone += syl.tn;
 	}
 
 	return {tone:tone, syllables:winner.syllables};
+}
+
+/*
+	other rules
+		vowel dipthong: ai, ao, etc
+		consonant cluster, not labeled as dipthong
+
+		final consonant
+			six ending sounds:
+				live  /-n/, /-ng/, or /-m/
+				dead  /-k/, /-p/, or /-t/
+
+		reduplication
+			a single consonant is used twice, as the 
+				end of the previous syllable, and 
+				beginning of the next
+			นัยนา  นัย ย นา    ย used twice, Naiyana
+			วิทยาลัย  วิท ท ยาลัย
+
+		initial consonant cluster
+			true consonant cluster { ก, ข, ค, ต, ป, ผ, พ } + { ร, ล, ว }
+			false consonant cluster  { จ, ซ, ท, ส, ศ } + silent ร
+			leading consonant clusters  neither true nor false 
+				including clusters with leading ห or อ
+				including enepenthetic initial consonant cluster
+					short-a inserted between incompatible adjacent consonants
+
+		inherent vowel
+			short o invoked between initial and final consonant
+			short a invoked with one standalone single consonant
+			short a in enepenthetic cluster described above
+*/
+voyc.Noam.prototype.parseSyllable = function(input, returnDetails) {
+	returnDetails = returnDetails || false;
+	var word = input;
+	
+	// find matching pattern for input word
+	var numMatches = 0;
+	var matchedPatterns = [];
+	for (var k in voyc.vowelPatterns) {
+		var pattern = new RegExp(voyc.vowelPatterns[k].syllablePattern, 'g');
+		var cnt = 0;
+		var m = [];
+		if (m = pattern.exec(word)) {
+			m.t = word;
+			m.i = k;
+			m.m = m[0];
+			m.vp = voyc.vowelPatterns[k].t;
+			m.lc = m[1];
+			m.tm = '';
+			if (m.length > 2) {
+				m.tm = m[2];
+			}
+			m.fc = '';
+			if (m.length > 3) {
+				m.fc = m[3];
+			}
+			m.tn = '';
+
+			matchedPatterns.push(m);
+			cnt++;
+			if (cnt > 50) {
+				break;  // stop runaway loop
+			}
+		}
+	}
+	var numMatches = matchedPatterns.length;
+	if (!numMatches) {
+		return false;
+	}
+
+	// sort matched patterns length of the match descending
+	matchedPatterns.sort(function(a,b) {
+		return (b.m.length - a.m.length);
+	});
+
+
+	// choose the longest match
+	var syl = matchedPatterns[0];
+	
+	syl.status = 0;
+	var lenMatch = syl.m.length;
+	var lenWord = word.length;
+	if (lenWord == lenMatch) {
+		syl.status = 1
+	}
+	if (lenWord == lenMatch+1) {
+		syl.fc = word[lenWord-1];
+		syl.status = 1;
+	}
+
+	// apply tone rules
+	var tone = '';
+	syl.rules = [];
+	syl.ending = '';
+	if (syl.fc) {
+		var finalConsonantMeta = this.alphabet.lookup(syl.fc);
+		if (finalConsonantMeta.a == 's')  // sonorant
+			syl.ending = 'live', syl.rules.push('final sonorant consonant: live');
+		else
+			syl.ending = 'dead', syl.rules.push('final non-sonorant consonant: dead');
+	}
+	else {
+		var vowelMeta = voyc.vowelPatterns[syl.i];
+		if (vowelMeta.l == 's')
+			syl.ending = 'dead', syl.rules.push('open vowel short: dead');
+		else
+			syl.ending = 'live', syl.rules.push('open vowel long: live');
+	}
+
+	// apply tone rules
+	syl.tn = false;
+	var maiaek = '่';
+	var maitoh = '้';
+	var maidtree = '๊';
+	var maidtawaa = '๋';
+
+	var firstConsonant = syl.lc;
+	if (syl.lc.length > 1) {
+		syl.rules.push('consonant cluster');
+		firstConsonant = syl.lc[0];
+	}
+	var leadingConsonantMeta = this.alphabet.lookup(firstConsonant);
+	var vowelMeta = voyc.vowelPatterns[syl.i];
+	if (leadingConsonantMeta.m == 'm' && syl.ending == 'live') syl.tn = 'M', syl.rules.push('mid-class live: M');
+	if (leadingConsonantMeta.m == 'm' && syl.ending == 'dead') syl.tn = 'L', syl.rules.push('mid-class dead: L');
+	if (leadingConsonantMeta.m == 'm' && syl.tm == maiaek) syl.tn = 'L', syl.rules.push('mid-class mai eak: L');
+	if (leadingConsonantMeta.m == 'm' && syl.tm == maitoh) syl.tn = 'F', syl.rules.push('mid-class mai toh: F');
+	if (leadingConsonantMeta.m == 'h' && syl.ending == 'live') syl.tn = 'R', syl.rules.push('high-class live: R');
+	if (leadingConsonantMeta.m == 'h' && syl.ending == 'dead') syl.tn = 'L', syl.rules.push('high-class dead: L');
+	if (leadingConsonantMeta.m == 'h' && syl.tm == maiaek) syl.tn = 'L', syl.rules.push('high-class mai eak: L');
+	if (leadingConsonantMeta.m == 'h' && syl.tm == maitoh) syl.tn = 'F', syl.rules.push('high-class mai toh: F');
+	if (leadingConsonantMeta.m == 'l' && syl.ending == 'live') syl.tn = 'M', syl.rules.push('low-class live: M');
+	if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 's') syl.tn = 'H', syl.rules.push('low-class dead short: H');
+	if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 'l') syl.tn = 'F', syl.rules.push('low-class dead long: F');
+	if (leadingConsonantMeta.m == 'l' && syl.tm == maiaek) syl.tn = 'F', syl.rules.push('low-class mai eak: F');
+	if (leadingConsonantMeta.m == 'l' && syl.tm == maitoh) syl.tn = 'H', syl.rules.push('low-class mai toh: H');
+	if (!syl.tn) 
+		debugger;
+
+	// compose transliteration
+	var lc = '';
+	for (var i=0; i<syl.lc.length; i++) {
+		lc += this.alphabet.lookup(syl.lc[i]).e;
+	}
+	var v = vowelMeta.e;
+	var fc = this.alphabet.lookup(syl.fc).e || '';
+	syl.tl = lc + v + fc;	
+
+	return syl;
 }
