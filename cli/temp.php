@@ -19,7 +19,7 @@ function readdict() {
 
 	// read dict
 	$name = 'query-dict';
-	$sql = "select * from mai.thaidict";
+	$sql = "select * from mai.thaidict where type = 'o' and numdef=1 order by numsyllables, level, thai";
 	$params = array();
 	$result = execSql($conn, $name, $sql, $params, false);
 	if (!$result) {
@@ -55,7 +55,7 @@ function readdict() {
 		$d = str_replace( "'", "\\'", $d);
 
 		// output one row
-		echo "{id:$id,g:'$g',t:'$t',s:$s,l:$l,n:$n,p:'$p',e:'$e',d:'$d',u:'$u',r:'$r',m:'$m',a:'$a',ns:'$ns'},\n";
+		echo "$ns\t$l\t$t\n";
         }
 	echo "];\n";
 }
