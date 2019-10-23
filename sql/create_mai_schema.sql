@@ -42,10 +42,13 @@ create table mai.thaidict (
 	leadingconsonant varchar(5),
 	finalconsonant varchar(5),
 	vowelpattern varchar(10),
+	tonemark char(1),
 	tone char(1),
+	translit varchar(100),
 	rules varchar(100),
 	
 	/* multi-syllable word and phrase */
 	numsyllables int,
+	syllablendx varchar(20),
 	components varchar(500)
 );

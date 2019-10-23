@@ -55,7 +55,7 @@ function readdict() {
 		$d = str_replace( "'", "\\'", $d);
 
 		// output one row
-		echo "{id:$id,g:'$g',t:'$t',s:$s,l:$l,n:$n,p:'$p',e:'$e',d:'$d',u:'$u',r:'$r',m:'$m',a:'$a',ns:'$ns'},\n";
+		echo "{id:$id,g:'$g',t:'$t',s:$s,l:$l,n:$n,p:'$p',e:'$e',d:'$d',u:'$u',r:'$r',m:'$m',a:'$a',ns:$ns},\n";
         }
 	echo "];\n";
 }
