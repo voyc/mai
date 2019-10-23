@@ -59,7 +59,7 @@ function readdict() {
 
 		// output one row
 		echo "{id:$id,g:'$g',t:'$t',s:$s,l:$l,n:$n,p:'$p',e:'$e',d:'$d',u:'$u',r:'$r',m:'$m',a:'$a',ns:$ns,";
-		echo "lc='$lc',fc='$fc',vp='$vp',tm='$tm',tn='$tn',tl='$tl',ru='$ru',sn='$sn',cp='$cp'},\n";
+		echo "lc:'$lc',fc:'$fc',vp:'$vp',tm:'$tm',tn:'$tn',tl:'$tl',ru:'$ru',sn:'$sn',cp:'$cp'},\n";
         }
 	echo "];\n";
 }
