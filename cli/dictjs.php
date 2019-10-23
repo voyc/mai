@@ -47,15 +47,19 @@ function readdict() {
 		$lc = $row['leadingconsonant'];
 		$fc = $row['finalconsonant'];
 		$vp = $row['vowelpattern'];
+		$tm = $row['tonemark'];
 		$tn = $row['tone'];
+		$tl = $row['translit'];
 		$ra = $row['rules'];
 		$ns = $row['numsyllables'];
+		$sn = $row['syllablendx'];
 		$cp = $row['components'];
 
 		$d = str_replace( "'", "\\'", $d);
 
 		// output one row
-		echo "{id:$id,g:'$g',t:'$t',s:$s,l:$l,n:$n,p:'$p',e:'$e',d:'$d',u:'$u',r:'$r',m:'$m',a:'$a',ns:$ns},\n";
+		echo "{id:$id,g:'$g',t:'$t',s:$s,l:$l,n:$n,p:'$p',e:'$e',d:'$d',u:'$u',r:'$r',m:'$m',a:'$a',ns:$ns,";
+		echo "lc='$lc',fc='$fc',vp='$vp',tm='$tm',tn='$tn',tl='$tl',ru='$ru',sn='$sn',cp='$cp'},\n";
         }
 	echo "];\n";
 }

@@ -39,16 +39,16 @@ create table mai.thaidict (
 	subclass char(1),    /* a */
 	
 	/* syllable and one-syllable word */
-	leadingconsonant varchar(5),
-	finalconsonant varchar(5),
-	vowelpattern varchar(10),
-	tonemark char(1),
-	tone char(1),
-	translit varchar(100),
-	rules varchar(100),
-	
-	/* multi-syllable word and phrase */
-	numsyllables int,
-	syllablendx varchar(20),
-	components varchar(500)
+	leadingconsonant varchar(5),  /* lc */
+        finalconsonant varchar(5),    /* fc */
+        vowelpattern varchar(10),     /* vp */
+        tonemark char(1),             /* tm */
+        tone char(1),                 /* tn */
+        translit varchar(100),        /* tl */
+        rules varchar(100),           /* ru */
+        
+        /* multi-syllable word and phrase */
+        numsyllables int,             /* ns */
+        syllablendx varchar(20),      /* sn */
+        components varchar(500)       /* cp */
 );
