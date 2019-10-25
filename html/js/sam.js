@@ -33,9 +33,16 @@ voyc.Sam = function(chat) {
 	this.setup();
 	this.lessonid = 0;  // for now, lessonid is the ndx into the voyc.lessons array
 	this.drillInProgress = false;
+	this.state = '';
 }
 
 voyc.Sam.prototype.setup = function() {
+	var self = this;
+	this.sync = new voyc.Sync(function() {
+		self.onReady();
+	});
+	this.sync.set('login', 'wait');
+	this.sync.set('vocab', 'wait');
 	this.vocab = new voyc.Vocab();
 	voyc.dictionary = new voyc.Dictionary();
 	voyc.sengen = new voyc.SenGen(this.vocab);
@@ -46,7 +53,7 @@ voyc.Sam.prototype.setup = function() {
 	this.observer.subscribe( "chat-posted", 'sam', function(note) {
 		console.log('on post');
 		if (note.payload.userid != self.idhost) {
-			self.reply(note.payload);
+			self.respond(note.payload);
 		}
 	});
 	this.observer.subscribe('login-received'   ,'user' ,function(note) { self.onLoginReceived   (note);});
@@ -65,38 +72,64 @@ voyc.Sam.prototype.setup = function() {
 voyc.Sam.prototype.onGetVocabReceived = function() {
 	this.noam = new voyc.Noam(voyc.dictionary, this.vocab.vocab.list);
 	//this.lessonid = this.chooseLesson();
+	this.sync.set('vocab','ready');
+}
+
+voyc.Sam.prototype.onReady = function() {
+	var a = this.chooseLesson();
+	this.lessonid = a.lessonid;
+	var s = '';
+	switch (a.state) {
+		case 'w':
+			s += 'You were working on lesson ';
+			break;
+		case 'm':
+			s += 'You completed lesson ';
+			break;
+		case 'u':
+			s += 'Your first lesson is ';
+			break;
+	}
+	s += voyc.lessons[this.lessonid].name + '. Shall we go ahead with that lesson?';
+	this.chat.post(this.idhost, s, ['go']);
+	this.state = 'ready';
 }
 
 voyc.Sam.prototype.chooseLesson = function() {
+	// lessonid is the index of the voyc.lessons array
 	// take the lowest lessonid with state of w or u
 	var lessonid = false;
+	var state = false;
 	var highm = false;
-	for (var i=0; i<this.vocab.vocab.list.length; i++) {
-		vocab = this.vocab.vocab.list[i];
-		if (vocab.t != 'l') {
-			continue;
+	this.vocab.iterate( function(vocab,ndx) {
+		var b = true;
+		if (vocab.t == 'l') {
+			if (vocab.s == 'w' || vocab.s == 'u') {
+				lessonid = vocab.w;
+				state = 'w';
+				b = false;
+			}
+			else if (vocab.s == 'm') {
+				highm = vocab.w;
+			}
 		}
-		if (vocab.s == 'w' || vocab.s == 'u') {
-			lessonid = i;
-			break;
-		}
-		if (vocab.s == 'm') {
-			highm = i;
-		}
-	}
+		return b;
+	});
 	if (lessonid === false) {
 		if (highm !== false) {
 			lessonid = highm + 1;
+			state = 'm';
 		}
 		else {
 			lessonid = 0;
+			state = 'u';
 		}
 	}
-	return lessonid;
+	return {lessonid:lessonid,state:state};
 }
 
 voyc.Sam.prototype.startLesson = function(lessonid) {
-	this.lessonid = lessonid || this.chooseLesson();
+	this.lessonid = lessonid || this.chooseLesson().lessonid;
 	var v = this.vocab.get(this.lessonid);
 	if (v.s == 'u') {
 		this.vocab.set(this.lessonid, 'l','w',0);
@@ -136,14 +169,25 @@ voyc.Sam.prototype.endDrill = function() {
 voyc.Sam.prototype.collect = function() {
 	var lesson = {
 		algorithm:'progressive',
-		workSize:4,
+		workSize:3,
+		initialShuffle:true,
 		cards:[]
 	}
-	var collection = this.noam.collect();
+	var lesson = voyc.lessons[this.lessonid];
+	var collection = this.noam.collect(lesson.cards);
+	collection.sort(function(a,b) {
+		return(a.l - b.l);
+	});
+	var optSetSize = 8;
+	collection = collection.slice(0,optSetSize);
+	collection = voyc.shuffleArray(collection);
+	var s = '';
 	for (var i=0; i<collection.length; i++) {
 		var w = collection[i];
 		lesson.cards.push(w.t);
+		s += w.t + "<br/>";
 	}
+	this.chat.post(this.idhost, s);
 	this.startDrill(lesson);
 }
 voyc.Sam.prototype.endLesson = function() {
@@ -169,7 +213,7 @@ voyc.Sam.prototype.reportScores = function(scores) {
 voyc.Sam.prototype.onLoginReceived = function(note) {
 	this.idguest = this.chat.addUser(note.payload.uname, false, true);
 	this.chat.post(this.idhost, "Welcome back, " + note.payload.uname);
-	this.chat.post(this.idhost, "Are you ready to begin?", ["start",'collect']);
+	this.sync.set('login','ready');
 }
 
 voyc.Sam.prototype.onLogoutReceived = function(note) {
@@ -200,59 +244,68 @@ groups
 	technology, javascript, php, ajax
 */
 
-voyc.Sam.prototype.reply = function(o) {
+voyc.Sam.prototype.respond = function(o) {
 	if (this.drillInProgress) {
-		return this.lee.reply(o);
+		return this.lee.respond(o);
 	}
-
 	var w = o.msg.split(/\s+/);
-	switch(w[0]) {
-		case 'no':
-			this.chat.post(this.idhost, 'OK');
-			break;
-		case 'start':
-			this.startLesson();
-			break;
-		case 'collect':
-			this.collect();
-			break;
-		case 'set':
-			var r = this.setVocab(o.msg);
-			this.chat.post(this.idhost, 'done');
-			break;
-		case 'get':
-			var r = this.getVocab(o.msg);
-			var s = voyc.printArray(r,voyc.breakSentence);
-			this.chat.post(this.idhost, s);
-			break;
-		case 'sample':
-			this.req.target = voyc.cloneArray(w);
-			this.req.target.splice(0,1);
-		case 'yes':
-			if (this.converseState == 'endlesson') {
-				this.startLesson();
+	switch (this.state) {
+		case 'ready':
+			switch (w[0]) {
+				case 'go':
+					this.startLesson(this.lessonid);
+					break;
+				case 'collect':
+					this.collect();
+					break;
 			}
-			break;
-		case 'again':
-			var r = voyc.sengen.genSentence(this.req);
-			if (r.length > 0) {
-				this.chat.post(this.idhost, r[0], ['again']);
-			}
-			else {
-				this.chat.post(this.idhost, "Try a lesson first");
-			}
-			break;
-		case 'translate':
-			var s = o.msg.substr(10);
-			var r = voyc.dictionary.translate(s);
-			this.chat.post(this.idhost, r);
-			break;
-		case 'สวัสดี':
-			this.chat.post(this.idhost, voyc.sengen.genSentence({pattern:'@howAreYou'}), ['สบาย ดี']);
 			break;
 		default:
-			this.chat.post(this.idhost, 'Would you like an example sentence?', ['yes', 'no']);
-			break;
+			switch(w[0]) {
+				case 'no':
+					this.chat.post(this.idhost, 'OK');
+					break;
+				case 'start':
+					this.startLesson();
+					break;
+				case 'set':
+					var r = this.setVocab(o.msg);
+					this.chat.post(this.idhost, 'done');
+					break;
+				case 'get':
+					var r = this.getVocab(o.msg);
+					var s = voyc.printArray(r,voyc.breakSentence);
+					this.chat.post(this.idhost, s);
+					break;
+				case 'sample':
+					this.req.target = voyc.cloneArray(w);
+					this.req.target.splice(0,1);
+				case 'yes':
+					if (this.converseState == 'endlesson') {
+						this.startLesson();
+					}
+					break;
+				case 'again':
+					var r = voyc.sengen.genSentence(this.req);
+					if (r.length > 0) {
+						this.chat.post(this.idhost, r[0], ['again']);
+					}
+					else {
+						this.chat.post(this.idhost, "Try a lesson first");
+					}
+					break;
+				case 'translate':
+					var s = o.msg.substr(10);
+					var r = voyc.dictionary.translate(s);
+					this.chat.post(this.idhost, r);
+					break;
+				case 'สวัสดี':
+					this.chat.post(this.idhost, voyc.sengen.genSentence({pattern:'@howAreYou'}), ['สบาย ดี']);
+					break;
+				default:
+					this.chat.post(this.idhost, 'Would you like an example sentence?', ['yes', 'no']);
+					break;
+			}
 	}
 	
 	// show emotion
@@ -261,7 +314,7 @@ voyc.Sam.prototype.reply = function(o) {
 }
 
 /**
-	process and reply to a "set" request
+	process and respond to a "set" request
 **/
 voyc.Sam.prototype.setVocab = function(msg) {
 	var r = 0;

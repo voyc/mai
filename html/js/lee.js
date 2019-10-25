@@ -33,6 +33,7 @@ voyc.Lee = function(chat,observer) {
 	this.reportCallback = false;
 	this.lastReportRecency = 0;
 	this.scores = [];
+	this.state = '';
 	this.setting = {
 		isAutoScore:true,
 		isAutoDir:true,
@@ -48,6 +49,8 @@ voyc.Lee = function(chat,observer) {
 		promoteCntWork:3,
 		promotePctReview:90,
 		promoteCntReview:6,
+		askTone:true,
+		selfScore:true,
 	}
 }
 
@@ -63,11 +66,15 @@ voyc.Lee.prototype.drill = function(lesson,callback) {
 	for (var i=0; i<this.lesson.cards.length; i++) {
 		var q = this.lesson.cards[i];
 		var dict = this.readDictionary(q);
+				case 'collect':
+					this.collect();
+					break;
 		this.scores.push({ndx:i, key:q, type:dict.g, acnt:0, ccnt:0, pct:0, recency:0, state:'u', consecutive:0});
 	}
 
 	// choose the first card
 	this.nextCard();
+	this.state = 'typing';
 }
 
 voyc.Lee.prototype.choose = function() {
@@ -173,32 +180,84 @@ voyc.strm = {
 	h:"high class"
 }
 
-voyc.Lee.prototype.reply = function(o) {
-	var b = this.checkAnswer(o);
-	this.scoreAnswer(b);
-	if (!b) {
-		var s = "Nope. Try again.";
-		this.chat.post(this.idhost, s, []);
-		this.chat.post(this.idhost, this.key, []);
-	}
-	else {
-		var s = '';
-		if (this.dictEntry.g == 'g' ) {
-			s = this.key + "  " + voyc.strp[this.dictEntry.p] + ", " + voyc.strm[this.dictEntry.m] + ", sound: " + this.dictEntry.e;
-		}
-		else if (this.dictEntry.g == 'o') {
-			s = this.key + "  " + voyc.r + "<sup>" + this.dictEntry.o + "</sup>  " + this.dictEntry.e;
-		}
-		else if (this.dictEntry.g == 't') {
-			s = this.key + "  tone mark";
-		}
-		this.chat.post(this.idhost, s, ['right', 'wrong']);
-		this.nextCard();
+voyc.Lee.prototype.respond = function(o) {
+	switch (this.state) {
+		case 'typing':
+			var b = this.checkAnswer(o);
+			this.scoreAnswer(b);
+			if (!b) {
+				var s = "Nope. Try again.";
+				this.chat.post(this.idhost, s, []);
+				this.chat.post(this.idhost, this.key, []);
+			}
+			else {
+				if (this.setting.askTone && this.dictEntry.g == 'o') {
+					this.chat.post(this.idhost,"What tone?", ['H','M','L','R','F']);
+					this.state = 'tone';
+				}
+				else {
+					this.state = 'showanswer';
+					this.respond();  // danger, recursion
+				}
+			}
+			break;
+		case 'tone':
+			var b = this.checkToneAnswer(o);
+			if (!b) {
+			}
+			this.state = 'showanswer';
+			this.respond();  // danger, recursion
+			break;
+		case 'selfscore':
+			switch (o.msg) {
+				case 'right':
+					break;
+				case 'wrong':
+					break;
+				case 'details':
+					break;
+				case 'mastered':
+					break;
+				default:
+					console.log('bogus message in lee respond');
+					break;
+			}
+			this.nextCard();
+			this.state = 'typing';
+			break;
+		case 'showanswer':
+			var s = '';
+			if (this.dictEntry.g == 'g' ) {
+				s = this.key + "  " + voyc.strp[this.dictEntry.p] + ", " + voyc.strm[this.dictEntry.m] + ", sound: " + this.dictEntry.e;
+			}
+			else if (this.dictEntry.g == 'o') {
+				s = this.key + "  " + this.dictEntry.tl + "<sup>" + this.dictEntry.tn + "</sup>  <i>" + this.dictEntry.p + "</i> " + this.dictEntry.e + "<br/>" + this.dictEntry.d;
+			}
+			else if (this.dictEntry.g == 't') {
+				s = this.key + "  tone mark";
+			}
+			if (this.setting.selfScore) {
+				this.chat.post(this.idhost, s, ['right', 'wrong','details','mastered']);
+				this.state = 'selfscore';
+			}
+			else {
+				this.chat.post(this.idhost, s, []);
+				this.nextCard();
+				this.state = 'typing';
+			}
+			break;
+		default:
+			console.log('bogus state in lee respond');
+			break;
 	}
 }
 
 voyc.Lee.prototype.checkAnswer = function(o) {
 	return (o.msg == this.lesson.cards[this.ndxCard]);
+}
+
+voyc.Lee.prototype.checkToneAnswer = function(o) {
+	return (o.msg == this.dictEntry.tn);
 }
 
 voyc.Lee.prototype.scoreAnswer = function(bool) {

@@ -33,6 +33,15 @@ voyc.Vocab.prototype.onLoginReceived = function(note) {
 	this.readServer();
 }
 
+voyc.Vocab.prototype.iterate = function(cb) {
+	for (var i=0; i<this.vocab.list.length; i++) {
+		vocab = this.vocab.list[i];
+		var b = cb(vocab,ndx);
+		if (!b) 
+			break;
+	}
+}
+
 voyc.Vocab.prototype.onVocabReceived = function(note) {
 	var serverList = note.payload.list;
 	var localList = this.vocab.list;

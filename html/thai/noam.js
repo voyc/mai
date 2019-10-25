@@ -1,3 +1,30 @@
+/*
+กรม kgrmoL department  grohm M
+หมด hmdoL finished  moht L
+การ kgaarM state-of,  ending r  gaan M
+อีก awiikgL e again,   default vowel iik
+
+
+หมด leading ห change following consonant to high class, makes the lc high class
+ditto with leading อ
+หมด consonant cluster distinguish lc vs fc
+	does the vowel pattern include a fc?
+การ fc sounds, different from lc sounds, (use eng vs translit?)
+silent tone mark: count syllables, ignore in translit
+
+right, wrong, details, mastered :optional
+H,M,L,R,F :optional
+
+add rules to db - update translit, tone, rules
+	put rule table, vp table in Noam
+	who uses dict: noam, lee, sam?
+show rules in details
+
+-----------------
+multi syllable words, components,
+grammar
+
+*/
 /**
 	class Noam
 	singleton
@@ -22,7 +49,7 @@ voyc.Noam = function(dictionary,vocab) {
 	only glyphs already mastered or working.
 	@return array of words
 */
-voyc.Noam.prototype.collect = function() {
+voyc.Noam.prototype.collect = function(target) {
 	var matched  = [];
 
 	function inVocab(ch,vocab) {
@@ -40,23 +67,26 @@ voyc.Noam.prototype.collect = function() {
 	// scan the dictionary
 	var self = this;
 	this.dictionary.iterate(function(dict,n) {
-		if (dict.g == 'g') {
+		if (dict.g != 'o') {  // collecting one-syllable words
+			return false;
+		}
+		if (inVocab(dict.t,self.vocab)) { // not yet mastered
 			return false;
 		}
 		var t = dict.t;
 		var tlen = t.length;
 		var cnt = 0;
-		var wcnt = 0;
-		for (var i=0; i<tlen; i++) {
+		var tcnt = 0;
+		for (var i=0; i<tlen; i++) {  // look at each letter in the word
 			var m = inVocab(t[i],self.vocab);
 			if (m) {
 				cnt++;
-				if (m.s == 'w' || m.s == 'm') {
-					wcnt++;	
+				if (target.includes(m.w)) {
+					tcnt++;	
 				}
 			}
 		}
-		if (cnt == tlen && wcnt > 0) {
+		if (cnt == tlen && tcnt > 0) {
 			matched.push(dict);
 		}
 	});
