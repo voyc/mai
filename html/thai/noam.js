@@ -3,6 +3,8 @@
 หมด hmdoL finished  moht L
 การ kgaarM state-of,  ending r  gaan M
 อีก awiikgL e again,   default vowel iik
+หอย hawyoL n shellfish
+สวย swyoL j beautiful
 
 
 หมด leading ห change following consonant to high class, makes the lc high class
@@ -20,10 +22,23 @@ add rules to db - update translit, tone, rules
 	who uses dict: noam, lee, sam?
 show rules in details
 
+continue with next lesson? - show name of lesson and cards in the lesson
+
+add button "do not ask this question"
 -----------------
 multi syllable words, components,
 grammar
 
+
+			can noam review all stories and pick ones appropriate and make a list
+			in the background?
+			recommended lessons:
+			optional lessons:
+			 we recommend you proceed through the lessons in order?
+			really?
+			make up your own order based on your interests
+			foods: pick the foods you intend to eat, buy, order
+			restaurant vs grocery store, market
 */
 /**
 	class Noam

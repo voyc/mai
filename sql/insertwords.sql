@@ -28,7 +28,7 @@ insert into mai.thaidict (source, level, numdef, type, pos, thai, eng, details) 
 insert into mai.thaidict (source, level, numdef, type, pos, thai, eng, details) values (1 ,100 ,1 ,'o' ,'j', 'หวาน'		,'sweet'		,'[is] sweet');
 insert into mai.thaidict (source, level, numdef, type, pos, thai, eng, details) values (1 ,100 ,1 ,'o' ,'j', 'เปรี้ยว'		,'sour'		,'');
 insert into mai.thaidict (source, level, numdef, type, pos, thai, eng, details) values (1 ,100 ,1 ,'o' ,'j', 'หนาว'		,'cold'		,'[feeling] [is] cool; cold');
-insert into mai.thaidict (source, level, numdef, type, pos, thai, eng, details) values (1 ,100 ,1 ,'o' ,'j', 'หนา'		,'thick'		,'[is] thick; insert into mai.thaidict (source, level, numdef, type, pos, thai, eng, details) values (of fabric) heavy');
+insert into mai.thaidict (source, level, numdef, type, pos, thai, eng, details) values (1 ,100 ,1 ,'o' ,'j', 'หนา'		,'thick'		,'[is] thick; (of fabric) heavy');
 insert into mai.thaidict (source, level, numdef, type, pos, thai, eng, details) values (1 ,100 ,1 ,'o' ,'j', 'บาง'		,'thin'		,'[is] thin; weak; light; fine;[is] scarce; limited; few; rare;');
 insert into mai.thaidict (source, level, numdef, type, pos, thai, eng, details) values (1 ,100 ,1 ,'o' ,'j', 'เสีย'		,'broken'		,'[is] spent; broken; wasted; malfunctioning; defective; out of order; rotten; bad');
 insert into mai.thaidict (source, level, numdef, type, pos, thai, eng, details) values (1 ,100 ,1 ,'o' ,'j', 'เหมือน'		,'alike'		,'[is] similar; all the same; like; as');

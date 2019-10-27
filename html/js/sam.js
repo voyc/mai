@@ -31,21 +31,22 @@ voyc.Sam = function(chat) {
 	this.chat = chat;
 	this.req = {};
 	this.setup();
-	this.lessonid = 0;  // for now, lessonid is the ndx into the voyc.lessons array
-	this.drillInProgress = false;
+	this.phaseNames = [
+		'glyph',
+		'word',
+		'phrase',
+		'sentence',
+		'story'
+	];
 	this.state = '';
 }
 
 voyc.Sam.prototype.setup = function() {
-	var self = this;
-	this.sync = new voyc.Sync(function() {
-		self.onReady();
-	});
-	this.sync.set('login', 'wait');
-	this.sync.set('vocab', 'wait');
 	this.vocab = new voyc.Vocab();
+	this.lessons = new voyc.Lessons(this.vocab);
 	voyc.dictionary = new voyc.Dictionary();
 	voyc.sengen = new voyc.SenGen(this.vocab);
+
 	this.idhost = this.chat.addUser('Sam', true, false);
 
 	this.observer = new voyc.Observer();
@@ -62,103 +63,62 @@ voyc.Sam.prototype.setup = function() {
 	this.observer.subscribe('logout-received'  ,'user' ,function(note) { self.onLogoutReceived  (note);});
 	this.observer.subscribe('getvocab-received','user' ,function(note) { self.onGetVocabReceived(note);});
 	
-	//var e = document.getElementById('facecontainer');
-	//voyc.face = new PokerFace(e);
-	//voyc.face.load();
-	//
 	this.lee = new voyc.Lee(this.chat, this.observer);
 }
 
 voyc.Sam.prototype.onGetVocabReceived = function() {
 	this.noam = new voyc.Noam(voyc.dictionary, this.vocab.vocab.list);
-	//this.lessonid = this.chooseLesson();
-	this.sync.set('vocab','ready');
-}
-
-voyc.Sam.prototype.onReady = function() {
-	var a = this.chooseLesson();
-	this.lessonid = a.lessonid;
+	this.lessons.setup();
+	var lesson = this.lessons.lesson;
 	var s = '';
-	switch (a.state) {
+	switch (this.lessons.startState) {
 		case 'w':
-			s += 'You were working on lesson ';
+			s += 'You were working on ';
 			break;
 		case 'm':
-			s += 'You completed lesson ';
+			s += 'You recently completed ';
+			s += lesson.section += ': ';
+			s += lesson.name + '. ';
+			this.chat.post(this.idhost, s);
+			s = 'The next lesson is ';
+			lesson = this.lessons.next();
 			break;
 		case 'u':
 			s += 'Your first lesson is ';
 			break;
 	}
-	s += voyc.lessons[this.lessonid].name + '. Shall we go ahead with that lesson?';
+	s += lesson.section += ': ';
+	s += lesson.name + '. ';
+	s += 'Shall we go ahead with that?';
 	this.chat.post(this.idhost, s, ['go']);
 	this.state = 'ready';
 }
 
-voyc.Sam.prototype.chooseLesson = function() {
-	// lessonid is the index of the voyc.lessons array
-	// take the lowest lessonid with state of w or u
-	var lessonid = false;
-	var state = false;
-	var highm = false;
-	this.vocab.iterate( function(vocab,ndx) {
-		var b = true;
-		if (vocab.t == 'l') {
-			if (vocab.s == 'w' || vocab.s == 'u') {
-				lessonid = vocab.w;
-				state = 'w';
-				b = false;
-			}
-			else if (vocab.s == 'm') {
-				highm = vocab.w;
-			}
-		}
-		return b;
-	});
-	if (lessonid === false) {
-		if (highm !== false) {
-			lessonid = highm + 1;
-			state = 'm';
-		}
-		else {
-			lessonid = 0;
-			state = 'u';
-		}
-	}
-	return {lessonid:lessonid,state:state};
+voyc.Sam.prototype.startLesson = function() {
+	this.startDrill(this.lessons.lesson, this.lessons.phasendx);
 }
 
-voyc.Sam.prototype.startLesson = function(lessonid) {
-	this.lessonid = lessonid || this.chooseLesson().lessonid;
-	var v = this.vocab.get(this.lessonid);
-	if (v.s == 'u') {
-		this.vocab.set(this.lessonid, 'l','w',0);
-	}
-	this.phase = 0;
-	var phase = voyc.lessons[this.lessonid].phases[this.phase];
-	if (phase == 'drill') {
-		this.startDrill(voyc.lessons[this.lessonid]);
-	}
-}
-
-voyc.Sam.prototype.startDrill = function(lesson) {
+voyc.Sam.prototype.startDrill = function(lesson, phasendx) {
 	var self = this;
-	this.drillInProgress = true;
-	this.lee.drill(lesson, function(scores) {
+	this.state = 'drill';
+	this.vocab.set(this.lessons.lesson.id, 'l',this.lessons.phasendx,0);
+	this.lee.drill(lesson, phasendx, function(scores) {
 		self.reportScores(scores);
 	});
 }
 
 voyc.Sam.prototype.endDrill = function() {
 	this.chat.changeHost('Sam');
-	this.drillInProgress = false;
-	var lesson = voyc.lessons[this.lessonid];
-	this.phase++;
-	if (this.phase < lesson.phases.length) { 
-		var phase = lesson.phases[this.phase];
-		if (phase == 'collect') {
-			this.converseState = 'collect';
-			this.chat.post(this.idhost, 'Good job.  Let\'s try some words using these letters.  Ready?', ['collect']);
+	this.state = 'ready';
+	this.lessons.phasendx++;
+	this.vocab.set(this.lessons.lesson.id, 'l',this.lessons.phasendx,0);
+	if (this.lessons.phasendx < this.lessons.lesson.phases.length) { 
+		var phase = voyc.phases[this.lessons.phasendx];
+		switch (phase) {
+			case 'word':
+				this.state = 'collect';
+				this.chat.post(this.idhost, 'Good job.  Let\'s try some words using these letters.  Click go when ready?', ['go']);
+				break;
 		}
 	}
 	else {
@@ -167,14 +127,9 @@ voyc.Sam.prototype.endDrill = function() {
 }
 
 voyc.Sam.prototype.collect = function() {
-	var lesson = {
-		algorithm:'progressive',
-		workSize:3,
-		initialShuffle:true,
-		cards:[]
-	}
-	var lesson = voyc.lessons[this.lessonid];
-	var collection = this.noam.collect(lesson.cards);
+	var lesson = this.lessons.lesson;
+	var phasendx = this.lessons.phasendx;
+	var collection = this.noam.collect(lesson.glyph);
 	collection.sort(function(a,b) {
 		return(a.l - b.l);
 	});
@@ -184,18 +139,24 @@ voyc.Sam.prototype.collect = function() {
 	var s = '';
 	for (var i=0; i<collection.length; i++) {
 		var w = collection[i];
-		lesson.cards.push(w.t);
+		lesson.word.push(w.t);
 		s += w.t + "<br/>";
 	}
 	this.chat.post(this.idhost, s);
-	this.startDrill(lesson);
+	this.startDrill(lesson,phasendx);
 }
 voyc.Sam.prototype.endLesson = function() {
 	this.chat.changeHost('Sam');
-	this.converseState = 'endlesson';
-	this.vocab.set(this.lessonid, 'l','m',1);
-	this.chat.post(this.idhost, 'Congratulations.  You have completed the lesson.');
-	this.chat.post(this.idhost, 'Continue with next lesson?', ['yes', 'no']);
+	this.state = 'next';
+	this.vocab.set(this.lessons.lesson.id, 'l','m',1);
+	var lesson = this.lessons.next();
+	if (!lesson) {
+		this.chat.post(this.idhost, 'Congratulations.  You have completed all of the lessons.');
+	}
+	else {
+		this.chat.post(this.idhost, 'Congratulations.  You have completed the lesson.');
+		this.chat.post(this.idhost, 'Continue with next lesson?', ['yes', 'no']);
+	}
 }
 
 voyc.Sam.prototype.reportScores = function(scores) {
@@ -213,7 +174,6 @@ voyc.Sam.prototype.reportScores = function(scores) {
 voyc.Sam.prototype.onLoginReceived = function(note) {
 	this.idguest = this.chat.addUser(note.payload.uname, false, true);
 	this.chat.post(this.idhost, "Welcome back, " + note.payload.uname);
-	this.sync.set('login','ready');
 }
 
 voyc.Sam.prototype.onLogoutReceived = function(note) {
@@ -221,6 +181,7 @@ voyc.Sam.prototype.onLogoutReceived = function(note) {
 }
 
 voyc.Sam.prototype.onAnonymous = function(note) {
+	this.idguest = this.chat.addUser('Guest', false, true);
 	this.chat.post(this.idhost, "Welcome to mai.voyc, the Online Language School.", []);
 	this.chat.post(this.idhost, "Please login or register to begin.", []);
 }
@@ -245,23 +206,41 @@ groups
 */
 
 voyc.Sam.prototype.respond = function(o) {
-	if (this.drillInProgress) {
-		return this.lee.respond(o);
-	}
 	var w = o.msg.split(/\s+/);
 	switch (this.state) {
-		case 'ready':
+		case 'drill':
+			return this.lee.respond(o);
+			break;
+		case 'collect':
 			switch (w[0]) {
 				case 'go':
-					this.startLesson(this.lessonid);
-					break;
-				case 'collect':
 					this.collect();
+					break;
+			}
+			break;
+		case 'ready':
+			switch (w[0]) {
+				case 'yes':
+				case 'go':
+					this.startLesson();
+					break;
+				case 'showalllessons':
+					break;
+			}
+			break;
+		case 'next':
+			switch (w[0]) {
+				case 'yes':
+				case 'go':
+					this.startLesson();
 					break;
 			}
 			break;
 		default:
 			switch(w[0]) {
+				case 'debug':
+					debugger;
+					break;
 				case 'no':
 					this.chat.post(this.idhost, 'OK');
 					break;
@@ -307,10 +286,6 @@ voyc.Sam.prototype.respond = function(o) {
 					break;
 			}
 	}
-	
-	// show emotion
-	//voyc.face.setPleasure(Math.random()*100);
-	//voyc.face.setFocus(Math.random()*100);
 }
 
 /**

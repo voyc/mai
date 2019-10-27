@@ -46,7 +46,7 @@ voyc.Lee = function(chat,observer) {
 		maxSizeReview:10,
 		isAutoPromote:true,
 		promotePctWork:80,
-		promoteCntWork:3,
+		promoteCntWork:1,//3
 		promotePctReview:90,
 		promoteCntReview:6,
 		askTone:true,
@@ -54,8 +54,9 @@ voyc.Lee = function(chat,observer) {
 	}
 }
 
-voyc.Lee.prototype.drill = function(lesson,callback) {
+voyc.Lee.prototype.drill = function(lesson,phasendx,callback) {
 	this.lesson = lesson;
+	this.phasendx = phasendx;
 	this.setting.optSizeWork = lesson.workSize;
 	this.ndxCard = -1;
 	this.reportCallback = callback;
@@ -63,12 +64,10 @@ voyc.Lee.prototype.drill = function(lesson,callback) {
 
 	// create the scores array
 	this.scores = [];
-	for (var i=0; i<this.lesson.cards.length; i++) {
-		var q = this.lesson.cards[i];
+	var cards = voyc.phases[this.phasendx];
+	for (var i=0; i<this.lesson[cards].length; i++) {
+		var q = this.lesson[cards][i];
 		var dict = this.readDictionary(q);
-				case 'collect':
-					this.collect();
-					break;
 		this.scores.push({ndx:i, key:q, type:dict.g, acnt:0, ccnt:0, pct:0, recency:0, state:'u', consecutive:0});
 	}
 
@@ -88,8 +87,8 @@ voyc.Lee.prototype.choose = function() {
 	}
 	switch(this.lesson.algorithm) {
 		case 'sequential':
-			//chosen = this.ndxCard + 1;
-			chosen = incr(this.ndxCard, this.lesson.cards.length);
+			var cards = voyc.phases[this.phasendx];
+			chosen = incr(this.ndxCard, this.lesson[cards].length);
 			break;
 		case 'progressive':
 			var cntw = this.countState('w');
@@ -161,7 +160,8 @@ voyc.Lee.prototype.nextCard = function() {
 		this.reportCallback(false);
 		return;
 	}
-	this.key = this.lesson.cards[this.ndxCard];
+	var cards = voyc.phases[this.phasendx];
+	this.key = this.lesson[cards][this.ndxCard];
 	this.dictEntry = this.readDictionary(this.key);
 	this.chat.post(this.idhost, this.key, []);
 	console.log('next card: ' + this.key);
@@ -183,6 +183,11 @@ voyc.strm = {
 voyc.Lee.prototype.respond = function(o) {
 	switch (this.state) {
 		case 'typing':
+			if (o.msg == 'dev quit drill') {
+				this.chat.post(this.idhost, "Finished.", []);
+				this.reportCallback(false);
+				break;
+			}		
 			var b = this.checkAnswer(o);
 			this.scoreAnswer(b);
 			if (!b) {
@@ -253,7 +258,8 @@ voyc.Lee.prototype.respond = function(o) {
 }
 
 voyc.Lee.prototype.checkAnswer = function(o) {
-	return (o.msg == this.lesson.cards[this.ndxCard]);
+	var cards = voyc.phases[this.phasendx];
+	return (o.msg == this.lesson[cards][this.ndxCard]);
 }
 
 voyc.Lee.prototype.checkToneAnswer = function(o) {

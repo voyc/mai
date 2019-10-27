@@ -88,6 +88,10 @@ voyc.Vocab.prototype.onVocabReceived = function(note) {
 	}
 	this.updateServer(dirtyBatch);
 	this.vocab.recency = Date.now();
+
+	this.vocab.list.sort(function(a,b) {
+		return (a.r - b.r);
+	});
 }
 
 voyc.Vocab.prototype.setDirty = function() {
