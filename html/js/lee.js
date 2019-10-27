@@ -241,6 +241,9 @@ voyc.Lee.prototype.respond = function(o) {
 			else if (this.dictEntry.g == 't') {
 				s = this.key + "  tone mark";
 			}
+			else if (this.dictEntry.g == 's') {
+				s = this.key + "  symbol";
+			}
 			if (this.setting.selfScore) {
 				this.chat.post(this.idhost, s, ['right', 'wrong','details','mastered']);
 				this.state = 'selfscore';
