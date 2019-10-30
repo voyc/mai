@@ -26,9 +26,14 @@
 #settings-dialog td:last-child {
 	max-width:4cm;
 }
-#headshot {
+.headshot {
 	float:right;
 	height:140px;
+}
+.headshot_drawing {
+	float:right;
+	height:90px;
+	padding:25px 25px;
 }
 footer {
 	height:2px;

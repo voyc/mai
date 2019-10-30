@@ -21,6 +21,17 @@
 		promote - change state w to m 
 		readDictionary - one line call to dictionary.lookup
 
+	compose question and answer:
+		t  thai
+		e  english
+		tl translit
+		ru rules
+		cp components
+		t+ picture
+		t+ audio
+		m  consonant class
+		?  vowel length
+		t  typed thai	
 **/
 voyc.Lee = function(chat,observer) {
 	this.chat = chat;
@@ -49,8 +60,8 @@ voyc.Lee = function(chat,observer) {
 		promoteCntWork:1,//3
 		promotePctReview:90,
 		promoteCntReview:6,
-		askTone:true,
-		selfScore:true,
+		askTone:false, //true,
+		selfScore:false, //true,
 	}
 }
 

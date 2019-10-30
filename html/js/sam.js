@@ -149,13 +149,15 @@ voyc.Sam.prototype.endLesson = function() {
 	this.chat.changeHost('Sam');
 	this.state = 'next';
 	this.vocab.set(this.lessons.lesson.id, 'l','m',1);
+	var prevLessonName = this.lessons.lesson.name;
 	var lesson = this.lessons.next();
-	if (!lesson) {
-		this.chat.post(this.idhost, 'Congratulations.  You have completed all of the lessons.');
+	if (lesson) {
+		this.chat.post(this.idhost, 'Congratulations.  You have completed ' + prevLessonName + '.');
+		this.chat.post(this.idhost, 'The next lesson is ' + lesson.section + ': ' + lesson.name + '.');
+		this.chat.post(this.idhost, 'Continue with next lesson?', ['yes', 'no']);
 	}
 	else {
-		this.chat.post(this.idhost, 'Congratulations.  You have completed the lesson.');
-		this.chat.post(this.idhost, 'Continue with next lesson?', ['yes', 'no']);
+		this.chat.post(this.idhost, 'Congratulations.  You have completed all of the lessons.');
 	}
 }
 
