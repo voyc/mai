@@ -30,6 +30,15 @@ voyc.vowelPatternsInit = function() {
 		//voyc.vowelPatterns[k].process = voyc.vowelPatterns[k].process.replace(/t/g, "([่้๊๋]?)");
 		//voyc.vowelPatterns[k].process = voyc.vowelPatterns[k].process.replace(/e/g, "([กขคฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮ]?)");
 	}
+	voyc.vowelPatterns.sort(function(a,b) {
+		var r = b.t.length - a.t.length;
+		if (r == 0) {
+			var sb = (b.p.split('').includes('l')) ? 1 : 2;
+			var sa = (a.p.split('').includes('l')) ? 1 : 2;
+			return sa - sb;
+		}
+		return r;
+	});
 }
 
 voyc.vowelPatterns = [
@@ -61,7 +70,7 @@ voyc.vowelPatterns = [
 { t:'เoือ'	,e:'ʉʉa',l:'l'	,d:'d'	,p:'lor'	},
 { t:'oัวะ'	,e:'ua'	,l:'s'	,d:'d'	,p:'orr'	},
 { t:'oัว'	,e:'ua'	,l:'l'	,d:'d'	,p:'or'	},
-{ t:'oว'	,e:'ua'	,l:'l'	,d:'d'	,p:'l'	},  // oวo 
+{ t:'oว'	,e:'ua'	,l:'l'	,d:'d'	,p:'r'	},  // oวo 
 { t:'ไo'	,e:'ai'	,l:'l'	,d:'d'	,p:'l'	},
 { t:'ใo'	,e:'ai'	,l:'l'	,d:'d'	,p:'l'	},
 { t:'เoา'	,e:'ao'	,l:'l'	,d:'d'	,p:'lr'	},

@@ -63,7 +63,7 @@ voyc.dict = [
 {id:404,g:'m',t:'ชายหาด',s:2,l:400,n:1,p:' ',e:'',d:'beach',u:'',r:'',m:'',a:'',ns:2,lc:'ช',fc:'',vp:'oา',tm:' ',tn:'M',tl:'chaa',ru:'',sn:'',cp:''},
 {id:541,g:'m',t:'ทดลอง',s:2,l:400,n:1,p:' ',e:'',d:'to experiment; test',u:'',r:'',m:'',a:'',ns:2,lc:'ทดลอง',fc:'',vp:'o',tm:' ',tn:'H',tl:'tdlawngo',ru:'',sn:'',cp:''},
 {id:545,g:'m',t:'ทรัพย์',s:2,l:400,n:1,p:' ',e:'',d:'asset; wealth; possessions; riches',u:'',r:'',m:'',a:'',ns:2,lc:'ทร',fc:'',vp:'oั',tm:' ',tn:'H',tl:'tra',ru:'',sn:'',cp:''},
-{id:1,g:'g',t:'ก',s:0,l:10,n:1,p:'c',e:'kg',d:'',u:'ก     ',r:' ',m:'m',a:' ',ns:0,lc:'',fc:'',vp:'',tm:'',tn:'',tl:'',ru:'',sn:'',cp:''},
+{id:1,g:'g',t:'ก',s:0,l:10,n:1,p:'c',e:'g',d:'',u:'ก     ',r:' ',m:'m',a:' ',ns:0,lc:'',fc:'',vp:'',tm:'',tn:'',tl:'',ru:'',sn:'',cp:''},
 {id:2,g:'g',t:'ข',s:0,l:10,n:1,p:'c',e:'k',d:'',u:'ข     ',r:' ',m:'h',a:' ',ns:0,lc:'',fc:'',vp:'',tm:'',tn:'',tl:'',ru:'',sn:'',cp:''},
 {id:133,g:'o',t:'กรม',s:2,l:300,n:1,p:'n',e:'department',d:'[of government] a department; [of military] a regiment',u:'',r:'',m:'',a:'',ns:1,lc:'กรม',fc:'',vp:'o',tm:' ',tn:'L',tl:'kgrmo',ru:'',sn:'',cp:''},
 {id:132,g:'o',t:'กระ',s:2,l:300,n:1,p:'n',e:'frekle',d:'frekle, spot, hawk-billed turtle',u:'',r:'',m:'',a:'',ns:1,lc:'กร',fc:'',vp:'oะ',tm:' ',tn:'L',tl:'kgra',ru:'',sn:'',cp:''},
