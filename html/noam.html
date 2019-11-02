@@ -130,20 +130,54 @@ window.addEventListener('load', function() {
 		document.getElementById('content').innerHTML = s;
 	}, true);
 
-	voyc.$('parseSyllable').addEventListener('click', function() {
+	voyc.$('parseSyllableTest').addEventListener('click', function() {
 		var s = '';
 		var set = voyc.parseSyllableTestSet;
 		for (var i=0; i<set.length; i++) {
 			var t = set[i];
 			var m = voyc.noam.parseSyllable(t.w);
-			if (t.m==m.m && t.vp==m.vp && t.lc==m.lc && t.fc==m.fc && t.tm==m.tm && t.tn==m.tn && t.tl==m.tl && t.rules==m.rules.join()) {
+			if (t.m==m.m && t.vp==m.vp && t.lc==m.lc && t.fc==m.fc && t.tm==m.tm && t.tn==m.tn && t.tl==m.tl && t.ru==m.ru.join()) {
 				s += 'same ';
 			}
 			else {
 				s += 'different ';
 			}
-			s += "{w:'"+m.t+"',m:'"+m.m+"',vp:'"+m.vp+"',lc:'"+m.lc+"',fc:'"+m.fc+"',tm:'"+m.tm+"',tn:'"+m.tn+"',tl:'"+m.tl+"',rules:'"+m.rules.join()+"'},<br/>";
+			s += "{w:'"+m.t+"',m:'"+m.m+"',vp:'"+m.vp+"',lc:'"+m.lc+"',fc:'"+m.fc+"',tm:'"+m.tm+"',tn:'"+m.tn+"',tl:'"+m.tl+"',ru:'"+m.ru.join()+"'},<br/>";
 		}
+		document.getElementById('content').innerHTML = s;
+	}, true);
+
+	voyc.$('parseSyllableInput').addEventListener('click', function() {
+		var s = '';
+		var input = voyc.$('parse-area').value;
+		var words = input.split(/\n/);
+		for (var w in words) {
+			var word = words[w];
+			var m = voyc.noam.parseSyllable(word);
+			s += "{w:'"+m.t+"',m:'"+m.m+"',vp:'"+m.vp+"',lc:'"+m.lc+"',fc:'"+m.fc+"',tm:'"+m.tm+"',tn:'"+m.tn+"',tl:'"+m.tl+"',ru:'"+m.ru.join()+"'},<br/>";
+		}
+		document.getElementById('content').innerHTML = s;
+	}, true);
+
+	voyc.$('parseSyllableDict').addEventListener('click', function() {
+		var s = '';
+		var cnt = 0;
+		var dcnt = 0;
+		dict.iterate(function(t,j) {
+			if (t.g != 'o') {
+				return;
+			}
+			cnt++;
+			var m = voyc.noam.parseSyllable(t.t);
+			if (t.vp==m.vp && t.lc==m.lc && t.fc==m.fc && t.tm==m.tm && t.tn==m.tn && t.tl==m.tl && t.ru==m.ru.join()) {
+			}
+			else {
+				dcnt++;
+				s += "/* "+t.t+" */ update mai.thaidict set vowelpattern='"+m.vp+"', leadingconsonant='"+m.lc+"', finalconsonant='"+m.fc+"', tonemark='"+m.tm+"', tone='"+m.tn+"', translit='"+m.tl+"', rules='"+m.ru.join()+"'";
+				s += " where id = " + t.id + ";<br/>"; 
+			}
+		});
+		s = dcnt + ' of ' + cnt + '<br/>' + s;
 		document.getElementById('content').innerHTML = s;
 	}, true);
 
@@ -264,7 +298,7 @@ function parseWordDetail(word) {
 	var m = voyc.parseWord(word,true);
 	for (var n in m.syllables) {
 		for (var k in m.syllables[n]) {
-			if (k == 'rules') {
+			if (k == 'ru') {
 				s += '<tr><td>'+k+'</td><td>'+m.syllables[n][k].join("<br/>")+'</td></tr>';
 			}
 			else {
@@ -290,9 +324,9 @@ function parseWordDetail(word) {
 <button id='parseWord'>Parse Word</button>
 <button id='special'>Special</button>
 <br/>
-<button id='parseSyllable'>Parse Syllable Test</button>
-<button id='parseSyllable'>Parse Syllable Input</button>
-<button id='parseSyllable'>Parse Syllable Dict</button>
+<button id='parseSyllableTest'>Parse Syllable Test</button>
+<button id='parseSyllableInput'>Parse Syllable Input</button>
+<button id='parseSyllableDict'>Parse Syllable Dict</button>
 <div id='detail'>this is the detail window</div>
 <div id='content'></div>
 &#9676

@@ -188,9 +188,9 @@ voyc.parse = function(input) {
 
 		new tables:
 			components - non-unique key: dictionary, phrasebook
-				alphabet, rules, words, grammars
+				alphabet, ru, words, grammars
 			phrase book - like dictionary, maybe part of dictionary
-			rules - shortname to longname
+			ru - shortname to longname
 */
 voyc.Noam.prototype.parseWord = function(input, returnDetails) {
 	returnDetails = returnDetails || false;
@@ -302,7 +302,7 @@ voyc.Noam.prototype.parseWord = function(input, returnDetails) {
 //	}
 
 /*
-	other rules
+	other ru
 		vowel dipthong: ai, ao, etc
 		consonant cluster, not labeled as dipthong
 
@@ -357,24 +357,24 @@ voyc.Noam.prototype.parseWord = function(input, returnDetails) {
 	var tone = '';
 	for (var s in winner.syllables) {
 		var syl = winner.syllables[s];
-		syl.rules = [];
+		syl.ru = [];
 		syl.ending = '';
 		if (syl.finalConsonant) {
 			var finalConsonantMeta = voyc.alphabet.lookup(syl.finalConsonant)[0];
 			if (finalConsonantMeta.a == 's')  // sonorant
-				syl.ending = 'live', syl.rules.push('final sonorant consonant: live');
+				syl.ending = 'live', syl.ru.push('final sonorant consonant: live');
 			else
-				syl.ending = 'dead', syl.rules.push('final non-sonorant consonant: dead');
+				syl.ending = 'dead', syl.ru.push('final non-sonorant consonant: dead');
 		}
 		else {
 			var vowelMeta = voyc.vowelPatterns[syl.patternIndex];
 			if (vowelMeta.l == 's')
-				syl.ending = 'dead', syl.rules.push('open vowel short: dead');
+				syl.ending = 'dead', syl.ru.push('open vowel short: dead');
 			else
-				syl.ending = 'live', syl.rules.push('open vowel long: live');
+				syl.ending = 'live', syl.ru.push('open vowel long: live');
 		}
 
-		// apply tone rules
+		// apply tone ru
 		syl.tn = false;
 		var maiaek = '่';
 		var maitoh = '้';
@@ -382,19 +382,19 @@ voyc.Noam.prototype.parseWord = function(input, returnDetails) {
 		var maidtawaa = '๋';
 		var leadingConsonantMeta = voyc.alphabet.lookup(syl.leadingConsonant)[0];
 		var vowelMeta = voyc.vowelPatterns[syl.patternIndex];
-		if (leadingConsonantMeta.m == 'm' && syl.ending == 'live') syl.tn = 'M', syl.rules.push('mid-class live: M');
-		if (leadingConsonantMeta.m == 'm' && syl.ending == 'dead') syl.tn = 'L', syl.rules.push('mid-class dead: L');
-		if (leadingConsonantMeta.m == 'm' && syl.tm == maiaek) syl.tn = 'L', syl.rules.push('mid-class mai eak: L');
-		if (leadingConsonantMeta.m == 'm' && syl.tm == maitoh) syl.tn = 'F', syl.rules.push('mid-class mai toh: F');
-		if (leadingConsonantMeta.m == 'h' && syl.ending == 'live') syl.tn = 'R', syl.rules.push('high-class live: R');
-		if (leadingConsonantMeta.m == 'h' && syl.ending == 'dead') syl.tn = 'L', syl.rules.push('high-class dead: L');
-		if (leadingConsonantMeta.m == 'h' && syl.tm == maiaek) syl.tn = 'L', syl.rules.push('high-class mai eak: L');
-		if (leadingConsonantMeta.m == 'h' && syl.tm == maitoh) syl.tn = 'F', syl.rules.push('high-class mai toh: F');
-		if (leadingConsonantMeta.m == 'l' && syl.ending == 'live') syl.tn = 'M', syl.rules.push('low-class live: M');
-		if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 's') syl.tn = 'H', syl.rules.push('low-class dead short: H');
-		if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 'l') syl.tn = 'F', syl.rules.push('low-class dead long: F');
-		if (leadingConsonantMeta.m == 'l' && syl.tm == maiaek) syl.tn = 'F', syl.rules.push('low-class mai eak: F');
-		if (leadingConsonantMeta.m == 'l' && syl.tm == maitoh) syl.tn = 'H', syl.rules.push('low-class mai toh: H');
+		if (leadingConsonantMeta.m == 'm' && syl.ending == 'live') syl.tn = 'M', syl.ru.push('mid-class live: M');
+		if (leadingConsonantMeta.m == 'm' && syl.ending == 'dead') syl.tn = 'L', syl.ru.push('mid-class dead: L');
+		if (leadingConsonantMeta.m == 'm' && syl.tm == maiaek) syl.tn = 'L', syl.ru.push('mid-class mai eak: L');
+		if (leadingConsonantMeta.m == 'm' && syl.tm == maitoh) syl.tn = 'F', syl.ru.push('mid-class mai toh: F');
+		if (leadingConsonantMeta.m == 'h' && syl.ending == 'live') syl.tn = 'R', syl.ru.push('high-class live: R');
+		if (leadingConsonantMeta.m == 'h' && syl.ending == 'dead') syl.tn = 'L', syl.ru.push('high-class dead: L');
+		if (leadingConsonantMeta.m == 'h' && syl.tm == maiaek) syl.tn = 'L', syl.ru.push('high-class mai eak: L');
+		if (leadingConsonantMeta.m == 'h' && syl.tm == maitoh) syl.tn = 'F', syl.ru.push('high-class mai toh: F');
+		if (leadingConsonantMeta.m == 'l' && syl.ending == 'live') syl.tn = 'M', syl.ru.push('low-class live: M');
+		if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 's') syl.tn = 'H', syl.ru.push('low-class dead short: H');
+		if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 'l') syl.tn = 'F', syl.ru.push('low-class dead long: F');
+		if (leadingConsonantMeta.m == 'l' && syl.tm == maiaek) syl.tn = 'F', syl.ru.push('low-class mai eak: F');
+		if (leadingConsonantMeta.m == 'l' && syl.tm == maitoh) syl.tn = 'H', syl.ru.push('low-class mai toh: H');
 		if (!syl.tn) 
 			debugger;
 
@@ -404,7 +404,7 @@ voyc.Noam.prototype.parseWord = function(input, returnDetails) {
 	return {tone:tone, syllables:winner.syllables};
 }
 
-voyc.rules = [
+voyc.ru = [
 	// endings
 	{code:'fsc', name:'final sonorant consonant: live'},
 	{code:'fnsc', name:'final non-sonorant consonant: dead'},
@@ -444,7 +444,7 @@ voyc.rules = [
 	{code:'cct', name:'True consonant cluster', details:'English-speakers call this a dipthong.  Combine multiple consonants into a single sound. { ก, ข, ค, ต, ป, ผ, พ } + { ร, ล, ว } '},
 	{code:'ccf', name:'False consonant cluster', details:'One of five consonants (จ, ซ, ท, ส, ศ) followed by a silent ร.'},
 	{code:'cclh', name:'consonant cluster with leading ห', details:'The ห is not pronounced, but is used to raise the class of the next consonant in the cluster to high class.  Similar to how a tone mark is used.'},
-	{code:'cclaw', name:'consonant cluster with leading อ', details:'The อ is not pronounced, but is used to raise the class of the next consonant in the cluster to high class.  This applies to only four words:  .'},
+	{code:'cclha', name:'consonant cluster with leading อ', details:'The อ is not pronounced, but is used to raise the class of the next consonant in the cluster to high class.  This applies to only four words:  .'},
 	{code:'ccredup', name:'Reduplication', details:'A single consonant is used twice, as the end of the previous syllable, and the beginning of the next.'},
 	{code:'ccivo', name:'Inherent vowel, short o', details:'A short o sound invoked between initial and final consonant.'},
 	{code:'cciva', name:'Inherent vowel, short a', details:'A short a sound invoked with one standalone consonant.'},
@@ -452,38 +452,38 @@ voyc.rules = [
 ];
 
 voyc.parseSyllableTestSet = [
-	{w:'กรอก',m:'กรอ',vp:'oอ',lc:'กร',fc:'ก',tm:'',tn:'L',tl:'graawk',rules:'fnsc,mcd,endk'},
-	{w:'ก๊าก',m:'ก๊า',vp:'oา',lc:'ก',fc:'ก',tm:'๊',tn:'H',tl:'gaak',rules:'fnsc,mc3,endk'},
-	{w:'กิ๊ก',m:'กิ๊',vp:'oิ',lc:'ก',fc:'ก',tm:'๊',tn:'H',tl:'gik',rules:'fnsc,mc3,endk'},
-	{w:'ครก',m:'ครก',vp:'o',lc:'คร',fc:'ก',tm:'',tn:'H',tl:'krok',rules:'ccivo,fnsc,lcds,endk'},
-	{w:'คราก',m:'ครา',vp:'oา',lc:'คร',fc:'ก',tm:'',tn:'F',tl:'kraak',rules:'fnsc,lcdl,endk'},
-	{w:'โครก',m:'โครก',vp:'โo',lc:'คร',fc:'ก',tm:'',tn:'F',tl:'krook',rules:'fnsc,lcdl,endk'},
-	{w:'กรง',m:'กรง',vp:'o',lc:'กร',fc:'ง',tm:'',tn:'M',tl:'grong',rules:'ccivo,fsc,mcl,endng'},
-	{w:'กร่าง',m:'กร่า',vp:'oา',lc:'กร',fc:'ง',tm:'่',tn:'L',tl:'graang',rules:'fsc,mc1,endng'},
-	{w:'โกร่ง',m:'โกร่',vp:'โo',lc:'กร',fc:'ง',tm:'่',tn:'L',tl:'groong',rules:'fsc,mc1,endng'},
-	{w:'แกง',m:'แกง',vp:'แo',lc:'ก',fc:'ง',tm:'',tn:'M',tl:'gaaeng',rules:'fsc,mcl,endng'},
-	{w:'งัด',m:'งั',vp:'oั',lc:'ง',fc:'ด',tm:'',tn:'H',tl:'ngat',rules:'fnsc,lcds,endt'},
-	{w:'งด',m:'งด',vp:'o',lc:'ง',fc:'ด',tm:'',tn:'H',tl:'ngot',rules:'ccivo,fnsc,lcds,endt'},
-	{w:'ผลาญ',m:'ผลา',vp:'oา',lc:'ผล',fc:'ญ',tm:'',tn:'R',tl:'plaan',rules:'fsc,hcl,endn'},
-	{w:'ชาญ',m:'ชา',vp:'oา',lc:'ช',fc:'ญ',tm:'',tn:'M',tl:'chaan',rules:'fsc,lcl,endn'},
-	{w:'ควร',m:'คว',vp:'oว',lc:'ค',fc:'ร',tm:'',tn:'M',tl:'kuan',rules:'fsc,lcl,endn'},
-	{w:'ก้าน',m:'ก้า',vp:'oา',lc:'ก',fc:'น',tm:'้',tn:'F',tl:'gaan',rules:'fsc,mc2,endn'},
-	{w:'รูป',m:'รู',vp:'oู',lc:'ร',fc:'ป',tm:'',tn:'F',tl:'ruup',rules:'fnsc,lcdl,endp'},
-	{w:'ลูบ',m:'ลู',vp:'oู',lc:'ล',fc:'บ',tm:'',tn:'F',tl:'luup',rules:'fnsc,lcdl,endp'},
-	{w:'ลาบ',m:'ลา',vp:'oา',lc:'ล',fc:'บ',tm:'',tn:'F',tl:'laap',rules:'fnsc,lcdl,endp'},
-	{w:'ลาภ',m:'ลา',vp:'oา',lc:'ล',fc:'ภ',tm:'',tn:'F',tl:'laap',rules:'fnsc,lcdl,endp'},
-	{w:'กาม',m:'กา',vp:'oา',lc:'ก',fc:'ม',tm:'',tn:'M',tl:'gaam',rules:'fsc,mcl,endm'},
-	{w:'ขม',m:'ขม',vp:'o',lc:'ข',fc:'ม',tm:'',tn:'R',tl:'kom',rules:'ccivo,fsc,hcl,endm'},
-	{w:'คม',m:'คม',vp:'o',lc:'ค',fc:'ม',tm:'',tn:'M',tl:'kom',rules:'ccivo,fsc,lcl,endm'},
-	{w:'ชม',m:'ชม',vp:'o',lc:'ช',fc:'ม',tm:'',tn:'M',tl:'chom',rules:'ccivo,fsc,lcl,endm'},
-	{w:'ชิม',m:'ชิ',vp:'oิ',lc:'ช',fc:'ม',tm:'',tn:'M',tl:'chim',rules:'fsc,lcl,endm'},
-	{w:'กาย',m:'กา',vp:'oา',lc:'ก',fc:'ย',tm:'',tn:'M',tl:'gaay',rules:'fsc,mcl,endy'},
-	{w:'ก่าย',m:'ก่า',vp:'oา',lc:'ก',fc:'ย',tm:'่',tn:'L',tl:'gaay',rules:'fsc,mc1,endy'},
-	{w:'ขาย',m:'ขา',vp:'oา',lc:'ข',fc:'ย',tm:'',tn:'R',tl:'kaay',rules:'fsc,hcl,endy'},
-	{w:'ข่า',m:'ข่า',vp:'oา',lc:'ข',fc:'',tm:'่',tn:'L',tl:'kaa',rules:'ovl,hc1'},
-	{w:'แก้ว',m:'แก้',vp:'แo',lc:'ก',fc:'ว',tm:'้',tn:'F',tl:'gaaeo',rules:'fsc,mc2,endo'},
-	{w:'หวิว',m:'หวิ',vp:'oิ',lc:'หว',fc:'ว',tm:'',tn:'R',tl:'wio',rules:'cclh,fsc,hcl,endo'},
-	{w:'ไหว',m:'ไหว',vp:'ไo',lc:'หว',fc:'',tm:'',tn:'R',tl:'wai',rules:'cclh,ovl,hcl'},
+	{w:'กรอก',m:'กรอ',vp:'oอ',lc:'กร',fc:'ก',tm:'',tn:'L',tl:'graawk',ru:'fnsc,mcd,endk'},
+	{w:'ก๊าก',m:'ก๊า',vp:'oา',lc:'ก',fc:'ก',tm:'๊',tn:'H',tl:'gaak',ru:'fnsc,mc3,endk'},
+	{w:'กิ๊ก',m:'กิ๊',vp:'oิ',lc:'ก',fc:'ก',tm:'๊',tn:'H',tl:'gik',ru:'fnsc,mc3,endk'},
+	{w:'ครก',m:'ครก',vp:'o',lc:'คร',fc:'ก',tm:'',tn:'H',tl:'krok',ru:'ccivo,fnsc,lcds,endk'},
+	{w:'คราก',m:'ครา',vp:'oา',lc:'คร',fc:'ก',tm:'',tn:'F',tl:'kraak',ru:'fnsc,lcdl,endk'},
+	{w:'โครก',m:'โครก',vp:'โo',lc:'คร',fc:'ก',tm:'',tn:'F',tl:'krook',ru:'fnsc,lcdl,endk'},
+	{w:'กรง',m:'กรง',vp:'o',lc:'กร',fc:'ง',tm:'',tn:'M',tl:'grong',ru:'ccivo,fsc,mcl,endng'},
+	{w:'กร่าง',m:'กร่า',vp:'oา',lc:'กร',fc:'ง',tm:'่',tn:'L',tl:'graang',ru:'fsc,mc1,endng'},
+	{w:'โกร่ง',m:'โกร่',vp:'โo',lc:'กร',fc:'ง',tm:'่',tn:'L',tl:'groong',ru:'fsc,mc1,endng'},
+	{w:'แกง',m:'แกง',vp:'แo',lc:'ก',fc:'ง',tm:'',tn:'M',tl:'gaaeng',ru:'fsc,mcl,endng'},
+	{w:'งัด',m:'งั',vp:'oั',lc:'ง',fc:'ด',tm:'',tn:'H',tl:'ngat',ru:'fnsc,lcds,endt'},
+	{w:'งด',m:'งด',vp:'o',lc:'ง',fc:'ด',tm:'',tn:'H',tl:'ngot',ru:'ccivo,fnsc,lcds,endt'},
+	{w:'ผลาญ',m:'ผลา',vp:'oา',lc:'ผล',fc:'ญ',tm:'',tn:'R',tl:'plaan',ru:'fsc,hcl,endn'},
+	{w:'ชาญ',m:'ชา',vp:'oา',lc:'ช',fc:'ญ',tm:'',tn:'M',tl:'chaan',ru:'fsc,lcl,endn'},
+	{w:'ควร',m:'คว',vp:'oว',lc:'ค',fc:'ร',tm:'',tn:'M',tl:'kuan',ru:'fsc,lcl,endn'},
+	{w:'ก้าน',m:'ก้า',vp:'oา',lc:'ก',fc:'น',tm:'้',tn:'F',tl:'gaan',ru:'fsc,mc2,endn'},
+	{w:'รูป',m:'รู',vp:'oู',lc:'ร',fc:'ป',tm:'',tn:'F',tl:'ruup',ru:'fnsc,lcdl,endp'},
+	{w:'ลูบ',m:'ลู',vp:'oู',lc:'ล',fc:'บ',tm:'',tn:'F',tl:'luup',ru:'fnsc,lcdl,endp'},
+	{w:'ลาบ',m:'ลา',vp:'oา',lc:'ล',fc:'บ',tm:'',tn:'F',tl:'laap',ru:'fnsc,lcdl,endp'},
+	{w:'ลาภ',m:'ลา',vp:'oา',lc:'ล',fc:'ภ',tm:'',tn:'F',tl:'laap',ru:'fnsc,lcdl,endp'},
+	{w:'กาม',m:'กา',vp:'oา',lc:'ก',fc:'ม',tm:'',tn:'M',tl:'gaam',ru:'fsc,mcl,endm'},
+	{w:'ขม',m:'ขม',vp:'o',lc:'ข',fc:'ม',tm:'',tn:'R',tl:'kom',ru:'ccivo,fsc,hcl,endm'},
+	{w:'คม',m:'คม',vp:'o',lc:'ค',fc:'ม',tm:'',tn:'M',tl:'kom',ru:'ccivo,fsc,lcl,endm'},
+	{w:'ชม',m:'ชม',vp:'o',lc:'ช',fc:'ม',tm:'',tn:'M',tl:'chom',ru:'ccivo,fsc,lcl,endm'},
+	{w:'ชิม',m:'ชิ',vp:'oิ',lc:'ช',fc:'ม',tm:'',tn:'M',tl:'chim',ru:'fsc,lcl,endm'},
+	{w:'กาย',m:'กา',vp:'oา',lc:'ก',fc:'ย',tm:'',tn:'M',tl:'gaay',ru:'fsc,mcl,endy'},
+	{w:'ก่าย',m:'ก่า',vp:'oา',lc:'ก',fc:'ย',tm:'่',tn:'L',tl:'gaay',ru:'fsc,mc1,endy'},
+	{w:'ขาย',m:'ขา',vp:'oา',lc:'ข',fc:'ย',tm:'',tn:'R',tl:'kaay',ru:'fsc,hcl,endy'},
+	{w:'ข่า',m:'ข่า',vp:'oา',lc:'ข',fc:'',tm:'่',tn:'L',tl:'kaa',ru:'ovl,hc1'},
+	{w:'แก้ว',m:'แก้',vp:'แo',lc:'ก',fc:'ว',tm:'้',tn:'F',tl:'gaaeo',ru:'fsc,mc2,endo'},
+	{w:'หวิว',m:'หวิ',vp:'oิ',lc:'หว',fc:'ว',tm:'',tn:'R',tl:'wio',ru:'cclh,fsc,hcl,endo'},
+	{w:'ไหว',m:'ไหว',vp:'ไo',lc:'หว',fc:'',tm:'',tn:'R',tl:'wai',ru:'cclh,ovl,hcl'},
 ];
 
 /*
@@ -491,12 +491,23 @@ voyc.parseSyllableTestSet = [
 	examples of reduplication
 			นัยนา  นัย ย นา    ย used twice, Naiyana
 			วิทยาลัย  วิท ท ยาลัย
-	{w:'ฉกาจ',m:'ฉกา',vp:'oา',lc:'ฉก',fc:'',tm:'',tn:'R',tl:'chkgaa',rules:'ovl,hcl'},
-	{w:'พจน์',m:'พจน',vp:'o',lc:'พจน',fc:'',tm:'',tn:'H',tl:'pjno',rules:'ovs,lcds'},
-	{w:'นัยนา', rules:'redup'},
-	{w:'วิทยาลัย', rules:'redup'},
-	{w:'ชำนาญ',m:'นา',vp:'oา',lc:'น',fc:'',tm:'',tn:'M',tl:'naa',rules:'ovl,lcl'},
-	{w:'คำนวณ',m:'นว',vp:'oว',lc:'น',fc:'',tm:'',tn:'M',tl:'nua',rules:'ovl,lcl'},
+	{w:'ฉกาจ',m:'ฉกา',vp:'oา',lc:'ฉก',fc:'',tm:'',tn:'R',tl:'chkgaa',ru:'ovl,hcl'},
+	{w:'พจน์',m:'พจน',vp:'o',lc:'พจน',fc:'',tm:'',tn:'H',tl:'pjno',ru:'ovs,lcds'},
+	{w:'นัยนา', ru:'redup'},
+	{w:'วิทยาลัย', ru:'redup'},
+	{w:'ชำนาญ',m:'นา',vp:'oา',lc:'น',fc:'',tm:'',tn:'M',tl:'naa',ru:'ovl,lcl'},
+	{w:'คำนวณ',m:'นว',vp:'oว',lc:'น',fc:'',tm:'',tn:'M',tl:'nua',ru:'ovl,lcl'},
+*/
+/*
+	parseSyllable
+	update these db fields
+		vowelpattern
+		leadingconsonant
+		tonemark
+		finalconsonant
+		tone
+		translit
+		rules
 */
 voyc.Noam.prototype.parseSyllable = function(syllable) {
 	// find matching vowel pattern for input syllable
@@ -533,7 +544,7 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	}
 
 	// consonant cluster
-	syl.rules = [];
+	syl.ru = [];
 
 	// use characteristics of the first consonant in the cluster
 	var firstConsonant = syl.lc;
@@ -544,16 +555,19 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 
 	// inherent vowel short o
 	if (syl.vp == 'o' && syl.lc.length > 1) {
-		syl.rules.push('ccivo');
+		syl.ru.push('ccivo');
 	} 
 	
 	// leading h
 	if (syl.lc.length > 1 && firstConsonant == 'ห') {
-		syl.rules.push('cclh'); 
+		syl.ru.push('cclh'); 
+	}
+	else if (syl.lc.length > 1 && firstConsonant == 'อ' && ['อย่า','อยู่','อย่าง','อยาก'].includes(syllable)) {
+		syl.ru.push('cclha'); 
 	}
 	else {
 		// assume final consonant
-		if (syl.lc.length > 1 && !syl.fc) {
+		if (syl.lc.length > 1 && !syl.fc && syl.lc[syl.lc.length-1] == syllable[syllable.length-1]) {
 			syl.fc = syl.lc[syl.lc.length-1];
 			syl.lc = syl.lc.substring(0,syl.lc.length-1);
 		}
@@ -565,15 +579,15 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	if (syl.fc) {
 		var finalConsonantMeta = this.alphabet.lookup(syl.fc);
 		if (finalConsonantMeta.a == 's')  // sonorant
-			syl.ending = 'live', syl.rules.push('fsc');
+			syl.ending = 'live', syl.ru.push('fsc');
 		else
-			syl.ending = 'dead', syl.rules.push('fnsc');
+			syl.ending = 'dead', syl.ru.push('fnsc');
 	}
 	else {
 		if (vowelMeta.l == 's')
-			syl.ending = 'dead', syl.rules.push('ovs');
+			syl.ending = 'dead', syl.ru.push('ovs');
 		else
-			syl.ending = 'live', syl.rules.push('ovl');
+			syl.ending = 'live', syl.ru.push('ovl');
 	}
 
 	// tone mark
@@ -584,37 +598,37 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	
 	// tone
 	syl.tn = false;
-	if (leadingConsonantMeta.m == 'm' && syl.tm == maiaek) syl.tn = 'L', syl.rules.push('mc1');
-	else if (leadingConsonantMeta.m == 'm' && syl.tm == maitoh) syl.tn = 'F', syl.rules.push('mc2');
-	else if (leadingConsonantMeta.m == 'm' && syl.tm == maidtree) syl.tn = 'H', syl.rules.push('mc3');
-	else if (leadingConsonantMeta.m == 'm' && syl.tm == maidtawaa) syl.tn = 'R', syl.rules.push('mc4');
-	else if (leadingConsonantMeta.m == 'm' && syl.ending == 'live') syl.tn = 'M', syl.rules.push('mcl');
-	else if (leadingConsonantMeta.m == 'm' && syl.ending == 'dead') syl.tn = 'L', syl.rules.push('mcd');
-	else if (leadingConsonantMeta.m == 'h' && syl.tm == maiaek) syl.tn = 'L', syl.rules.push('hc1');
-	else if (leadingConsonantMeta.m == 'h' && syl.tm == maitoh) syl.tn = 'F', syl.rules.push('hc2');
-	else if (leadingConsonantMeta.m == 'h' && syl.ending == 'live') syl.tn = 'R', syl.rules.push('hcl');
-	else if (leadingConsonantMeta.m == 'h' && syl.ending == 'dead') syl.tn = 'L', syl.rules.push('hcd');
-	else if (leadingConsonantMeta.m == 'l' && syl.tm == maiaek) syl.tn = 'F', syl.rules.push('lc1');
-	else if (leadingConsonantMeta.m == 'l' && syl.tm == maitoh) syl.tn = 'H', syl.rules.push('lc2');
-	else if (leadingConsonantMeta.m == 'l' && syl.ending == 'live') syl.tn = 'M', syl.rules.push('lcl');
-	else if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 's') syl.tn = 'H', syl.rules.push('lcds');
-	else if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 'l') syl.tn = 'F', syl.rules.push('lcdl');
+	if (leadingConsonantMeta.m == 'm' && syl.tm == maiaek) syl.tn = 'L', syl.ru.push('mc1');
+	else if (leadingConsonantMeta.m == 'm' && syl.tm == maitoh) syl.tn = 'F', syl.ru.push('mc2');
+	else if (leadingConsonantMeta.m == 'm' && syl.tm == maidtree) syl.tn = 'H', syl.ru.push('mc3');
+	else if (leadingConsonantMeta.m == 'm' && syl.tm == maidtawaa) syl.tn = 'R', syl.ru.push('mc4');
+	else if (leadingConsonantMeta.m == 'm' && syl.ending == 'live') syl.tn = 'M', syl.ru.push('mcl');
+	else if (leadingConsonantMeta.m == 'm' && syl.ending == 'dead') syl.tn = 'L', syl.ru.push('mcd');
+	else if (leadingConsonantMeta.m == 'h' && syl.tm == maiaek) syl.tn = 'L', syl.ru.push('hc1');
+	else if (leadingConsonantMeta.m == 'h' && syl.tm == maitoh) syl.tn = 'F', syl.ru.push('hc2');
+	else if (leadingConsonantMeta.m == 'h' && syl.ending == 'live') syl.tn = 'R', syl.ru.push('hcl');
+	else if (leadingConsonantMeta.m == 'h' && syl.ending == 'dead') syl.tn = 'L', syl.ru.push('hcd');
+	else if (leadingConsonantMeta.m == 'l' && syl.tm == maiaek) syl.tn = 'F', syl.ru.push('lc1');
+	else if (leadingConsonantMeta.m == 'l' && syl.tm == maitoh) syl.tn = 'H', syl.ru.push('lc2');
+	else if (leadingConsonantMeta.m == 'l' && syl.ending == 'live') syl.tn = 'M', syl.ru.push('lcl');
+	else if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 's') syl.tn = 'H', syl.ru.push('lcds');
+	else if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 'l') syl.tn = 'F', syl.ru.push('lcdl');
 	if (!syl.tn) debugger;
 
 	// final consonant sound
 	var fs = '';
-	if ('กขคฆ'.split('').includes(syl.fc)) fs = 'k', syl.rules.push('endk');
-	else if ('จฉชซฌฎฏฐฑฒดตถทธศษส'.split('').includes(syl.fc)) fs = 't', syl.rules.push('endt');
-	else if ('ปพภฟบ'.split('').includes(syl.fc)) fs = 'p', syl.rules.push('endp');
-	else if ('ง'.split('').includes(syl.fc)) fs = 'ng', syl.rules.push('endng');
-	else if ('ม'.split('').includes(syl.fc)) fs = 'm', syl.rules.push('endm');
-	else if ('นณญรลฬ'.split('').includes(syl.fc)) fs = 'n', syl.rules.push('endn');
-	else if ('ย'.split('').includes(syl.fc)) fs = 'y', syl.rules.push('endy');
-	else if ('ว'.split('').includes(syl.fc)) fs = 'o', syl.rules.push('endo');
+	if ('กขคฆ'.split('').includes(syl.fc)) fs = 'k', syl.ru.push('endk');
+	else if ('จฉชซฌฎฏฐฑฒดตถทธศษส'.split('').includes(syl.fc)) fs = 't', syl.ru.push('endt');
+	else if ('ปพภฟบ'.split('').includes(syl.fc)) fs = 'p', syl.ru.push('endp');
+	else if ('ง'.split('').includes(syl.fc)) fs = 'ng', syl.ru.push('endng');
+	else if ('ม'.split('').includes(syl.fc)) fs = 'm', syl.ru.push('endm');
+	else if ('นณญรลฬ'.split('').includes(syl.fc)) fs = 'n', syl.ru.push('endn');
+	else if ('ย'.split('').includes(syl.fc)) fs = 'y', syl.ru.push('endy');
+	else if ('ว'.split('').includes(syl.fc)) fs = 'o', syl.ru.push('endo');
 
 	// consonant cluster with leading h
 	var lc = syl.lc;
-	if (lc.length > 1 && firstConsonant == 'ห') {
+	if (lc.length > 1 && (firstConsonant == 'ห' || (firstConsonant == 'อ' && ['อย่า','อยู่','อย่าง','อยาก'].includes(syllable)))) {
 		lc = lc.substring(1);
 	}
 

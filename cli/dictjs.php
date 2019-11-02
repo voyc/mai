@@ -50,16 +50,35 @@ function readdict() {
 		$tm = $row['tonemark'];
 		$tn = $row['tone'];
 		$tl = $row['translit'];
-		$ra = $row['rules'];
+		$ru = $row['rules'];
 		$ns = $row['numsyllables'];
 		$sn = $row['syllablendx'];
 		$cp = $row['components'];
+		$ps = $row['parse'];
 
 		$d = str_replace( "'", "\\'", $d);
+		if ($tm == ' ') {
+			$tm = '';
+		}
+		if ($p == ' ') {
+			$p = '';
+		}
+		if ($r == ' ') {
+			$r = '';
+		}
+		if ($m == ' ') {
+			$m = '';
+		}
+		if ($a == ' ') {
+			$a = '';
+		}
+		if ($ps != 'm') {
+			$a = '';
+		}
 
 		// output one row
 		echo "{id:$id,g:'$g',t:'$t',s:$s,l:$l,n:$n,p:'$p',e:'$e',d:'$d',u:'$u',r:'$r',m:'$m',a:'$a',ns:$ns,";
-		echo "lc:'$lc',fc:'$fc',vp:'$vp',tm:'$tm',tn:'$tn',tl:'$tl',ru:'$ru',sn:'$sn',cp:'$cp'},\n";
+		echo "lc:'$lc',fc:'$fc',vp:'$vp',tm:'$tm',tn:'$tn',tl:'$tl',ru:'$ru',sn:'$sn',cp:'$cp',ps:'$ps'},\n";
         }
 	echo "];\n";
 }

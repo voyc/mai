@@ -51,4 +51,5 @@ create table mai.thaidict (
         numsyllables int,             /* ns */
         syllablendx varchar(20),      /* sn */
         components varchar(500)       /* cp */
+	parse char(1)                 /* ps */
 );
