@@ -510,13 +510,25 @@ voyc.parseSyllableTestSet = [
 		rules
 */
 voyc.Noam.prototype.parseSyllable = function(syllable) {
+	// find and remove trailing silent consonant
+	var garaan = "์";
+	var syllabl = '';
+	for (var i=syllable.length-1; i>=0; i--) {
+		if (syllable[i] == garaan) {
+			i--;
+		}
+		else {
+			syllabl = syllable[i] + syllabl;
+		} 
+	}
+
 	// find matching vowel pattern for input syllable
 	var syl = false;
 	for (var k in voyc.vowelPatterns) {
 		syl = false;
 		var pattern = new RegExp(voyc.vowelPatterns[k].syllablePattern, 'g');
 		var m = [];
-		if (m = pattern.exec(syllable)) {
+		if (m = pattern.exec(syllabl)) {
 			m.t = syllable;
 			m.i = k;
 			m.m = m[0];
@@ -539,8 +551,8 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	if (!syl) return false;
 
 	// append final consonant	
-	if (syllable.length == syl.m.length+1) {
-		syl.fc = syllable[syllable.length-1];
+	if (syllabl.length == syl.m.length+1) {
+		syl.fc = syllabl[syllabl.length-1];
 	}
 
 	// consonant cluster
@@ -567,7 +579,7 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	}
 	else {
 		// assume final consonant
-		if (syl.lc.length > 1 && !syl.fc && syl.lc[syl.lc.length-1] == syllable[syllable.length-1]) {
+		if (syl.lc.length > 1 && !syl.fc && syl.lc[syl.lc.length-1] == syllabl[syllabl.length-1]) {
 			syl.fc = syl.lc[syl.lc.length-1];
 			syl.lc = syl.lc.substring(0,syl.lc.length-1);
 		}

@@ -73,7 +73,7 @@ function readdict() {
 			$a = '';
 		}
 		if ($ps != 'm') {
-			$a = '';
+			$ps = '';
 		}
 
 		// output one row

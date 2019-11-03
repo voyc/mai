@@ -1,0 +1,82 @@
+
+/* 1385 */ insert into mai.thaidict (thai, eng, details, type, pos, source, level, numdef, numsyllables) values ('ขนม', 'cake', 'dessert made from rice flour', 'm', 'n', 1, 400, 1, 2);
+/* 1386 */ insert into mai.thaidict (thai, eng, details, type, pos, source, level, numdef, numsyllables) values ('สมุด', 'notebook', 'ledger, notebook, or directory', 'm', 'n', 1, 400, 1, 2);
+
+update mai.thaidict set pos='n', eng='lust' where id = 177;
+
+update mai.thaidict set pos='v', eng='experiment' where id= 541;
+update mai.thaidict set pos='e', eng='except' where id= 620;
+update mai.thaidict set pos='n', eng='gold' where id= 553;
+update mai.thaidict set pos='j', eng='excellent' where id= 910;
+update mai.thaidict set pos='n', eng='total' where id= 911;
+update mai.thaidict set pos='n', eng='subordinate' where id= 939;
+update mai.thaidict set pos='n', eng='item' where id=1251;
+update mai.thaidict set pos='v', eng='claim' where id=1254;
+update mai.thaidict set pos='v', eng='may' where id=1255;
+update mai.thaidict set pos='v', eng='read' where id=1259;
+update mai.thaidict set pos='n', eng='pomelo' where id=1272;
+update mai.thaidict set pos='v', eng='collect' where id= 938;
+update mai.thaidict set pos='j', eng='even' where id=1155;
+update mai.thaidict set pos='n', eng='alphabet' where id=1248;
+update mai.thaidict set pos='n', eng='England'      where id=1249;
+update mai.thaidict set pos='n', eng='kingdom'      where id=1257;
+update mai.thaidict set pos='n', eng='district'     where id=1264;
+update mai.thaidict set pos='j', eng='considerate'  where id=1271;
+update mai.thaidict set pos='n', eng='chance'       where id=1273;
+update mai.thaidict set pos='v', eng='defend'       where id= 726;
+update mai.thaidict set pos='j', eng='legitimate'   where id=1274;
+update mai.thaidict set pos='e', eng='during'       where id= 475;
+update mai.thaidict set pos='v', eng='carry'        where id=1267;
+update mai.thaidict set vowelpattern='', leadingconsonant='', finalconsonant='', tonemark='', tone='' where type='m';
+
+update mai.thaidict set pos='n' where id=1236;
+update mai.thaidict set pos='v' where id=1244;
+update mai.thaidict set pos='n' where id=1245;
+update mai.thaidict set pos='v' where id=1246;
+update mai.thaidict set pos='v' where id=1237;
+
+update mai.thaidict set pos='n', eng='mail'        where id= 746;
+update mai.thaidict set pos='n', eng='wealth'      where id= 545;
+update mai.thaidict set pos='n', eng='Moon'        where id= 347;
+update mai.thaidict set pos='n', eng='February'    where id= 179;
+update mai.thaidict set pos='n', eng='lineage'     where id=1055;
+update mai.thaidict set pos='n', eng='money'       where id=1086;
+update mai.thaidict set pos='n', eng='week'        where id=1258;
+update mai.thaidict set pos='n', eng='animal'      where id=1128;
+update mai.thaidict set pos='v', eng='wish'        where id= 715;
+update mai.thaidict set pos='n', eng='Brahman'     where id= 787;
+update mai.thaidict set pos='n', eng='benefit'     where id= 713;
+update mai.thaidict set pos='n', eng='king'        where id= 154;
+update mai.thaidict set pos='j', eng='innocent'    where id= 667;
+update mai.thaidict set pos='j', eng='useful'      where id= 714;
+update mai.thaidict set pos='n', eng='suffering'   where id= 582;
+update mai.thaidict set pos='n', eng='philosopher' where id= 625;
+update mai.thaidict set pos='j', eng='perfect'     where id= 665;
+update mai.thaidict set pos='v', eng='type'        where id= 812;
+update mai.thaidict set pos='n', eng='human'       where id= 869;
+update mai.thaidict set pos='n', eng='commerce'    where id= 806;
+update mai.thaidict set pos='n', eng='citizens'    where id= 969;
+update mai.thaidict set pos='n', eng='Venus'       where id=1078;
+update mai.thaidict set pos='n', eng='criteria'    where id= 182;
+update mai.thaidict set pos='n', eng='accusation'  where id= 370;
+update mai.thaidict set pos='e', eng='sure'        where id= 396;
+update mai.thaidict set pos='v', eng='bind'        where id= 804;
+update mai.thaidict set pos='j', eng='powered'     where id= 908;
+update mai.thaidict set pos='n', eng='number'      where id= 690;
+update mai.thaidict set pos='n', eng='Saturn'      where id=1158;
+update mai.thaidict set pos='n', eng='heaven'      where id=1112;
+
+update mai.thaidict set numsyllables=3 where id in (179,746,667);
+update mai.thaidict set numsyllables=2 where id in (625,806);
+update mai.thaidict set type='m',numsyllables=2 where id in (1112);
+update mai.thaidict set type='o', numsyllables=1 where id in (347,1055,1128,787,545,582,812,1079,969);
+
+/* เกณฑ์ */ update mai.thaidict set vowelpattern='เo', leadingconsonant='ก', finalconsonant='ณ', tonemark='', tone='M', translit='gen', rules='fsc,mcl,endn' where id = 182;
+/* โจทย์ */ update mai.thaidict set vowelpattern='โo', leadingconsonant='จ', finalconsonant='ท', tonemark='', tone='L', translit='joot', rules='fnsc,mcd,endt' where id = 370;
+/* ทุกข์ */ update mai.thaidict set vowelpattern='oุ', leadingconsonant='ท', finalconsonant='ก', tonemark='', tone='H', translit='tuk', rules='fnsc,lcds,endk' where id = 582;
+/* พิมพ์ */ update mai.thaidict set vowelpattern='oิ', leadingconsonant='พ', finalconsonant='ม', tonemark='', tone='M', translit='pim', rules='fsc,lcl,endm' where id = 812;
+/* พันธ์ */ update mai.thaidict set vowelpattern='oั', leadingconsonant='พ', finalconsonant='น', tonemark='', tone='M', translit='pan', rules='fsc,lcl,endn' where id = 804;
+/* ศูนย์ */ update mai.thaidict set vowelpattern='oู', leadingconsonant='ศ', finalconsonant='น', tonemark='', tone='R', translit='suun', rules='fsc,hcl,endn' where id = 1079;
+/* ยนต์ */ update mai.thaidict set vowelpattern='o', leadingconsonant='ย', finalconsonant='น', tonemark='', tone='M', translit='yon', rules='ccivo,fsc,lcl,endn' where id = 908;
+/* วงศ์ */ update mai.thaidict set vowelpattern='o', leadingconsonant='ว', finalconsonant='ง', tonemark='', tone='M', translit='wong', rules='ccivo,fsc,lcl,endng' where id = 1055;
+/* สัตว์ */ update mai.thaidict set vowelpattern='oั', leadingconsonant='ส', finalconsonant='ต', tonemark='', tone='L', translit='sat', rules='fnsc,hcd,endt' where id = 1128;
