@@ -149,11 +149,19 @@ window.addEventListener('load', function() {
 		for (var i=0; i<set.length; i++) {
 			var t = set[i];
 			var m = voyc.noam.parseSyllable(t.w);
+			var dif = '';
+			if (t.vp!=m.vp) dif += 'vp';
+			if (t.lc!=m.lc) dif += 'lc';
+			if (t.fc!=m.fc) dif += 'fc';
+			if (t.tm!=m.tm) dif += 'tm';
+			if (t.tn!=m.tn) dif += 'tn';
+			if (t.tl!=m.tl) dif += 'tl';
+			if (t.ru!=m.ru.join()) dif += 'ru';
 			if (t.m==m.m && t.vp==m.vp && t.lc==m.lc && t.fc==m.fc && t.tm==m.tm && t.tn==m.tn && t.tl==m.tl && t.ru==m.ru.join()) {
-				s += 'same<nobr/>';
+				s += '/*same*/<nobr/>';
 			}
 			else {
-			s += 'different<nobr/>';
+			s += '/*diff'+dif+'*/<nobr/>';
 		}
 		s += compose(m) +"<br/>";
 		}
