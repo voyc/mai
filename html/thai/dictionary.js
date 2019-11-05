@@ -5,6 +5,39 @@
 	public function:
 		translate(phrase)
 **/
+/**
+Sources
+1. by hand
+
+2. http://www.thai-language.com/ref/starred
+	https://docs.google.com/spreadsheets/d/1zgcZH80RBbUD4m3h43UAsPLY0LbhTMTnQvoawRyKg6E/edit?usp=sharing
+	(.*?)\t(.*?)$
+	{t:'$1'\t,e:'$2'},
+
+3. original dict file ,with tones and hints
+
+See also 
+https://youtu.be/Gkj5AlcxmUE 100 phrases
+
+columns
+	t:thai language word
+	e:english language word
+	d:english language details
+	s:source (1,2,3,...)
+	n:definition number (1,2,3,...)
+	l:level (100,200,300,...)
+	p:part of speech
+		n:noun
+		v:verb
+		c:conjunction
+		p:preposition
+		j:adjective
+		e:adverb
+		r:pronoun
+		a:particle
+		g:glyph
+		s:syllable
+**/
 voyc.Dictionary = function() {
 	this.dict = [];
 	this.load();

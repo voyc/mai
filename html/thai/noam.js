@@ -510,7 +510,7 @@ voyc.parseSyllableTestSet = [
 		rules
 */
 voyc.Noam.prototype.parseSyllable = function(syllable) {
-	// find and remove trailing silent consonant
+	// remove silent consonant marked with garaan
 	var garaan = "์";
 	var syllabl = '';
 	for (var i=syllable.length-1; i>=0; i--) {
@@ -522,7 +522,10 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 		} 
 	}
 
-	// find matching vowel pattern for input syllable
+	// find the dictionary entry for this syllable
+	var dic = this.dictionary.lookup(syllable)[0]; // used only to include id in output
+
+	// find matching vowel pattern
 	var syl = false;
 	for (var k in voyc.vowelPatterns) {
 		syl = false;
@@ -530,7 +533,8 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 		var m = [];
 		if (m = pattern.exec(syllabl)) {
 			m.t = syllable;
-			m.i = k;
+			m.id = dic.id;
+			m.k = k;
 			m.m = m[0];
 			m.vp = voyc.vowelPatterns[k].t;
 			m.lc = m[1];
@@ -608,7 +612,7 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	var maidtree = '๊';
 	var maidtawaa = '๋';
 	
-	// tone
+	// tone rules
 	syl.tn = false;
 	if (leadingConsonantMeta.m == 'm' && syl.tm == maiaek) syl.tn = 'L', syl.ru.push('mc1');
 	else if (leadingConsonantMeta.m == 'm' && syl.tm == maitoh) syl.tn = 'F', syl.ru.push('mc2');
@@ -625,18 +629,21 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	else if (leadingConsonantMeta.m == 'l' && syl.ending == 'live') syl.tn = 'M', syl.ru.push('lcl');
 	else if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 's') syl.tn = 'H', syl.ru.push('lcds');
 	else if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 'l') syl.tn = 'F', syl.ru.push('lcdl');
-	if (!syl.tn) debugger;
 
+	// tone exceptions
+	if (syllable == 'ก็') syl.tn = 'F', syl.ru.push('tnex');
+	if (!syl.tn) debugger;
+	
 	// final consonant sound
 	var fs = '';
-	if ('กขคฆ'.split('').includes(syl.fc)) fs = 'k', syl.ru.push('endk');
-	else if ('จฉชซฌฎฏฐฑฒดตถทธศษส'.split('').includes(syl.fc)) fs = 't', syl.ru.push('endt');
-	else if ('ปพภฟบ'.split('').includes(syl.fc)) fs = 'p', syl.ru.push('endp');
-	else if ('ง'.split('').includes(syl.fc)) fs = 'ng', syl.ru.push('endng');
-	else if ('ม'.split('').includes(syl.fc)) fs = 'm', syl.ru.push('endm');
-	else if ('นณญรลฬ'.split('').includes(syl.fc)) fs = 'n', syl.ru.push('endn');
-	else if ('ย'.split('').includes(syl.fc)) fs = 'y', syl.ru.push('endy');
-	else if ('ว'.split('').includes(syl.fc)) fs = 'o', syl.ru.push('endo');
+	if ('กขคฆ'.split('').includes(syl.fc)) fs = 'k';
+	else if ('จฉชซฌฎฏฐฑฒดตถทธศษส'.split('').includes(syl.fc)) fs = 't';
+	else if ('ปพภฟบ'.split('').includes(syl.fc)) fs = 'p';
+	else if ('ง'.split('').includes(syl.fc)) fs = 'ng';
+	else if ('ม'.split('').includes(syl.fc)) fs = 'm';
+	else if ('นณญรลฬ'.split('').includes(syl.fc)) fs = 'n';
+	else if ('ย'.split('').includes(syl.fc)) fs = 'y';
+	else if ('ว'.split('').includes(syl.fc)) fs = 'o';
 
 	// consonant cluster with leading h
 	var lc = syl.lc;
@@ -644,7 +651,7 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 		lc = lc.substring(1);
 	}
 
-	// transliteration
+	// transliteration standard
 	var lce = '';
 	for (var i=0; i<lc.length; i++) {
 		lce += this.alphabet.lookup(lc[i]).e;
@@ -652,5 +659,14 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	var v = vowelMeta.e;
 	syl.tl = lce + v + fs;	
 
+	// transliteration custom
+	var lce = '';
+	for (var i=0; i<lc.length; i++) {
+		lce += voyc.translit[this.alphabet.lookup(lc[i]).e];
+	}
+	var v = voyc.translit[vowelMeta.e];
+	syl.tlc = lce + v + voyc.translit['-'+fs];	
+		
+	
 	return syl;
 }

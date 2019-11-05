@@ -131,6 +131,18 @@ window.addEventListener('load', function() {
 		document.getElementById('content').innerHTML = s;
 	}, true);
 
+	function compose(m) {
+		var format = document.getElementById("js").checked;
+		var s = '';
+		if (format) {
+			s = "{t:'"+m.t+"',m:'"+m.m+"',vp:'"+m.vp+"',lc:'"+m.lc+"',fc:'"+m.fc+"',tm:'"+m.tm+"',tn:'"+m.tn+"',tl:'"+m.tl+"',ru:'"+m.ru.join()+"'}";
+		}
+		else {
+			s = "/* "+m.t+" */ update mai.thaidict set vowelpattern='"+m.vp+"', leadingconsonant='"+m.lc+"', finalconsonant='"+m.fc+"', tonemark='"+m.tm+"', tone='"+m.tn+"', translit='"+m.tl+"', rules='"+m.ru.join()+"' where id = " + m.id + ";"; 
+		}
+		return s;
+	}
+
 	voyc.$('parseSyllableTest').addEventListener('click', function() {
 		var s = '';
 		var set = voyc.parseSyllableTestSet;
@@ -138,12 +150,12 @@ window.addEventListener('load', function() {
 			var t = set[i];
 			var m = voyc.noam.parseSyllable(t.w);
 			if (t.m==m.m && t.vp==m.vp && t.lc==m.lc && t.fc==m.fc && t.tm==m.tm && t.tn==m.tn && t.tl==m.tl && t.ru==m.ru.join()) {
-				s += 'same ';
+				s += 'same<nobr/>';
 			}
 			else {
-				s += 'different ';
-			}
-			s += "{w:'"+m.t+"',m:'"+m.m+"',vp:'"+m.vp+"',lc:'"+m.lc+"',fc:'"+m.fc+"',tm:'"+m.tm+"',tn:'"+m.tn+"',tl:'"+m.tl+"',ru:'"+m.ru.join()+"'},<br/>";
+			s += 'different<nobr/>';
+		}
+		s += compose(m) +"<br/>";
 		}
 		document.getElementById('content').innerHTML = s;
 	}, true);
@@ -155,7 +167,7 @@ window.addEventListener('load', function() {
 		for (var w in words) {
 			var word = words[w];
 			var m = voyc.noam.parseSyllable(word);
-			s += "{w:'"+m.t+"',m:'"+m.m+"',vp:'"+m.vp+"',lc:'"+m.lc+"',fc:'"+m.fc+"',tm:'"+m.tm+"',tn:'"+m.tn+"',tl:'"+m.tl+"',ru:'"+m.ru.join()+"'},<br/>";
+			s += compose(m) + "<br/>";
 		}
 		document.getElementById('content').innerHTML = s;
 	}, true);
@@ -174,8 +186,7 @@ window.addEventListener('load', function() {
 			}
 			else {
 				dcnt++;
-				s += "/* "+t.t+" */ update mai.thaidict set vowelpattern='"+m.vp+"', leadingconsonant='"+m.lc+"', finalconsonant='"+m.fc+"', tonemark='"+m.tm+"', tone='"+m.tn+"', translit='"+m.tl+"', rules='"+m.ru.join()+"'";
-				s += " where id = " + t.id + ";<br/>"; 
+				s += compose(m) + "<br/>";
 			}
 		});
 		s = dcnt + ' of ' + cnt + '<br/>' + s;
@@ -328,6 +339,8 @@ function parseWordDetail(word) {
 <button id='parseSyllableTest'>Parse Syllable Test</button>
 <button id='parseSyllableInput'>Parse Syllable Input</button>
 <button id='parseSyllableDict'>Parse Syllable Dict</button>
+<input type='radio' id='sql' name='a'></radio />SQL
+<input type='radio' id='js'  name='a' checked />JS
 <div id='detail'>this is the detail window</div>
 <div id='content'></div>
 &#9676
