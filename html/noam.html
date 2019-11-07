@@ -131,14 +131,33 @@ window.addEventListener('load', function() {
 		document.getElementById('content').innerHTML = s;
 	}, true);
 
-	function compose(m) {
+	function compose(m,t) {
 		var format = document.getElementById("js").checked;
 		var s = '';
-		if (format) {
-			s = "{t:'"+m.t+"',m:'"+m.m+"',vp:'"+m.vp+"',lc:'"+m.lc+"',fc:'"+m.fc+"',tm:'"+m.tm+"',tn:'"+m.tn+"',tl:'"+m.tl+"',ru:'"+m.ru.join()+"'}";
+		var dif = '';
+		if (t) {
+			if (t.vp!=m.vp) dif += 'vp';
+			if (t.lc!=m.lc) dif += 'lc';
+			if (t.fc!=m.fc) dif += 'fc';
+			if (t.tm!=m.tm) dif += 'tm';
+			if (t.tn!=m.tn) dif += 'tn';
+			if (t.tl!=m.tl) dif += 'tl';
+			if (t.ru!=m.ru.join()) dif += 'ru';
+			if (t.m==m.m && t.vp==m.vp && t.lc==m.lc && t.fc==m.fc && t.tm==m.tm && t.tn==m.tn && t.tl==m.tl && t.ru==m.ru.join()) {
+				s += '/*same&nbsp;';
+			}
+			else {
+				s += '/*diff'+dif+'&nbsp;';
+			}
 		}
 		else {
-			s = "/* "+m.t+" */ update mai.thaidict set vowelpattern='"+m.vp+"', leadingconsonant='"+m.lc+"', finalconsonant='"+m.fc+"', tonemark='"+m.tm+"', tone='"+m.tn+"', translit='"+m.tl+"', rules='"+m.ru.join()+"' where id = " + m.id + ";"; 
+			s += '/*';
+		}
+		if (format) {
+			s += "*/{t:'"+m.t+"',m:'"+m.m+"',vp:'"+m.vp+"',lc:'"+m.lc+"',fc:'"+m.fc+"',tm:'"+m.tm+"',tn:'"+m.tn+"',tl:'"+m.tl+"',ru:'"+m.ru.join()+"'}";
+		}
+		else {
+			s += m.t+" */ update mai.thaidict set vowelpattern='"+m.vp+"', leadingconsonant='"+m.lc+"', finalconsonant='"+m.fc+"', tonemark='"+m.tm+"', tone='"+m.tn+"', translit='"+m.tl+"', rules='"+m.ru.join()+"' where id = " + m.id + ";"; 
 		}
 		return s;
 	}
@@ -149,21 +168,7 @@ window.addEventListener('load', function() {
 		for (var i=0; i<set.length; i++) {
 			var t = set[i];
 			var m = voyc.noam.parseSyllable(t.w);
-			var dif = '';
-			if (t.vp!=m.vp) dif += 'vp';
-			if (t.lc!=m.lc) dif += 'lc';
-			if (t.fc!=m.fc) dif += 'fc';
-			if (t.tm!=m.tm) dif += 'tm';
-			if (t.tn!=m.tn) dif += 'tn';
-			if (t.tl!=m.tl) dif += 'tl';
-			if (t.ru!=m.ru.join()) dif += 'ru';
-			if (t.m==m.m && t.vp==m.vp && t.lc==m.lc && t.fc==m.fc && t.tm==m.tm && t.tn==m.tn && t.tl==m.tl && t.ru==m.ru.join()) {
-				s += '/*same*/<nobr/>';
-			}
-			else {
-			s += '/*diff'+dif+'*/<nobr/>';
-		}
-		s += compose(m) +"<br/>";
+			s += compose(m,t) +"<br/>";
 		}
 		document.getElementById('content').innerHTML = s;
 	}, true);
@@ -194,7 +199,7 @@ window.addEventListener('load', function() {
 			}
 			else {
 				dcnt++;
-				s += compose(m) + "<br/>";
+				s += compose(m,t) + "<br/>";
 			}
 		});
 		s = dcnt + ' of ' + cnt + '<br/>' + s;

@@ -484,6 +484,11 @@ voyc.parseSyllableTestSet = [
 	{w:'แก้ว',m:'แก้',vp:'แo',lc:'ก',fc:'ว',tm:'้',tn:'F',tl:'gaaeo',ru:'fsc,mc2'},
 	{w:'หวิว',m:'หวิ',vp:'oิ',lc:'หว',fc:'ว',tm:'',tn:'R',tl:'wio',ru:'cclh,fsc,hcl'},
 	{w:'ไหว',m:'ไหว',vp:'ไo',lc:'หว',fc:'',tm:'',tn:'R',tl:'wai',ru:'cclh,ovl,hcl'},
+	{w:'วรรค',m:'วรร',vp:'oรร',lc:'ว',fc:'ค',tm:'',tn:'H',tl:'wak',ru:'fnsc,lcds'},
+	{w:'ธรรม',m:'ธรร',vp:'oรร',lc:'ธ',fc:'ม',tm:'',tn:'M',tl:'tam',ru:'fsc,lcl'},
+	{w:'สรร',m:'สรร',vp:'oรร',lc:'ส',fc:'',tm:'',tn:'R',tl:'san',ru:'ovs,hcl'},
+	{w:'พร',m:'พร',vp:'o',lc:'พ',fc:'ร',tm:'',tn:'M',tl:'paawn',ru:'ccivo,fsc,lcl'},
+	{w:'ศร',m:'ศร',vp:'o',lc:'ศ',fc:'ร',tm:'',tn:'R',tl:'saawn',ru:'ccivo,fsc,hcl'},
 ];
 
 /*
@@ -605,6 +610,10 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 		else
 			syl.ending = 'live', syl.ru.push('ovl');
 	}
+	// exception for openrr
+	if (syl.vp == 'oรร' && syl.fc == '') {
+		syl.ending = 'live'; // add -n
+	}
 
 	// tone mark
 	var maiaek = '่';
@@ -649,6 +658,16 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	var lc = syl.lc;
 	if (lc.length > 1 && (firstConsonant == 'ห' || (firstConsonant == 'อ' && ['อย่า','อยู่','อย่าง','อยาก'].includes(syllable)))) {
 		lc = lc.substring(1);
+	}
+
+	// exception for openrr
+	if (syl.vp == 'oรร' && syl.fc == '') {
+		fs = 'n';
+	} 
+
+	// exception for final consonant ร with inherent vowel
+	if (syl.vp == 'o' && syl.fc == 'ร') {
+		vowelMeta = voyc.vowelPatternsLookup('oอ');
 	}
 
 	// transliteration standard

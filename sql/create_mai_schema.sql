@@ -25,6 +25,8 @@ create table mai.thaidict (
 	id serial primary key,
 	type char(1),        /* g */ 
 	thai varchar(100),   /* t */
+
+	/* meaning */
 	source int,          /* s */
 	level int,           /* l */
 	numdef int,          /* n */

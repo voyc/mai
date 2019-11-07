@@ -41,6 +41,15 @@ voyc.vowelPatternsInit = function() {
 	});
 }
 
+voyc.vowelPatternsLookup = function(pat) {
+	for (var i=0; i<voyc.vowelPatterns.length; i++) {
+		if (voyc.vowelPatterns[i].t == pat) {
+			break;
+		}
+	}
+	return voyc.vowelPatterns[i];
+}
+
 voyc.vowelPatterns = [
 { t:'oะ'	,e:'a'	,l:'s'	,d:'s'	,p:'r'	},
 { t:'oา'	,e:'aa'	,l:'l'	,d:'s'	,p:'r'	},
@@ -77,4 +86,5 @@ voyc.vowelPatterns = [
 { t:'เoา'	,e:'ao'	,l:'l'	,d:'d'	,p:'lr'	},
 { t:'oำ'	,e:'am'	,l:'l'	,d:'d'	,p:'r'	},
 { t:'เoย'	,e:'öi'	,l:'l'	,d:'d'	,p:'lr'	},
+{ t:'oรร'	,e:'a'	,l:'s'	,d:'d'	,p:'r'	},
 ];
