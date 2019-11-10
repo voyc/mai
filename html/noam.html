@@ -346,8 +346,8 @@ window.addEventListener('load', function() {
 			else if (c > 0) {
 				//s += dict2[ndx2].t + '<br/>';
 				var m = dict2[ndx2];
-				//s += "insert into mai.thaidict (level, source, type, numsyllables, numdef, pos, thai, eng, details) values ("+m.l+","+m.s+",'"+m.g+"',"+m.n+",1,'"+m.p+"','"+m.t+"','"+m.e+"','"+m.d+"');";
-				//s += "<br/>";
+				s += "insert into mai.thaidict (level, source, type, numsyllables, numdef, pos, thai, eng, details) values ("+m.l+","+m.s+",'"+m.g+"',1,"+m.n+",'"+m.p+"','"+m.t+"','"+m.e+"','"+m.d+"');";
+				s += "<br/>";
 				cntDict2++;
 				incDict2();
 			}
