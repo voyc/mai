@@ -8,6 +8,7 @@
 			s:'m',  // state w/t/u/r/m
 			m:0,    // mastery
 			r:5702539857129 // recency timestamp
+			t:'g'   // type g/w/l
 		}
 **/
 voyc.Vocab = function() {
@@ -35,10 +36,8 @@ voyc.Vocab.prototype.onLoginReceived = function(note) {
 
 voyc.Vocab.prototype.iterate = function(cb) {
 	for (var i=0; i<this.vocab.list.length; i++) {
-		vocab = this.vocab.list[i];
-		var b = cb(vocab,ndx);
-		if (!b) 
-			break;
+		voc = this.vocab.list[i];
+		cb(voc,i);
 	}
 }
 

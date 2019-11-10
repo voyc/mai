@@ -5,6 +5,8 @@
 	Noam, as in Noam Chomsky, famous linguist, 
 	does all the linquistic and grammar analysis.
 
+	Requires the prescence of dictionary and vocab data.
+
 	public methods:
 		collect()
 		parse()
@@ -23,17 +25,16 @@ voyc.Noam = function(dictionary,vocab) {
 	@return array of words
 */
 voyc.Noam.prototype.collect = function(target) {
+	target = [] || target;
 	var matched  = [];
 
 	function inVocab(ch,vocab) {
 		var r = false;
-		for (var i=0; i<vocab.length; i++) {
-			var v = vocab[i];
-			if (v.w == ch) {
-				r = v;
-				break;
+		vocab.iterate(function(voc,ndx) {
+			if (voc.w == ch) {
+				r = true;
 			}
-		}
+		});
 		return r;
 	}
 
@@ -59,7 +60,8 @@ voyc.Noam.prototype.collect = function(target) {
 				}
 			}
 		}
-		if (cnt == tlen && tcnt > 0) {
+		//if (cnt == tlen && tcnt > 0) {
+		if (cnt == tlen) {
 			matched.push(dict);
 		}
 	});
@@ -145,10 +147,7 @@ voyc.parse = function(input) {
 	];
 }
 
-/*
-static table of rules
-*/
-voyc.ru = [
+/* static table of rules */ voyc.ru = [
 	// endings
 	{code:'fsc', name:'final sonorant consonant: live'},
 	{code:'fnsc', name:'final non-sonorant consonant: dead'},
@@ -431,262 +430,16 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 }
 
 
-
-
-
-/**
-	Parse a word into syllables.
-	
-	public static function voyc.parseWord(input)
-		@return array
-
-		return: tone, one of five: L,M,H,R,F
-
-		test cases
-			ไก่	L	ok
-			แดน	M	ok
-			ใด	M	ok
-			ทน	M	ok, default vowel closed
-			ทวีป	HF	error, is M, default vowel open not detected
-			ทำไม	MM	ok
-			นี่	F	ok
-			ที่นี่	FF	ok
-			นม	M	ok
-			นวด	F	ok
-			แน่	F	ok
-			ปวด	L	ok
-			ปาก	L	error, is M, finalConsonant not detected
-			ปี	M	ok
-			แปด	L	ok
-			ไม่	F	ok
-
-		todo
-			count trailing orphan glyphs
-			look at orphan glyphs
-			if consonant, try to add to previous syllable as finalConsonant
-			if cannot, try to make default vowel open
-
-		note: parseWord() need only be done once for each word
-			then it is added to dictionary and components tables
-
-		parse() on the other hand, will be run repeatedly 
-			on every sentence that is not in the phrase book
-
-		new tables:
-			components - non-unique key: dictionary, phrasebook
-				alphabet, ru, words, grammars
-			phrase book - like dictionary, maybe part of dictionary
-			ru - shortname to longname
-*/
-voyc.Noam.prototype.xparseWord = function(input, returnDetails) {
-	returnDetails = returnDetails || false;
-	var word = input;
-
-	// find matching pattern for input word
-	var numMatches = 0;
-	var matchedPatterns = [];
-	for (var k in voyc.vowelPatterns) {
-		var pattern = new RegExp(voyc.vowelPatterns[k].syllablePattern, 'g');
-		var cnt = 0;
-		var m = [];
-		// for global pattern, must exec repeatedly, once for each match
-
-		while (m = pattern.exec(word)) {
-			m.patternIndex = k;
-			m.string = m[0];
-			m.vowel = voyc.vowelPatterns[k].print;
-			m.leadingConsonant = m[1];
-			m.toneMark = m[2];
-			if (m.length > 3) {
-				m.finalConsonant = m[3];
-			}
-
-			//m.leadingConsonant = voyc.alphabet.lookup(m[1])[0];
-			//m.finalConsonant = voyc.alphabet.lookup(m[3])[0];
-			//m.tonemark = voyc.alphabet.lookup(m[2])[0];
-
-			m.begin = m.index;
-			m.end = m.index + m.string.length; // up to but not including
-			matchedPatterns.push(m);
-			cnt++;
-			if (cnt > 50) {
-				break;  // stop runaway loop
-			}
-		}
+voyc.Noam.prototype.dev = function(msg) {
+	// parse msg
+	// assume msg = 'collect a,b,c,d';
+	var s = '';
+	switch (msg[1]) {
+		case 'collect':
+			var a =this.collect(msg[2]);
+			for (var k in a) {
+				s += (parseInt(k)+1)+'\t'+a[k].t+'\t'+a[k].e+'\t'+a[k].l;
+			}		
+	return s;
 	}
-	var numMatches = matchedPatterns.length;
-	if (!numMatches) {
-		return {tone:'', num:0, syllables:0};
-	}
-
-	// sort matched patterns by index and length, both ascending
-	matchedPatterns.sort(function(a,b) {
-		var x = a.index - b.index;
-		if (x == 0) {
-			(a.end - a.begin) - (b.end - b.begin);
-		}
-		return x;
-	});
-
-	// assemble possible chains of syllables
-	function addSyllableToChain(chain, syllable) {
-		chain.orphans.push({begin:chain.end, end:syllable.begin});
-		chain.numOrphanGlyphs += syllable.begin - chain.end;
-		chain.syllables.push(syllable);
-		chain.end = syllable.end;
-	}
-
-	function isOverlap(chain, syllable) {
-		return (syllable.begin < chain.end);
-	}
-
-	var chains = [];
-	for (var k in matchedPatterns) {
-		var syllable = matchedPatterns[k];
-		var chained = false;
-
-		// add the syllable to each chain where it fits
-		for (var c in chains) {
-			chain = chains[c];
-			if (!isOverlap(chain, syllable)) {
-				addSyllableToChain(chain, syllable);
-				chained = true;
-			}
-		}
-
-		// if it did not fit on any chain, create a new chain and add it there
-		if (!chained) {
-			var chain = {
-				syllables:[],
-				orphans:[],
-				numOrphanGlyphs:0,
-				end:0
-			};
-			addSyllableToChain(chain, syllable);
-			chains.push(chain);
-		}
-	}
-
-	// add trailing orphans
-	for (var c in chains) {
-		chain = chains[c];
-		if (chain.end < word.length) {
-			chain.orphans.push({begin:chain.end, end:word.length});
-			chain.numOrphanGlyphs += word.length - chain.end;
-			chain.end = word.length;
-		}
-	}
-
-	// convert orphaned consonant to finalConsonant or defaultVowelOpen
-//	for (var c in chains) {
-//		chain = chains[c];
-//		if (chain.end < word.length) {
-//			chain.orphans.push({begin:chain.end, end:word.length});
-//			chain.numOrphanGlyphs += word.length - chain.end;
-//			chain.end = word.length;
-//		}
-//	}
-
-/*
-	other ru
-		vowel dipthong: ai, ao, etc
-		consonant cluster, not labeled as dipthong
-
-		final consonant
-			six ending sounds:
-				live  /-n/, /-ng/, or /-m/
-				dead  /-k/, /-p/, or /-t/
-
-		reduplication
-			a single consonant is used twice, as the 
-				end of the previous syllable, and 
-				beginning of the next
-			นัยนา  นัย ย นา    ย used twice, Naiyana
-			วิทยาลัย  วิท ท ยาลัย
-
-		initial consonant cluster
-			true consonant cluster { ก, ข, ค, ต, ป, ผ, พ } + { ร, ล, ว }
-			false consonant cluster  { จ, ซ, ท, ส, ศ } + silent ร
-			leading consonant clusters  neither true nor false 
-				including clusters with leading ห or อ
-				including enepenthetic initial consonant cluster
-					short-a inserted between incompatible adjacent consonants
-
-		inherent vowel
-			short o invoked between initial and final consonant
-			short a invoked with one standalone single consonant
-			short a in enepenthetic cluster described above
-*/
-
-	// choose the chain with the lowest number of orphans
- 	var winnerIndex = -1;
-	var winnerNumOrphanGlyphs = 100;
-	for (var c in chains) {
-		chain = chains[c];
-		if (chain.numOrphanGlyphs < winnerNumOrphanGlyphs) {
-			winnerNumOrphanGlyphs = chain.numOrphanGlyphs;
-			winnerIndex = c;
-		}
-	}
-	var winner = chains[c];
-	var numSyllables = winner.syllables.length;
-	return {tone:tone, num:numSyllables, syllables:winner.syllables};
-
-	
-	// Actually, there should be one and only one syllable with 0 orphans.
-	// If not, developer intervention is required.
-	if (winner.numOrphanGlyphs != 0) {
-		console.log( [winner.syllables[0].input, "orphans", winner.numOrphanGlyphs]);
-	}
-
-	// analyze each syllable
-	var tone = '';
-	for (var s in winner.syllables) {
-		var syl = winner.syllables[s];
-		syl.ru = [];
-		syl.ending = '';
-		if (syl.finalConsonant) {
-			var finalConsonantMeta = voyc.alphabet.lookup(syl.finalConsonant)[0];
-			if (finalConsonantMeta.a == 's')  // sonorant
-				syl.ending = 'live', syl.ru.push('final sonorant consonant: live');
-			else
-				syl.ending = 'dead', syl.ru.push('final non-sonorant consonant: dead');
-		}
-		else {
-			var vowelMeta = voyc.vowelPatterns[syl.patternIndex];
-			if (vowelMeta.l == 's')
-				syl.ending = 'dead', syl.ru.push('open vowel short: dead');
-			else
-				syl.ending = 'live', syl.ru.push('open vowel long: live');
-		}
-
-		// apply tone ru
-		syl.tn = false;
-		var maiaek = '่';
-		var maitoh = '้';
-		var maidtree = '๊';
-		var maidtawaa = '๋';
-		var leadingConsonantMeta = voyc.alphabet.lookup(syl.leadingConsonant)[0];
-		var vowelMeta = voyc.vowelPatterns[syl.patternIndex];
-		if (leadingConsonantMeta.m == 'm' && syl.ending == 'live') syl.tn = 'M', syl.ru.push('mid-class live: M');
-		if (leadingConsonantMeta.m == 'm' && syl.ending == 'dead') syl.tn = 'L', syl.ru.push('mid-class dead: L');
-		if (leadingConsonantMeta.m == 'm' && syl.tm == maiaek) syl.tn = 'L', syl.ru.push('mid-class mai eak: L');
-		if (leadingConsonantMeta.m == 'm' && syl.tm == maitoh) syl.tn = 'F', syl.ru.push('mid-class mai toh: F');
-		if (leadingConsonantMeta.m == 'h' && syl.ending == 'live') syl.tn = 'R', syl.ru.push('high-class live: R');
-		if (leadingConsonantMeta.m == 'h' && syl.ending == 'dead') syl.tn = 'L', syl.ru.push('high-class dead: L');
-		if (leadingConsonantMeta.m == 'h' && syl.tm == maiaek) syl.tn = 'L', syl.ru.push('high-class mai eak: L');
-		if (leadingConsonantMeta.m == 'h' && syl.tm == maitoh) syl.tn = 'F', syl.ru.push('high-class mai toh: F');
-		if (leadingConsonantMeta.m == 'l' && syl.ending == 'live') syl.tn = 'M', syl.ru.push('low-class live: M');
-		if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 's') syl.tn = 'H', syl.ru.push('low-class dead short: H');
-		if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 'l') syl.tn = 'F', syl.ru.push('low-class dead long: F');
-		if (leadingConsonantMeta.m == 'l' && syl.tm == maiaek) syl.tn = 'F', syl.ru.push('low-class mai eak: F');
-		if (leadingConsonantMeta.m == 'l' && syl.tm == maitoh) syl.tn = 'H', syl.ru.push('low-class mai toh: H');
-		if (!syl.tn) 
-			debugger;
-
-		tone += syl.tn;
-	}
-
-	return {tone:tone, syllables:winner.syllables};
 }
-

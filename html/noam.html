@@ -24,6 +24,7 @@ table {
 <script src='thai/noam.js'></script>
 <script src='thai/dictionary.js'></script>
 <script src='thai/dict.js'></script>
+<script src='thai/dict2.js'></script>  <!-- used onetime only in special -->
 <script src='js/vocab.js'></script>
 <script src='thai/alphabet.js'></script>
 <!--
@@ -261,29 +262,104 @@ window.addEventListener('load', function() {
 	//	document.getElementById('content').innerHTML = s;
 	//});
 
+	//voyc.$('special').addEventListener('click', function() {
+	//	var s = '';
+	//	var acnt = 0;
+	//	var ccnt = 0;
+	//	dict.iterate(function(m,j) {
+	//		if (m.g == 'o' && m.n == 1 && m.ns == 1) {
+	//			var m = voyc.noam.parseSyllable(m.t);
+	//			//s += m.t+'\t'+m.m+'\t'+m.vp+'\t'+m.lc+'\t'+m.fc+'\t'+m.tm+'\t'+m.tn+'\t'+m.tl+'\t'+m.tl+'<sup>'+m.tn+'</sup>' +'<br/>';
+	//			//s += m.t +'<br/>';
+	//			s += "update mai.thaidict set vowelpattern='"+m.vp+"'";
+	//			s += ",leadingconsonant='"+m.lc+"'";
+	//			s += ",finalconsonant='"+m.fc+"'";
+	//			s += ",tonemark='"+m.tm+"'";
+	//			s += ",tone='"+m.tn+"'";
+	//			s += ",translit='"+m.tl+"'";
+	//			s += " where thai='"+m.t +"';<br/>";
+	//			if (m.status) {
+	//			    ccnt++;
+	//			}
+	//			acnt++;
+	//		}
+	//	});
+	//	s = ccnt + " of " + acnt + '<br/>' + s;
+	//	document.getElementById('content').innerHTML = s;
+	//});
+
 	voyc.$('special').addEventListener('click', function() {
-		var s = '';
-		var acnt = 0;
-		var ccnt = 0;
-		dict.iterate(function(m,j) {
-			if (m.g == 'o' && m.n == 1 && m.ns == 1) {
-				var m = voyc.noam.parseSyllable(m.t);
-				//s += m.t+'\t'+m.m+'\t'+m.vp+'\t'+m.lc+'\t'+m.fc+'\t'+m.tm+'\t'+m.tn+'\t'+m.tl+'\t'+m.tl+'<sup>'+m.tn+'</sup>' +'<br/>';
-				//s += m.t +'<br/>';
-				s += "update mai.thaidict set vowelpattern='"+m.vp+"'";
-				s += ",leadingconsonant='"+m.lc+"'";
-				s += ",finalconsonant='"+m.fc+"'";
-				s += ",tonemark='"+m.tm+"'";
-				s += ",tone='"+m.tn+"'";
-				s += ",translit='"+m.tl+"'";
-				s += " where thai='"+m.t +"';<br/>";
-				if (m.status) {
-				    ccnt++;
-				}
-				acnt++;
-			}
+		var dict = voyc.noam.dictionary.dict;	
+		var ndx = 0;
+		dict.sort(function(a,b) {
+			return a.t.localeCompare(b.t);
 		});
-		s = ccnt + " of " + acnt + '<br/>' + s;
+		
+		var dict2 = voyc.dict2;
+		var ndx2 = 0;
+		dict2.sort(function(a,b) {
+			return a.t.localeCompare(b.t);
+		});
+
+		function incDict() {
+			if (ndx >= 0) {
+				ndx++;
+				if (ndx >= dict.length) {
+					ndx = -1;
+				}
+			}
+		}
+		function incDict2() {
+			if (ndx2 >= 0) {
+				ndx2++;
+				if (ndx2 >= dict2.length) {
+					ndx2 = -1;
+				}
+			}
+		}
+		function compare() {
+			if (ndx < 0) {
+				return -1;
+			}
+			if (ndx2 < 0) {
+				return 1;
+			}
+			return (dict[ndx].t.localeCompare(dict2[ndx2].t));
+		}
+
+		var s= '';
+		var cntBoth = 0;
+		var cntDict = 0;
+		var cntDict2 = 0;
+		var safety = 0;
+		while ((ndx >= 0 || ndx2 >= 0) && safety < 2000) {
+			var c = compare();		
+			if (c == 0) {
+				cntBoth++;
+				incDict();
+				incDict2();
+			}
+			else if (c < 0) {
+				cntDict++;
+				incDict();
+			}
+			else if (c > 0) {
+				//s += dict2[ndx2].t + '<br/>';
+				var m = dict2[ndx2];
+				//s += "insert into mai.thaidict (level, source, type, numsyllables, numdef, pos, thai, eng, details) values ("+m.l+","+m.s+",'"+m.g+"',"+m.n+",1,'"+m.p+"','"+m.t+"','"+m.e+"','"+m.d+"');";
+				//s += "<br/>";
+				cntDict2++;
+				incDict2();
+			}
+			safety++;
+		}
+		s += 'both: ' + cntBoth + '<br/>';
+		s += 'dict only: ' + cntDict + '<br/>';
+		s += 'dict only2: ' + cntDict2 + '<br/>';
+		s += 'dict: ' + dict.length + '<br/>';
+		s += 'dict2: ' + dict2.length + '<br/>';
+		//dictonly + matched == dict.length
+		//dict2only + matched == dict2.length
 		document.getElementById('content').innerHTML = s;
 	});
 
@@ -307,7 +383,7 @@ window.addEventListener('load', function() {
 		s += '<table>';
 
 		var input = voyc.$('parse-area').value;
-		var a = voyc.collect(input);
+		var a = voyc.noam.collect(input);
 
 		for (var k in a) {
 			s += '<tr><td>'+(parseInt(k)+1)+'</td><td>'+a[k].t+'</td><td>'+a[k].e+'</td><td>'+a[k].l+'</td></tr>';

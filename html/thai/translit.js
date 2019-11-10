@@ -56,3 +56,20 @@ voyc.translit = {
 '-y'	:'i'	,
 '-w'	:'o'	,
 };
+
+
+/**
+pos table
+**/
+voyc.pos = {
+'n':'noun',
+'v':'verb',
+'c':'conjunction',
+'p':'preposition',
+'j':'adjective',
+'e':'adverb',
+'r':'pronoun',
+'a':'particle',
+'g':'glyph',
+'s':'syllable',
+};

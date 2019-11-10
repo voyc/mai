@@ -57,7 +57,7 @@ voyc.Lee = function(chat,observer) {
 		maxSizeReview:10,
 		isAutoPromote:true,
 		promotePctWork:80,
-		promoteCntWork:1,//3
+		promoteCntWork:3,//1
 		promotePctReview:90,
 		promoteCntReview:6,
 		askTone:false, //true,
@@ -243,14 +243,15 @@ voyc.Lee.prototype.respond = function(o) {
 			break;
 		case 'showanswer':
 			var s = '';
-			if (this.dictEntry.g == 'g' ) {
+			if (this.dictEntry.g == 'g' && this.dictEntry.p == 't') {
+				s = this.key + "  tone mark";
+			}
+			else if (this.dictEntry.g == 'g' ) {
 				s = this.key + "  " + voyc.strp[this.dictEntry.p] + ", " + voyc.strm[this.dictEntry.m] + ", sound: " + this.dictEntry.e;
 			}
 			else if (this.dictEntry.g == 'o') {
-				s = this.key + "  " + this.dictEntry.tl + "<sup>" + this.dictEntry.tn + "</sup>  <i>" + this.dictEntry.p + "</i> " + this.dictEntry.e + "<br/>" + this.dictEntry.d;
-			}
-			else if (this.dictEntry.g == 't') {
-				s = this.key + "  tone mark";
+				//s = this.key + "  " + this.dictEntry.tl + "<sup>" + this.dictEntry.tn + "</sup>  <i>" + this.dictEntry.p + "</i> " + this.dictEntry.e + "<br/>" + this.dictEntry.d;
+				s = this.key + "  " + this.dictEntry.tl + "<sup>" + this.dictEntry.tn + "</sup>  <i>" + voyc.pos[this.dictEntry.p] + "</i> " + this.dictEntry.e;
 			}
 			else if (this.dictEntry.g == 's') {
 				s = this.key + "  symbol";

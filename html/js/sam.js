@@ -67,7 +67,7 @@ voyc.Sam.prototype.setup = function() {
 }
 
 voyc.Sam.prototype.onGetVocabReceived = function() {
-	this.noam = new voyc.Noam(voyc.dictionary, this.vocab.vocab.list);
+	this.noam = new voyc.Noam(voyc.dictionary, this.vocab);
 	this.lessons.setup();
 	var lesson = this.lessons.lesson;
 	var s = '';
@@ -145,6 +145,7 @@ voyc.Sam.prototype.collect = function() {
 	this.chat.post(this.idhost, s);
 	this.startDrill(lesson,phasendx);
 }
+
 voyc.Sam.prototype.endLesson = function() {
 	this.chat.changeHost('Sam');
 	this.state = 'next';
@@ -228,6 +229,9 @@ voyc.Sam.prototype.respond = function(o) {
 					break;
 				case 'showalllessons':
 					break;
+				case 'noam':
+					this.noam.dev(w);
+					break;
 			}
 			break;
 		case 'next':
@@ -235,6 +239,10 @@ voyc.Sam.prototype.respond = function(o) {
 				case 'yes':
 				case 'go':
 					this.startLesson();
+					break;
+				default:
+					this.state = 'ready';
+					this.respond(o);
 					break;
 			}
 			break;
