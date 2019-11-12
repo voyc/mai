@@ -2,46 +2,55 @@
 **/
 voyc.Lessons = function(vocab) {
 	this.vocab = vocab;
-	this.lessons = voyc.lessons;
-	this.lessonid = '';
-	this.phasendx = -1;
-	this.lesson = null;
+	this.lessons = voyc.lessons; // the array of lessons
+	this.lessonid = ''; // the id of the current lesson
+	this.lesson = null; // the current lesson object
+	this.phasendx = -1; // the current phase of the current lesson, a zero-based index into phases array
+	this.direction = 'normal';
+	this.settings = {};
+	this.settings.firstLessonId = 'kh';
 }
 
 voyc.Lessons.prototype.setup = function() {
 	// get most recent lesson state
-	var highm = '';
-	var loww = '';
-	this.vocab.iterate(function(vocab) {
-		if (vocab.t == 'l') {
-			if (vocab.s == 'm') {
-				highm = vocab.w;
-			}
-			else {
-				loww = vocab.w;
-				lows = vocab.s;
-			}
+	//   what do we find when we iterate the lesson ids in vocab?
+	//     multiple mastered lessons
+	//     multiple started lessons, each in a different phase
+	//   in vocab, state = m or the phase ndx
+	//   if there are lessons in progress, we want the most recenct one
+	//   find the most recent lesson
+	//     if it is mastered, go to the next one
+	//     if it is not mastered, restart the current phase
+	var mostrecent = 0;
+	var mostrecentid = '';
+	var mostrecentstate = '';
+	this.vocab.iterate(function(voc) {
+		if (voc.t == 'l' && voc.r > mostrecent) {
+			mostrecent = voc.r;
+			mostrecentid = voc.w;
+			mostrecentstate = voc.s;
 		}
-		return true; // continue
 	});
 
-	if (loww) {
-		this.lessonid = loww;
-		this.lesson = this.getLessonFromId(loww);
-		this.phasendx = lows;
-		this.startState = 'w';
+	this.lessonid = mostrecentid;
+	this.lesson = this.getLessonFromId(this.lessonid);
+	this.phasendx = mostrecentstate;
+
+	// three possible start states:
+	//    first time ever	
+	//    most recent lesson was completed, start a new lesson
+	//    most recent lesson in progress
+	if (this.lessonid == '') {
+		this.lessonid = this.settings.firstLessonId;
+		this.lesson = this.getLessonFromId(this.lessonid);
+		this.phasendx = 0;
+		this.startState = 'u';  // first time ever
 	}
-	else if (highm) {
-		this.lessonid = highm;
-		this.lesson = this.getLessonFromId(highm);
-		this.phasendx = this.lesson.phases.length-1;
-		this.startState = 'm';
+	else if (this.phasendx == 'm') {
+		this.startState = 'm'; // previous lesson was mastered
 	}
 	else {
-		this.lessonid = this.lessons[0].id;
-		this.lesson = this.lessons[0];
-		this.phasendx = 0;
-		this.startState = 'u';
+		this.startState = 'w'; // previous lesson is in-progresss
 	}
 }
 
@@ -55,6 +64,7 @@ voyc.Lessons.prototype.getLessonFromId = function(id) {
 	}
 	return lesson;
 }
+
 voyc.Lessons.prototype.current = function() {
 	var lesson = false;
 	for (var i=0; i<this.lessons.length; i++) {
@@ -99,8 +109,6 @@ voyc.Lessons.prototype.isLastLesson = function() {
 	return (this.currentNdx() >= this.lessons.length-1);
 }
 
-voyc.phases = ['glyph', 'word', 'phrase', 'sentence', 'story'];
-
 voyc.lessons = [
 	{
 		id:'kh',
@@ -110,9 +118,10 @@ voyc.lessons = [
 		algorithm: 'progressive',
 		initialShuffle: false,
 		workSize:3,
-		phases: ['glyph', 'word'],
+		phases: ['glyph', 'word', 'word-reverse', 'phrase', 'phrase-reverse'],
 		glyph: ['ด','่','ก','า','ห','ส','ฟ','ว'],
 		word:[],
+		phrase:[],
 	},{
 		id:'ki',
 		section: 'Keyboard',
@@ -124,6 +133,7 @@ voyc.lessons = [
 		phases: ['glyph', 'word'],
 		glyph: ['พ','ี','อ','ท','ำ','ร','แ','ม'],
 		word:[],
+		phrase:[],
 	},{
 		id:'krp',
 		section: 'Keyboard',
@@ -135,6 +145,7 @@ voyc.lessons = [
 		phases: ['glyph', 'word'],
 		glyph: ['ไ','น','ป','ใ','ๆ','ย','ผ','ฝ'],
 		word:[],
+		phrase:[],
 	},{
 		id:'kic',
 		section: 'Keyboard',
@@ -146,6 +157,7 @@ voyc.lessons = [
 		phases: ['glyph', 'word'],
 		glyph: ['เ','้','ะ','ั','ิ','ื'],
 		word:[],
+		phrase:[],
 	},{
 		id:'kpr',
 		section: 'Keyboard',
@@ -157,6 +169,7 @@ voyc.lessons = [
 		phases: ['glyph', 'word'],
 		glyph: ['ง','บ','ล'],
 		word:[],
+		phrase:[],
 	}
 ];
 

@@ -31,13 +31,6 @@ voyc.Sam = function(chat) {
 	this.chat = chat;
 	this.req = {};
 	this.setup();
-	this.phaseNames = [
-		'glyph',
-		'word',
-		'phrase',
-		'sentence',
-		'story'
-	];
 	this.state = '';
 }
 
@@ -69,8 +62,10 @@ voyc.Sam.prototype.setup = function() {
 voyc.Sam.prototype.onGetVocabReceived = function() {
 	this.noam = new voyc.Noam(voyc.dictionary, this.vocab);
 	this.lessons.setup();
-	var lesson = this.lessons.lesson;
+
+	// restart previous lesson
 	var s = '';
+	var lesson = this.lessons.lesson;
 	switch (this.lessons.startState) {
 		case 'w':
 			s += 'You were working on ';
@@ -113,11 +108,41 @@ voyc.Sam.prototype.endDrill = function() {
 	this.lessons.phasendx++;
 	this.vocab.set(this.lessons.lesson.id, 'l',this.lessons.phasendx,0);
 	if (this.lessons.phasendx < this.lessons.lesson.phases.length) { 
-		var phase = voyc.phases[this.lessons.phasendx];
+		var phase = this.lessons.lesson.phases[this.lessons.phasendx];
 		switch (phase) {
+			case 'glyph':
+				break;
 			case 'word':
-				this.state = 'collect';
-				this.chat.post(this.idhost, 'Good job.  Let\'s try some words using these letters.  Click go when ready?', ['go']);
+				this.state = 'nextphase';
+				var collection = this.collectWords();
+				var s = 'Good job.  Let\'s try some words using these letters.<br/>';
+				for (var i=0; i<collection.length; i++) {
+					var w = collection[i];
+					this.lessons.lesson.word.push(w.t);
+					s += w.t + "<br/>";
+				}
+				s += 'Click go when ready.';
+				this.chat.post(this.idhost, s, ['go']);
+				break;
+			case 'word-reverse':
+				this.state = 'nextphase';
+				this.chat.post(this.idhost, 'Now the reverse.  Click go when ready.', ['go']);
+				break;
+			case 'phrase':
+				this.state = 'nextphase';
+				var collection = this.collectPhrases();
+				var s = 'Good job.  Let\'s try some phrases using these words.<br/>';
+				for (var i=0; i<collection.length; i++) {
+					var w = collection[i];
+					this.lessons.lesson.phrase.push(w.t);
+					s += w.t + "<br/>";
+				}
+				s += 'Click go when ready.';
+				this.chat.post(this.idhost, s, ['go']);
+				break;
+			case 'phrase-reverse':
+				this.state = 'nextphase';
+				this.chat.post(this.idhost, 'Now the reverse. Click go when ready.', ['go']);
 				break;
 		}
 	}
@@ -126,24 +151,29 @@ voyc.Sam.prototype.endDrill = function() {
 	}
 }
 
-voyc.Sam.prototype.collect = function() {
+voyc.Sam.prototype.collectWords= function() {
 	var lesson = this.lessons.lesson;
 	var phasendx = this.lessons.phasendx;
-	var collection = this.noam.collect(lesson.glyph);
+	var collection = this.noam.collectWords(lesson.glyph);
 	collection.sort(function(a,b) {
 		return(a.l - b.l);
 	});
 	var optSetSize = 8;
 	collection = collection.slice(0,optSetSize);
 	collection = voyc.shuffleArray(collection);
-	var s = '';
-	for (var i=0; i<collection.length; i++) {
-		var w = collection[i];
-		lesson.word.push(w.t);
-		s += w.t + "<br/>";
-	}
-	this.chat.post(this.idhost, s);
-	this.startDrill(lesson,phasendx);
+	return collection;
+}
+voyc.Sam.prototype.collectPhrases = function() {
+	var lesson = this.lessons.lesson;
+	var phasendx = this.lessons.phasendx;
+	var collection = this.noam.collectPhrases(lesson.word);
+	collection.sort(function(a,b) {
+		return(a.l - b.l);
+	});
+	var optSetSize = 8;
+	collection = collection.slice(0,optSetSize);
+	collection = voyc.shuffleArray(collection);
+	return collection;
 }
 
 voyc.Sam.prototype.endLesson = function() {
@@ -214,10 +244,10 @@ voyc.Sam.prototype.respond = function(o) {
 		case 'drill':
 			return this.lee.respond(o);
 			break;
-		case 'collect':
+		case 'nextphase':
 			switch (w[0]) {
 				case 'go':
-					this.collect();
+					this.startDrill(this.lessons.lesson, this.lessons.phasendx);
 					break;
 			}
 			break;

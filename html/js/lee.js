@@ -75,7 +75,9 @@ voyc.Lee.prototype.drill = function(lesson,phasendx,callback) {
 
 	// create the scores array
 	this.scores = [];
-	var cards = voyc.phases[this.phasendx];
+	var phase = this.lesson.phases[this.phasendx];
+	var cards = phase.split('-')[0];
+	this.direction = (phase.split('-')[1]) ? (phase.split('-')[1]) : 'normal';
 	for (var i=0; i<this.lesson[cards].length; i++) {
 		var q = this.lesson[cards][i];
 		var dict = this.readDictionary(q);
@@ -98,7 +100,7 @@ voyc.Lee.prototype.choose = function() {
 	}
 	switch(this.lesson.algorithm) {
 		case 'sequential':
-			var cards = voyc.phases[this.phasendx];
+			var cards = this.lesson.phases[this.phasendx].split('-')[0];
 			chosen = incr(this.ndxCard, this.lesson[cards].length);
 			break;
 		case 'progressive':
@@ -171,10 +173,14 @@ voyc.Lee.prototype.nextCard = function() {
 		this.reportCallback(false);
 		return;
 	}
-	var cards = voyc.phases[this.phasendx];
+	var cards = this.lesson.phases[this.phasendx].split('-')[0];
 	this.key = this.lesson[cards][this.ndxCard];
 	this.dictEntry = this.readDictionary(this.key);
-	this.chat.post(this.idhost, this.key, []);
+	var s = this.key;
+	if (this.direction == 'reverse') {
+		s = this.dictEntry.e;
+	}
+	this.chat.post(this.idhost, s, []);
 	console.log('next card: ' + this.key);
 }
 
@@ -273,7 +279,7 @@ voyc.Lee.prototype.respond = function(o) {
 }
 
 voyc.Lee.prototype.checkAnswer = function(o) {
-	var cards = voyc.phases[this.phasendx];
+	var cards = this.lesson.phases[this.phasendx].split('-')[0];
 	return (o.msg == this.lesson[cards][this.ndxCard]);
 }
 

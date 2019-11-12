@@ -64,12 +64,12 @@ pos table
 voyc.pos = {
 'n':'noun',
 'v':'verb',
-'c':'conjunction',
-'p':'preposition',
-'j':'adjective',
-'e':'adverb',
-'r':'pronoun',
-'a':'particle',
+'c':'conj',
+'p':'prep',
+'j':'adj',
+'e':'adv',
+'r':'pron',
+'a':'part',
 'g':'glyph',
 's':'syllable',
 };

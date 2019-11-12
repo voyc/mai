@@ -24,7 +24,56 @@ voyc.Noam = function(dictionary,vocab) {
 	only glyphs already mastered or working.
 	@return array of words
 */
-voyc.Noam.prototype.collect = function(target) {
+voyc.Noam.prototype.collectWords = function(target) {
+	target = [] || target;
+	var matched  = [];
+
+	function inVocab(ch,vocab) {
+		var r = false;
+		vocab.iterate(function(voc,ndx) {
+			if (voc.w == ch) {
+				r = true;
+			}
+		});
+		return r;
+	}
+
+	// scan the dictionary
+	var self = this;
+	this.dictionary.iterate(function(dict,n) {
+		if (dict.g != 'o') {  // collecting one-syllable words
+			return false;
+		}
+		if (inVocab(dict.t,self.vocab)) { // not yet mastered
+			return false;
+		}
+		var t = dict.t;
+		var tlen = t.length;
+		var cnt = 0;
+		var tcnt = 0;
+		for (var i=0; i<tlen; i++) {  // look at each letter in the word
+			var m = inVocab(t[i],self.vocab);
+			if (m) {
+				cnt++;
+				if (target.includes(m.w)) {
+					tcnt++;	
+				}
+			}
+		}
+		//if (cnt == tlen && tcnt > 0) {
+		if (cnt == tlen) {
+			matched.push(dict);
+		}
+	});
+	return matched;
+}
+
+/**
+	Collect a list of phrases that contain 
+	only words already mastered or working.
+	@return array of words
+*/
+voyc.Noam.prototype.collectPhrases = function(target) {
 	target = [] || target;
 	var matched  = [];
 
@@ -436,7 +485,7 @@ voyc.Noam.prototype.dev = function(msg) {
 	var s = '';
 	switch (msg[1]) {
 		case 'collect':
-			var a =this.collect(msg[2]);
+			var a =this.collectWords(msg[2]);
 			for (var k in a) {
 				s += (parseInt(k)+1)+'\t'+a[k].t+'\t'+a[k].e+'\t'+a[k].l;
 			}		
