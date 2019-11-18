@@ -56,20 +56,3 @@ voyc.translit = {
 '-y'	:'i'	,
 '-w'	:'o'	,
 };
-
-
-/**
-pos table
-**/
-voyc.pos = {
-'n':'noun',
-'v':'verb',
-'c':'conj',
-'p':'prep',
-'j':'adj',
-'e':'adv',
-'r':'pron',
-'a':'part',
-'g':'glyph',
-'s':'syllable',
-};

@@ -196,7 +196,34 @@ voyc.parse = function(input) {
 	];
 }
 
-/* static table of rules */ voyc.ru = [
+/* static code tables */
+voyc.pos = {
+	'n':'noun',
+	'v':'verb',
+	'c':'conj',
+	'p':'prep',
+	'j':'adj',
+	'e':'adv',
+	'r':'pron',
+	'a':'part',
+	'g':'glyph',
+	's':'syllable',
+};
+voyc.strp = {
+	c:"consonant",
+	v:"vowel",
+	t:"tone mark"
+}
+voyc.strm = {
+	s:"short",
+	o:"long",
+	m:"middle class",
+	l:"low class",
+	h:"high class"
+}
+
+/* static table of rules */ 
+voyc.ru = [
 	// endings
 	{code:'fsc', name:'final sonorant consonant: live'},
 	{code:'fnsc', name:'final non-sonorant consonant: dead'},

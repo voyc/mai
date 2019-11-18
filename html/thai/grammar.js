@@ -66,6 +66,10 @@ noun @person > [@personNeutral,@personMale,@personFemale]
 adj @adjPerson > [ตัวใหญ่,ตัวเล็ก,สูง,เตี้ย,อ้วน,ผอม,เหนื่อย,ง่วง,เก่ง,ขี้เกียจ,เมา]
 phrase @describePerson > @person @adjPerson
 sentence @comparePerson > @person @adjPerson กว่า @person
+phrase @pluralperson > สาว $number(1,10,1) คน
+phrase @sv1 > สาว ว่า
+phrase @findobject > หา [สาว,ดาว]
+phrase @describeNoun > [สาว] [สด]
 `;
 
 /**

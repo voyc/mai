@@ -89,6 +89,25 @@ voyc.Dictionary.prototype.translate = function(passage, lang) {
 	return s;
 }
 
+voyc.Dictionary.prototype.translit = function(passage, lang) {
+	var ilang = lang || this.lang(passage);
+	var olang = (ilang == 't') ? 'e' : 't';
+
+	var s = '';
+	var w = passage.split(' ');
+	for (var i=0; i<w.length; i++) {
+		var m = this.lookup(w[i], ilang);
+		var e = '###';
+		if (m && m.length && m[0][ilang]) {
+			e = m[0]['tl'];
+			e += '<sup>' + m[0].tn + '</sup>';
+		}
+		if (s.length) s += ' ';
+		s += e;
+	}
+	return s;
+}
+
 voyc.Dictionary.prototype.iterate = function(cb,primaryOnly) {
 	primaryOnly = primaryOnly || true;
 	for (var i=0; i<this.dict.length; i++) {
