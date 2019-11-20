@@ -1,0 +1,73 @@
+psql -U voyccom_jhagstrand -d voyccom_mai -c "select id, thai, translit, tone, vowelpattern, leadingconsonant, finalconsonant, level, eng from  mai.thaidict where substring(thai,1,1) = 'ห' and type = 'o' order by level;" > sql/leadingh.out
+
+  id  | thai | translit | tone | vowelpattern | leadingconsonant | finalconsonant | level |    eng     
+------+------+----------+------+--------------+------------------+----------------+-------+------------
+   87 | หมู   | muu      | R    | oู            | หม               |                |   100 | pork
+   92 | หอย  | haawy    | R    | oอ           | ห                | ย              |   100 | shellfish
+  115 | หนาว | naao     | R    | oา           | หน               | ว              |   100 | cold
+  122 | หมด  | mdo      | L    | o            | หมด              |                |   100 | finished
+  113 | หวาน | waan     | R    | oา           | หว               | น              |   100 | sweet
+   97 | หล่อ  | laaw     | L    | oอ           | หล               |                |   100 | handsome
+  116 | หนา  | naa      | R    | oา           | หน               |                |   100 | thick
+ 1220 | หัว   | hua      | R    | oัว           | ห                |                |   200 | head
+ 1178 | หน้า  | naa      | F    | oา           | หน               |                |   300 | face
+ 1208 | หลัง  | lang     | R    | oั            | หล               | ง              |   300 | behind
+ 1215 | ห้อง  | haawng   | F    | oอ           | ห                | ง              |   300 | room
+ 1188 | หมอ  | maaw     | R    | oอ           | หม               |                |   300 | doctor
+ 1174 | หนัก  | nak      | L    | oั            | หน               | ก              |   300 | heavy
+ 1203 | หรือ  | rʉʉ      | R    | oือ           | หร               |                |   300 | or
+ 1175 | หนัก  | hnakg    | L    | oั            | หน               | ก              |   300 | serious
+ 1202 | หยุด  | yut      | L    | oุ            | หย               | ด              |   300 | stop
+ 1226 | หู    | huu      | R    | oู            | ห                |                |   300 | ear
+ 1194 | หมี   | mii      | R    | oี            | หม               |                |   400 | bear
+ 1221 | ห้า   | haa      | F    | oา           | ห                |                |   400 | five
+ 1197 | หมู่   | hmuu     | L    | oู            | หม               |                |   400 | 
+ 1218 | หัด   | had      | L    | oั            | ห                | ด              |   400 | 
+ 1205 | หลวง | hlwngo   | L    | o            | หลวง             |                |   400 | 
+ 1171 | หญิง  | ying     | R    | oิ            | หญ               | ง              |   400 | 
+ 1176 | หนัง  | nang     | R    | oั            | หน               | ง              |   400 | 
+ 1182 | หนึ่ง  | nʉng     | L    | oึ            | หน               | ง              |   400 | one
+ 1183 | หนุ่ม  | num      | L    | oุ            | หน               | ม              |   400 | 
+ 1185 | ห่ม   | hom      | L    | o            | ห                | ม              |   400 | cover
+ 1187 | หมวก | muak     | L    | oว           | หม               | ก              |   400 | hat
+ 1193 | หมาย | maay     | R    | oา           | หม               | ย              |   400 | 
+ 1195 | หมุน  | mun      | R    | oุ            | หม               | น              |   400 | 
+ 1200 | หยาบ | yaap     | L    | oา           | หย               | บ              |   400 | 
+ 1204 | หลวง | luang    | R    | oว           | หล               | ง              |   400 | 
+ 1206 | หลัก  | lak      | L    | oั            | หล               | ก              |   400 | 
+ 1212 | หลีก  | liik     | L    | oี            | หล               | ก              |   400 | 
+ 1429 | หก   | go       | L    | o            | หก               |                |   400 | six
+ 1430 | หา   | haa      | R    | oา           | ห                |                |   400 | find
+ 1431 | หาก  |          |      |              |                  |                |   400 | if
+ 1432 | หาด  |          |      |              |                  |                |   400 | beach
+ 1201 | หยาบ | hyaab    | L    | oา           | หย               | บ              |   400 | 
+ 1207 | หลัก  | hlakg    | L    | oั            | หล               | ก              |   400 | 
+ 1189 | หม้อ  | maaw     | F    | oอ           | หม               |                |   400 | container
+ 1190 | หม้อ  | hmaaw    | F    | oอ           | หม               |                |   400 | cookpot
+ 1180 | หนี   | nii      | R    | oี            | หน               |                |   400 | 
+ 1181 | หนี้   | nii      | F    | oี            | หน               |                |   400 | 
+ 1184 | หนู   | nuu      | R    | oู            | หน               |                |   400 | 
+ 1186 | ห่ม   | hom      | L    | o            | ห                | ม              |   400 | cover
+ 1192 | หมา  | maa      | R    | oา           | หม               |                |   400 | dog
+ 1196 | หมู่   | muu      | L    | oู            | หม               |                |   400 | 
+ 1198 | หยด  | ydo      | L    | o            | หยด              |                |   400 | 
+ 1199 | หยด  | hydo     | L    | o            | หยด              |                |   400 | 
+ 1225 | หาย  | haay     | R    | oา           | ห                | ย              |   400 | 
+ 1191 | หมอก | maawk    | L    | oอ           | หม               | ก              |   400 | fog
+ 1209 | หลับ  | lap      | L    | oั            | หล               | บ              |   400 | 
+ 1217 | หัด   | hat      | L    | oั            | ห                | ด              |   400 | 
+ 1210 | หลาน | laan     | R    | oา           | หล               | น              |   400 | grandchild
+ 1211 | หลาย | laay     | R    | oา           | หล               | ย              |   400 | 
+ 1213 | หลุม  | lum      | R    | oุ            | หล               | ม              |   400 | 
+ 1214 | หวัง  | wang     | R    | oั            | หว               | ง              |   400 | 
+ 1216 | หัก   | hak      | L    | oั            | ห                | ก              |   400 | 
+ 1219 | หัน   | han      | R    | oั            | ห                | น              |   400 | 
+ 1222 | หาง  | haang    | R    | oา           | ห                | ง              |   400 | 
+ 1223 | ห่าง  | haang    | L    | oา           | ห                | ง              |   400 | 
+ 1224 | ห้าม  | haam     | F    | oา           | ห                | ม              |   400 | 
+ 1310 | หลง  | lngo     | L    | o            | หลง              |                |   500 | lost
+ 1308 | หิว   | hio      | R    | oิ            | ห                | ว              |   500 | hungry
+ 1412 | หาร  | haan     | R    | oา           | ห                | ร              |   500 | divide
+ 1409 | หวิว  | wio      | R    | oิ            | หว               | ว              |   500 | feel-dizzy
+(67 rows)
+
