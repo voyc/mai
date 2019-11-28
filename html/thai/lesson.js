@@ -153,6 +153,19 @@ voyc.lessons = [
 		glyph: ['ง','บ','ล'],
 		word:[],
 		phrase:[],
+	},{
+		id:'khr',
+		section: 'Keyboard',
+		name: 'High Right',
+		sequence: 8,
+		algorithm: 'progressive',
+		initialShuffle: false,
+		workSize:4,
+		phases: ['glyph', 'word', 'word-reverse', 'phrase', 'phrase-reverse'],
+		phasen: 0,
+		glyph: ['ุ','ึ','ค','ต','จ','ข','ช'],
+		word:[],
+		phrase:[],
 	}
 ];
 
@@ -172,10 +185,9 @@ section/name  state
 ๆยผฝ    5    pinkie
 เ้ะัิื      6     index finger center
 งบล     7     pinkie reach
-ภึถุ      8     high index finger
-คตๅจขช  9     high right hand
+ ุ ึคตจขช  8   high right
 
-
+ภถๅ  9     high left
 โ๋ฏษฆศฤซ    shift home keys
 ฑ๊ฮ?        shift index finger
 ฎณฉฒ        shift middle finger

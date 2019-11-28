@@ -69,8 +69,31 @@ sentence @comparePerson > @person @adjPerson กว่า @person
 phrase @pluralperson > สาว $number(1,10,1) คน
 phrase @sv1 > สาว ว่า
 phrase @findobject > หา [สาว,ดาว]
-phrase @describeNoun > [สาว] [สด]
+phrase @describeNoun > [สาว,ผม] [สวย]
+phrase @nounColor > [หมา,แมว,หมี,หมวก,ร่ม] @color
+phrase @animal > [หมา,แมว,หมี,ไก่]
+phrase @clothing > [ร่ม,หมวก]
+noun @color > สี [ดำ,แดง]
+noun @number > $number(1,9,1)
+sentence @howmany > กี่ [@animal,@clothing]
+adj @very > [เหมือน]ๆ
+phrase @skinny [สาว] ผอม
 `;
+
+/*
+he eats rice RMF high Kข
+{three,four,six} {black} {dog, cat, umbrella, hat, ant}
+	 no, need classifiers for numbers
+how many [colors, dogs, cats, umbrellas, hats, ant]
+good, very good
+wear hat
+share umbrella
+[father, mother, older-sibling, doctor]
+have blessing
+!apply medicine
+come to
+
+*/
 
 /**
 	JS Array of semantic conventions

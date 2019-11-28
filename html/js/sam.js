@@ -145,7 +145,7 @@ voyc.Sam.prototype.endDrill = function() {
 			for (var i=0; i<collection.length; i++) {
 				var w = collection[i];
 				lesson.word.push(w.t);
-				s += w.t + "<br/>";
+				s += w.t + ' ' + w.tl + '<sup>' + w.tn + '</sup> ' + '<i>' + w.p + '</i> ' + w.e + '<br/>';
 			}
 			this.lesson.store();
 			s += 'Click go when ready.';
@@ -316,6 +316,24 @@ voyc.Sam.prototype.respond = function(o) {
 			break;
 		case 'สวัสดี':
 			this.chat.post(this.idhost, voyc.sengen.genSentence({pattern:'@howAreYou'}), ['สบาย ดี']);
+			break;
+		case 'sengen':
+			var collection = voyc.sengen.genSentence({count:20,shuffle:1,pattern:'',target:[]});
+			var s = '';
+			for (var i=0; i<collection.length; i++) {
+				var w = collection[i];
+				s += w + "<br/>";
+			}
+			this.chat.post(this.idhost, s);
+			break;
+		case 'collect':
+			var collection = this.noam.collectWords();
+			var s = '';
+			for (var i=0; i<collection.length; i++) {
+				var w = collection[i];
+				s += w.t + ' ' + w.tl + '<sup>' + w.tn + '</sup> ' + '<i>' + w.p + '</i> ' + w.e + '<br/>';
+			}
+			this.chat.post(this.idhost, s);
 			break;
 		default:
 			this.chat.post(this.idhost, 'Would you like an example sentence?', ['yes', 'no']);

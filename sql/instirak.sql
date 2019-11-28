@@ -1,0 +1,1 @@
+insert into mai.thaidict (level, source, type, numsyllables, numdef, pos, thai, eng, details) values (500, 1, 'm', 2, 1, 'n', 'ที่รัก', 'darling', '[term of endearment] darling; dear; sweetheart; love; honey');
