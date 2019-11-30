@@ -37,9 +37,16 @@
 @person('self', 'name'): สวัส ดี่ [@polite]
 */
 
-voyc.lesson.conversation = {};
-voyc.lesson.conversation.levels = ['white','red','purple','black'];
-voyc.lesson.conversation.white = {
+if (typeof(voyc.course.co) == 'undefined') {
+	voyc.course.co = {};
+}
+
+voyc.course.co.helo = {
+	section:'Conversation',
+	course:'Hello Goodbye',
+}
+
+voyc.course.co.white = {
 		id:'ki',
 		section: 'white',
 		name: 'Index and Middle Finger',
@@ -61,4 +68,30 @@ voyc.lesson.conversation.white = {
 		'John: สขาย ดี่ ครับ ',
 	]
 }};
-voyc.onLessonLoaded('conversation');
+
+voyc.course.co.yellow = {
+	list:[
+		'แล้ว พบ กัน ใหม่',
+		'แล้ว เจอ กัน',
+		'แล้ว พบ กัน ภาย ใน ๑ ชั่วโมง',
+		'ลา ก่อน',
+		'ไป ละ นะ',
+		'ไป ก่อน นะ',
+		'ลา ละ นะ',
+		'กลับก่อนนะ',
+		'โชคดี',
+		'ขับ ปลอดภัย',
+		'เดินทาง ปลอดภัย',
+		'เดินทาง โดย ความปลอดภัย',
+		'ขอให้ มี ความสุข วันหยุด สุดสัปดาห์',
+		'ขอให้ มี ความสุข ใน วันหยุด',
+		'ดูแล ตัวเอง ด้วย นะ',
+		'ราตรี สวัสดิ์',
+		'นอนหลับฝันดี',
+		'ฝันดี',
+		'นอนหลับ ฝันดี ราตรี สวัสดิ์',
+	]
+};
+
+voyc.onLessonLoaded('cohelo');
+
