@@ -40,3 +40,51 @@ footer {
 	position:fixed;
 	bottom:0px;
 }
+
+#toc table,th,td {
+	border:1px solid black;
+}
+#toc td.section {
+	font-weight:bold;
+	background-color:lightgray;
+	padding-left:.5rem
+}
+#toc td.course {
+	padding-left:1rem;
+}
+#toc td:nth-of-type(2) {
+	color:black;
+	background-color:white;
+}
+#toc td:nth-of-type(3) {
+	color:black;
+	background-color:yellow;
+}
+#toc td:nth-of-type(4) {
+	color:black;
+	background-color:orange;
+}
+#toc td:nth-of-type(5) {
+	color:black;
+	background-color:green;
+}
+#toc td:nth-of-type(6) {
+	color:white;
+	background-color:blue;
+}
+#toc td:nth-of-type(7) {
+	color:white;
+	background-color:purple;
+}
+#toc td:nth-of-type(8) {
+	color:white;
+	background-color:red;
+}
+#toc td:nth-of-type(9) {
+	color:white;
+	background-color:brown;
+}
+#toc td:nth-of-type(10) {
+	color:white;
+	background-color:black;
+}
