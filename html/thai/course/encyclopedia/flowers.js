@@ -44,6 +44,16 @@ orchid.jpg
 plumeria.jpg
 sakura.jpg
 
+				<img src="thai/i/dict/b/beehive-ginger.jpg"/>
+				<img src="thai/i/dict/b/bougainvillea.jpg"/>
+				<img src="thai/i/dict/b/flame-tree.jpg"/>
+				<img src="thai/i/dict/b/golden-shower-tree.jpg"/>
+				<img src="thai/i/dict/b/heliconia-rostrata.jpg"/>
+				<img src="thai/i/dict/b/jasmine.jpg"/>
+				<img src="thai/i/dict/b/lotus.jpg"/>
+				<img src="thai/i/dict/b/orchid.jpg"/>
+				<img src="thai/i/dict/b/plumeria.jpg"/>
+				<img src="thai/i/dict/b/sakura.jpg"/>
 
 
 

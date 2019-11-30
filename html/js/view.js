@@ -19,9 +19,11 @@ voyc.View.prototype.setup = function () {
 	var self = this;
 	this.observer.subscribe('home-requested'         ,'view' ,function(note) { self.drawPage('home');    });
 	this.observer.subscribe('about-requested'        ,'view' ,function(note) { self.drawPage('about');   });
+	this.observer.subscribe('howto-requested'        ,'view' ,function(note) { self.drawPage('howto');   });
 	this.observer.subscribe('account-requested'      ,'view' ,function(note) { self.drawPage('account'); });
 	this.observer.subscribe('profile-requested'      ,'view' ,function(note) { self.drawPage('profile'); self.clearProfileForm(); });
-	this.observer.subscribe('keyboard-requested'      ,'view' ,function(note) { self.drawPage('keyboard'); });
+	this.observer.subscribe('keyboard-requested'     ,'view' ,function(note) { self.drawPage('keyboard'); });
+	this.observer.subscribe('curriculum-requested'   ,'view' ,function(note) { self.drawPage('curriculum'); });
 }
 
 /**
@@ -67,8 +69,10 @@ voyc.View.prototype.onSubmitClick = function(evt) {
 voyc.View.prototype.drawPage = function(pageid) {
 	voyc.hide('content-home'   );
 	voyc.hide('content-about'  );
+	voyc.hide('content-howto'  );
 	voyc.hide('content-profile');
 	voyc.hide('content-keyboard');
+	voyc.hide('content-curriculum');
 	voyc.show('content-'+pageid);
 }
 

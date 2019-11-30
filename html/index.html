@@ -48,6 +48,7 @@
 		<script src="jslib/browserhistory.js"></script>
 		<script src="jslib/chat.js"></script>
 		<script src="thai/keyboard2.js"></script>
+		<script src="thai/curriculum.js"></script>
 <?php } else { ?>
 <!--<remove>
 		<script src='min.js'></script>
@@ -103,6 +104,11 @@
 				<p>Lee is the AI in charge of all language drills.</p>
 				<p>Lee got his start in a classified military AI project and was released to us to further his understanding of human learning through repetitive drill.</p>
 			</section>
+			<section hidden class='narrative' id='content-howto'>
+				<h1>How To</h1>
+				<h2>How to use mai.voyc</h2>
+				<p>Come on.  It's self-explanatory.</p>
+			</section>
 			<section hidden class='narrative' id='content-profile'>
 				<h1>User Profile</h1>
 				<form id='profile' svc='setprofile'>
@@ -119,6 +125,10 @@
 				<h1>Keyboard</h1>
 				<section id='keyboard'></section>
 			</section>
+			<section hidden class='narrative' id='content-curriculum'>
+				<h1>Curriculum</h1>
+				<section id='curriculum'></section>
+			</section>
 		</section>
 
 		<section id='chatcontainer'></section>
@@ -129,10 +139,10 @@
 			<h3>Go To...</h3>
 			<p><button close class='anchor' nav='home'     >Home</button></p>
 			<p><button close class='anchor' nav='about'    >About</button></p>
+			<p><button close class='anchor' nav='howto'    >How To</button></p>
 			<p><button close class='anchor' nav='profile'  >User Profile</button></p>
 			<p><button close class='anchor' nav='keyboard' >Keyboard</button></p>
-			<p><button close class='anchor' nav='alphabet' >Alphabet</button></p>
-			<p><button close class='anchor' nav='signs1'   >Signs One</button></p>
+			<p><button close class='anchor' nav='curriculum'>Curriculum</button></p>
 		</nav>
 		<aside initially hidden class='panel popup dropdown blu' id='settings-dialog'>
 			<div close class='closex'>&times;</div>
