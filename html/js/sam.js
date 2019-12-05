@@ -111,6 +111,13 @@ voyc.Sam.prototype.setupFirstLesson = function(interval) {
 voyc.Sam.prototype.startLesson = function() {
 	this.startDrill(this.lesson.current);
 }
+voyc.Sam.prototype.startLevel = function(id) {
+	var sectionid = id.substr(0,2);
+	var courseid = id.substr(2,4);
+	var levelid = id.substr(6,2);
+	var lvl = voyc.course[sectionid][courseid][levelid];
+	this.startDrill(lvl);
+}
 
 voyc.Sam.prototype.startDrill = function(lesson) {
 	var self = this;

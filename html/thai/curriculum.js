@@ -28,6 +28,7 @@ voyc.Curriculum = function() {
 }
 
 voyc.Curriculum.prototype.setup = function(container) {
+	voyc.course = {};
 	var s = this.drawCurriculum();
 	container.innerHTML = s;
 	this.attachDomEventHandlers();
@@ -73,15 +74,83 @@ voyc.Curriculum.prototype.attachDomEventHandlers = function() {
 			var id = evt.currentTarget.id;
 			var folder = id.substr(0,2);
 			var filename = id.substr(2,4)+'.js';
-			console.log(folder+'/'+filename);
+			console.log('loading '+folder+'/'+filename);
+			var courseroot = 'thai/course/';
+			voyc.appendScript(courseroot+folder+'/'+filename);
 		}, false);
 	}
+}
+
+voyc.Curriculum.prototype.onCourseLoaded = function(id) {
+	var s = this.drawCoursePage(id);
+	voyc.$('course').innerHTML = s;
+	(new voyc.BrowserHistory).nav('course');
+	this.attachCourseEventHandlers();
+}
+
+voyc.Curriculum.prototype.drawCoursePage = function(id) {
+	var s = '';
+	var sectionid = id.substr(0,2);
+	var courseid = id.substr(2,4);
+	var c = voyc.course[sectionid][courseid];
+	s += '<h2>'+c.section+': '+c.course+'</h2>';
+	for (var i=0; i<voyc.levels.length; i++) {
+		var level = voyc.levels[i]; 
+		s += this.drawLevel(c, level);
+	}
+	return s;
+}
+
+voyc.Curriculum.prototype.drawLevel = function(c, level) {
+	var s = '';
+	if (typeof(c[level.id]) == 'undefined') {
+		return s;
+	}
+	s += c.section;
+	s += c.course;
+	s += level.name;
+	s += '<br/>';
+	var lvl = c[level.id];
+	for (var i=0; i<lvl.word.length; i++) {
+		s += lvl.word[i];
+		s += '<br/>';
+	}
+	s += "<button class='drill' id='"+lvl.id+"'>Drill</button>";
+	return s;
+}
+
+voyc.Curriculum.prototype.attachCourseEventHandlers = function() {
+	var coursePage = document.getElementById('course');
+	var drillButtons = coursePage.querySelectorAll("button.drill");
+	drillButtons.forEach(function(btn) {
+		btn.addEventListener('click', function(evt) {
+			var id=evt.currentTarget.id;	
+			console.log(id);
+			voyc.mai.sam.startLevel(id);
+		});
+	});
+}
+
+voyc.onCourseLoaded = function(id) {
+	voyc.curriculum.onCourseLoaded(id);
 }
 
 window.addEventListener('load', function(evt) {
 	voyc.curriculum = new voyc.Curriculum();
 	voyc.curriculum.setup(voyc.$('curriculum'));
 }, false);
+
+voyc.levels = [
+	{ id:'wh', name:'white', color:'white' },
+	{ id:'ye', name:'yellow', color:'yellow' },
+	{ id:'or', name:'orange', color:'orange' },
+	{ id:'gr', name:'green', color:'green' },
+	{ id:'bl', name:'blue', color:'blue' },
+	{ id:'pu', name:'purple', color:'purple' },
+	{ id:'re', name:'red', color:'red' },
+	{ id:'br', name:'brown', color:'brown' },
+	{ id:'bk', name:'black', color:'black' },
+]
 
 voyc.courselist = [
 	{ id:'grkybd', section: 'Grammar', course: 'Keyboard', level: 9, },

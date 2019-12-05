@@ -24,6 +24,7 @@ voyc.View.prototype.setup = function () {
 	this.observer.subscribe('profile-requested'      ,'view' ,function(note) { self.drawPage('profile'); self.clearProfileForm(); });
 	this.observer.subscribe('keyboard-requested'     ,'view' ,function(note) { self.drawPage('keyboard'); });
 	this.observer.subscribe('curriculum-requested'   ,'view' ,function(note) { self.drawPage('curriculum'); });
+	this.observer.subscribe('course-requested'       ,'view' ,function(note) { self.drawPage('course'); });
 }
 
 /**
@@ -73,6 +74,7 @@ voyc.View.prototype.drawPage = function(pageid) {
 	voyc.hide('content-profile');
 	voyc.hide('content-keyboard');
 	voyc.hide('content-curriculum');
+	voyc.hide('content-course');
 	voyc.show('content-'+pageid);
 }
 

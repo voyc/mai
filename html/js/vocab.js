@@ -21,7 +21,7 @@ voyc.Vocab = function() {
 	this.observer = new voyc.Observer();
 	var self = this;
 	this.observer.subscribe('login-received'   ,'user' ,function(note) { self.onLoginReceived   (note);});
-	this.observer.subscribe('relogin-received'   ,'user' ,function(note) { self.onLoginReceived   (note);});
+	this.observer.subscribe('relogin-received'   ,'user' ,function(note) { self.onReloginReceived   (note);});
 	this.observer.subscribe('getvocab-received'   ,'user' ,function(note) { self.onVocabReceived   (note);});
 	
 	this.language = 'th';
@@ -30,7 +30,13 @@ voyc.Vocab = function() {
 }
 
 voyc.Vocab.prototype.onLoginReceived = function(note) {
-	this.vocab = this.retrieve();
+	this.vocab = this.removeSto();
+	this.vocab = this.retrieveSto();
+	this.readServer();
+}
+
+voyc.Vocab.prototype.onReloginReceived = function(note) {
+	this.vocab = this.retrieveSto();
 	this.readServer();
 }
 
@@ -177,12 +183,17 @@ voyc.Vocab.prototype.readServer = function() {
 	this.observer.publish('getvocab-posted', 'mai', {});
 }
 
-voyc.Vocab.prototype.store = function() {
+voyc.Vocab.prototype.storeSto = function() {
 	localStorage.setItem('vocab', JSON.stringify(this.vocab));
 	this.setDirty();
 }
 
-voyc.Vocab.prototype.retrieve = function() {
+voyc.Vocab.prototype.removeSto = function() {
+	localStorage.removeItem('vocab');
+	localStorage.removeItem('lesson');
+}
+
+voyc.Vocab.prototype.retrieveSto = function() {
 	var vocab = JSON.parse(localStorage.getItem('vocab'));
 	if (!vocab) {
 		vocab = {
@@ -230,7 +241,7 @@ voyc.Vocab.prototype.set = function(word, type, state, mastery) {
 		this.vocab.list.push({w:word,t:type,s:state,r:Date.now(),m:mastery});
 		r++;
 	}
-	this.store();
+	this.storeSto();
 	return r;
 }
 
@@ -265,5 +276,5 @@ voyc.Vocab.prototype.finger = function(word, recency) {
 		if (voyc.analyticLogging) 
 			console.log(['finger vocab word not found', word]);
 	}
-	this.store();
+	this.storeSto();
 }

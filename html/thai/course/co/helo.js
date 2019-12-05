@@ -46,20 +46,15 @@ voyc.course.co.helo = {
 	course:'Hello Goodbye',
 }
 
-voyc.course.co.white = {
-		id:'ki',
-		section: 'white',
-		name: 'Index and Middle Finger',
-		sequence: 1,
-		algorithm: 'sequential',
-		initialShuffle: false,
-		workSize:3,
-		phases: ['glyph', 'word', 'word-reverse', 'phrase', 'phrase-reverse'],
-		phasen: 0,
-		glyph: ['พ','ี','อ','ท','ำ','ร','แ','ม'],
-		word:[],
-		phrase:[],
-	list: [
+voyc.course.co.helo.wh = {
+	id:'cohelowh',
+	algorithm: 'sequential',
+	initialShuffle: false,
+	workSize:3,
+	phases: ['word', 'word-reverse', 'phrase', 'phrase-reverse'],
+	phasen: 0,
+	phrase:[],
+	word:[
 		'John: สวัส ดี่ ครับ', 
 		'Juan: สวัส ดี่ คะ',
 		'John: สขาย ดี่ ไหม ครับ', 
@@ -67,10 +62,13 @@ voyc.course.co.white = {
 		'Juan: [แลัว] คุณ ล่ะ',
 		'John: สขาย ดี่ ครับ ',
 	]
-}};
+};
 
-voyc.course.co.yellow = {
-	list:[
+voyc.course.co.helo.ye = {
+	id:'coheloye',
+	phases: ['word', 'word-reverse', 'phrase', 'phrase-reverse'],
+	phasen: 0,
+	word:[
 		'แล้ว พบ กัน ใหม่',
 		'แล้ว เจอ กัน',
 		'แล้ว พบ กัน ภาย ใน ๑ ชั่วโมง',
@@ -93,5 +91,5 @@ voyc.course.co.yellow = {
 	]
 };
 
-voyc.onLessonLoaded('cohelo');
+voyc.onCourseLoaded('cohelo');
 
