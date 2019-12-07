@@ -51,7 +51,7 @@ function setvocab() {
 		$mastery = $m->m;
 		$state = $m->s;
 		$type = $m->t;
-        	Log::write(LOG_WARNING, 'write: ' . $word);
+        	Log::write(LOG_INFO, 'write: ' . $word);
 	
 		// attempt to read vocab record
 		$language = 'th';
@@ -73,7 +73,7 @@ function setvocab() {
 			$params = array($vocabid, $state, $mastery, $recency);
 			$result = execSql($conn, $name, $sql, $params, true);
 			if (!$result) {
-				Log::write(LOG_NOTICE, "$name failed");
+				Log::write(LOG_WARNING, "$name failed");
 				$a['status'] = 'failed';
 			}
 		}
@@ -83,7 +83,7 @@ function setvocab() {
 			$params = array($userid, $word, $language, $type, $state, $mastery, $recency);
 			$result = execSql($conn, $name, $sql, $params, true);
 			if (!$result) {
-				Log::write(LOG_NOTICE, "$name failed");
+				Log::write(LOG_WARNING, "$name failed");
 				$a['status'] = 'failed';
 			}
 		}

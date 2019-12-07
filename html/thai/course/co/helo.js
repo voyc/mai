@@ -23,18 +23,29 @@
 		@person('third', 'name')
 		@person('third', 'age')
 		@person('third', 'gender')
+		@person('self', 'name'): สวัส ดี่ [@polite]
 
-4. load lessons dynamically
+x 4. load lessons dynamically
 
-5. generate list of lessons dynamically
+x 5. generate list of lessons dynamically
 
 6. perequisites
 	glyphs
 	words
 	phrases?
 
+make a list of glyphs in the story
+	mark those mastered already
+make a list of words in the story
+	mark those mastered already
+make a list of phrases used in the story?
 
-@person('self', 'name'): สวัส ดี่ [@polite]
+noam:
+	vet story
+		check all glyphs, make sure they are in alphabet
+		check all words, make sure they are in dictionary
+	compare vetting to vocab
+		mark all already mastered
 */
 
 if (typeof(voyc.course.co) == 'undefined') {
@@ -55,12 +66,23 @@ voyc.course.co.helo.wh = {
 	phasen: 0,
 	phrase:[],
 	word:[
-		'John: สวัส ดี่ ครับ', 
-		'Juan: สวัส ดี่ คะ',
-		'John: สขาย ดี่ ไหม ครับ', 
-		'Juan: สขาย ดี่ คะ',
-		'Juan: [แลัว] คุณ ล่ะ',
-		'John: สขาย ดี่ ครับ ',
+		'สวัส', 
+		'ดี',
+		'ครับ', 
+		'คะ',
+		'สบาย', 
+		'ไหม', 
+		'แล้ว',
+		'คุณ',
+		'ละ',
+	],
+	story:[
+		'สวัส ดี่ ครับ', 
+		'สวัส ดี่ คะ',
+		'สขาย ดี่ ไหม ครับ', 
+		'สขาย ดี่ คะ',
+		'[แลัว] คุณ ล่ะ',
+		'สขาย ดี่ ครับ ',
 	]
 };
 
