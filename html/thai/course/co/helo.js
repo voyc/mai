@@ -1,56 +1,7 @@
-/*
-1. to display any page
-	find texts on the page (always english)
-	translate to thai
-	lookup in vocab
-	if in vocab, use thai
-
-2. start conversation
-	persons:
-		self: name, age, gender
-		other: name, age, gender
-		third: name, age, gender
-
-3. in lessons, use local patterns, added auto to grammar
-	functions
-		@polite (depends on gender of speaker)
-		@person('self', 'name')
-		@person('self', 'age')
-		@person('self', 'gender')
-		@person('other', 'name')
-		@person('other', 'age')
-		@person('other', 'gender')
-		@person('third', 'name')
-		@person('third', 'age')
-		@person('third', 'gender')
-		@person('self', 'name'): สวัส ดี่ [@polite]
-
-x 4. load lessons dynamically
-
-x 5. generate list of lessons dynamically
-
-6. perequisites
-	glyphs
-	words
-	phrases?
-
-make a list of glyphs in the story
-	mark those mastered already
-make a list of words in the story
-	mark those mastered already
-make a list of phrases used in the story?
-
-noam:
-	vet story
-		check all glyphs, make sure they are in alphabet
-		check all words, make sure they are in dictionary
-	compare vetting to vocab
-		mark all already mastered
-*/
-
-if (typeof(voyc.course.co) == 'undefined') {
-	voyc.course.co = {};
-}
+// moved to curriculum.js
+//if (typeof(voyc.course.co) == 'undefined') {
+//	voyc.course.co = {};
+//}
 
 voyc.course.co.helo = {
 	section:'Conversation',

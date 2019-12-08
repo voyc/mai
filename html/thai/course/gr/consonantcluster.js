@@ -1,4 +1,4 @@
-var lesson = `
+var level = `
 <h1>Consonant Cluster</h1>
 <h2>True Consonant Cluster</h2>
 <p>Two or more consonants combined into a single sound.
