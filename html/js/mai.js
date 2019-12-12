@@ -42,7 +42,7 @@ voyc.Mai.prototype.setup = function () {
 	this.observer.subscribe('getprofile-received' ,'mai' ,function(note) { self.onGetProfileReceived  (note); });
 
 	this.observer.publish('setup-complete', 'mai', {});
-	//(new voyc.3).nav('home');
+	(new voyc.BrowserHistory).nav('home');
 }
 
 voyc.Mai.prototype.onProfileRequested = function(note) {
