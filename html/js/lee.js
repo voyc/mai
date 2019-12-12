@@ -11,7 +11,7 @@
 	in the 1987 Stanley Kubrick Movie "Full Metal Jacket".
 
 	structure:
-		drill - start lesson: priming nextCard
+		drill - start level: priming nextCard
 		choose - choose next card per algorithm
 		countState - utility
 		nextCard - calls choose, readDictionary
@@ -37,7 +37,7 @@ voyc.Lee = function(chat,observer) {
 	this.chat = chat;
 	this.observer = observer;
 	this.idhost = 1;
-	this.lesson = {};
+	this.level = {};
 	this.ndxCard = 0;  // index into the scores array, and into the glyph/word/phrase array
 	this.direction = 'normal'; // normal or reverse
 	this.reportCallback = false;
@@ -64,22 +64,24 @@ voyc.Lee = function(chat,observer) {
 	}
 }
 
-voyc.Lee.prototype.drill = function(lesson,callback) {
-	this.lesson = lesson;
-	this.phasendx = lesson.phasen;
-	this.setting.optSizeWork = lesson.workSize;
+voyc.Lee.prototype.drill = function(level,callback) {
+	this.level = level;
+	this.phasendx = level.phasen;
+	this.setting.optSizeWork = level.workSize;
 	this.ndxCard = -1;
 	this.reportCallback = callback;
 	this.chat.changeHost('Lee');
 
 	// create the scores array
 	this.scores = [];
-	var phase = this.lesson.phases[this.phasendx];
+	var phase = this.level.phases[this.phasendx];
 	var sp = phase.split('-');
 	var cards = sp[0];  // glyph/word/phrase
 	this.direction = (sp[1]) ? sp[1] : 'normal';  // normal/reverse
-	for (var i=0; i<this.lesson[cards].length; i++) {
-		var t = this.lesson[cards][i];
+
+	for (var i=0; i<this.level[cards].length; i++) {
+		var t = this.level[cards][i];
+
 		if (cards == 'word' || cards == 'glyph') {
 			var dict = this.readDictionary(t);
 		}
@@ -105,10 +107,10 @@ voyc.Lee.prototype.choose = function() {
 		}
 		return r;
 	}
-	switch(this.lesson.algorithm) {
+	switch(this.level.algorithm) {
 		case 'sequential':
-			var cards = this.lesson.phases[this.phasendx].split('-')[0];
-			chosen = incr(this.ndxCard, this.lesson[cards].length);
+			var cards = this.level.phases[this.phasendx].split('-')[0];
+			chosen = incr(this.ndxCard, this.level[cards].length);
 			break;
 		case 'progressive':
 			var cntw = this.countState('w');

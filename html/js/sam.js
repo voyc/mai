@@ -14,11 +14,12 @@ voyc.Sam = function(chat) {
 	this.req = {};
 	this.setup();
 	this.state = '';
+	this.lang = 'thai';
 }
 
 voyc.Sam.prototype.setup = function() {
 	this.vocab = new voyc.Vocab();
-	this.lesson = new voyc.Lesson(this.vocab);
+	//this.level = new voyc.Level(this.vocab);
 	voyc.dictionary = new voyc.Dictionary();
 	voyc.sengen = new voyc.SenGen(this.vocab);
 
@@ -64,67 +65,67 @@ voyc.intervalToString = function(ms) {
 voyc.Sam.prototype.onGetVocabReceived = function() {
 	// setup continued
 	this.noam = new voyc.Noam(voyc.dictionary, this.vocab);
-	this.lesson.loadPreviousLessonInProgress();
+	//this.level.loadPreviousLevelInProgress();
 	var interval = Date.now() - this.vocab.vocab.recency;
-	this.setupFirstLesson(interval);
+	//this.setupFirstLevel(interval);
 }
 
-voyc.Sam.prototype.setupFirstLesson = function(interval) {
+/*
+voyc.Sam.prototype.setupFirstLevel = function(interval) {
 	var sInterval = voyc.intervalToString(interval);
-	var lesson = this.lesson.current;
-	if (lesson.phasen < 0) {
+	var level = this.level;
+	if (level.phasen < 0) {
 		// welcome new student
-		lesson.phasen = 0;
-		this.lesson.store();
+		level.phasen = 0;
+		this.level.store();
 		var s = 'Welcome to the jungle.';
-		s += 'We recommend you start with ' + this.lesson.getName() + '.';
+		s += 'We recommend you start with ' + this.level.getName() + '.';
 		s += 'Click go when ready.';
 		this.chat.post(this.idhost, s, ['go']);
 	}
-	else if (this.lesson.isLessonFinished()) {
-		// start next lesson
+	else if (this.level.isLevelFinished()) {
+		// start next level
 		var s = "At your last session " + sInterval + " ago, ";
-		s += "you completed " + this.lesson.getName() + '. ';
+		s += "you completed " + this.level.getName() + '. ';
 		this.chat.post(this.idhost, s);
 		
-		this.lesson.next();
-		s = 'The next lesson is ' + this.lesson.getName() + '. ';
+		this.level.next();
+		s = 'The next level is ' + this.level.getName() + '. ';
 		s += 'Click go to proceed.';
 		this.chat.post(this.idhost, s, ['go']);
 	}
 	else if (!sInterval) {
-		// restart lesson silently
+		// restart level silently
 		var s = 'Click go to continue.';
 		this.chat.post(this.idhost, s, ['go']);
 	}
 	else {
-		// restart lesson with confirmation
+		// restart level with confirmation
 		var s = 'It has been ' + sInterval + '.';
-		s += 'You were working on ' + this.lesson.getName() + '.';
+		s += 'You were working on ' + this.level.getName() + '.';
 		s += 'Click go to continue.';
 		this.chat.post(this.idhost, s, ['go']);
 	}
 
 	this.state = 'ready';
 }
+*/
 
-voyc.Sam.prototype.startLesson = function() {
-	this.startDrill(this.lesson.current);
-}
 voyc.Sam.prototype.startLevel = function(id) {
 	var sectionid = id.substr(0,2);
 	var courseid = id.substr(2,4);
 	var levelid = id.substr(6,2);
-	var lvl = voyc.course[sectionid][courseid][levelid];
-	this.startDrill(lvl);
+	var lvl = voyc[this.lang].course[sectionid][courseid][levelid];
+	this.level = new voyc.Level(this.lang,lvl);
+	this.startDrill(this.level);
 }
 
-voyc.Sam.prototype.startDrill = function(lesson) {
+voyc.Sam.prototype.startDrill = function(level) {
+	this.vocab.set(level.id, 'l', level.phasen, 0);
+	level.store();
 	var self = this;
 	this.state = 'drill';
-	this.vocab.set(lesson.id, 'l', lesson.phasen, 0);
-	this.lesson.store();
-	this.lee.drill(lesson, function(scores) {
+	this.lee.drill(level, function(scores) {
 		self.reportScores(scores);
 	});
 }
@@ -132,16 +133,16 @@ voyc.Sam.prototype.startDrill = function(lesson) {
 voyc.Sam.prototype.endDrill = function() {
 	this.chat.changeHost('Sam');
 	this.state = 'ready';
-	var lesson = this.lesson.current;
-	lesson.phasen++;
-	if (lesson.phasen >= lesson.phases.length) { 
-		this.endLesson();
+	var level = this.level;
+	level.phasen++;
+	if (level.phasen >= level.phases.length) { 
+		this.endLevel();
 		return;
 	}
-	this.vocab.set(lesson.id, 'l', lesson.phasen, 0);
-	this.lesson.store();
+	this.vocab.set(level.id, 'l', level.phasen, 0);
+	level.store();
 
-	var phase = lesson.phases[lesson.phasen];
+	var phase = level.phases[level.phasen];
 	switch (phase) {
 		case 'glyph':
 			break;
@@ -151,10 +152,10 @@ voyc.Sam.prototype.endDrill = function() {
 			var s = 'Good job.  Let\'s try some words using these letters.<br/>';
 			for (var i=0; i<collection.length; i++) {
 				var w = collection[i];
-				lesson.word.push(w.t);
+				level.word.push(w.t);
 				s += w.t + ' ' + w.tl + '<sup>' + w.tn + '</sup> ' + '<i>' + w.p + '</i> ' + w.e + '<br/>';
 			}
-			this.lesson.store();
+			this.level.store();
 			s += 'Click go when ready.';
 			this.chat.post(this.idhost, s, ['go']);
 			break;
@@ -168,10 +169,10 @@ voyc.Sam.prototype.endDrill = function() {
 			var s = 'Good job.  Let\'s try some phrases using these words.<br/>';
 			for (var i=0; i<collection.length; i++) {
 				var w = collection[i];
-				lesson.phrase.push(w);
+				level.phrase.push(w);
 				s += w + "<br/>";
 			}
-			this.lesson.store();
+			this.level.store();
 			s += 'Click go when ready.';
 			this.chat.post(this.idhost, s, ['go']);
 			break;
@@ -183,9 +184,9 @@ voyc.Sam.prototype.endDrill = function() {
 }
 
 voyc.Sam.prototype.collectWords= function() {
-	var lesson = this.lesson.current;
-	var phasendx = lesson.phasen;
-	var collection = this.noam.collectWords(lesson.glyph);
+	var level = this.level;
+	var phasendx = level.phasen;
+	var collection = this.noam.collectWords(level.glyph);
 	collection.sort(function(a,b) {
 		return(a.l - b.l);
 	});
@@ -195,22 +196,23 @@ voyc.Sam.prototype.collectWords= function() {
 	return collection;
 }
 
-voyc.Sam.prototype.endLesson = function() {
+voyc.Sam.prototype.endLevel = function() {
 	this.chat.changeHost('Sam');
 	this.state = 'next';
-	var lesson = this.lesson.current;
-	this.vocab.set(lesson.id, 'l','m',1);
-	lesson.phasen = 'm';
-	this.lesson.store();
-	var prevLessonName = this.lesson.getName();
-	var lesson = this.lesson.next();
-	if (lesson) {
-		this.chat.post(this.idhost, 'Congratulations.  You have completed ' + prevLessonName + '.');
-		this.chat.post(this.idhost, 'The next lesson is ' + this.lesson.getName() + '.');
-		this.chat.post(this.idhost, 'Continue with next lesson?', ['yes', 'no']);
+	var level = this.level;
+	this.vocab.set(level.id, 'l','m',1);
+	level.phasen = 'm';
+	this.level.store();
+	var prevLevelName = this.level.getName();
+	var nextLevel = this.level.next();
+	if (nextLevel) {
+		this.level = new voyc.Level(this.lang,nextLevel);
+		this.chat.post(this.idhost, 'Congratulations.  You have completed ' + prevLevelName + '.');
+		this.chat.post(this.idhost, 'The next level is ' + this.level.getName() + '.');
+		this.chat.post(this.idhost, 'Continue with next level?', ['yes', 'no']);
 	}
 	else {
-		this.chat.post(this.idhost, 'Congratulations.  You have completed all of the lessons.');
+		this.chat.post(this.idhost, 'Congratulations.  You have completed all of the levels.');
 	}
 }
 
@@ -225,7 +227,7 @@ voyc.Sam.prototype.reportScores = function(scores) {
 		//this.vocab.set(score.key, score.type, score.state, score.ccnt);
 		this.vocab.set(score.dict.t, score.dict.g, score.state, score.ccnt);
 	}
-	this.lesson.store();
+	this.level.store();
 }
 
 voyc.Sam.prototype.onLoginReceived = function(note) {
@@ -245,12 +247,12 @@ voyc.Sam.prototype.onAnonymous = function(note) {
 /*
 state
 	brand new
-		are you ready for your first lesson?
+		are you ready for your first level?
 	active
-		current lesson
+		current level
 	drill in progress
 
-	lesson in progress
+	level in progress
 
 other
 	lee present: yes/no
@@ -272,15 +274,15 @@ voyc.Sam.prototype.respond = function(o) {
 		case 'yes':
 			switch (this.state) {
 				case 'nextphase':
-					this.startDrill(this.lesson.current);
+					this.startDrill(this.level);
 					break;
 				case 'ready':
 				case 'next':
-					this.startLesson();
+					this.startLevel();
 					break;
 				break;
 			}
-		case 'showalllessons':
+		case 'showalllevels':
 			break;
 		case 'noam':
 			this.noam.dev(w);
@@ -292,7 +294,7 @@ voyc.Sam.prototype.respond = function(o) {
 			this.chat.post(this.idhost, 'OK');
 			break;
 		case 'start':
-			this.startLesson();
+			this.startLevel();
 			break;
 		case 'set':
 			var r = this.setVocab(o.msg);
@@ -313,7 +315,7 @@ voyc.Sam.prototype.respond = function(o) {
 				this.chat.post(this.idhost, r[0], ['again']);
 			}
 			else {
-				this.chat.post(this.idhost, "Try a lesson first");
+				this.chat.post(this.idhost, "Try a level first");
 			}
 			break;
 		case 'translate':

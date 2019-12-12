@@ -1,4 +1,5 @@
-﻿voyc.courselist = [
+﻿if (!voyc.thai) { voyc.thai = {}; }
+voyc.thai.courselist = [
 	{ id:'grkybd', section: 'Grammar', course: 'Keyboard', level: 9, },
 	{ id:'gralph', section: 'Grammar', course: 'Alphabet', level: 7, },
 	{ id:'grcons', section: 'Grammar', course: 'Consonants', level: 5, },

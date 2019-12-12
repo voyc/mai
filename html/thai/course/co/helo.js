@@ -1,14 +1,14 @@
 // moved to curriculum.js
-//if (typeof(voyc.course.co) == 'undefined') {
-//	voyc.course.co = {};
+//if (typeof(voyc.thai.course.co) == 'undefined') {
+//	voyc.thai.course.co = {};
 //}
 
-voyc.course.co.helo = {
+voyc.thai.course.co.helo = {
 	section:'Conversation',
 	course:'Hello Goodbye',
 }
 
-voyc.course.co.helo.wh = {
+voyc.thai.course.co.helo.wh = {
 	id:'cohelowh',
 	algorithm: 'sequential',
 	initialShuffle: false,
@@ -16,6 +16,7 @@ voyc.course.co.helo.wh = {
 	phases: ['word', 'word-reverse', 'phrase', 'phrase-reverse'],
 	phasen: 0,
 	phrase:[],
+	glyph:[],
 	word:[
 		'สวัส', 
 		'ดี',
@@ -27,21 +28,23 @@ voyc.course.co.helo.wh = {
 		'คุณ',
 		'ละ',
 	],
-	story:[
-		'สวัส ดี่ ครับ', 
-		'สวัส ดี่ คะ',
-		'สขาย ดี่ ไหม ครับ', 
-		'สขาย ดี่ คะ',
-		'[แลัว] คุณ ล่ะ',
-		'สขาย ดี่ ครับ ',
+	phrase:[
+		'สวัส ดี ครับ', 
+		'สวัส ดี คะ',
+		'สบาย ดี ไหม ครับ', 
+		'สบาย ดี คะ',
+		'[แลัว] คุณ ละ',
+		'สบาย ดี ครับ ',
 	]
 };
 
-voyc.course.co.helo.ye = {
+voyc.thai.course.co.helo.ye = {
 	id:'coheloye',
 	phases: ['word', 'word-reverse', 'phrase', 'phrase-reverse'],
 	phasen: 0,
-	word:[
+	glyph:[],
+	word:[],
+	phrase:[
 		'แล้ว พบ กัน ใหม่',
 		'แล้ว เจอ กัน',
 		'แล้ว พบ กัน ภาย ใน ๑ ชั่วโมง',

@@ -23,48 +23,16 @@
 
 /*
 TODO
-separate curriculum and the courselist
-	leave courselist in thai folder
-	move curriculum to js
+x separate curriculum and the courselist
+x 	leave courselist in thai folder
+x 	move curriculum to js
 fold lesson.js into curriculum.js
 replace "lesson" with "level" throughout
 resolve "curriculum" vs "courselist"
-
-1. to display any page
-	find texts on the page (always english)
-	translate to thai
-	lookup in vocab
-	if in vocab, use thai
-
-2. start conversation
-	persons:
-		self: name, age, gender
-		other: name, age, gender
-		third: name, age, gender
-
-3. in levels, use local patterns, added auto to grammar
-	functions
-		@polite (depends on gender of speaker)
-		@person('self', 'name')
-		@person('self', 'age')
-		@person('self', 'gender')
-		@person('other', 'name')
-		@person('other', 'age')
-		@person('other', 'gender')
-		@person('third', 'name')
-		@person('third', 'age')
-		@person('third', 'gender')
-		@person('self', 'name'): สวัส ดี่ [@polite]
-
-x 4. load levels dynamically
-
-x 5. generate list of levels dynamically
-
 6. perequisites
 	glyphs
 	words
 	phrases?
-
 
 change lesson to course/gr/kbrd ??
 
@@ -94,6 +62,35 @@ noam:
 		check all words, make sure they are in dictionary
 	compare vetting to vocab
 		mark all already mastered
+
+conversation
+
+1. to display any page
+	find texts on the page (always english)
+	translate to thai
+	lookup in vocab
+	if in vocab, use thai
+
+2. start conversation
+	persons:
+		self: name, age, gender
+		other: name, age, gender
+		third: name, age, gender
+
+3. in levels, use local patterns, added auto to grammar
+	functions
+		@polite (depends on gender of speaker)
+		@person('self', 'name')
+		@person('self', 'age')
+		@person('self', 'gender')
+		@person('other', 'name')
+		@person('other', 'age')
+		@person('other', 'gender')
+		@person('third', 'name')
+		@person('third', 'age')
+		@person('third', 'gender')
+		@person('self', 'name'): สวัส ดี่ [@polite]
+
 */
 
 
@@ -104,7 +101,9 @@ voyc.Curriculum = function() {
 }
 
 voyc.Curriculum.prototype.setup = function(container) {
-	voyc.course = {};
+	this.lang = 'thai';
+	voyc[this.lang].course = {};
+	this.coursebase = voyc[this.lang].course;
 	var s = this.drawCurriculum();
 	container.innerHTML = s;
 	this.attachDomEventHandlers();
@@ -115,8 +114,8 @@ voyc.Curriculum.prototype.drawCurriculum = function() {
 	var s = '';
 	s += "<table>";
 	var section = '';
-	for (var c in voyc.courselist) {
-		var cur = voyc.courselist[c];
+	for (var c in voyc[this.lang].courselist) {
+		var cur = voyc[this.lang].courselist[c];
 		// header row for each section
 		if (cur.section != section) {
 			s += "<tr><td class='section' colspan=10>"+cur.section+"</td></tr>";
@@ -144,20 +143,18 @@ voyc.Curriculum.prototype.drawCurriculum = function() {
 
 voyc.Curriculum.prototype.attachDomEventHandlers = function() {
 	var self = this;
-	for (var c in voyc.courselist) {
-		var cur = voyc.courselist[c];
+	for (var c in voyc[this.lang].courselist) {
+		var cur = voyc[this.lang].courselist[c];
 		voyc.$(cur.id).addEventListener('click', function(evt) {
 			var id = evt.currentTarget.id;
 			var folder = id.substr(0,2);
 			var filename = id.substr(2,4)+'.js';
-			var lang = 'thai';
-			var courseroot = 'course';
-			if (!voyc[lang][courseroot][folder]) {
-				voyc[lang][courseroot][folder] = {};
+			if (!self.coursebase[folder]) {
+				self.coursebase[folder] = {};
 			}
-			var coursefolder = lang+'/'+courseroot+'/'+folder;
-			console.log('loading '+coursefolder+'/'+filename);
-			voyc.appendScript(coursefolder+'/'+filename);
+			var coursefile = self.lang+'/course/'+folder+'/'+filename;
+			console.log('loading '+coursefile);
+			voyc.appendScript(coursefile);
 		}, false);
 	}
 }
@@ -173,11 +170,11 @@ voyc.Curriculum.prototype.drawCoursePage = function(id) {
 	var s = '';
 	var sectionid = id.substr(0,2);
 	var courseid = id.substr(2,4);
-	var c = voyc.course[sectionid][courseid];
+	var c = voyc[this.lang].course[sectionid][courseid];
 	s += '<h2>'+c.section+': '+c.course+'</h2>';
-	for (var i=0; i<voyc.levels.length; i++) {
-		var level = voyc.levels[i]; 
-		s += this.drawLevel(c, level);
+	for (var i=0; i<voyc.levelColors.length; i++) {
+		var levelColor = voyc.levelColors[i]; 
+		s += this.drawLevel(c, levelColor);
 	}
 	return s;
 }
@@ -187,16 +184,26 @@ voyc.Curriculum.prototype.drawLevel = function(c, level) {
 	if (typeof(c[level.id]) == 'undefined') {
 		return s;
 	}
-	s += c.section;
-	s += c.course;
-	s += level.name;
-	s += '<br/>';
+	s += '<h3>'+level.name+'</h3>';
+	s += '<table class="horz">';
 	var lvl = c[level.id];
-	for (var i=0; i<lvl.word.length; i++) {
-		s += lvl.word[i];
-		s += '<br/>';
+	for (var i=0; i<lvl.glyph.length; i++) {
+		s += '<tr><td>';
+		s += lvl.glyph[i];
+		s += '</td></tr>';
 	}
-	s += "<button class='drill' id='"+lvl.id+"'>Drill</button>";
+	for (var i=0; i<lvl.word.length; i++) {
+		s += '<tr><td>';
+		s += lvl.word[i];
+		s += '</td></tr>';
+	}
+	for (var i=0; i<lvl.phrase.length; i++) {
+		s += '<tr><td>';
+		s += lvl.phrase[i];
+		s += '</td></tr>';
+	}
+	s += '</table>';
+	s += "<p><button class='drill' id='"+lvl.id+"'>Drill</button></p>";
 	return s;
 }
 
@@ -220,15 +227,3 @@ window.addEventListener('load', function(evt) {
 	voyc.curriculum = new voyc.Curriculum();
 	voyc.curriculum.setup(voyc.$('curriculum'));
 }, false);
-
-voyc.levels = [
-	{ id:'wh', name:'white', color:'white' },
-	{ id:'ye', name:'yellow', color:'yellow' },
-	{ id:'or', name:'orange', color:'orange' },
-	{ id:'gr', name:'green', color:'green' },
-	{ id:'bl', name:'blue', color:'blue' },
-	{ id:'pu', name:'purple', color:'purple' },
-	{ id:'re', name:'red', color:'red' },
-	{ id:'br', name:'brown', color:'brown' },
-	{ id:'bk', name:'black', color:'black' },
-]

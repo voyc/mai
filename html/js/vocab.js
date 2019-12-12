@@ -190,7 +190,7 @@ voyc.Vocab.prototype.storeSto = function() {
 
 voyc.Vocab.prototype.removeSto = function() {
 	localStorage.removeItem('vocab');
-	localStorage.removeItem('lesson');
+	localStorage.removeItem('level');
 }
 
 voyc.Vocab.prototype.retrieveSto = function() {
