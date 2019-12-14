@@ -13,18 +13,7 @@
 
 voyc.Level = function(lang,level) {
 	this.lang = lang;
-	this.id = level.id;
-	this.name = level.name;
-	this.algorithm = level.algorithm;
-	this.initialShuffle = level.initialShuffle;
-	this.workSize = level.algorithm;
-	this.phases = level.phases;
-	this.phasen = level.phasen || 0;
-	this.glyph = level.glyph;
-	this.word = level.word;
-	this.phrase = level.phrase;
 
-	// working
 	this.phasen = 0;
 	this.scores = {};
 
@@ -35,9 +24,10 @@ voyc.Level = function(lang,level) {
 
 voyc.Level.prototype.setup = function(level) {
 	this.id = level.id;
+	this.name = level.name;
 	this.algorithm = level.algorithm;
 	this.initialShuffle = level.initialShuffle;
-	this.workSize = level.algorithm;
+	this.workSize = level.workSize;
 	this.phases= level.phases;
 	this.glyph = level.glyph;
 	this.word = level.word;

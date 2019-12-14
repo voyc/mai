@@ -118,6 +118,7 @@ voyc.Sam.prototype.startLevel = function(id) {
 	var lvl = voyc[this.lang].course[sectionid][courseid][levelid];
 	this.level = new voyc.Level(this.lang,lvl);
 	this.startDrill(this.level);
+	(new voyc.BrowserHistory).nav('home');
 }
 
 voyc.Sam.prototype.startDrill = function(level) {
@@ -278,7 +279,7 @@ voyc.Sam.prototype.respond = function(o) {
 					break;
 				case 'ready':
 				case 'next':
-					this.startLevel();
+					this.startLevel(this.level.id);
 					break;
 				break;
 			}
