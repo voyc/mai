@@ -1,0 +1,41 @@
+/*
+psql -U voyccom_jhagstrand -d voyccom_mai -c "select thai, eng, id from mai.thaidict where pos = '' and type = 'o';" >updateonopos.sql
+*/
+update mai.thaidict set pos='j' where id= 150;
+update mai.thaidict set pos='r' where id= 202;
+update mai.thaidict set pos='j' where id= 203;
+update mai.thaidict set pos='p' where id=1431;
+update mai.thaidict set pos='n' where id=1432;
+update mai.thaidict set pos='j' where id= 444;
+update mai.thaidict set pos='j' where id= 465;
+update mai.thaidict set pos='v' where id= 564;
+update mai.thaidict set pos='v' where id= 578;
+update mai.thaidict set pos='v' where id= 805;
+update mai.thaidict set pos='j' where id= 149;
+update mai.thaidict set pos='v' where id= 970;
+update mai.thaidict set pos='v' where id=1096;
+update mai.thaidict set pos='v' where id=1168;
+update mai.thaidict set pos='v' where id=1169;
+update mai.thaidict set pos='n' where id=1192;
+update mai.thaidict set pos='n' where id=1194;
+update mai.thaidict set pos='n' where id=1145;
+update mai.thaidict set pos='n' where id= 462;
+update mai.thaidict set pos='n' where id= 463;
+update mai.thaidict set pos='v' where id= 542;
+update mai.thaidict set pos='n' where id= 797;
+update mai.thaidict set pos='n' where id= 803;
+update mai.thaidict set pos='v' where id= 167;
+update mai.thaidict set pos='n' where id= 169;
+update mai.thaidict set pos='n' where id= 887;
+update mai.thaidict set pos='n' where id= 903;
+update mai.thaidict set pos='v' where id= 935;
+update mai.thaidict set pos='v' where id= 936;
+update mai.thaidict set pos='n' where id= 968;
+update mai.thaidict set pos='n' where id= 991;
+update mai.thaidict set pos='j' where id=1095;
+update mai.thaidict set pos='v' where id=1111;
+update mai.thaidict set pos='n' where id=1187;
+update mai.thaidict set pos='v' where id=1185;
+delete from mai.thaidict where id = 1186;
+update mai.thaidict set pos='n',details='umbrella; parasol; shade; sunshade; screen; blind; canopy; cover; covering; curtain; shield; veil' where id = 933;
+delete from mai.thaidict where id = 934;
