@@ -191,6 +191,7 @@ voyc.Curriculum.prototype.drawLevel = function(c, level) {
 	if (typeof(c[level.id]) == 'undefined') {
 		return s;
 	}
+	s += '<div class="panel '+level.id+'">';
 	s += '<h3>'+level.name+'</h3>';
 	s += '<table class="horz">';
 	var lvl = c[level.id];
@@ -211,6 +212,7 @@ voyc.Curriculum.prototype.drawLevel = function(c, level) {
 	}
 	s += '</table>';
 	s += "<p><button class='drill' id='"+lvl.id+"'>Drill</button></p>";
+	s += '</div>';
 	return s;
 }
 

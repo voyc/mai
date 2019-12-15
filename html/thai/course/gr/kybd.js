@@ -18,7 +18,7 @@ voyc.thai.course.gr.kybd.wh = {
 	word:[],
 	phrase:[]
 };
-voyc.thai.course.gr.kybd.yl = {
+voyc.thai.course.gr.kybd.ye = {
 	id:'grkybdyl',
 	name: 'Index and Middle Finger',
 	algorithm: 'progressive',
@@ -74,17 +74,39 @@ voyc.thai.course.gr.kybd.pu = {
 	word:[],
 	phrase:[]
 };
-/*
 voyc.thai.course.gr.kybd.re = {
 	id:'grkybdre',
+	name:'Shift 1',
+	algorithm: 'progressive',
+	initialShuffle: false,
+	workSize:4,
+	phases: ['glyph', 'word', 'word-reverse', 'phrase', 'phrase-reverse'],
+	glyph: ['โ','ณ','ธ','ฯ','ฉ','ฮ','์'],
+	word:[],
+	phrase:[]
 };
 voyc.thai.course.gr.kybd.br = {
 	id:'grkybdbr',
+	name:'Shift 2',
+	algorithm: 'progressive',
+	initialShuffle: false,
+	workSize:4,
+	phases: ['glyph', 'word', 'word-reverse', 'phrase', 'phrase-reverse'],
+	glyph: ['',''],
+	word:[],
+	phrase:[]
 };
 voyc.thai.course.gr.kybd.bk = {
 	id:'grkybdbk',
+	name:'Digits',
+	algorithm: 'progressive',
+	initialShuffle: false,
+	workSize:4,
+	phases: ['glyph', 'word', 'word-reverse', 'phrase', 'phrase-reverse'],
+	glyph: ['๐','๑','๒','๓','๔','๕','๖','๗','๘','๙','฿'],
+	word:[],
+	phrase:[]
 };
-*/
 /*
 ภถๅ       high left
 โ๋ฏษฆศฤซ    shift home keys
