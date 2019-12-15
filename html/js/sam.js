@@ -33,13 +33,14 @@ voyc.Sam.prototype.setup = function() {
 			self.respond(note.payload);
 		}
 	});
-	this.observer.subscribe('login-received'   ,'user' ,function(note) { self.onLoginReceived   (note);});
-	this.observer.subscribe('relogin-received' ,'user' ,function(note) { self.onLoginReceived   (note);});
-	this.observer.subscribe('restart-anonymous','user' ,function(note) { self.onAnonymous       (note);});
-	this.observer.subscribe('logout-received'  ,'user' ,function(note) { self.onLogoutReceived  (note);});
-	this.observer.subscribe('getvocab-received','user' ,function(note) { self.onGetVocabReceived(note);});
+	this.observer.subscribe('login-received'   ,'sam' ,function(note) { self.onLoginReceived   (note);});
+	this.observer.subscribe('relogin-received' ,'sam' ,function(note) { self.onLoginReceived   (note);});
+	this.observer.subscribe('restart-anonymous','sam' ,function(note) { self.onAnonymous       (note);});
+	this.observer.subscribe('logout-received'  ,'sam' ,function(note) { self.onLogoutReceived  (note);});
+	this.observer.subscribe('getvocab-received','sam' ,function(note) { self.onGetVocabReceived(note);});
 	
 	this.lee = new voyc.Lee(this.chat, this.observer);
+	voyc.curriculum = new voyc.Curriculum(voyc.$('curriculum'), this.observer, this.vocab);
 }
 
 voyc.intervalToString = function(ms) {
