@@ -20,13 +20,58 @@ voyc.Noam = function(dictionary,vocab) {
 }
 
 /**
+	is input phrases, story, or words?
+	input: list of phrases
+	output: list of glyphs, list of words
+**/
+voyc.Noam.prototype.prereq = function(phrases) {
+	var word = [];
+	for (var i=0; i<phrases.length; i++) {
+		var words = this.parsePhrase(phrases[i]);
+		for (var j=0; j<words.length; j++) {
+			var v = this.vocab.get(words[j])
+			if (!v) {
+				word.push(words[j]);
+			}
+		}
+	}
+
+	var glyph = [];
+	for (var i=0; i<word.length; i++) {
+		var glyphs = this.parseWord(word[i]);
+		for (var j=0; j<glyphs.length; j++) {
+			var v = this.vocab.get(glyphs[j]);
+			if (!v) {
+				glyph.push(glyphs[j]);
+			}
+		}
+	}
+	return [ word, glyph ];
+}
+
+voyc.Noam.prototype.parsePhrase = function(phrase) {
+	return phrase.split(' ');
+}
+
+voyc.Noam.prototype.parseWord = function(word) {
+	return word.split('');
+}
+
+/**
 	Collect a list of words that contain 
 	only glyphs already mastered or working.
 	@return array of words
 */
-voyc.Noam.prototype.collectWords = function(target) {
-	target = [] || target;
-	var matched  = [];
+voyc.Noam.prototype.collectWords = function(target, options) {
+	var settings = {
+		newWordsOnly: false,
+		targetGlyphsOnly: false,
+	}
+	if (options) {
+		for (var key in options) {
+			settings[key] = options[key];
+		}
+	}
 
 	function inVocab(ch,vocab) {
 		var r = false;
@@ -39,30 +84,39 @@ voyc.Noam.prototype.collectWords = function(target) {
 	}
 
 	// scan the dictionary
+	var matched  = [];
 	var self = this;
 	this.dictionary.iterate(function(dict,n) {
 		if (dict.g != 'o') {  // collecting one-syllable words
 			return false;
 		}
-		if (inVocab(dict.t,self.vocab)) { // not yet mastered
+		if (settings.newWordsOnly && inVocab(dict.t,self.vocab)) { // not yet mastered
 			return false;
 		}
 		var t = dict.t;
 		var tlen = t.length;
-		var cnt = 0;
-		var tcnt = 0;
+		var cntMastered = 0;
+		var cntTargeted = 0;
 		for (var i=0; i<tlen; i++) {  // look at each letter in the word
-			var m = inVocab(t[i],self.vocab);
+			var c = t[i];
+			var m = inVocab(c, self.vocab);
 			if (m) {
-				cnt++;
-				if (target.includes(m.w)) {
-					tcnt++;	
-				}
+				cntMastered++;
+			}
+			if (target.includes(c)) {
+				cntTargeted++;	
 			}
 		}
-		//if (cnt == tlen && tcnt > 0) {
-		if (cnt == tlen) {
-			matched.push(dict);
+
+		if (settings.targetGlyphsOnly) {
+			if (cntTargeted == tlen) {
+				matched.push(dict);
+			}
+		}
+		else {
+			if (cntMastered == tlen && cntTargeted > 0) {
+				matched.push(dict);
+			}
 		}
 	});
 	return matched;
@@ -511,11 +565,22 @@ voyc.Noam.prototype.dev = function(msg) {
 	// assume msg = 'collect a,b,c,d';
 	var s = '';
 	switch (msg[1]) {
+		//noam collect words ด่กาหสฟว false true
+		//noam collect words พีอำทรแม false true
+		//noam collect words ไนปใๆยผฝ false true
 		case 'collect':
-			var a =this.collectWords(msg[2]);
-			for (var k in a) {
-				s += (parseInt(k)+1)+'\t'+a[k].t+'\t'+a[k].e+'\t'+a[k].l;
-			}		
-	return s;
+			if (msg[2] == 'words') {
+				var target = msg[3];
+				var newWordsOnly = (msg[4] === 'true');
+				var targetGlyphsOnly = (msg[5] === 'true');
+				var a =this.collectWords(target, {newWordsOnly:newWordsOnly, targetGlyphsOnly:targetGlyphsOnly});
+				for (var k in a) {
+					s += (parseInt(k)+1)+'\t'+a[k].t+'\t'+a[k].e+'\t'+a[k].l+'<br/>';
+				}		
+			}
+			break;
+		default:
+			break;
 	}
+	return s;
 }

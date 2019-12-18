@@ -124,6 +124,19 @@ voyc.Sam.prototype.startLevel = function(id) {
 
 voyc.Sam.prototype.startDrill = function(level) {
 	this.vocab.set(level.id, 'l', level.phasen, 0);
+	if (level.prereq) {
+		var a = this.noam.prereq(level.phrase);
+		level.word = a[0];
+		if (level.word.length > 0) {
+			level.phases.unshift('word-reverse');
+			level.phases.unshift('word');
+		}
+		level.glyph = a[1];
+		if (level.glyph.length > 0) {
+			level.phases.unshift('glyph-reverse');
+			level.phases.unshift('glyph');
+		}
+	}
 	level.store();
 	var self = this;
 	this.state = 'drill';
@@ -287,7 +300,8 @@ voyc.Sam.prototype.respond = function(o) {
 		case 'showalllevels':
 			break;
 		case 'noam':
-			this.noam.dev(w);
+			var s = this.noam.dev(w);
+			this.chat.post(this.idhost, s);
 			break;
 		case 'debug':
 			debugger;

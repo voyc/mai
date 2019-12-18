@@ -15,7 +15,7 @@ voyc.thai.course.gr.kybd.wh = {
 	workSize: 3,
 	phases: ['glyph', 'word', 'word-reverse', 'phrase', 'phrase-reverse'],
 	glyph: ['ด','่','ก','า','ห','ส','ฟ','ว'],
-	word:[],
+	word:['ดาว','สด','กว่า','หก','สาว','ว่า','หา','กา','ฟาด'],
 	phrase:[]
 };
 voyc.thai.course.gr.kybd.ye = {
@@ -26,7 +26,7 @@ voyc.thai.course.gr.kybd.ye = {
 	workSize:3,
 	phases: ['glyph', 'word', 'word-reverse', 'phrase', 'phrase-reverse'],
 	glyph: ['พ','ี','อ','ท','ำ','ร','แ','ม'],
-	word:[],
+	word:['พร','ทำ','ที','พอ','มี','รำ','ออม','แรม'],
 	phrase:[]
 };
 voyc.thai.course.gr.kybd.or = {
@@ -37,7 +37,7 @@ voyc.thai.course.gr.kybd.or = {
 	workSize:3,
 	phases: ['glyph', 'word', 'word-reverse', 'phrase', 'phrase-reverse'],
 	glyph: ['ไ','น','ป','ใ','ๆ','ย','ผ','ฝ'],
-	word:[],
+	word:['ใน','ไป','ฝน'],
 	phrase:[]
 };
 voyc.thai.course.gr.kybd.gr = {
@@ -81,7 +81,7 @@ voyc.thai.course.gr.kybd.re = {
 	initialShuffle: false,
 	workSize:4,
 	phases: ['glyph', 'word', 'word-reverse', 'phrase', 'phrase-reverse'],
-	glyph: ['โ','ณ','ธ','ฯ','ฉ','ฮ','์'],
+	glyph: ['โ','ณ','ธ','ฯ','ฉ','ฮ','์','ู'],
 	word:[],
 	phrase:[]
 };
@@ -92,7 +92,7 @@ voyc.thai.course.gr.kybd.br = {
 	initialShuffle: false,
 	workSize:4,
 	phases: ['glyph', 'word', 'word-reverse', 'phrase', 'phrase-reverse'],
-	glyph: ['',''],
+	glyph: ['็','ษ','ฑ','ญ','ซ','ศ','ฬ','ฦ','฿'],
 	word:[],
 	phrase:[]
 };
@@ -103,7 +103,7 @@ voyc.thai.course.gr.kybd.bk = {
 	initialShuffle: false,
 	workSize:4,
 	phases: ['glyph', 'word', 'word-reverse', 'phrase', 'phrase-reverse'],
-	glyph: ['๐','๑','๒','๓','๔','๕','๖','๗','๘','๙','฿'],
+	glyph: ['๐','๑','๒','๓','๔','๕','๖','๗','๘','๙'],
 	word:[],
 	phrase:[]
 };

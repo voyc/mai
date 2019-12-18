@@ -1,0 +1,134 @@
+voyc.thai.course.co.helo.ye = {
+        id:'coheloye',
+        prereq:true,
+        postreq:false,
+        glyph:[],
+        word:[],
+	phases:['glyph', 'word', 'word-reverse', 'phrase', 'phrase-reverse'],
+	phase:[ 
+		{
+			type:'phrase',
+        		algorithm: 'sequential',
+        		initialShuffle: false,
+        		workSize:3,
+			reversible:true,
+		 	phrase:[
+		                'แล้ว พบ กัน ใหม่',
+		                'แล้ว เจอ กัน',
+		                'แล้ว พบ กัน ภาย ใน ๑ ชั่วโมง',
+		                'ลา ก่อน',
+		                'ไป ละ นะ',
+		                'ไป ก่อน นะ',
+		                'ลา ละ นะ',
+		                'กลับ ก่อน นะ',
+		        ]
+		}
+	]
+};
+
+
+1. sequential algorithm 
+	return false from choose() at top of repeat when all are mastered
+	option seqElimation: show only mastered words
+	option seqShuffleEach:
+	option promoteCount:3
+	option reversible:true
+	option prereq:true
+	option postreq:true
+
+2. progressive algorithm
+	option proWorkSize: default 3
+	option proInitialShuffle:false
+	option promoteCount:3
+	option reversible:true
+	option prereq:true
+	option postreq:true
+
+3. specify algorithm for each phase
+	glyph is always progressive, never reversible
+	word is always progressive, always reversible 
+	phrase is always sequential-with-elimination, always reversible
+	note: workSize is irrelevant for sequential algorithm
+
+primaryPhase = 'phrase'
+
+
+collect words containing target glpyhs
+	option "newwordsonly": collect only new words, not yet mastered
+	option "targetglyphsonly": collect words made up of target glyphs only
+	option: default: collect words made up of at least one target glyph plus previously mastered glyphs
+
+-----------
+
+/*
+TODO
+x separate curriculum and the courselist
+x 	leave courselist in thai folder
+x 	move curriculum to js
+fold lesson.js into curriculum.js
+replace "lesson" with "level" throughout
+resolve "curriculum" vs "courselist"
+6. perequisites
+	glyphs
+	words
+	phrases?
+
+change lesson to course/gr/kbrd ??
+
+1. Discover the story.
+	what should the phases be?  story only?
+
+2. make a list of glyphs in the story
+	mark those mastered already
+	store the remainder in glyph[]
+
+3. run the drill on glyph
+
+4. make a list of words in the story
+	mark those mastered already
+	make sure you have one word for each glyph
+	store the remainder in word[]
+
+5. run the drill on word
+
+(make a list of phrases used in the story?)
+
+6. run the drill on the story
+
+noam:
+	vet story
+		check all glyphs, make sure they are in alphabet
+		check all words, make sure they are in dictionary
+	compare vetting to vocab
+		mark all already mastered
+
+conversation
+
+1. to display any page
+	find texts on the page (always english)
+	translate to thai
+	lookup in vocab
+	if in vocab, use thai
+
+2. start conversation
+	persons:
+		self: name, age, gender
+		other: name, age, gender
+		third: name, age, gender
+
+3. in levels, use local patterns, added auto to grammar
+	functions
+		@polite (depends on gender of speaker)
+		@person('self', 'name')
+		@person('self', 'age')
+		@person('self', 'gender')
+		@person('other', 'name')
+		@person('other', 'age')
+		@person('other', 'gender')
+		@person('third', 'name')
+		@person('third', 'age')
+		@person('third', 'gender')
+		@person('self', 'name'): สวัส ดี่ [@polite]
+
+*/
+

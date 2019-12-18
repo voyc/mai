@@ -21,79 +21,6 @@
 	Lee conducts a drill on each phase.
 **/
 
-/*
-TODO
-x separate curriculum and the courselist
-x 	leave courselist in thai folder
-x 	move curriculum to js
-fold lesson.js into curriculum.js
-replace "lesson" with "level" throughout
-resolve "curriculum" vs "courselist"
-6. perequisites
-	glyphs
-	words
-	phrases?
-
-change lesson to course/gr/kbrd ??
-
-1. Discover the story.
-	what should the phases be?  story only?
-
-2. make a list of glyphs in the story
-	mark those mastered already
-	store the remainder in glyph[]
-
-3. run the drill on glyph
-
-4. make a list of words in the story
-	mark those mastered already
-	make sure you have one word for each glyph
-	store the remainder in word[]
-
-5. run the drill on word
-
-(make a list of phrases used in the story?)
-
-6. run the drill on the story
-
-noam:
-	vet story
-		check all glyphs, make sure they are in alphabet
-		check all words, make sure they are in dictionary
-	compare vetting to vocab
-		mark all already mastered
-
-conversation
-
-1. to display any page
-	find texts on the page (always english)
-	translate to thai
-	lookup in vocab
-	if in vocab, use thai
-
-2. start conversation
-	persons:
-		self: name, age, gender
-		other: name, age, gender
-		third: name, age, gender
-
-3. in levels, use local patterns, added auto to grammar
-	functions
-		@polite (depends on gender of speaker)
-		@person('self', 'name')
-		@person('self', 'age')
-		@person('self', 'gender')
-		@person('other', 'name')
-		@person('other', 'age')
-		@person('other', 'gender')
-		@person('third', 'name')
-		@person('third', 'age')
-		@person('third', 'gender')
-		@person('self', 'name'): สวัส ดี่ [@polite]
-
-*/
-
-
 voyc.Curriculum = function(container, observer, vocab) {
 	// is singleton
 	if (voyc.Curriculum._instance) return voyc.Curriculum._instance;
@@ -186,6 +113,16 @@ voyc.Curriculum.prototype.drawCoursePage = function(id) {
 	return s;
 }
 
+voyc.Curriculum.prototype.drawGlyph = function(c) {
+	var r = c;
+	var u = '&#9676;';
+	var diacritics = 'ืิ์้่ัีุูึำ็';
+	if (diacritics.indexOf(r) > -1) {
+		r = u + r;
+	}
+	return r;
+}
+
 voyc.Curriculum.prototype.drawLevel = function(c, level) {
 	var s = '';
 	if (typeof(c[level.id]) == 'undefined') {
@@ -197,7 +134,7 @@ voyc.Curriculum.prototype.drawLevel = function(c, level) {
 	var lvl = c[level.id];
 	for (var i=0; i<lvl.glyph.length; i++) {
 		s += '<tr><td>';
-		s += lvl.glyph[i];
+		s += this.drawGlyph(lvl.glyph[i]);
 		s += '</td></tr>';
 	}
 	for (var i=0; i<lvl.word.length; i++) {
