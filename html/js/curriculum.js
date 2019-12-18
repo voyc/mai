@@ -94,20 +94,23 @@ conversation
 */
 
 
-voyc.Curriculum = function() {
+voyc.Curriculum = function(container, observer, vocab) {
 	// is singleton
 	if (voyc.Curriculum._instance) return voyc.Curriculum._instance;
 	else voyc.Curriculum._instance = this;
+
+	this.container = container;
+	this.observer = observer;
+	this.vocab = vocab;
+	this.setup();
 }
 
-voyc.Curriculum.prototype.setup = function(container) {
+voyc.Curriculum.prototype.setup = function() {
 	this.lang = 'thai';
 	voyc[this.lang].course = {};
 	this.coursebase = voyc[this.lang].course;
-	var s = this.drawCurriculum();
-	container.innerHTML = s;
-	this.attachDomEventHandlers();
-	(new voyc.Minimal).attachAll(container);
+	var self = this;
+	this.observer.subscribe('curriculum-requested', 'curriculum', function(note) {self.drawCurriculum();});
 }
 
 voyc.Curriculum.prototype.drawCurriculum = function() {
@@ -127,18 +130,22 @@ voyc.Curriculum.prototype.drawCurriculum = function() {
 		var level1 = 2;
 		for (var l=1; l<=9; l++) {
 			s += "<td>";
-			if (cur.level >= ((l+2) - level1)) {
-				s += "&#x2714;";
+			var lcid = voyc.levelColors[l-1].id;
+			var voc = this.vocab.get(cur.id + lcid);
+			if (voc && voc.s == 'm') {
+				s += "&#x2714;"; // checkmark
 			}
 			else {
-				s += "&#x2003;";
+				s += "&#x2003;"; // blankspace
 			}
 			s += "</td>";
 		}
 		s += "</tr>";
 	}
 	s += "</table>";
-	return s;
+	this.container.innerHTML = s;
+	this.attachDomEventHandlers();
+	(new voyc.Minimal).attachAll(this.container);
 }
 
 voyc.Curriculum.prototype.attachDomEventHandlers = function() {
@@ -184,6 +191,7 @@ voyc.Curriculum.prototype.drawLevel = function(c, level) {
 	if (typeof(c[level.id]) == 'undefined') {
 		return s;
 	}
+	s += '<div class="panel '+level.id+'">';
 	s += '<h3>'+level.name+'</h3>';
 	s += '<table class="horz">';
 	var lvl = c[level.id];
@@ -204,6 +212,7 @@ voyc.Curriculum.prototype.drawLevel = function(c, level) {
 	}
 	s += '</table>';
 	s += "<p><button class='drill' id='"+lvl.id+"'>Drill</button></p>";
+	s += '</div>';
 	return s;
 }
 
@@ -222,8 +231,3 @@ voyc.Curriculum.prototype.attachCourseEventHandlers = function() {
 voyc.onCourseLoaded = function(id) {
 	voyc.curriculum.onCourseLoaded(id);
 }
-
-window.addEventListener('load', function(evt) {
-	voyc.curriculum = new voyc.Curriculum();
-	voyc.curriculum.setup(voyc.$('curriculum'));
-}, false);
