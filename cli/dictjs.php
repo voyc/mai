@@ -57,6 +57,7 @@ function readdict() {
 		$ps = $row['parse'];
 
 		$d = str_replace( "'", "\\'", $d);
+		$e = str_replace( "'", "\\'", $e);
 		if ($tm == ' ') {
 			$tm = '';
 		}
