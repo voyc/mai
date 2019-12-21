@@ -1,8 +1,5 @@
-// moved to curriculum.js
-//if (typeof(voyc.thai.course.co) == 'undefined') {
-//	voyc.thai.course.co = {};
-//}
-
+/**
+**/
 voyc.thai.course.co.helo = {
 	section:'Conversation',
 	course:'Hello Goodbye',
@@ -10,27 +7,21 @@ voyc.thai.course.co.helo = {
 
 voyc.thai.course.co.helo.wh = {
 	id:'cohelowh',
-	algorithm: 'sequential',
-	initialShuffle: false,
-	workSize:3,
 	prereq:true,
 	postreq:false,
-	phases: ['phrase', 'phrase-reverse'],
-	phasen: 0,
-	phrase:[],
+	primaryDictType: 'phrase',
 	glyph:[],
-	word:[],
-//	word:[
-//		'สวัส', 
-//		'ดี',
-//		'ครับ', 
-//		'คะ',
-//		'สบาย', 
-//		'ไหม', 
-//		'แล้ว',
-//		'คุณ',
-//		'ละ',
-//	],
+	word:[
+		'สวัส', 
+		'ดี',
+		'ครับ', 
+		'คะ',
+		'สบาย', 
+		'ไหม', 
+		'แล้ว',
+		'คุณ',
+		'ละ',
+	],
 	phrase:[
 		'สวัส ดี ครับ', 
 		'สวัส ดี คะ',
@@ -44,13 +35,9 @@ voyc.thai.course.co.helo.wh = {
 
 voyc.thai.course.co.helo.ye = {
 	id:'coheloye',
-	algorithm: 'sequential',
-	initialShuffle: false,
-	workSize:3,
 	prereq:true,
 	postreq:false,
-	phases: ['phrase', 'phrase-reverse'],
-	phasen: 0,
+	primaryDictType: 'phrase',
 	glyph:[],
 	word:[],
 	phrase:[
@@ -67,13 +54,9 @@ voyc.thai.course.co.helo.ye = {
 
 voyc.thai.course.co.helo.or = {
 	id:'coheloor',
-	algorithm: 'sequential',
-	initialShuffle: false,
-	workSize:3,
 	prereq:true,
 	postreq:false,
-	phases: ['phrase', 'phrase-reverse'],
-	phasen: 0,
+	primaryDictType: 'phrase',
 	glyph:[],
 	word:[],
 	phrase:[
@@ -90,13 +73,9 @@ voyc.thai.course.co.helo.or = {
 
 voyc.thai.course.co.helo.gr = {
 	id:'cohelogr',
-	algorithm: 'sequential',
-	initialShuffle: false,
-	workSize:3,
 	prereq:true,
 	postreq:false,
-	phases: ['phrase', 'phrase-reverse'],
-	phasen: 0,
+	primaryDictType: 'phrase',
 	glyph:[],
 	word:[],
 	phrase:[

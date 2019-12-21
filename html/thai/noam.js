@@ -10,7 +10,6 @@
 	public methods:
 		collect()
 		parse()
-		parseWord()
 **/
 voyc.Noam = function(dictionary,vocab) {
 	this.dictionary = dictionary;
@@ -66,6 +65,8 @@ voyc.Noam.prototype.collectWords = function(target, options) {
 	var settings = {
 		newWordsOnly: false,
 		targetGlyphsOnly: false,
+		sort: true,
+		limit: 8
 	}
 	if (options) {
 		for (var key in options) {
@@ -119,58 +120,18 @@ voyc.Noam.prototype.collectWords = function(target, options) {
 			}
 		}
 	});
-	return matched;
-}
 
-/**
-	Collect a list of phrases that contain 
-	only words already mastered or working.
-	@return array of words
-*/
-voyc.Noam.prototype.collectPhrases = function(target) {
-	target = [] || target;
-	var matched  = [];
-
-	function inVocab(ch,vocab) {
-		var r = false;
-		vocab.iterate(function(voc,ndx) {
-			if (voc.w == ch) {
-				r = true;
-			}
+	if (settings.sort) {
+		matched.sort(function(a,b) {
+			return(a.l - b.l);
 		});
-		return r;
+	}	
+	if (settings.limit) {
+		matched = matched.slice(0, settings.limit);
+		matched = voyc.shuffleArray(matched);
 	}
-
-	// scan the dictionary
-	var self = this;
-	this.dictionary.iterate(function(dict,n) {
-		if (dict.g != 'o') {  // collecting one-syllable words
-			return false;
-		}
-		if (inVocab(dict.t,self.vocab)) { // not yet mastered
-			return false;
-		}
-		var t = dict.t;
-		var tlen = t.length;
-		var cnt = 0;
-		var tcnt = 0;
-		for (var i=0; i<tlen; i++) {  // look at each letter in the word
-			var m = inVocab(t[i],self.vocab);
-			if (m) {
-				cnt++;
-				if (target.includes(m.w)) {
-					tcnt++;	
-				}
-			}
-		}
-		//if (cnt == tlen && tcnt > 0) {
-		if (cnt == tlen) {
-			matched.push(dict);
-		}
-	});
 	return matched;
 }
-
 
 /**
 	Find all the parts within a string
@@ -557,30 +518,4 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 		
 	
 	return syl;
-}
-
-
-voyc.Noam.prototype.dev = function(msg) {
-	// parse msg
-	// assume msg = 'collect a,b,c,d';
-	var s = '';
-	switch (msg[1]) {
-		//noam collect words ด่กาหสฟว false true
-		//noam collect words พีอำทรแม false true
-		//noam collect words ไนปใๆยผฝ false true
-		case 'collect':
-			if (msg[2] == 'words') {
-				var target = msg[3];
-				var newWordsOnly = (msg[4] === 'true');
-				var targetGlyphsOnly = (msg[5] === 'true');
-				var a =this.collectWords(target, {newWordsOnly:newWordsOnly, targetGlyphsOnly:targetGlyphsOnly});
-				for (var k in a) {
-					s += (parseInt(k)+1)+'\t'+a[k].t+'\t'+a[k].e+'\t'+a[k].l+'<br/>';
-				}		
-			}
-			break;
-		default:
-			break;
-	}
-	return s;
 }

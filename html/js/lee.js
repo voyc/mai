@@ -45,6 +45,7 @@ voyc.Lee = function(chat,observer) {
 	this.scores = [];  // created for each drill
 	this.state = '';  // conversation state
 	this.setting = {
+		optStackSize:8,
 		isAutoScore:true,
 		isAutoDir:true,
 		autoDirNth:30,

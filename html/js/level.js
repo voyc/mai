@@ -1,11 +1,13 @@
 /**
 	The Level object.
+	Each course has nine levels.
 	Sam creates.
 	Begins life as a copy of the level of a course.
-	Noam adds prereq.
+	Can have multiple stacks created by course author.
+	Noam adds prereq stacks.
 		for phrases, words
 		for words, glyphs
-	Noam adds postreq. 
+	Noam adds postreq stacks. 
 		for glyphs, words
 		for words, phrases
 	Lee adds scores.
@@ -14,8 +16,12 @@
 voyc.Level = function(lang,level) {
 	this.lang = lang;
 
-	this.phasen = 0;
+	this.currentStackNdx = 0;
 	this.scores = {};
+
+	this.defaultSettings = {
+		workSize:3,
+	};
 
 	if (level) {
 		this.setup(level);
@@ -25,15 +31,89 @@ voyc.Level = function(lang,level) {
 voyc.Level.prototype.setup = function(level) {
 	this.id = level.id;
 	this.name = level.name;
-	this.algorithm = level.algorithm;
-	this.initialShuffle = level.initialShuffle;
-	this.workSize = level.workSize;
+	this.primaryDictType = level.primaryDictType;
 	this.prereq = level.prereq;
 	this.postreq = level.postreq;
-	this.phases= level.phases;
 	this.glyph = level.glyph;
 	this.word = level.word;
 	this.phrase = level.phrase;
+
+	// initialize stacks
+	this.stacks = [];
+	if (this.glyph.length) {
+		var p = {
+			dictType: 'glyph',
+			dir: 'normal',
+			data: this.glyph,
+			primary: (this.primaryDictType == 'glyph'),
+			algorithm: 'progressive',
+			initialShuffle: false,
+			workSize: 3,
+		};
+		this.stacks.push(p);
+	}
+	if (this.word.length) {
+		var p = {
+			dictType: 'word',
+			dir: 'normal',
+			data: this.word,
+			primary: (this.primaryDictType == 'word'),
+			algorithm: 'progressive',
+			initialShuffle: false,
+			workSize: 3,
+		}
+		this.stacks.push(p);
+		var p = {
+			dictType: 'word',
+			dir: 'reverse',
+			data: this.word,
+			primary: false,
+			algorithm: 'progressive',
+			initialShuffle: false,
+			workSize: 3,
+		}
+		this.stacks.push(p);
+	}
+	if (this.phrase.length) {
+		var p = {
+			dictType: 'phrase',
+			dir: 'normal',
+			data: this.phrase,
+			primary: (this.primaryDictType == 'phrase'),
+			algorithm: 'sequential',
+			initialShuffle: false,
+			workSize: 3,
+		}
+		this.stacks.push(p);
+		var p = {
+			dictType: 'phrase',
+			dir: 'reverse',
+			data: this.phrase,
+			primary: false,
+			algorithm: 'sequential',
+			initialShuffle: false,
+			workSize: 3,
+		}
+		this.stacks.push(p);
+	}
+
+	// identify primary stack
+	var ndx = 0;
+	for (var i=0; i<this.stacks.length; i++) {
+		if (this.stacks[i].primary) {
+			ndx = i;
+		}
+	}
+	this.primaryStackNdx = ndx;
+	
+	// let authors override default settings on primary stack
+	var primaryStack = this.stacks[this.primaryStackNdx];
+	if (level.algorithm) 
+		primaryStack.algorithm = level.algorithm;
+	if (level.initialShuffle) 
+		primaryStack.initialShuffle = level.initialShuffle;
+	if (level.workSize) 
+		primaryStack.workSize = level.workSize;
 }
 
 voyc.Level.prototype.store = function() {

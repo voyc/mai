@@ -6,7 +6,7 @@
 	Show the level reached for each course.
 
 	The curriculum heirarchy is:
-		section > course > level > phase (drill)
+		section > course > level > drill
 	
 	section = folder
 	course = filename.js
@@ -17,8 +17,8 @@
 
 	User selects a course.
 	Noam analyzes the course to see if it is appropriate.
-	Sam steps through the levels and phases.
-	Lee conducts a drill on each phase.
+	Sam steps through the levels and drills.
+	Lee conducts a drill on each drill.
 **/
 
 voyc.Curriculum = function(container, observer, vocab) {
@@ -132,20 +132,26 @@ voyc.Curriculum.prototype.drawLevel = function(c, level) {
 	s += '<h3>'+level.name+'</h3>';
 	s += '<table class="horz">';
 	var lvl = c[level.id];
-	for (var i=0; i<lvl.glyph.length; i++) {
-		s += '<tr><td>';
-		s += this.drawGlyph(lvl.glyph[i]);
-		s += '</td></tr>';
+	if (lvl.primaryDictType == 'glyph') {
+		for (var i=0; i<lvl.glyph.length; i++) {
+			s += '<tr><td>';
+			s += this.drawGlyph(lvl.glyph[i]);
+			s += '</td></tr>';
+		}
 	}
-	for (var i=0; i<lvl.word.length; i++) {
-		s += '<tr><td>';
-		s += lvl.word[i];
-		s += '</td></tr>';
+	else if (lvl.primaryDictType == 'word') {
+		for (var i=0; i<lvl.word.length; i++) {
+			s += '<tr><td>';
+			s += lvl.word[i];
+			s += '</td></tr>';
+		}
 	}
-	for (var i=0; i<lvl.phrase.length; i++) {
-		s += '<tr><td>';
-		s += lvl.phrase[i];
-		s += '</td></tr>';
+	else if (lvl.primaryDictType == 'phrase') {
+		for (var i=0; i<lvl.phrase.length; i++) {
+			s += '<tr><td>';
+			s += lvl.phrase[i];
+			s += '</td></tr>';
+		}
 	}
 	s += '</table>';
 	s += "<p><button class='drill' id='"+lvl.id+"'>Drill</button></p>";

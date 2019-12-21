@@ -75,9 +75,9 @@ voyc.Sam.prototype.onGetVocabReceived = function() {
 voyc.Sam.prototype.setupFirstLevel = function(interval) {
 	var sInterval = voyc.intervalToString(interval);
 	var level = this.level;
-	if (level.phasen < 0) {
+	if (level.currentDrill < 0) {
 		// welcome new student
-		level.phasen = 0;
+		level.currentDrill = 0;
 		this.level.store();
 		var s = 'Welcome to the jungle.';
 		s += 'We recommend you start with ' + this.level.getName() + '.';
@@ -118,26 +118,52 @@ voyc.Sam.prototype.startLevel = function(id) {
 	var levelid = id.substr(6,2);
 	var lvl = voyc[this.lang].course[sectionid][courseid][levelid];
 	this.level = new voyc.Level(this.lang,lvl);
-	this.startDrill(this.level);
+
+	// build prerequisite stacks
+	if (this.level.prereq) {
+		var a = this.noam.prereq(this.level.phrase);
+		this.level.word = a[0];
+		if (this.level.word.length > 0) {
+			this.level.stacks.unshift('word-reverse');
+			this.level.stacks.unshift('word');
+		}
+		this.level.glyph = a[1];
+		if (this.level.glyph.length > 0) {
+			this.level.stacks.unshift('glyph-reverse');
+			this.level.stacks.unshift('glyph');
+		}
+	}
+
+	// build postrequisite stacks
+	if (this.level.postreq) {
+		// if glyphs, collect words
+		if (this.level.glyph.length > 0 && this.level.word < this.lee.setting.optStackSize) {
+			var target = this.level['glyph'];
+			var limit = this.lee.setting.optStackSize - this.level.word.length;
+			if (limit > 0) {
+				var collection = this.noam.collectWords(target, {limit:limit});
+				this.level.word = this.level.word.concat(collection);
+			}
+		}
+
+		// if words, generate phrases
+		if (this.level.word.length > 0 && this.level.phrase < this.lee.setting.optStackSize) {
+			//var collection = voyc.sengen.genSentence({count:8,shuffle:1,pattern:'',target:[]});
+			//for (var i=0; i<collection.length; i++) {
+			//	var w = collection[i];
+			//	this.level.phrase.push(w);
+			//	s += w + "<br/>";
+			//}
+		}
+	}
+
+	this.level.store();
 	(new voyc.BrowserHistory).nav('home');
+	this.startDrill(this.level);
 }
 
 voyc.Sam.prototype.startDrill = function(level) {
-	this.vocab.set(level.id, 'l', level.phasen, 0);
-	if (level.prereq) {
-		var a = this.noam.prereq(level.phrase);
-		level.word = a[0];
-		if (level.word.length > 0) {
-			level.phases.unshift('word-reverse');
-			level.phases.unshift('word');
-		}
-		level.glyph = a[1];
-		if (level.glyph.length > 0) {
-			level.phases.unshift('glyph-reverse');
-			level.phases.unshift('glyph');
-		}
-	}
-	level.store();
+	this.vocab.set(level.id, 'l', level.currentDrill, 0);
 	var self = this;
 	this.state = 'drill';
 	this.lee.drill(level, function(scores) {
@@ -148,75 +174,48 @@ voyc.Sam.prototype.startDrill = function(level) {
 voyc.Sam.prototype.endDrill = function() {
 	this.chat.changeHost('Sam');
 	this.state = 'ready';
-	var level = this.level;
-	level.phasen++;
-	if (level.phasen >= level.phases.length) { 
+	this.level.currentDrill++;
+	if (this.level.currentDrill >= this.level.stacks.length) { 
 		this.endLevel();
 		return;
 	}
-	this.vocab.set(level.id, 'l', level.phasen, 0);
-	level.store();
+	this.vocab.set(this.level.id, 'l', this.level.currentDrill, 0);
+	this.level.store();
 
-	var phase = level.phases[level.phasen];
-	switch (phase) {
+	var drill = this.level.stacks[this.level.currentDrill];
+	switch (drill) {
 		case 'glyph':
 			break;
 		case 'word':
-			this.state = 'nextphase';
-			var collection = this.collectWords();
-			var s = 'Good job.  Let\'s try some words using these letters.<br/>';
-			for (var i=0; i<collection.length; i++) {
-				var w = collection[i];
-				level.word.push(w.t);
-				s += w.t + ' ' + w.tl + '<sup>' + w.tn + '</sup> ' + '<i>' + w.p + '</i> ' + w.e + '<br/>';
-			}
+			this.state = 'nextstack';
 			this.level.store();
+			var s = 'Good job.  Let\'s try some words using these letters.<br/>';
 			s += 'Click go when ready.';
 			this.chat.post(this.idhost, s, ['go']);
 			break;
 		case 'word-reverse':
-			this.state = 'nextphase';
+			this.state = 'nextstack';
 			this.chat.post(this.idhost, 'Now the reverse.  Click go when ready.', ['go']);
 			break;
 		case 'phrase':
-			this.state = 'nextphase';
-			var collection = voyc.sengen.genSentence({count:8,shuffle:1,pattern:'',target:[]});
-			var s = 'Good job.  Let\'s try some phrases using these words.<br/>';
-			for (var i=0; i<collection.length; i++) {
-				var w = collection[i];
-				level.phrase.push(w);
-				s += w + "<br/>";
-			}
+			this.state = 'nextstack';
 			this.level.store();
+			var s = 'Good job.  Let\'s try some phrases using these words.<br/>';
 			s += 'Click go when ready.';
 			this.chat.post(this.idhost, s, ['go']);
 			break;
 		case 'phrase-reverse':
-			this.state = 'nextphase';
+			this.state = 'nextstack';
 			this.chat.post(this.idhost, 'Now the reverse. Click go when ready.', ['go']);
 			break;
 	}
 }
 
-voyc.Sam.prototype.collectWords= function() {
-	var level = this.level;
-	var phasendx = level.phasen;
-	var collection = this.noam.collectWords(level.glyph);
-	collection.sort(function(a,b) {
-		return(a.l - b.l);
-	});
-	var optSetSize = 8;
-	collection = collection.slice(0,optSetSize);
-	collection = voyc.shuffleArray(collection);
-	return collection;
-}
-
 voyc.Sam.prototype.endLevel = function() {
 	this.chat.changeHost('Sam');
 	this.state = 'next';
-	var level = this.level;
-	this.vocab.set(level.id, 'l','m',1);
-	level.phasen = 'm';
+	this.vocab.set(this.level.id, 'l','m',1);
+	this.level.currentDrill = 'm';
 	this.level.store();
 	var prevLevelName = this.level.getName();
 	var nextLevel = this.level.next();
@@ -288,7 +287,7 @@ voyc.Sam.prototype.respond = function(o) {
 		case 'go':
 		case 'yes':
 			switch (this.state) {
-				case 'nextphase':
+				case 'nextstack':
 					this.startDrill(this.level);
 					break;
 				case 'ready':
@@ -298,10 +297,6 @@ voyc.Sam.prototype.respond = function(o) {
 				break;
 			}
 		case 'showalllevels':
-			break;
-		case 'noam':
-			var s = this.noam.dev(w);
-			this.chat.post(this.idhost, s);
 			break;
 		case 'debug':
 			debugger;
@@ -352,12 +347,17 @@ voyc.Sam.prototype.respond = function(o) {
 			this.chat.post(this.idhost, s);
 			break;
 		case 'collect':
-			var collection = this.noam.collectWords();
+			// collect ด่กาหสฟว false true
+			// collect พีอำทรแม false true
+			// collect ไนปใๆยผฝ false true
+			var target = w[1];
+			var newWordsOnly = (w[2] === 'true');
+			var targetGlyphsOnly = (w[3] === 'true');
+			var a =this.noam.collectWords(target, {newWordsOnly:newWordsOnly, targetGlyphsOnly:targetGlyphsOnly});
 			var s = '';
-			for (var i=0; i<collection.length; i++) {
-				var w = collection[i];
-				s += w.t + ' ' + w.tl + '<sup>' + w.tn + '</sup> ' + '<i>' + w.p + '</i> ' + w.e + '<br/>';
-			}
+			for (var k in a) {
+				s += (parseInt(k)+1)+'\t'+a[k].t+'\t'+a[k].e+'\t'+a[k].l+'<br/>';
+			}		
 			this.chat.post(this.idhost, s);
 			break;
 		default:
