@@ -1,7 +1,8 @@
 /**
 	class SenGen
 	singleton
-	One public function: genSentence
+	One public function: genSentence() with eleven subfunctions
+	Also the constructor with calls buildSemantics()
 **/
 voyc.SenGen = function(vocab) {
 	this.vocab = vocab;

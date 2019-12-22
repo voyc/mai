@@ -10,25 +10,10 @@
 	Noam adds postreq stacks. 
 		for glyphs, words
 		for words, phrases
-	Lee adds scores.
 **/
 
 voyc.Level = function(lang,level) {
 	this.lang = lang;
-
-	this.currentStackNdx = 0;
-	this.scores = {};
-
-	this.defaultSettings = {
-		workSize:3,
-	};
-
-	if (level) {
-		this.setup(level);
-	}
-}
-
-voyc.Level.prototype.setup = function(level) {
 	this.id = level.id;
 	this.name = level.name;
 	this.primaryDictType = level.primaryDictType;
@@ -38,61 +23,62 @@ voyc.Level.prototype.setup = function(level) {
 	this.word = level.word;
 	this.phrase = level.phrase;
 
-	// initialize stacks
 	this.stacks = [];
+	this.primaryStackNdx = 0;
+	this.currentStackNdx = 0;
+	this.initStacks();
+	this.settingOverrideByAuthor(level);
+}
+
+voyc.Level.prototype.initStacks = function(level) {
 	if (this.glyph.length) {
 		var p = {
 			dictType: 'glyph',
-			dir: 'normal',
+			direction: 'normal',
 			data: this.glyph,
 			primary: (this.primaryDictType == 'glyph'),
 			algorithm: 'progressive',
 			initialShuffle: false,
-			workSize: 3,
 		};
 		this.stacks.push(p);
 	}
 	if (this.word.length) {
 		var p = {
 			dictType: 'word',
-			dir: 'normal',
+			direction: 'normal',
 			data: this.word,
 			primary: (this.primaryDictType == 'word'),
 			algorithm: 'progressive',
 			initialShuffle: false,
-			workSize: 3,
 		}
 		this.stacks.push(p);
 		var p = {
 			dictType: 'word',
-			dir: 'reverse',
+			direction: 'reverse',
 			data: this.word,
 			primary: false,
 			algorithm: 'progressive',
 			initialShuffle: false,
-			workSize: 3,
 		}
 		this.stacks.push(p);
 	}
 	if (this.phrase.length) {
 		var p = {
 			dictType: 'phrase',
-			dir: 'normal',
+			direction: 'normal',
 			data: this.phrase,
 			primary: (this.primaryDictType == 'phrase'),
 			algorithm: 'sequential',
 			initialShuffle: false,
-			workSize: 3,
 		}
 		this.stacks.push(p);
 		var p = {
 			dictType: 'phrase',
-			dir: 'reverse',
+			direction: 'reverse',
 			data: this.phrase,
 			primary: false,
 			algorithm: 'sequential',
 			initialShuffle: false,
-			workSize: 3,
 		}
 		this.stacks.push(p);
 	}
@@ -105,8 +91,13 @@ voyc.Level.prototype.setup = function(level) {
 		}
 	}
 	this.primaryStackNdx = ndx;
-	
-	// let authors override default settings on primary stack
+}
+
+voyc.Level.prototype.settingOverrideByAuthor = function(level) {
+	// let authors override three settings on primary stack
+	//     note: settings for the other stacks cannot be specified by author
+	//     and these three settings are overrideable
+	//     todo: allow override of all settings by author, by user
 	var primaryStack = this.stacks[this.primaryStackNdx];
 	if (level.algorithm) 
 		primaryStack.algorithm = level.algorithm;

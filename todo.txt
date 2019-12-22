@@ -9,10 +9,12 @@ postreq
 	include sengen within noam?
 		noam::parse() 400 lines
 		noam::collectWords() 75 lines
-		sengen::all  300 lines 
+		sengen::genSentence() 300 lines
+		sengen::constructor incl buildSemantics() 40 lines
 	noam.js
+	parse.js
 	sengen.js
-	parse.js	
+	grammar.js
 
 prereq
 	rewrite
@@ -59,5 +61,12 @@ names in conversations
 		@person('self', 'name'): สวัส ดี่ [@polite]
 
 hints and usage in chat window
+
+keyboard vs chart
+	rename keyboard to chart
+	rename keyboard2 to keyboard
+	delete all files with 2 in the name
+	delete other unused files:
+		lesson.js
 
 

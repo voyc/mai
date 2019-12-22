@@ -51,6 +51,12 @@ voyc.Vocab.prototype.onVocabReceived = function(note) {
 	var serverList = note.payload.list;
 	var localList = this.vocab.list;
 
+	// fix serverList types
+	for (var i=0; i<serverList.length; i++) {
+		serverList[i].m = parseInt(serverList[i].m);
+		serverList[i].r = parseInt(serverList[i].r);
+	}
+
 	function findInServerList(word) {
 		for (var i=0; i<serverList.length; i++) {
 			if (serverList[i].w == word) {
@@ -92,6 +98,7 @@ voyc.Vocab.prototype.onVocabReceived = function(note) {
 		}
 	}
 	this.updateServer(dirtyBatch);
+	this.storeSto();
 	this.vocab.recency = Date.now();
 
 	this.vocab.list.sort(function(a,b) {
@@ -206,6 +213,21 @@ voyc.Vocab.prototype.retrieveSto = function() {
 }
 
 /**
+	remove - remove one entry from the list
+	@input {string} word
+**/	
+voyc.Vocab.prototype.remove = function(word) {
+	for (var i=0; i<this.vocab.list.length; i++) {
+		var e = this.vocab.list[i];
+		if (e.w == word) {
+			this.vocab.list.splice(i,1);
+			break;
+		}
+	}
+	this.storeSto();
+}
+
+/**
 	get - read one entry from the list
 	@input {string} word
 	@return {object}
@@ -229,20 +251,18 @@ voyc.Vocab.prototype.get = function(word) {
 	@input {string} state
 	@return {number} count of new entries inserted
 **/	
-voyc.Vocab.prototype.set = function(word, type, state, mastery) {
-	var r = 0;
+voyc.Vocab.prototype.set = function(word, type, state) {
+	var mastery = (state == 'm') ? 1 : 0;
 	var e = this.get(word);
 	if (e) {
 		e.s = state;
 		e.r = Date.now();
-		e.m = e.m + mastery;
+		e.m += mastery;
 	}
 	else {
 		this.vocab.list.push({w:word,t:type,s:state,r:Date.now(),m:mastery});
-		r++;
 	}
 	this.storeSto();
-	return r;
 }
 
 /**
