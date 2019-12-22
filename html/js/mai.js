@@ -43,6 +43,19 @@ voyc.Mai.prototype.setup = function () {
 
 	this.observer.publish('setup-complete', 'mai', {});
 	(new voyc.BrowserHistory).nav('home');
+	
+	window.addEventListener('resize', function() {
+		self.resize();
+	}, false);
+	this.resize();
+}
+
+voyc.Mai.prototype.resize = function() {
+	var top = document.querySelector('#chatcontainer').offsetTop;
+	var bot = document.querySelector('footer').offsetTop;
+	var ht = bot - top;
+	document.querySelector('#chatcontainer').style.height = ht + 'px';
+	this.chat.resize(ht);
 }
 
 voyc.Mai.prototype.onProfileRequested = function(note) {
