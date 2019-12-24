@@ -254,6 +254,9 @@ voyc.Lee.prototype.respond = function(o) {
 			else if (dict.g == 'o') {
 				s = dict.t + "  " + dict.tl + "<sup>" + dict.tn + "</sup>  <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
 			}
+			else if (dict.g == 'm') {
+				s = dict.t + "  " + dict.tl + " <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
+			}
 			else if (dict.g == 's') {
 				s = dict.t + "  symbol";
 			}

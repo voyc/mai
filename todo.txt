@@ -1,8 +1,6 @@
 
-vocab
-	increment m, sometimes it's doing a string concat instead of addition
-	type l has no s
-	line 47 has w=null
+sequential
+	quit after n times
 
 postreq
 	reimplement sengen
@@ -15,10 +13,6 @@ postreq
 	parse.js
 	sengen.js
 	grammar.js
-
-prereq
-	rewrite
-	move prereq(), parseWord(), parsePhrase() from noam to sam
 
 vet story
 	check all glyphs, make sure they are in alphabet
@@ -70,3 +64,5 @@ keyboard vs chart
 		lesson.js
 
 
+compose answer
+	grammar keyboard digits undefined

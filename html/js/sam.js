@@ -21,7 +21,6 @@ voyc.Sam = function(chat) {
 
 voyc.Sam.prototype.setup = function() {
 	this.vocab = new voyc.Vocab();
-	//this.level = new voyc.Level(this.vocab);
 	voyc.dictionary = new voyc.Dictionary();
 	voyc.sengen = new voyc.SenGen(this.vocab);
 
@@ -89,7 +88,7 @@ voyc.Sam.prototype.setupFirstLevel = function(interval) {
 	else if (this.level.isLevelFinished()) {
 		// start next level
 		var s = "At your last session " + sInterval + " ago, ";
-		s += "you completed " + this.level.getName() + '. ';
+		s += "you cleared " + this.level.getName() + '. ';
 		this.chat.post(this.chatid, s);
 		
 		this.level.next();
@@ -121,29 +120,25 @@ voyc.Sam.prototype.startLevel = function(id) {
 	var lvl = voyc[this.lang].course[sectionid][courseid][levelid];
 	this.level = new voyc.Level(this.lang,lvl);
 
-	// build prerequisite stacks
+	// parse prerequisites
 	if (this.level.prereq) {
-		var a = this.noam.prereq(this.level.phrase);
-		this.level.word = a[0];
-		if (this.level.word.length > 0) {
-			this.level.stacks.unshift('word-reverse');
-			this.level.stacks.unshift('word');
-		}
-		this.level.glyph = a[1];
-		if (this.level.glyph.length > 0) {
-			this.level.stacks.unshift('glyph-reverse');
-			this.level.stacks.unshift('glyph');
-		}
+		// find new words within story
+		var words = this.noam.parseStoryBySpace(this.level.phrase, {newWordsOnly:true, format:'dict'});
+		this.level.word = this.level.word.concat(words);
+		
+		// find new glyphs within new words
+		var glyphs = this.noam.parseWordToGlyphs(words, {newGlyphsOnly:true, format:'dict'});
+		this.level.glyph = this.level.glyph.concat(glyphs);
 	}
 
-	// build postrequisite stacks
+	// collect postrequisites
 	if (this.level.postreq) {
 		// if glyphs, collect words
 		if (this.level.glyph.length > 0 && this.level.word < this.lee.setting.optStackSize) {
 			var target = this.level['glyph'];
 			var limit = this.lee.setting.optStackSize - this.level.word.length;
 			if (limit > 0) {
-				var collection = this.noam.collectWords(target, {limit:limit});
+				var collection = this.noam.collectWords(target, {limit:limit, format:'word'});
 				this.level.word = this.level.word.concat(collection);
 			}
 		}
@@ -159,6 +154,7 @@ voyc.Sam.prototype.startLevel = function(id) {
 		}
 	}
 
+	this.level.initStacks();
 	this.level.store();
 	(new voyc.BrowserHistory).nav('home');
 	this.startDrill(this.level);
@@ -166,6 +162,7 @@ voyc.Sam.prototype.startLevel = function(id) {
 
 voyc.Sam.prototype.startDrill = function(level) {
 	this.vocab.set(level.id, 'l', level.currentStackNdx.toString());
+	this.level.store();
 	var self = this;
 	this.state = 'drill';
 	var stack = level.stacks[level.currentStackNdx];
@@ -184,8 +181,8 @@ voyc.Sam.prototype.endDrill = function() {
 		this.endLevel();
 		return;
 	}
-	this.level.store();
 	this.vocab.set(this.level.id, 'l', this.level.currentStackNdx.toString());
+	this.level.store();
 
 	// proceed with next stack?
 	var stack = this.level.stacks[this.level.currentStackNdx];
@@ -206,20 +203,22 @@ voyc.Sam.prototype.endDrill = function() {
 voyc.Sam.prototype.endLevel = function() {
 	this.chat.changeHost(this.chatid);
 	this.state = 'next';
-	this.vocab.set(this.level.id, 'l','m');
+
 	this.level.currentStackNdx = 'm';
+	this.vocab.set(this.level.id, 'l', this.level.currentStackNdx.toString());
 	this.level.store();
+
 	var prevLevelName = this.level.getName();
 	var nextLevel = this.level.next();
+	var nextLevelName = this.level.getName(nextLevel)
 	if (nextLevel) {
-		this.level = new voyc.Level(this.lang,nextLevel);
-		var s = 'Congratulations.  You have completed level ' + prevLevelName + '.<br/>';
-		s += 'The next level is ' + this.level.getName() + '.<br/>';
+		var s = 'Congratulations.  You have cleared level ' + prevLevelName + '.<br/>';
+		s += 'The next level is ' + nextLevelName + '.<br/>';
 		s += 'Continue with next level?';
 		this.chat.post(this.chatid, s, ['yes', 'no']);
 	}
 	else {
-		this.chat.post(this.chatid, 'Congratulations.  You have completed all of the levels.');
+		this.chat.post(this.chatid, 'Congratulations.  You have cleared all of the levels.');
 	}
 }
 
@@ -233,7 +232,6 @@ voyc.Sam.prototype.reportScores = function(scores) {
 		var score = scores[i];
 		this.vocab.set(score.dict.t, score.dict.g, score.state);
 	}
-	this.level.store();
 }
 
 voyc.Sam.prototype.onLoginReceived = function(note) {

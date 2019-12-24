@@ -23,37 +23,118 @@ voyc.Noam = function(dictionary,vocab) {
 	input: list of phrases
 	output: list of glyphs, list of words
 **/
-voyc.Noam.prototype.prereq = function(phrases) {
-	var word = [];
-	for (var i=0; i<phrases.length; i++) {
-		var words = this.parsePhrase(phrases[i]);
-		for (var j=0; j<words.length; j++) {
-			var v = this.vocab.get(words[j])
-			if (!v) {
-				word.push(words[j]);
-			}
-		}
-	}
+//voyc.Noam.prototype.prereq = function(phrases) {
+//	var word = [];
+//	for (var i=0; i<phrases.length; i++) {
+//		var words = this.parsePhrase(phrases[i]);
+//		for (var j=0; j<words.length; j++) {
+//			var v = this.vocab.get(words[j])
+//			if (!v) {
+//				word.push(words[j]);
+//			}
+//		}
+//	}
+//
+//	var glyph = [];
+//	for (var i=0; i<word.length; i++) {
+//		var glyphs = this.parseWord(word[i]);
+//		for (var j=0; j<glyphs.length; j++) {
+//			var v = this.vocab.get(glyphs[j]);
+//			if (!v) {
+//				glyph.push(glyphs[j]);
+//			}
+//		}
+//	}
+//	return [ word, glyph ];
+//}
+//
+//voyc.Noam.prototype.parsePhrase = function(phrase) {
+//	return phrase.split(' ');
+//}
+//
+//voyc.Noam.prototype.parseWord = function(word) {
+//	return word.split('');
+//}
 
+voyc.Noam.prototype.eliminateDupes = function(a) {
+	a.sort();
+	var b = [];
+	var prev = '';
+	a.forEach(function(i) {
+		if (i != prev) {
+			b.push(i);
+		}
+		prev = i;
+	}, this);
+	b = voyc.shuffleArray(b);
+	return b;
+}
+
+voyc.Noam.prototype.parseWordToGlyphs = function(words,options) {
+	var settings = {
+		newGlyphsOnly: true,
+		format: 'word',
+	}
 	var glyph = [];
-	for (var i=0; i<word.length; i++) {
-		var glyphs = this.parseWord(word[i]);
-		for (var j=0; j<glyphs.length; j++) {
-			var v = this.vocab.get(glyphs[j]);
-			if (!v) {
-				glyph.push(glyphs[j]);
+	words.forEach(function(word) {
+		var glyphs = word.split('');
+		glyphs.forEach(function(g) {
+			var bVocab = false;
+			if (settings.newGlyphsOnly) {
+				bVocab = this.vocab.get(g);
 			}
-		}
+			if (!bVocab) {
+				glyph.push(g);
+			}
+		}, this);
+
+	}, this);
+
+	glyph = this.eliminateDupes(glyph);
+
+	if (settings.format == 'dict') {
+		var dict = [];
+		glyph.forEach(function(g) {
+			var d = voyc.dictionary.lookup(g)[0];
+			dict.push[d];
+		}, this);
+		glyph = dict;
 	}
-	return [ word, glyph ];
+	return glyph;
 }
 
-voyc.Noam.prototype.parsePhrase = function(phrase) {
-	return phrase.split(' ');
-}
+voyc.Noam.prototype.parseStoryBySpace = function(story,options) {
+	var settings = {
+		newWordsOnly: true,
+		format: 'word',
+	}
+	var word = [];
+	story.forEach(function(phrase) {
+		var words = phrase.split(' ');
+		words.forEach(function(w) {
+			var bVocab = false;
+			if (settings.newWordsOnly) {
+				var d = this.vocab.get(w);
+				bVocab = (d && (d.s == 'm'));
+			}
+			if (!bVocab) {
+				word.push(w);
+			}
+		}, this);
 
-voyc.Noam.prototype.parseWord = function(word) {
-	return word.split('');
+	}, this);
+
+	word = this.eliminateDupes(word);
+
+	if (settings.format == 'dict') {
+		var dict = [];
+		word.forEach(function(w) {
+			var d = voyc.dictionary.lookup(w)[0];
+			dict.push[d]
+		}, this);
+		word = dict;
+	}
+	return word;
 }
 
 /**
@@ -66,7 +147,8 @@ voyc.Noam.prototype.collectWords = function(target, options) {
 		newWordsOnly: false,
 		targetGlyphsOnly: false,
 		sort: true,
-		limit: 8
+		limit: 8,
+		format:'dict', //'word'
 	}
 	if (options) {
 		for (var key in options) {
@@ -129,6 +211,13 @@ voyc.Noam.prototype.collectWords = function(target, options) {
 	if (settings.limit) {
 		matched = matched.slice(0, settings.limit);
 		matched = voyc.shuffleArray(matched);
+	}
+	if (settings.format == 'word') {
+		var words = [];
+		matched.forEach(function(value,ndx,array) {
+			words.push(value.t);
+		}, this);
+		matched = words;
 	}
 	return matched;
 }

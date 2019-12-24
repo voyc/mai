@@ -26,8 +26,6 @@ voyc.Level = function(lang,level) {
 	this.stacks = [];
 	this.primaryStackNdx = 0;
 	this.currentStackNdx = 0;
-	this.initStacks();
-	this.settingOverrideByAuthor(level);
 }
 
 voyc.Level.prototype.initStacks = function(level) {
@@ -91,20 +89,22 @@ voyc.Level.prototype.initStacks = function(level) {
 		}
 	}
 	this.primaryStackNdx = ndx;
+	
+	this.settingOverrideByAuthor();
 }
 
-voyc.Level.prototype.settingOverrideByAuthor = function(level) {
+voyc.Level.prototype.settingOverrideByAuthor = function() {
 	// let authors override three settings on primary stack
 	//     note: settings for the other stacks cannot be specified by author
 	//     and these three settings are overrideable
 	//     todo: allow override of all settings by author, by user
 	var primaryStack = this.stacks[this.primaryStackNdx];
-	if (level.algorithm) 
-		primaryStack.algorithm = level.algorithm;
-	if (level.initialShuffle) 
-		primaryStack.initialShuffle = level.initialShuffle;
-	if (level.workSize) 
-		primaryStack.workSize = level.workSize;
+	if (this.algorithm) 
+		primaryStack.algorithm = this.algorithm;
+	if (this.initialShuffle) 
+		primaryStack.initialShuffle = this.initialShuffle;
+	if (this.workSize) 
+		primaryStack.workSize = this.workSize;
 }
 
 voyc.Level.prototype.store = function() {
@@ -122,12 +122,13 @@ voyc.Level.prototype.remove = function() {
 	localStorage.removeItem('level');
 }
 
-voyc.Level.prototype.getName = function() {
-	var colorid = this.id.substr(6,2);
+voyc.Level.prototype.getName = function(level) {
+	level = level || this;
+	var colorid = level.id.substr(6,2);
 	var levelcolor = this.getLevelColorById(colorid);
 	var s = levelcolor.name;
-	if (this.name) {
-		s += ': ' + this.name; 
+	if (level.name) {
+		s += ': ' + level.name; 
 	}
 	return s;
 }
