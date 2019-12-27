@@ -130,11 +130,54 @@ voyc.Noam.prototype.parseStoryBySpace = function(story,options) {
 		var dict = [];
 		word.forEach(function(w) {
 			var d = voyc.dictionary.lookup(w)[0];
-			dict.push[d]
+			if (!d) {
+				console.log('word '+w+' not in dictionary.');
+			}
+			else {
+				dict.push[d];
+			}
 		}, this);
 		word = dict;
 	}
 	return word;
+}
+
+voyc.Noam.prototype.analyzeStory = function(story) {
+	var word = [];
+	var wordEng = [];
+	var phraseEng = [];
+	story.forEach(function(phrase) {
+		phraseEng.push(this.dictionary.translate(phrase));
+		var words = phrase.split(' ');
+		words.forEach(function(w) {
+			word.push(w);
+			wordEng.push(this.dictionary.translate(w));
+		}, this);
+
+	}, this);
+
+	word = this.eliminateDupes(word);
+
+	dictOld = [];
+	dictNew = [];
+	wordErr = [];
+	word.forEach(function(w) {
+		var d = voyc.dictionary.lookup(w)[0];
+		if (!d) {
+			wordErr.push(w);
+		}
+		else {
+			var v = this.vocab.get(w);
+			var bVocab = (v && (v.s == 'm'));
+			if (bVocab) {
+				dictOld.push(d);
+			}
+			else {
+				dictNew.push(d);
+			}
+		}
+	}, this);
+	return {new:dictNew, old:dictOld, err:wordErr, pheng:phraseEng};
 }
 
 /**

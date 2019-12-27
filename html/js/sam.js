@@ -41,7 +41,6 @@ voyc.Sam.prototype.setup = function() {
 	this.observer.subscribe('getvocab-received','sam' ,function(note) { self.onGetVocabReceived(note);});
 	
 	this.lee = new voyc.Lee(this.chat, this.observer);
-	voyc.curriculum = new voyc.Curriculum(voyc.$('curriculum'), this.observer, this.vocab);
 }
 
 voyc.intervalToString = function(ms) {
@@ -70,6 +69,7 @@ voyc.Sam.prototype.onGetVocabReceived = function() {
 	//this.level.loadPreviousLevelInProgress();
 	var interval = Date.now() - this.vocab.vocab.recency;
 	//this.setupFirstLevel(interval);
+	voyc.curriculum = new voyc.Curriculum(voyc.$('curriculum'), this.observer, this.vocab, this.noam);
 }
 
 /*
@@ -120,6 +120,14 @@ voyc.Sam.prototype.startLevel = function(id) {
 	var lvl = voyc[this.lang].course[sectionid][courseid][levelid];
 	this.level = new voyc.Level(this.lang,lvl);
 
+	// vet this story
+	var words = this.noam.parseStoryBySpace(this.level.phrase, {newWordsOnly:false, format:'dict'});
+		
+		// find new glyphs within new words
+		var glyphs = this.noam.parseWordToGlyphs(words, {newGlyphsOnly:true, format:'dict'});
+		this.level.glyph = this.level.glyph.concat(glyphs);
+	
+	
 	// parse prerequisites
 	if (this.level.prereq) {
 		// find new words within story
@@ -153,6 +161,8 @@ voyc.Sam.prototype.startLevel = function(id) {
 			//}
 		}
 	}
+
+	//var analysis = this.noam.analyzeStory(this.level.phrase);
 
 	this.level.initStacks();
 	this.level.store();
@@ -202,7 +212,7 @@ voyc.Sam.prototype.endDrill = function() {
 
 voyc.Sam.prototype.endLevel = function() {
 	this.chat.changeHost(this.chatid);
-	this.state = 'next';
+	this.state = 'nextlevel';
 
 	this.level.currentStackNdx = 'm';
 	this.vocab.set(this.level.id, 'l', this.level.currentStackNdx.toString());
@@ -248,25 +258,6 @@ voyc.Sam.prototype.onAnonymous = function(note) {
 	this.chat.post(this.chatid, "Welcome to mai.voyc, the Online Language School.", []);
 	this.chat.post(this.chatid, "Please login or register to begin.", []);
 }
-/*
-state
-	brand new
-		are you ready for your first level?
-	active
-		current level
-	drill in progress
-
-	level in progress
-
-other
-	lee present: yes/no
-	logged in: yes/no
-
-groups
-	language
-	online marketing
-	technology, javascript, php, ajax
-*/
 
 voyc.Sam.prototype.respond = function(o) {
 	if (this.state ==  'drill')
@@ -281,7 +272,8 @@ voyc.Sam.prototype.respond = function(o) {
 					this.startDrill(this.level);
 					break;
 				case 'ready':
-				case 'next':
+				case 'nextlevel':
+					this.level = this.level.nextLevel();
 					this.startLevel(this.level.id);
 					break;
 				break;
@@ -295,7 +287,7 @@ voyc.Sam.prototype.respond = function(o) {
 			this.chat.post(this.chatid, 'OK');
 			break;
 		case 'start':
-			this.startLevel();
+			this.startLevel(this.level.id);
 			break;
 		case 'set':
 			this.setVocab(o.msg);

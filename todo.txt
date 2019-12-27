@@ -1,7 +1,4 @@
 
-sequential
-	quit after n times
-
 postreq
 	reimplement sengen
 	include sengen within noam?
@@ -14,9 +11,9 @@ postreq
 	sengen.js
 	grammar.js
 
-vet story
-	check all glyphs, make sure they are in alphabet
-	check all words, make sure they are in dictionary
+vet level 
+	count glyphs total vs mastered, flag missing from dict
+	count words total vs mastered, flag missing from dict
 
 determine appropriateness of a course-level-story
 	count glyphs, new vs mastered
@@ -66,3 +63,12 @@ keyboard vs chart
 
 compose answer
 	grammar keyboard digits undefined
+	ไหม maiR part isn't it?
+
+db
+	สวัส swatL noun good-fortune
+
+groups
+	language
+	online marketing
+	technology, javascript, php, ajax

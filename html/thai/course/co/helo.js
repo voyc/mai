@@ -9,6 +9,7 @@ voyc.thai.course.co.helo.wh = {
 	id:'cohelowh',
 	prereq:true,
 	postreq:false,
+	algorithm: 'progressive',
 	primaryDictType: 'phrase',
 	glyph:[],
 	word:[],
@@ -38,7 +39,7 @@ voyc.thai.course.co.helo.ye = {
 		'ไป ละ นะ',
 		'ไป ก่อน นะ',
 		'ลา ละ นะ',
-		'กลับก่อนนะ',
+		'กลับ ก่อน นะ',
 	]
 };
 

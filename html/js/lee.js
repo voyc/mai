@@ -104,7 +104,19 @@ voyc.Lee.prototype.choose = function() {
 	}
 	switch(this.stack.algorithm) {
 		case 'sequential':
-			chosen = incr(this.ndxCard, this.stack.data.length);
+			var n = this.ndxCard;
+			var start = n-1;
+			while (start != n) {
+				var n = incr(n, this.scores.length);
+				var score = this.scores[n];
+				if (score.state == 'u') {
+					score.state = 'w';
+				}
+				if (score.state != 'm') {
+					chosen = n;
+					break;
+				}
+			}
 			break;
 		case 'progressive':
 			var cntw = this.countState('w');

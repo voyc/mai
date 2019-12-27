@@ -21,7 +21,7 @@
 	Lee conducts a drill on each drill.
 **/
 
-voyc.Curriculum = function(container, observer, vocab) {
+voyc.Curriculum = function(container, observer, vocab, noam) {
 	// is singleton
 	if (voyc.Curriculum._instance) return voyc.Curriculum._instance;
 	else voyc.Curriculum._instance = this;
@@ -29,6 +29,7 @@ voyc.Curriculum = function(container, observer, vocab) {
 	this.container = container;
 	this.observer = observer;
 	this.vocab = vocab;
+	this.noam = noam;
 	this.setup();
 }
 
@@ -128,10 +129,13 @@ voyc.Curriculum.prototype.drawLevel = function(c, level) {
 	if (typeof(c[level.id]) == 'undefined') {
 		return s;
 	}
+
+	var lvl = c[level.id];
+	var analysis = this.noam.analyzeStory(lvl.phrase);
+
 	s += '<div class="panel '+level.id+'">';
 	s += '<h3>'+level.name+'</h3>';
 	s += '<table class="horz">';
-	var lvl = c[level.id];
 	if (lvl.primaryDictType == 'glyph') {
 		for (var i=0; i<lvl.glyph.length; i++) {
 			s += '<tr><td>';
@@ -150,10 +154,32 @@ voyc.Curriculum.prototype.drawLevel = function(c, level) {
 		for (var i=0; i<lvl.phrase.length; i++) {
 			s += '<tr><td>';
 			s += lvl.phrase[i];
+			s += '<td/><td>';
+			s += analysis.pheng[i];
 			s += '</td></tr>';
 		}
 	}
 	s += '</table>';
+
+	//var ng = analysis.new.length;
+	var nw = analysis.new.length;
+	var ew = analysis.err.length;
+	//s += ng + ' new glyphs</br>';
+	if (nw) {
+		s += '<p>' + nw + ' new words</p>';
+	}
+
+	if (ew) {
+		s += '<p>Error: ' + ew + ' words not in dictionary</p>';
+		s += '<table class="horz">';
+		analysis.err.forEach(function(w) {
+			s += '<tr><td>';
+			s += w;
+			s += '</td></tr>';
+		}, this);
+	}
+	s += '</table>';
+	
 	s += "<p><button class='drill' id='"+lvl.id+"'>Drill</button></p>";
 	s += '</div>';
 	return s;
