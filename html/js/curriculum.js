@@ -102,6 +102,8 @@ voyc.Curriculum.prototype.onCourseLoaded = function(id) {
 }
 
 voyc.Curriculum.prototype.drawCoursePage = function(id) {
+	this.newWords = [];
+	this.errWords = [];
 	var s = '';
 	var sectionid = id.substr(0,2);
 	var courseid = id.substr(2,4);
@@ -161,10 +163,25 @@ voyc.Curriculum.prototype.drawLevel = function(c, level) {
 	}
 	s += '</table>';
 
+	function purgeArray(amerge, apurge) {
+		var amerged = [];
+		amerge.forEach(function(w) { 
+			if (!apurge.includes(w)) {
+				amerged.push(w);
+			}
+		}, this);
+		return amerged;
+	}
+
+	analysis.new = purgeArray(analysis.new, this.newWords);
+	analysis.err = purgeArray(analysis.err, this.errWords);
+
 	//var ng = analysis.new.length;
+	//s += ng + ' new glyphs</br>';
+
 	var nw = analysis.new.length;
 	var ew = analysis.err.length;
-	//s += ng + ' new glyphs</br>';
+	
 	if (nw) {
 		s += '<p>' + nw + ' new words</p>';
 	}
@@ -182,6 +199,9 @@ voyc.Curriculum.prototype.drawLevel = function(c, level) {
 	
 	s += "<p><button class='drill' id='"+lvl.id+"'>Drill</button></p>";
 	s += '</div>';
+	
+	this.newWords = this.newWords.concat(analysis.new);
+	this.errWords = this.errWords.concat(analysis.err);
 	return s;
 }
 

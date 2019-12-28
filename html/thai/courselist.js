@@ -30,7 +30,7 @@ voyc.thai.courselist = [
 	{ id:'sobdss', section: 'Songs', course: 'Bird: Sabai Sabai'},
 	{ id:'sobabu', section: 'Songs', course: 'Bird+Atom: Beyond Universe'},
 	{ id:'socilu', section: 'Songs', course: 'พลพล: ให้ ฉัน รัก เธอ ได้ ไหม'},
-	{ id:'mnbk01', section: 'Maanii', course: 'Book 1'},
-	{ id:'mnbk02', section: 'Maanii', course: 'Book 2'},
-	{ id:'mnbk03', section: 'Maanii', course: 'Book 3'}
+	{ id:'mabk01', section: 'Maanii', course: 'Book 1'},
+	{ id:'mabk02', section: 'Maanii', course: 'Book 2'},
+	{ id:'mabk03', section: 'Maanii', course: 'Book 3'}
 ];
