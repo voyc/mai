@@ -88,6 +88,9 @@ footer {
 	color:white;
 	background-color:black;
 }
+#course table,th,td {
+	border:0px;
+}
 
 .panel { border-width:3px; }
 .panel.wh { border-color:rgb(   0,  0,  0); background-color:rgb(250,250,252); }

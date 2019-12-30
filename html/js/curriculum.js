@@ -99,6 +99,8 @@ voyc.Curriculum.prototype.onCourseLoaded = function(id) {
 	voyc.$('course').innerHTML = s;
 	(new voyc.BrowserHistory).nav('course');
 	this.attachCourseEventHandlers();
+	(new voyc.Minimal).attachAll();
+
 }
 
 voyc.Curriculum.prototype.drawCoursePage = function(id) {
@@ -133,11 +135,10 @@ voyc.Curriculum.prototype.drawLevel = function(c, level) {
 	}
 
 	var lvl = c[level.id];
-	var analysis = this.noam.analyzeStory(lvl.phrase);
 
-	s += '<div class="panel '+level.id+'">';
+	s += '<div select class="panel list '+level.id+'">';
 	s += '<h3>'+level.name+'</h3>';
-	s += '<table class="horz">';
+	s += '<table>';
 	if (lvl.primaryDictType == 'glyph') {
 		for (var i=0; i<lvl.glyph.length; i++) {
 			s += '<tr><td>';
@@ -146,9 +147,12 @@ voyc.Curriculum.prototype.drawLevel = function(c, level) {
 		}
 	}
 	else if (lvl.primaryDictType == 'word') {
+		var analysis = this.noam.analyzeWord(lvl.word);
 		for (var i=0; i<lvl.word.length; i++) {
-			s += '<tr><td>';
+			s += '<tr id="23"><td>';
 			s += lvl.word[i];
+			s += '</td><td>';
+			s += analysis.wordeng[i];
 			s += '</td></tr>';
 		}
 	}
@@ -157,6 +161,7 @@ voyc.Curriculum.prototype.drawLevel = function(c, level) {
 			s += '<tr><td>';
 			s += lvl.phrase[i];
 			s += '<td/><td>';
+			var analysis = this.noam.analyzeStory(lvl.phrase);
 			s += analysis.pheng[i];
 			s += '</td></tr>';
 		}
@@ -188,7 +193,7 @@ voyc.Curriculum.prototype.drawLevel = function(c, level) {
 
 	if (ew) {
 		s += '<p>Error: ' + ew + ' words not in dictionary</p>';
-		s += '<table class="horz">';
+		s += '<table>';
 		analysis.err.forEach(function(w) {
 			s += '<tr><td>';
 			s += w;

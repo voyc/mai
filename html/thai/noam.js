@@ -142,6 +142,34 @@ voyc.Noam.prototype.parseStoryBySpace = function(story,options) {
 	return word;
 }
 
+voyc.Noam.prototype.analyzeWord = function(word) {
+	var wordEng = [];
+	word.forEach(function(w) {
+		wordEng.push(this.dictionary.translate(w));
+	}, this);
+
+	dictOld = [];
+	dictNew = [];
+	wordErr = [];
+	word.forEach(function(w) {
+		var d = voyc.dictionary.lookup(w)[0];
+		if (!d) {
+			wordErr.push(w);
+		}
+		else {
+			var v = this.vocab.get(w);
+			var bVocab = (v && (v.s == 'm'));
+			if (bVocab) {
+				dictOld.push(d);
+			}
+			else {
+				dictNew.push(d);
+			}
+		}
+	}, this);
+	return {new:dictNew, old:dictOld, err:wordErr, wordeng:wordEng};
+}
+
 voyc.Noam.prototype.analyzeStory = function(story) {
 	var word = [];
 	var wordEng = [];
