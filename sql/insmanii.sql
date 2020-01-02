@@ -2,6 +2,7 @@
 psql -U voyccom_jhagstrand -d voyccom_mai -f inshelo.sql
 insert into mai.thaidict (level, source, type, numsyllables, numdef, pos, thai, eng, details) values (500, 1, 'o', 1, 1, 'n', 'ข่า', 'news', 'news; tidings; information received; message');
 */
+/*
 insert into mai.thaidict (level, source, type, numsyllables, numdef, pos, thai, eng, details) values (500, 1, 'o', 1, 1, 'n', 'ข่า', 'news', 'news; tidings; information received; message');
 insert into mai.thaidict (level, source, type, numsyllables, numdef, pos, thai, eng, details) values (500, 1, 'o', 1, 1, 'n', 'อา', 'uncle', 'aunt or uncle, younger sister or brother of father');
 insert into mai.thaidict (level, source, type, numsyllables, numdef, pos, thai, eng, details) values (500, 1, 'o', 1, 1, 'n', 'ปู', 'crab', 'crab');
@@ -21,3 +22,15 @@ insert into mai.thaidict (level, source, type, numsyllables, numdef, pos, thai, 
 insert into mai.thaidict (level, source, type, numsyllables, numdef, pos, thai, eng, details) values (500, 1, 'm', 2, 1, 'n', 'ปูนา', 'field-crab', 'field crab');
 insert into mai.thaidict (level, source, type, numsyllables, numdef, pos, thai, eng, details) values (500, 1, 'm', 2, 1, 'j', 'สีดำ', 'black', 'black');
 insert into mai.thaidict (level, source, type, numsyllables, numdef, pos, thai, eng, details) values (500, 1, 'm', 2, 1, 'n', 'ใบบัว', 'lotus-leaf', 'lotus leaf');
+*/
+
+/*อา */ update mai.thaidict set vowelpattern='oา', leadingconsonant='อ', finalconsonant='', tonemark='', tone='M', translit=' aa', rules='ovl,mcl' where id = 1439;
+/*ปู */ update mai.thaidict set vowelpattern='oู', leadingconsonant='ป', finalconsonant='', tonemark='', tone='M', translit='bpuu', rules='ovl,mcl' where id = 1440;
+/*ไว */ update mai.thaidict set vowelpattern='ไo', leadingconsonant='ว', finalconsonant='', tonemark='', tone='M', translit='wai', rules='ovl,lcl' where id = 1441;
+/*เทา */ update mai.thaidict set vowelpattern='เoา', leadingconsonant='ท', finalconsonant='', tonemark='', tone='M', translit='tao', rules='ovl,lcl' where id = 1442;
+/*ถู */ update mai.thaidict set vowelpattern='oู', leadingconsonant='ถ', finalconsonant='', tonemark='', tone='R', translit='tuu', rules='ovl,hcl' where id = 1443;
+/*กำ */ update mai.thaidict set vowelpattern='oำ', leadingconsonant='ก', finalconsonant='', tonemark='', tone='M', translit='gam', rules='ovl,mcl' where id = 1444;
+/*แบ */ update mai.thaidict set vowelpattern='แo', leadingconsonant='บ', finalconsonant='', tonemark='', tone='M', translit='baae', rules='ovl,mcl' where id = 1445;
+/*ชู */ update mai.thaidict set vowelpattern='oู', leadingconsonant='ช', finalconsonant='', tonemark='', tone='M', translit='chuu', rules='ovl,lcl' where id = 1446;
+/*โบ */ update mai.thaidict set vowelpattern='โo', leadingconsonant='บ', finalconsonant='', tonemark='', tone='M', translit='boo', rules='ovl,mcl' where id = 1447;
+/*บัว */ update mai.thaidict set vowelpattern='oัว', leadingconsonant='บ', finalconsonant='', tonemark='', tone='M', translit='bua', rules='ovl,mcl' where id = 1448;

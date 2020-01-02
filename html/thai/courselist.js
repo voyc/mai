@@ -6,6 +6,7 @@ voyc.thai.courselist = [
 	{ id:'grvowl', section: 'Grammar', course: 'Vowels' },
 	{ id:'grtone', section: 'Grammar', course: 'Tones' },
 	{ id:'grsynt', section: 'Grammar', course: 'Syntax' },
+	{ id:'auda01', section: 'AUA', course: 'Nouns and Adjectives' },
 	{ id:'cohelo', section: 'Conversation', course: 'Hello Goodbye'},
 	{ id:'cothnk', section: 'Conversation', course: 'Thank You'},
 	{ id:'coname', section: 'Conversation', course: 'Names'},
