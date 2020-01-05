@@ -72,3 +72,169 @@ groups
 	language
 	online marketing
 	technology, javascript, php, ajax
+
+=========================
+
+psql -U voyccom_jhagstrand -d voyccom_mai -c "select id, thai, translit, tone, eng from  mai.thaidict where substring(thai,1,1) = 'ห' and type = 'o';"
+translit for leading ห
+	หก go
+	หมด mdoL
+ 1198 | หยด  | ydo      | L    | o            | หยด              |                |   400 | 
+ 1199 | หยด 
+
+ผม pmoL noun hair pomR
+สวัส swatL noun good-fortune  2 syllables
+review between lessons
+during word-reverse, nope try again requires hints
+tired, beef, alike are too advanced for keyboard lesson
+add tone buttons to reply (also add speech)
+
+sengen - avoid words recently used
+
+attach polarity to vocab, reimplement vocab as memory
+On refresh how long has it been?  check recency
+
+lesson 3 ring fingers and pinkies, phrase: hair beautiful
+
+write dynamic translit function in Dictionary or Noam.  Current translit function in Dictionary is static.
+
+consonant cluster after leading upright vowel, positions reversed
+
+consonant cluster, inherent short a, two syllables
+	if first consonant high and second low, low becomes high
+	examples tanon, kanom, samud
+
+silent tone mark
+	เกณฑ์
+
+silent i on final consonant
+	examples Suvarnabhumi, Bhumibol
+
+loi, at all
+
+trailing อ
+	ถือ
+	มือ
+	ชื่อ
+	หนังสือ	
+
+อ = aw or silent, is it in position of vowel or consonant?
+lc = อ, consonant placeholder, skip translit of lc, vowel only
+psql -U voyccom_jhagstrand -d voyccom_mai -c "select * from  mai.thaidict where substring(thai,1,1) = 'อ';"
+เอก 1268
+เอง  1269
+
+
+psql -U voyccom_jhagstrand -d voyccom_mai -c "select id, thai, level, details from mai.thaidict where pos = '' and eng = '' and details != '';"
+
+
+
+
+parse
+pos, eng
+translit table: given lc, vp, fc, tn per syllable; what about multi-syllable words?
+implement translit as separate function
+if there is a final consonant, there must also be an endx rule
+
+
+translit of lc comes from dictionary
+translit of fc comes from rules
+translit of vowels comes from vowel pattern table
+tone calculation can be fixed
+translit can be table driven and customizeable
+add รร to vowel pattern table
+translit table
+
+
+consonant cluster, presence of tonemark unclusters these consonants
+final cluster nt, t has to be silent because n as already stopped the sound
+ m    |            2 | จันทร์    | n   | Moon        |  347
+
+ditto dri is final cluster, d stops the sound ri is silent
+ m    |            2 | กษัตริย์   | n   | king        |  154
+
+weird, what is the h doing in here
+ m    |            2 | พราหมณ์  | n   | Brahman     |  787
+
+
+ทรัพย์
+จันทร์
+ราษฎร์
+พราหมณ์
+เบอร์
+จอห์น
+
+ทรัพย์	sapH	tr => s
+จันทร์	janM	fc is cluster of two
+ราษฎร์	raatF	fc is cluster of two
+เบอร์	buuhrM	pronunciation?
+พราหมณ์	phraamM		leading cluster pr, final cluster silent h+m, silent mark
+จอห์น	jaawnM	silent consonant is NOT the last letter in the word
+
+
+
+
+เบื้อง  - prefix, what type, what pos?
+
+
+Profile includes goals:
+Speaking, listening, reading, typing, hand-writing
+
+สวัสดีค่ะ
+วันนี้คุณเป็นยังไงบ้างคะ
+ทำอะไรอยู่
+
+Lesson expressions 
+create a structure.
+Generate the page from the structure.
+Allow the drill from the page and structure.
+
+Collect one word for each letter.Generate a new sentence for each word. Do not try to save or score the sentences, but only the target word within the sentence.
+The sentence should contain all mastered words except for one target word.
+
+Geography
+Rivers
+Mountains
+Cities
+Islands
+Provinces
+Neighboring countries
+
+Biology, Chemistry, Physics, Psychology
+
+mai.voyc
+Gradually change the UI buttons to use Thai instead of English, as the user masters each button label word.
+come up with thai names for sam and lee
+Setup voyc.com emails for Sam and Naiyana.
+
+====================================
+Marketing
+
+chiang mai groups:
+online marketing
+dev tech
+graphic design
+language learning
+
+marketing:
+Statistics show
+Students learn more faster , enjoy it more, an stick with it. Students are more likely to come to Thailand, enjoy it more, stay longer.
+Coaches earn more money, get more clients, and clients stay longer and are more satisfied.
+Stimulate the economy.
+Increase revenue for coaches 
+More tourism among students.
+Reviews
+Comments
+Contact, chat
+Customer relations 
+Newsletter
+SEO
+Social media
+Lead management
+Advertising
+Hubspot
+Click funnels
+Digital nomad meetings
+
+
+

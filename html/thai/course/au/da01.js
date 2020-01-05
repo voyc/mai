@@ -1,5 +1,5 @@
 /**
- * **/
+**/
 voyc.thai.course.au.da01 = {
         section:'AUA',
         course:'Nouns and Adjectives', /* day 1, 17 Sep */
@@ -8,7 +8,7 @@ voyc.thai.course.au.da01 = {
 voyc.thai.course.au.da01.wh = {
         id:'auda01wh',
         prereq:true,
-        postreq:true,
+        postreq:false,
         algorithm: 'progressive',
         primaryDictType: 'word',
         glyph:[],
@@ -21,7 +21,16 @@ voyc.thai.course.au.da01.wh = {
 		'เตี้ย',
 		'ง่วง',
 	],
-        phrase:[],
+        phrase:[
+		'ผู้หญิง สวย',
+		'ผู้ชาย หล่อ',
+		'ผู้หญิง สูง',
+		'ผู้ชาย เตี้ย',
+		'Q:ผู้ชาย สูง ไหม A:สูง',
+		'Q:ผู้ชาย เตี้ย ไหม A:ไม่ เตี้ย',
+		'Q:ผู้หญิง สวย ไหม A:สวย',
+		'Q:ผู้หญิง ง่วง ไหม A:ไม่ ง่วง',
+	],
 };
 
 voyc.thai.course.au.da01.ye = {
@@ -85,11 +94,6 @@ voyc.thai.course.au.da01.gr = {
 voyc.onCourseLoaded('auda01');
 
 /*
-
-
-
-
-
 เชียงใหม่	FL	Chiangmai
 นา		M	rice field
 A.U.A.
@@ -144,7 +148,45 @@ An: ไม่ใช่
 Q: noun adj หรือ kh
 Ap: kh
 An: ไม่ kh
-
-
 */
 
+/*
+Verbs
+ไป    M    go to
+มา    M    come
+กิน    M    eat 
+ดื่ม    L    drink 
+เรียน    M    study 
+พูด    F    speak 
+อ่าน    L    read 
+เขียน    R    write 
+ช่วย    F    help
+ดู    M    see (by intention), watch 
+เห็น    R    see (by accident)
+หา    R    look for 
+พบ    H    meet 
+ได้ยิน    FM    hear 
+ฟัง    M    listen 
+เข้าใจ    FM    understand 
+
+Nouns
+หนา    R    thick
+บาง    M    thin
+หน้า    F    1) face, 2) surface, 3) season, 4) seasonal, 5) page
+เนื้อ    H    1) meat, 2) beef, 3) texture
+
+Patterns
+
+Q: อะไร adj kh
+A: (place, animal, thing) kh
+
+Q: ใคร adj kh
+A: person kh
+
+Q: noun adj kh
+Ap: adj ky
+fQ: noun ล่ะ kh
+
+Subj + verb + object
+
+*/

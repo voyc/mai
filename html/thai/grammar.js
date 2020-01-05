@@ -1,5 +1,6 @@
 /** 
 	Syntactic Structures
+	(currently unused)
 	contains only parts of speech and parts of sentences
 	using the rewrite conventions of Noam Chomsky
 	non-zero id identifies those structures that must be mastered before use
@@ -22,14 +23,7 @@ voyc.syntacticStructures = `
 	sentence > declarative
 	question > declarative questionword
 	conversation > Q: question A: answer
-`;
 
-/**
-	Semantic Conventions
-	expressed using same rewrite conventions of Syntactic Structures
-	but name must be unique
-**/
-voyc.semanticConventions = `
 	n > {person,animal,place,thing}
 	n > n owner
 	n > n adj
@@ -40,7 +34,32 @@ voyc.semanticConventions = `
 	food > {meat,vegetable,fruit,beverage}
 	meat > {หมู ไก่ เป็ด ปลา กุ้ง หอย ปลาหมึก เนื้อ}
 `;
+
+/**
+	Semantic Conventions - human-readable text
+	expressed using same rewrite conventions of Syntactic Structures
+	but name must be unique
+**/
 voyc.semanticConventions = `
+particle @not > ไม่
+particle @polite > [คะ,ครับ]
+noun @personMale > [ผู้ชาย]
+noun @personFemale > [ผู้หญิง]
+noun @person > [คน]
+adj @adjPersonMale > [หล่อ]
+adj @adjPersonFemale > [สวย]
+adj @adjPerson > [สูง เตี้ย ง่วง]
+sentence @describePersonMale > @personMale {@not} @adjPersonMale {ไหม} {คะ}
+sentence @describePersonFemale > @personFemale {@not} @adjPersonFemale {ไหม} {คะ}
+sentence @describePerson > @person {@not} @adjPerson {ไหม} {คะ}
+sentence @describePersonQA > Q:@person @adjPerson ไหม {คะ} A:{ไม่} $refer(2)
+`;
+
+/*
+noun @person > [ผู้ชาย ผู้หญิง คน]
+adj @adjPerson > [สวย หล่อ สูง เตี้ย ง่วง]
+sentence @describePerson > @person @adjPerson
+
 expression @hello > สวัสดี @polite
 expression @howAreYou > [{คุณ} เป็น อย่าง [อะไร,ไร,ไง] บ้าง,สบาย ดี ไหม] @polite
 expression @polite > [คะ,ครับ]
@@ -78,27 +97,17 @@ noun @number > $number(1,9,1)
 sentence @howmany > กี่ [@animal,@clothing]
 adj @very > [เหมือน]ๆ
 phrase @skinny [สาว] ผอม
-`;
-
-/*
-he eats rice RMF high Kข
-{three,four,six} {black} {dog, cat, umbrella, hat, ant}
-	 no, need classifiers for numbers
-how many [colors, dogs, cats, umbrellas, hats, ant]
-good, very good
-wear hat
-share umbrella
-[father, mother, older-sibling, doctor]
-have blessing
-!apply medicine
-come to
-
 */
 
 /**
-	JS Array of semantic conventions
+	Semantic Conventions - javascript
+	Javascript
+	generated from above text
 **/
 voyc.semantics = [
+	// all this following is obsolete
+	// this section is generated from the above text
+/*
 	{ pos:'noun', name:'@noun',type:'partofspeech',value:'' },
 	{ pos:'verb', name:'@waaverb',type:'list',value:['พูด','ถาม','ได้ยิน','คิด','เขียน','อ่าน','เห็น','บอก','สอน','พิมพ์','ทราบ','รู้','เข้าใจ','สั่ง'] },
 	{ pos:'noun', name:'@food',type:'list',value:['ผัก','ข้าว','ไข่','ไข่'] },
@@ -173,4 +182,18 @@ voyc.semantics = [
 	{ pos:'conversation',  name:'@howAreYou', type:'pattern', value:'Q: [,คุณ] เป็น อย่าง ไร บ้าง  A: [สบายดี,เหนื่อย] [,แลัวคุณล่ะ]' },
 	{ pos:'sentence', name:'@rent1', type:'pattern', value:'$number(1000,30000,500) [,บาท] ต่อ เดือน'},
 	{ pos:'sentence', name:'@rent2', type:'pattern', value:'ค่ามัดจำ $number(1000,30000,500) บาท'},
+*/
 ];
+/*
+he eats rice RMF high Kข
+{three,four,six} {black} {dog, cat, umbrella, hat, ant}
+	 no, need classifiers for numbers
+how many [colors, dogs, cats, umbrellas, hats, ant]
+good, very good
+wear hat
+share umbrella
+[father, mother, older-sibling, doctor]
+have blessing
+!apply medicine
+come to
+*/

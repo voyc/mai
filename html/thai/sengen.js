@@ -13,6 +13,7 @@ voyc.SenGen = function(vocab) {
 	this.orgpattern = '';
 	this.buildSemantics();
 	voyc.analyticLogging = false;
+	this.prevtimestamp = 0;
 }
 
 voyc.SenGen.prototype.buildSemantics = function() {
@@ -47,68 +48,88 @@ voyc.SenGen.prototype.buildSemantics = function() {
 }
 
 /**
-	public function genSentence(request);
-	@param request {object|null}
+	public function genSentence(options);
+	@param options {object|null}
 	@return {array} of strings
-
-	a req object contains
-		pattern {string}
-		count {number}
-		shuffle {boolean}
-		target {array}
 **/
-voyc.SenGen.prototype.genSentence = function(req) {
-	// default request
-	var req = req || {};
-	req.count = req.count || 1;
-	req.shuffle = req.shuffle || 1;
-	req.pattern = req.pattern || '';
-	this.target = req.target || [];
-	
-	// process functions
-	var r = [];
-	var sem = voyc.cloneArray(voyc.semantics);
-	for (var i=0; i<sem.length; i++) {
-		if (req.pattern && sem[i].name != req.pattern) {
-			continue;
+voyc.SenGen.prototype.genSentence = function(options) {
+	this.options = {
+		count: 1,
+		pattern: [],
+		target: [],
+		targetOnly: false,
+		masteredOnly: false,
+		shuffle: true,
+		rebuild: false,
+	}
+	if (options) {
+		for (var key in options) {
+			this.options[key] = options[key];
 		}
-		var sentenceEquivalents = ['sentence', 'expression', 'phrase'];
-		if (sentenceEquivalents.indexOf(sem[i].pos) < 0) {
-			continue;
-		}
-		var out = this.replaceFunction(sem[i].pattern);
-		out = out.trim();
-		out = out.replace(/ +/g,' ');
-		r.push(out);
 	}
 	
-	r = this.filter(r,req.count);
+	// process functions
+	function isDuplicate(s,r) {
+		return r.includes(s);
+	}
 
+	this.vocab.freeze();
+	var r = [];
+	voyc.semantics.forEach(function(rule) {
+		if (this.options.pattern.length && this.options.pattern.indexOf(rule.name) < 0) {
+			return;
+		}
+		if (!['sentence', 'expression', 'phrase'].includes(rule.pos)) {
+			return;
+		}
+
+		var loop = 0;
+		var runaway = 1000;
+		var expected = 10;
+		while (loop < runaway) {
+			loop++;
+			var sen = this.executeFunctions(rule.pattern);
+			if (!isDuplicate(sen,r)) {
+				r.push(sen);
+			}
+			if (r.length >= expected) {
+				break;
+			}
+		}
+		console.log('loop ' + loop);
+	}, this);
+	
+	//r = this.filter(r,this.options.count);
+
+	this.vocab.thaw();
 	this.setRecency(r);
 	return r;
 }
 
-voyc.SenGen.prototype.replaceFunction = function(str) {
+voyc.SenGen.prototype.executeFunctions = function(pat) {
+	// find all the functions in the input pattern
 	var funcs = [];
-	var pos = str.indexOf('$');
+	var pos = pat.indexOf('$');
 	while (pos >= 0) {
-		var m = this.findClose(str,pos);
+		var m = this.findClose(pat,pos);
 		funcs.push(m);
-		pos = str.indexOf('$',pos+1);
+		pos = pat.indexOf('$',pos+1);
 	} 
 
+	// functions can be nested. sort so the inside functions are executed first.
 	funcs.sort(function(a,b) {return a.lvl - b.lvl});
 
-	var out = str;
+	// replace each function in the pattern with a single word
+	var sen = pat;
 	for (var i=0; i<funcs.length; i++) {
 		var f = funcs[i];
-		var s = out.substring(f.pos,f.close+1);
-		var t = out.substring(f.pos+f.cmd.length+2,f.close);
+		var s = sen.substring(f.pos,f.close+1);
+		var t = sen.substring(f.pos+f.cmd.length+2,f.close);
 		f.s = s;
 		f.t = t;
 		var r = this.callFunction(f);
 		f.r = r;
-		out = out.replace(s,r);
+		sen = sen.replace(s,r);
 		var diff = s.length - r.length;
 		for (var j=0; j<funcs.length; j++) {
 			if (j > i) {
@@ -122,8 +143,9 @@ voyc.SenGen.prototype.replaceFunction = function(str) {
 			}
 		}
 	}
-	
-	return out;
+	sen = sen.trim();
+	sen = sen.replace(/ +/g,' ');
+	return sen;
 }
 
 voyc.SenGen.prototype.findClose = function(s,pos) {
@@ -152,12 +174,32 @@ voyc.SenGen.prototype.findClose = function(s,pos) {
 }
 
 voyc.SenGen.prototype.selectFromList = function(s) {
-	var w = s.split(',');
-	var r = this.sortRecency(w);
-	var n = Math.round(Math.random() * Math.min(r.length / 3, 5));
-	var a = r.slice(n,n+1);
+	var a = s.split(' ');
+	a = this.qualifyWords(a);
+	var a = this.sortRecency(a);
+	var n = Math.round(Math.random() * Math.min(a.length / 3, 5));
+	var a = a.slice(n,n+1);
+	//var a = a.slice(0,1);
 	this.setRecency(a);
 	return a;
+}
+
+voyc.SenGen.prototype.qualifyWords = function(a) {
+	var o = [];
+	a.forEach(function(w) {
+		if (this.options.targetOnly && !this.options.target.includes(w)) {
+			return;
+		}
+		var v = this.vocab.get(w);
+		if (!v) {
+			return;
+		}
+		if (this.options.masteredOnly && (v.s != 'm')) {
+			return;
+		}
+		o.push(w);
+	}, this);
+	return o;
 }
 
 /**
@@ -204,6 +246,9 @@ voyc.SenGen.prototype.sortRecency = function(a) {
 		if (r == 0) {
 			r = a.ro - b.ro;
 		}
+		if (r == 0) {
+			console.log('sortRecency equal');
+		}
 		return r;
 	});
 	
@@ -215,16 +260,24 @@ voyc.SenGen.prototype.sortRecency = function(a) {
 	return r;
 }
 
+voyc.SenGen.prototype.getUniqueTimestamp = function() {
+	var timestamp = new Date().getTime();
+	if (timestamp <= this.prevtimestamp) {
+		timestamp = this.prevtimestamp + 1;
+	}
+	this.prevtimestamp = timestamp;
+	return timestamp;
+}
+
 /**
 	set recency on each vocabulary word
 	@input {array} vocab list
 **/
 voyc.SenGen.prototype.setRecency = function(a) {
-	var timestamp = new Date().getTime();
 	for (var i=0; i<a.length; i++) {
 		var w = a[i].split(' ');
 		for (var j=0; j<w.length; j++) {
-			this.vocab.finger(w[j], timestamp);
+			this.vocab.finger(w[j], this.getUniqueTimestamp());
 		}
 	}
 }

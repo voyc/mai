@@ -153,12 +153,8 @@ voyc.Sam.prototype.startLevel = function(id) {
 
 		// if words, generate phrases
 		if (this.level.word.length > 0 && this.level.phrase < this.lee.setting.optStackSize) {
-			//var collection = voyc.sengen.genSentence({count:8,shuffle:1,pattern:'',target:[]});
-			//for (var i=0; i<collection.length; i++) {
-			//	var w = collection[i];
-			//	this.level.phrase.push(w);
-			//	s += w + "<br/>";
-			//}
+			var collection = voyc.sengen.genSentence({count:8,shuffle:1,pattern:'',target:[]});
+			this.level.phrase = this.level.phrase.concat(collection);
 		}
 	}
 
@@ -323,7 +319,12 @@ voyc.Sam.prototype.respond = function(o) {
 			this.chat.post(this.chatid, voyc.sengen.genSentence({pattern:'@howAreYou'}), ['สบาย ดี']);
 			break;
 		case 'sengen':
-			var collection = voyc.sengen.genSentence({count:20,shuffle:1,pattern:'',target:[]});
+			var options = {
+				target: [w[1]],
+				reload: (w.length > 2 && w[2] == 'reload'),
+				count:20
+			}
+			var collection = voyc.sengen.genSentence(options);
 			var s = '';
 			for (var i=0; i<collection.length; i++) {
 				var w = collection[i];

@@ -27,6 +27,7 @@ voyc.Vocab = function() {
 	this.language = 'th';
 	this.timerid = null;
 	this.vocab = {};
+	this.frozen = false;
 }
 
 voyc.Vocab.prototype.onLoginReceived = function(note) {
@@ -224,7 +225,9 @@ voyc.Vocab.prototype.remove = function(word) {
 			break;
 		}
 	}
-	this.storeSto();
+	if (!this.frozen) {
+		this.storeSto();
+	}
 }
 
 /**
@@ -262,7 +265,9 @@ voyc.Vocab.prototype.set = function(word, type, state) {
 	else {
 		this.vocab.list.push({w:word,t:type,s:state,r:Date.now(),m:mastery});
 	}
-	this.storeSto();
+	if (!this.frozen) {
+		this.storeSto();
+	}
 }
 
 /**
@@ -296,5 +301,16 @@ voyc.Vocab.prototype.finger = function(word, recency) {
 		if (voyc.analyticLogging) 
 			console.log(['finger vocab word not found', word]);
 	}
-	this.storeSto();
+	if (!this.frozen) {
+		this.storeSto();
+	}
+}
+
+voyc.Vocab.prototype.freeze = function() {
+	this.frozen = true;
+}
+
+voyc.Vocab.prototype.thaw = function() {
+	this.frozen = false;
+	this.retrieveSto();
 }
