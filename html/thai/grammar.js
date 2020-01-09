@@ -49,6 +49,7 @@ noun @person > [คน]
 adj @adjPersonMale > [หล่อ]
 adj @adjPersonFemale > [สวย]
 adj @adjPerson > [สูง เตี้ย ง่วง]
+adj @adjPerson > [ตัวใหญ่ ตัวเล็ก สูง เตี้ย อ้วน ผอม เหนื่อย ง่วง เก่ง ขี้เกียจ เมา]
 sentence @describePersonMale > @personMale {@not} @adjPersonMale {ไหม} {คะ}
 sentence @describePersonFemale > @personFemale {@not} @adjPersonFemale {ไหม} {คะ}
 sentence @describePerson > @person {@not} @adjPerson {ไหม} {คะ}
@@ -58,6 +59,7 @@ sentence @describePersonQA > Q:@person @adjPerson ไหม {คะ} A:{ไม�
 /*
 noun @person > [ผู้ชาย ผู้หญิง คน]
 adj @adjPerson > [สวย หล่อ สูง เตี้ย ง่วง]
+adj @adjPerson > [ตัวใหญ่,ตัวเล็ก,สูง,เตี้ย,อ้วน,ผอม,เหนื่อย,ง่วง,เก่ง,ขี้เกียจ,เมา]
 sentence @describePerson > @person @adjPerson
 
 expression @hello > สวัสดี @polite

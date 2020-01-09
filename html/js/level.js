@@ -66,7 +66,7 @@ voyc.Level.prototype.initStacks = function(level) {
 			direction: 'normal',
 			data: this.phrase,
 			primary: (this.primaryDictType == 'phrase'),
-			algorithm: 'sequential',
+			algorithm: 'progressive',
 			initialShuffle: false,
 		}
 		this.stacks.push(p);
@@ -75,7 +75,7 @@ voyc.Level.prototype.initStacks = function(level) {
 			direction: 'reverse',
 			data: this.phrase,
 			primary: false,
-			algorithm: 'sequential',
+			algorithm: 'progressive',
 			initialShuffle: false,
 		}
 		this.stacks.push(p);
