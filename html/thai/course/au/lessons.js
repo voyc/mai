@@ -1424,6 +1424,7 @@ definitions
 -# when
 กี่ โมง แก้ว	What time now?
 
+-# middle, please, restaurant
 กลาง	M	1	n	middle
 กลาง	M	2	adj	middle
 
@@ -1438,12 +1439,14 @@ Please, 3 forms
 
 เก็บ เงิน ด้วย	Collect money also.  (ask for bill in restaurant)
 
+-# compound noun
 สมุด	notebook
 ห้องสมุด	library (room notebook)
 รับ	H	v	accept
 แขก	L	n	visitor
 ห้อง รับ แขก	front room
 
+-# prefix tam kuam verb to noun
 ความ	M	prefix makes noun from adj
 ความ สะอาด	n	cleanliness
 
@@ -1470,6 +1473,7 @@ Example
 ข้อคิดเห็น	opinion
 ความ คิด	idea
 
+-# prefix
 คิด H	v	think, plan, calculate
 
 การ	M	prefix
@@ -1512,6 +1516,7 @@ s โทร เข้า มือ ถือ owner		s call-enter cellphone-owner
 
 -- 17 Sep, Monday --
 
+-# compound noun
 Definition
 เท่า	adj	is equal to
 นั้น	that
@@ -1524,6 +1529,8 @@ definition
 young
 เตา ถ่าน	charcoal burner
 hot plate
+
+-# driving
 แยก	v	separate
 สี่ แยก	n	intersection
 ถึง	arrive
@@ -1560,6 +1567,7 @@ example
 
 จับ มือ	v	shake hands
 
+-# sound-alike
 บีบ	v	squeeze
 ปั่น	v	spin, blend
 จับ	v	catch
@@ -1567,8 +1575,10 @@ example
 
 -- 18 Sep, Tuesday --
 
+-# animal
 ควาย	M	water buffalo
 
+-# compound noun
 หนัง สือ	book
 หนัง สือ พิมพ์	newspaper
 สมุด	notebook
@@ -1576,12 +1586,16 @@ example
 ปากกา		pen
 ดินสอ		pencil
 สี	R	n color
+
+-# anatomy
 ตา	eye
 หู	ear
 มือ	hand
 เท้า	foot
 แขน	arm
 ขา	leg
+
+-# compound word, phrase
 จิบ	sip
 ทา	paint
 ถึง	arrive
@@ -1611,10 +1625,12 @@ example
 เสื้อ ฝน	raincoat
 เสื้อ หนาว	sweater
 
+-# sound-alike
 เสือ	R	tiger
 เสื่อ	L	mat (woven straw)
 เสื้อ	F	shirt
 
+-# compound noun
 เสือดำ	panther (tiger black)
 เสือดาว	leopard (tiger star)
 
@@ -1642,8 +1658,11 @@ example
 
 หนัง สือ		book
 หนัง สือ พิมพ์	newspaper
+
+-# classifier
 Different clf for book and newspaper
 
+-# anatomy
 ปาก	n	mouth
 กา	n	crow
 ปากกา	n	pen (mouth+crow)
@@ -1651,9 +1670,11 @@ Different clf for book and newspaper
 ด้าม	1	n	handle
 ด้าม	2	clf	pen, broom, brush
 
+-# classifier
 Example
 ปากกา สี ด้าม	four pens
 
+-# compound noun
 หู	1	n	ear
 หู	2	n	handle	of cup or telephone (shaped like ear)
 
@@ -1675,13 +1696,13 @@ Example
 
 -- 19 Sep, Wednesday --
 
+-# where 
 จอด ที่ ปั๊มน้ำมัน	stop at the gas station
 จอด หน้า ปั๊มน้ำมัน	stop in front of the gas station
 จอด ใน ปั๊มน้ำมัน	stop in the gas station
 เลี้ยว เข้า ปั๊มน้ำมัน	turn enter the gas station
 
-
-
+-# helper verb give allow
 ให้ 
 ให้	1	v	give
 ให้	2	v	allow	let
@@ -1727,14 +1748,14 @@ imperative > ให้(3) actor v o
 
 -- 20 Sep, Thursday --
 
+-# verb stop
 ห้าม	v	forbid	indirectly
 หย่า	1	v	divorce
 หย่า	2	v	stop,halt,cease
 
 ผม อยาก ให้ คุณ ห้าม ลูกชาย ของ คุณ ตี หมา ของ ผม
 
-
-
+-# verb plus about
 Verbs used with ว่า
 พูด speak
 ถาม ask
@@ -1754,9 +1775,9 @@ Verbs used with ว่า
 pattern
 waaverb > {พูด,ถาม,ได้ยิน,คิด,เขียน,อ่าน,เห็น,บอก,สอน,พิมพ์,ทราบ,รู้,เข้าใจ,สั่ง}
 
+-# verb
 ได้ยิน	hear
 ฟัง	listen
-
 
 -- 21 Sep, Friday --
 
@@ -1764,6 +1785,7 @@ Q. คำ ว่า “understand” เขียน ภาษาไทย ย�
 Q. คำ ว่า “understand” ภาษาไทย พูด ว่า ยังไง
 A. เข้าใจ
 
+-# how
 how? ยังไง
 อย่าง	n	type, variety
 อย่าง	clf	type, variety
@@ -1773,18 +1795,21 @@ how? ยังไง
 อย่างไร like what?, how?
 ยังไง	in what way?, how? [colloquial]
 
+-# verb cause
 cause
 ทำ	1	v	do
 ทำ	2	v	make
 
 ทำ ให้	v	cause
 
+-# why, because
 เพราะ	because (in my opinion)
 เพราะว่า	because (in society’s opinion)
 
 sentence > clause1 ทำ ให้ clause2
 sentence > clause2 เพราะว่า clause1
 
+-# verb flood?
 ท่วม	1	v	flood
 ท่วม	2	adj	flooded
 ท่วม	3	n	flood
@@ -1799,6 +1824,7 @@ examples
 น้ำท่วม ทำ ให้ โรงเรียนปิด
 น้ำท่วม เพราะว่า โรงเรียนปิด
 
+-# adjective sick
 ท้อง	n	belly
 เสีย	1	v	deteriorate
 เสีย	2	adj	broken, out of condition
@@ -1811,15 +1837,19 @@ Drink bad water ทำ ให้ ท้อง เสีย
 อื่น	adj	other
 อื่น อื่น	pronoun	others
 
+-# ?
 คำ ใหม่	new word
 
+-# how
 เก่ง	1	v	is good at
 เก่ง	2	adv	skillfully
 เก่ง	3	adj	skillful
 
+-# when
 บ่อย	adv	often
 บ่อยๆ	adv	very often
 
+-# comparison, where
 More comparison
 ขึ้น	1	v	ascend
 ขึ้น	2	adv	increasing	modifies an adjective
@@ -1827,21 +1857,26 @@ More comparison
 ลง	1	v	descend
 ลง	2	adv	decreasing	modifies an adjective
 
+-# where
 วิ่ง ขึ้น ข้างบน	run upstairs
 
 Some adjectives have a built-in direction
 ร้อน ขึ้น
 เย็น ลง
 
+-# when
 นาน	adv	long time
 
+-# classifier
 กาย	n	body	formal
 ตัว	n	body	informal
 ตัว	clf	things with legs
 
+-# driving
 ขับ รถ		drive car
 ขี่ รถ เครื่อง	ride motorscooter
 
+-# preposition tii
 ที่	5	pron	who	relative pronoun
 ที่	6	pron	where	relative pronoun
 ที่	7	pron	that	relative pronoun
@@ -1855,6 +1890,7 @@ n > person ที่5 clause
 n > place ที่6 clause
 n > {animal,thing} ที่7 clause
 
+-# ?
 เลี้ยง	v	nurture	raise
 ขน	n	body hair
 
