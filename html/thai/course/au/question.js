@@ -60,3 +60,15 @@ Q. What you want?
 A. Coffee ???
 
 
+-# question 
+Particle
+ซิ	H	particle that conveys urgency, used in reply to question
+
+Pattern for ซิ
+v ซิ kh
+กิน ซิ kh
+
+adj ซิ kh
+v ซิ kh
+อร่อย ซิ kh
+

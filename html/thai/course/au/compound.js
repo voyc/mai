@@ -75,3 +75,33 @@ workplace
 -# Compound noun: n + v   
 gai pad, fried chicken
 
+
+-# compound words - cloth
+
+ผ้า เช็ด ตัว	bath towel (cloth+wipe+body)
+ผ้า เช็ด หน้า	handkerchief (cloth+wipe+face)
+ผ้าปูโต๊ะ	tablecloth(cloth+cover+table)
+
+
+-# compound nouns
+มะนาว	HM	lemon, lime
+น้ำ มะนาว	lemon juice to clean
+น้ำ มะนาว ทำ อาหาร	HM	lemon juice to drink
+ยางรัด	MH	rubberband (rubber + fasten)
+
+ปั่น	L	blend
+เครื่อง ปั่น น้ำ ผลไม้	blender (machine + blend + water + fruit)
+น้ำ ผลไม้ ปั่น	blended fruit juice (water + fruit + blend)
+
+-# compound nouns, anatomy
+มือ	hand
+เท้า	foot
+
+ถุงมือ	glove
+ถุงเท้า	sock
+รอง	to place underneath
+รองเท้า	shoe
+
+ผ้า รอง จาน	placement (cloth + place underneath + plate)
+ผ้า รอง แก้ว	placement (cloth + place underneath + glass)
+

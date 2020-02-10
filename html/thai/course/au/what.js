@@ -84,3 +84,14 @@ fQ: noun ล่ะ kh
 
 -# Subj + verb + object
 
+
+ประตู	door, gate, window, football goalpost
+
+
+วิทยุ	HHH	radio
+
+
+Expression
+นี่ อะไร		what is this? (first)
+นี่ ล่ะ		what is this? (followup)
+

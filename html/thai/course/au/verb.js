@@ -158,3 +158,19 @@ noun มา verb obj Kh
 noun verb ไป verb obj Kh
 noun verb มา verb obj Kh
 
+เปิด	L	open, turn on
+ปิด	L	close, turn off
+
+-# what are you doing
+
+ทำ อะไร	what you do?
+ทำ งาน	do work
+ซื้อ ของ	buy things
+เอา เงิน	get money
+
+I help what you can all?
+ผม ช่วย อะไร คุณ ได้ บ้าง
+
+help stirfry basil pork please
+ช่วย ผัด กะเพรา หมู หน่อย
+
