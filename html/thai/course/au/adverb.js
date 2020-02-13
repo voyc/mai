@@ -18,3 +18,10 @@ I not tired at all.
 Child eats only kanom.
 เด็ก กิน แต่ ขนม
 
+-# why, because
+เพราะ	because (in my opinion)
+เพราะว่า	because (in society’s opinion)
+
+sentence > clause1 ทำ ให้ clause2
+sentence > clause2 เพราะว่า clause1
+

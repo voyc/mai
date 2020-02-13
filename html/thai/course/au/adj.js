@@ -95,3 +95,129 @@ A กับ B เหมือน กัน
 Expression
 เท่า นั่น		that’s all (equal that) 
 
+-# adjective, comparison
+กว่า	L	suffix used for comparison, more than, better than
+
+-# question
+ไหน	R	QW, which, where, when
+
+-# adjective comparison, classifer, question
+pattern
+sentence > n1 adj กว่า n2
+question > n1 gab n2 QW adj กว่า กัน
+question > n 2 clf QW adj กว่า กัน
+QW > {krai, tinai, arai, clf+nai}
+
+example
+หมา 2 ตัว ตัว ไหน ใหญ่ กว่า กัน kh
+หมา ตัว นี่ กับ หมา ตัว นั่น ตัว ไหน ใหญ่ กว่า กัน kh
+
+บ้านหลังนี้กับหลังนั้น หลังไหนสวยกว่ากัน
+"Which house is more beautiful, this one or that one?"
+
+-# adjective
+ยาก	F	difficult
+ง่าย	F	easy
+
+-# adjective, comparison
+2 comparative pattern
+> s v o
+o > n1 {adj,adv} กว่า n2
+> o s v QW {adj,adv} กว่า กัน kh
+
+pattern
+>s ใช้ n v o 
+
+3 comparative pattern
+> s v o กว่า s2
+s1 กับ s2 QW v o {adj,adv} กว่า กัน kh
+
+definition
+ที่สุด	FM	superlative
+
+pattern superlative
+> n adj ที่สุด
+
+-# color, noun, adjective
+สี	R	n color
+		clf color
+		v to bow a violin string
+		v remove the husk from a rice grain
+
+-# adjective, colors
+สี ขาว	R	white
+สี น้ำ ตาล	HM	brown, sugar
+สี น้ำ เงิน	HM	royal blue (water silver)
+สี เทา	M	gray
+สี เนื้อ	H	beige
+สี ครีม	M	cream
+สี ทอง	M	gold
+สี เงิน	M	silver, money
+
+definition
+-# adjective, strong, weak, contextual variations
+แก่	L	1	old (age)
+แก่	L	2	strong (drink)
+แก่	L	3	dark (color)
+
+อ่อน	L	1	young (age)
+อ่อน	L	2	weak (drink)
+อ่อน	L	3	pale (color}
+อ่อน	L	4	soft (hardness)
+
+example
+กาแฟ แก่	strong coffee
+สีเขียว แก่	dark green
+คน แก่		old person
+
+กาแฟ อ่อน	weak coffee
+สีเขียว อ่อน	pale green
+คน อ่อน กว่า เขา	you younger than her
+
+น้ำ ยาก	hard water
+ข้าว แข็ง	hard rice
+เนย แข็ง	cheese (butter hard )
+กระดาษ แข็ง	cardboard (paper hard)
+
+Q. คุณ ชอบ สี อะไร kh	you like color what?
+A. ชอบ สี ทอง kh		like color gold
+
+Q. ชอบ สี ทอง แก่ หรือ อ่อน kh	color gold dark or pale?
+A. อ่อน kh		pale
+
+-# adjective, length vs height
+ยาว หรือ สั้น	long or short in length
+
+สูง หรือ ?	tall or short in height
+
+
+-# middle, please, restaurant
+กลาง	M	1	n	middle
+กลาง	M	2	adj	middle
+
+เล็ก กลาง ใหญ่		small, medium, large
+
+ช้อน กลาง	serving spoon
+
+-# adjective sick
+ท้อง	n	belly
+เสีย	1	v	deteriorate
+เสีย	2	adj	broken, out of condition
+เสีย	3	n	death
+
+ท้อง เสีย	upset stomach, diarrhea (belly broken)
+
+Drink bad water ทำ ให้ ท้อง เสีย
+
+อื่น	adj	other
+อื่น อื่น	pronoun	others
+
+-# ?
+คำ ใหม่	new word
+
+-# adj feeling
+สบาย	adj	happy
+สุข	adj	happy
+มีความสุข	have happiness
+สุขสบาย	adj	happy
+

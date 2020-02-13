@@ -130,3 +130,62 @@ If number is one, drop it.
 นั่น	F	that, there
 โน่น	F	that yonder, over there
 
+-# where
+หลัง	shortR	behind
+ล่าง	longF	under
+
+-# where 
+จอด ที่ ปั๊มน้ำมัน	stop at the gas station
+จอด หน้า ปั๊มน้ำมัน	stop in front of the gas station
+จอด ใน ปั๊มน้ำมัน	stop in the gas station
+เลี้ยว เข้า ปั๊มน้ำมัน	turn enter the gas station
+
+-# comparison, where
+More comparison
+ขึ้น	1	v	ascend
+ขึ้น	2	adv	increasing	modifies an adjective
+
+ลง	1	v	descend
+ลง	2	adv	decreasing	modifies an adjective
+
+-# where
+วิ่ง ขึ้น ข้างบน	run upstairs
+
+Some adjectives have a built-in direction
+ร้อน ขึ้น
+เย็น ลง
+
+-# where
+ใส่	v	put, wear
+วาง	v	place	lay down
+ไว้	v	put away	put in proper place
+
+> s v o วาง prep place
+> s v o ไว้ prep place
+
+วาง หนังสือ บน โต๊ะ	Place the book on the table
+
+น้ำ เชื่อม	n	syrup
+
+ช่อง	n	space	gap, hole, opening
+
+ตู้	n	storage cabinet
+
+ตู้ เย็น	n	fridge (cabinet cool)
+
+ตู้ แช่ แข็ง	freezer standalone (cabinet soak hard)
+ช่อง แช่ แข็ง	freezer within fridge (space soak hard)
+
+> s v o ไว้ prep place
+(คุณ) เอา ผลไม้ ไว้ ใน ตู้ เย็น	Put something in the fridge.
+
+กุ้ง แช่ ใน น้ำปลา	Shrimp soak in fish sauce.
+
+-# where, verb, stay-live
+> n อยู่ prep ...
+
+Second meaning of the word อยู่ - not in dictionary.
+อยู่	2	adv	right now, at the moment
+> s v o อยู่
+> n adj อยู่2
+

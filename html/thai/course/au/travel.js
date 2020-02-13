@@ -49,3 +49,42 @@ QW
 ส่ง	L	send away, see off
 เพื่อน ไป ส่ง 	friend see off
 
+-# driving
+แยก	v	separate
+สี่ แยก	n	intersection
+ถึง	arrive
+เลี้ยว	v turn
+เลี้ยว ซ้าย	turn left
+แล้ว	stop (vehicle)
+หยุด	stop (walking, speaking, activity)
+
+pattern
+ถึง noun	= destination
+ถึง time	= destination
+
+ขับ ตรง ไป ถึง สี่ แยก แล้ว เลี้ยว ซ้าย
+แล้ว จอด 
+
+
+
+pattern
+adj ตรง ข้าม กับ adj
+
+example
+สูง ตรง ข้าม กับ เตี้ย
+
+ข้าม	v	cross
+ตรง ข้าม	prep	opposite, across from	
+สะพาน	n	bridge
+ลอย	adj	floating
+ลอย	v	fly
+สะพาน ลอย	n	bridge over street
+ใจ ลอย	adj	absent-minded
+
+รวจ	v	capture
+คน รวจ	n	police
+
+-# driving
+ขับ รถ		drive car
+ขี่ รถ เครื่อง	ride motorscooter
+

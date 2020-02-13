@@ -95,3 +95,17 @@ Expression
 นี่ อะไร		what is this? (first)
 นี่ ล่ะ		what is this? (followup)
 
+-# noun
+ควาย	M	water buffalo
+
+มีด	F	knife
+ใช้	H	use
+
+-# anatomy
+ตา	eye
+หู	ear
+มือ	hand
+เท้า	foot
+แขน	arm
+ขา	leg
+

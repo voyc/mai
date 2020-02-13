@@ -122,3 +122,152 @@ example
 n # clf ก่อน
 คน ก่อน	previous person (processed in queue)
 
+-# when
+บ่อย	L	often
+
+Time
+definitions
+
+-# expressions, what you do, when
+เข้า นอน	FM	go to bed (enter bed)
+ตื่น		L	wake up
+go for a walk
+eat breakfast
+eat lunch
+eat dinner
+read book
+watch movie
+play video game
+watch youtube
+drink coffee
+ไปซื้อของ	go shopping
+go to market
+go to bank
+go to school
+study 
+
+-# when
+ตอน	M	1	n	part, episode. 
+ตอน	M	2	n	period of time
+ตอน	M	3	p	at (time period)
+
+เมื่อ	F	1	prep	when
+เมื่อ	F	2	conj	when
+
+เวลา	MM	1	n	time
+เวลา	MM	2	adv	while
+เวลา	MM	3	prep	at (time)
+
+วัน	M	day
+คืน	M	night
+
+กลาง วัน	daytime
+กลาง คืน	nighttime
+
+ตอน กลาง วัน		in the daytime
+ตอน กลาง คืน		in the nighttime
+
+ตอน เช้า	F	in the morning (6-12)
+ตอน สาย	R	in the late morning (9-12)
+ตอน เที่ยง	F	in the noon (12-1)
+ตอน บ่าย	F	in the early afternoon (1-4)
+ตอน เย็น	M	in the late afternoon (4-6)	
+ตอน ค่ำ	F	in the dusk
+ตอน ดึก	M	in the late night
+
+ชั่ว โมง		FM	n,clf hour
+
+โมง	M	n o'clock
+โมง เช้า	morning
+โมง เย็น	late afternoon
+
+ตี 	M	morning hours between 1:00 a.m. and 5:00 a.m.
+เช้า	F	morning hours between 6:00 am and 12:00 pm
+บ่าย 	L	afternoon hours between 1:00 p.m. and 4:00 p.m.
+ทุ่ม 	F	evening hours between 7:00 p.m. and 11:00 p.m.
+
+เที่ยง 	F	noon
+เที่ยง คืน	midnight
+
+patterns
+ตี # 		morning hours between 1:00 a.m. and 5:00 a.m.
+# โมง เช้า		morning hours between 6:00 am and 12:00 pm
+บ่าย # โมง		afternoon hours between 1:00 p.m. and 4:00 p.m.
+# โมง เย็น	early evening 4-6
+(#-6) ทุ่ม	evening hours between 7:00 p.m. and 11:00 p.m.
+
+examples
+I wake up at 6 am.
+ผม ตื่น	เวลา 6 โมง เช้า
+ผม ตื่น	เวลา 6 โมง
+ผม ตื่น	เวลา 6 นาฬิกา	
+
+I go to bed at 10 pm.
+ผม เข้า นอน เวลา 4 ทุ่ม	
+ผม เข้า นอน เวลา 22 นาฬิกา	
+
+Night guard duty, in three-hour shifts beginning at 6 PM
+ยาม	M	n	guard
+1 ยาม	6 PM
+2 ยาม	9 PM
+3 ยาม	12 PM
+4 ยาม	3 AM
+
+Patterns
+
+timeP
+dayPart:{เช้า,สาย,เที่ยง,บ่าย,เย็น,ค่ำ,ดึก}
+dayWeek:{วันอาทิตย์,วันจันทร์,วันอังคาร,วันพุธ,วันพฤหัสบดี,วันศุกร์,วันเสาร์}
+timeP > n owner > {เช้า,เที่ยง,บ่าย,เย็น} {dayweek}	time phrase at beginning of sentence
+timeP > {dayweek} ตอน {daypart}	time phrase at beginning of sentence
+timeP > เมื่อ {daypart} นี่ this past
+timeP > {daypart} นี่	this coming
+
+timeP leading, trailing
+
+เวลา	MM	3	prep	at (time)
+
+-# when
+Example
+เที่ยง นี้ ผม จะ ไป กิน ข้าว	This coming noon I will go each rice.
+
+Expression
+เที่ยง ตรง	noon sharp
+
+-- Thu 13 Sep --
+
+definitions
+มืด	F	dark
+ตอน เช้า มืด	in the morning before sunrise
+
+-# when, vocab with multiple pos
+หัว	R	1	n	head
+หัว	R	2	n	essence
+หัว	R	3	clf	tubers 
+หัว	R	4	adv	at the beginning of...
+
+ตอน ค่ำ หัว	in the beginning of dusk, at sunset
+
+ตอน เช้า คน ไทย ไป ตลาด ขาย ของ	In the morning, Thai people go to market to sell things.
+
+-# when
+กี่ โมง แก้ว	What time now?
+
+-# when
+บ่อย	adv	often
+บ่อยๆ	adv	very often
+
+-# when
+นาน	adv	long time
+
+-# when
+ยัง	adv	yet, since, not yet, still
+
+> s ยัง v o
+> n ยัง adj
+
+-# when
+บ้าง	1	adj	some, any, partially
+บ้าง	2	adv	sometimes, anytime
+
+

@@ -20,3 +20,18 @@ QW
 ขับ รถ ไป	drive car
 
 
+-# how
+how? ยังไง
+อย่าง	n	type, variety
+อย่าง	clf	type, variety
+ยัง	colloquial pronunciation of อย่าง
+ไร 	suffix to make question
+ไง	suffix to make question [colloquial]
+อย่างไร like what?, how?
+ยังไง	in what way?, how? [colloquial]
+
+-# how
+เก่ง	1	v	is good at
+เก่ง	2	adv	skillfully
+เก่ง	3	adj	skillful
+

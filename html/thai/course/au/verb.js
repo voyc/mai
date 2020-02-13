@@ -174,3 +174,195 @@ I help what you can all?
 help stirfry basil pork please
 ช่วย ผัด กะเพรา หมู หน่อย
 
+Time
+definitions
+
+-# expressions, what you do, when
+เข้า นอน	FM	go to bed (enter bed)
+ตื่น		L	wake up
+go for a walk
+eat breakfast
+eat lunch
+eat dinner
+read book
+watch movie
+play video game
+watch youtube
+drink coffee
+ไปซื้อของ	go shopping
+go to market
+go to bank
+go to school
+study 
+
+pattern
+s โทร ไป {place}	make outgoing call to a place
+s โทร มา {place}	receive incoming call from a place
+
+s โทร {ไป,มา}  v person
+s โทร {ไป,มา}  หา person	call to visit person
+s โทร {ไป,มา}  ทำ person	call to make person do something
+s โทร {ไป,มา}  พูด กับ person	call to speak to person
+s โทร {ไป,มา}  บอก person 	call to tell person something
+
+-# compound word, phrase
+จิบ	sip
+ทา	paint
+ถึง	arrive
+ทิ้ง	discard
+ตี	hit
+
+-# helper verb give allow
+ให้ 
+ให้	1	v	give
+ให้	2	v	allow	let
+ให้	3	v	command	have someone do something
+ให้	4	prep	for
+ให้	5	prep	to
+ให้	6	prep	toward	when or until a result is achieved
+
+patterns
+clause > s ให้((1) o receiver
+clause > s ให้(2) actor v o
+clause > s ให้(3) actor v o
+clause > s v o ให้(4) someone
+clause > s v o ให้(5) receiver
+imperative > v {o} ให้(6) result		imperative, do this until result reached
+clause > s จะ v {o} ให้(6) result	declarative, someone will do this until result reached, always future
+result > adj
+result > adv
+result > clause
+someone > {}
+receiver > someone
+actor > someone
+
+In an imperative clause, the implied subject is “you”.
+
+examples
+เขียน ให้(6) สวย
+พูด ให้(6) ชัด
+อ่าน ให้(6) เข้าใจ
+
+จอห์น จะ เรียน ให้(6) เข้าใจ
+เขา จะ ซื้อ บ้าน ให้(6) ได้
+เขา จะ เปิด ร้าน อาหาร ให้(6) ได้
+เขา จะ ล้าง รถยาน ให้(6) สะอาด
+
+ลูกชาย	son
+
+someone > person
+person > {ลูกชาย,ลูกสาว,}
+
+imperative > v o
+imperative > ให้(3) actor v o
+
+-# verb stop
+ห้าม	v	forbid	indirectly
+หย่า	1	v	divorce
+หย่า	2	v	stop,halt,cease
+
+ผม อยาก ให้ คุณ ห้าม ลูกชาย ของ คุณ ตี หมา ของ ผม
+
+-# verb plus about
+Verbs used with ว่า
+พูด speak
+ถาม ask
+ได้ยิน hear
+คิด think 
+เขียน write
+อ่าน read 
+เห็น see 
+บอก tell
+สอน Teach
+พิมพ์ Type
+ทราบ Know fact
+รู้ know subject
+เข้าใจ Understand
+สั่ง Order
+
+pattern
+waaverb > {พูด,ถาม,ได้ยิน,คิด,เขียน,อ่าน,เห็น,บอก,สอน,พิมพ์,ทราบ,รู้,เข้าใจ,สั่ง}
+
+-# verb
+ได้ยิน	hear
+ฟัง	listen
+
+Q. คำ ว่า “understand” เขียน ภาษาไทย ยังไง
+Q. คำ ว่า “understand” ภาษาไทย พูด ว่า ยังไง
+A. เข้าใจ
+
+-# verb cause
+cause
+ทำ	1	v	do
+ทำ	2	v	make
+
+ทำ ให้	v	cause
+
+-# verb flood?
+ท่วม	1	v	flood
+ท่วม	2	adj	flooded
+ท่วม	3	n	flood
+น้ำท่วม	1	v	flood
+น้ำท่วม	2	adj	flooded
+น้ำท่วม	3	n	flood
+
+examples
+ฝนตก ทำ ให้ น้ำท่วม
+น้ำท่วม เพราะว่า  ฝนตก 
+
+น้ำท่วม ทำ ให้ โรงเรียนปิด
+น้ำท่วม เพราะว่า โรงเรียนปิด
+
+-# ?
+เลี้ยง	v	nurture	raise
+ขน	n	body hair
+
+-# verb, help
+เอื้อ	v	help	aid, do a favor
+
+-# verb, aux verb, can
+จำ	v	remember
+จำได้	v	can remember
+จำไม่ได้	v	cannot remember
+
+-# adj, free (housing and appointment)
+ว่าง	adj	free	vacant, available, empty
+ไม่ว่าง	adj	busy	not free
+ที่ว่าง	n	empty room, vacancy, space, empty space
+
+มีธุระ	have errand
+มีเวลา	have time
+
+-# verb, aux verb
+auxiliary verbs
+อาจ	v	may
+อาจจะ	v	maybe
+คง	v	probably
+คงจะ	v	probably will
+
+> s อาจจะ {v,adj}
+> s คงจะ {v,adj}
+
+-# aux verb, help
+ช่วย	v	help
+
+> {s} ช่วย v o ให้ {receiver} หน่อย
+
+s = listener
+receiver = {person,animal} or me by default
+
+> ช่วย v o ให้ หน่อย	give me a hand (imperative)
+> คุณ ช่วย ผม v o หน่อย	(we do it together)
+> คุณ ช่วย v o ให้ receiver หน่อย	(you do it instead of me)
+
+Not all verbs can be helped.
+“To learn”, for example, is a subjective experience, which can only be done by oneself.
+
+What is an infinitive clause?
+In English, a verb preceded by "to".  
+Used as noun, as subject or object.
+Has aspects of noun and verb.
+Often used with verbs "like" and "want".
+subject: To hope is our only resource.
+object: I want to come.
+

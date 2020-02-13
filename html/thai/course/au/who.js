@@ -26,3 +26,31 @@ names
 
 คนขาย		seller
 
+-# who, family
+Family
+ครอบ ครัว	n	family	formal
+ญาติ	n	relative		kin, relation, cousin
+ญาติๆ	n	relatives	family members
+
+เด็ก	n	child
+พี่	n	older sibling
+น้อง	n	younger sibling
+หลาน	n	grandchild, nephew, niece
+พ่อ	n	father
+แม่	n	mother
+ปู่	n	paternal grandfather
+ย่า	n	paternal grandmother
+ตา	n	maternal grandfather
+ยาย	n	maternal grandmother
+ลุง	n	older uncle	father’s or mother’s older brother
+ป้า	n	older aunt	father’s or mother’s older sister
+อา	n	younger paternal aunt or uncle	father’s younger brother or sister
+น้า	n	younger maternal aunt or uncle	mother’s younger brother or sister
+
+-# who
+ชาย	adj	male
+หญิง	adj	female
+
+person > {ญาติ,เด็ก,พี่,น้อง,หลาน} {ชาย,หญิง}
+
+

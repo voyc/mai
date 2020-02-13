@@ -114,3 +114,71 @@ which one?
 -# classifer
 หลัง	R	classifier for house, piano, building
 
+-# adjective, comparison
+กว่า	L	suffix used for comparison, more than, better than
+
+-# question
+ไหน	R	QW, which, where, when
+
+-# adjective comparison, classifer, question
+pattern
+sentence > n1 adj กว่า n2
+question > n1 gab n2 QW adj กว่า กัน
+question > n 2 clf QW adj กว่า กัน
+QW > {krai, tinai, arai, clf+nai}
+
+example
+หมา 2 ตัว ตัว ไหน ใหญ่ กว่า กัน kh
+หมา ตัว นี่ กับ หมา ตัว นั่น ตัว ไหน ใหญ่ กว่า กัน kh
+
+บ้านหลังนี้กับหลังนั้น หลังไหนสวยกว่ากัน
+"Which house is more beautiful, this one or that one?"
+
+-# where, how many, question
+Pattern
+> n # clf nai kh
+
+Examples
+กาแฟ 6 ถ้วย ไหน kh	# cups coffee, which cup?
+
+definition
+ที่	n,clf location
+
+pattern
+ที่ # ที่ ไหน kh	
+When noun and classifier are the same, drop noun.
+When number is 1 drop #. 
+Therefore: ที่ ไหน = where
+
+ไป ร้านอาหาร	go to restaurant
+กี่ นี่	waiter asks "how many seats?"
+สอง นี่	reply: two seats
+
+-# vocab with multiple pos
+ห่อ	L	1	v	wrap in paper, banana leaf, xmas gift wrap
+ห่อ	L	2	n	parcel
+ห่อ	L	3	clf	parcel
+
+-# classifier
+Klawng	plastic
+Thung R	bag or takeaway
+Nam kheng	ice
+Maay	clf a thing on a stick (ahaan) 
+n made from plant, like wood or stick
+Yaaw vs sanF	long short length
+Suung vs tiaF	tall short height
+
+ถุง	n	plastic bag, takeaway food
+ถุง	clf	bags
+
+ไม้	clf wooden objects
+ไม้	clf a thing (food) on a stick
+
+-# classifier
+Different clf for book and newspaper
+
+-# classifier
+กาย	n	body	formal
+ตัว	n	body	informal
+ตัว	clf	things with legs
+
