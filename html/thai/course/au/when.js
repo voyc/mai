@@ -1,39 +1,18 @@
 
--# when
-adverbs
-clock
-calendar
+when
+how long
+how often
 
--# clause
-เมื่อ	F	when
-ถ้า	F	if (condition)
-ก็	F	then, therefore; also
-
--# linking words (conjunctions and adverbs)
-
-กับ	L	with, and
-และ	H	and
-
-
-other words
-กัน	M	together; together with (conj)
-เหมือน	R	alike; as (conj)
-
-patterns
-เมื่อ clause, clause
-clause เมื่อ clause
-ถ้า clause ก็ clause
-n adj and n ก็ adj
-
--# when
-
+เมื่อ	when
 นี้	this
 วัน	day
-วาน	day before
+วันนี้	today
+เมื่อวาน	yesterday
+พรุ่งนี้	tomorrow
 
-เมื่อวานซืน - เมื่อวาน - วันนี้ - พรุ่งนี้ - มะรืน
-
--# when
+# patterns
+เมื่อ clause, clause
+clause เมื่อ clause
 
 ค่อย	F	gradually, ever
 ไม่ ค่อย	F	not so much, rarely
@@ -41,17 +20,20 @@ n adj and n ก็ adj
 นาฬิกา	MHM	thing telling time
 โมง	M	o'clock
 	
--# when
-pattern
-# นาฬิกา		# o'clock
+# pattern
+$number(1,24) นาฬิกา	o'clock 24-hour based
+
 # โมง		# o'clock
 
+# how long
+โมง		hour
+ชั่วโมง		hour	 
 นาที		minute
 วินาที		second
 ครึ่ง		half
-ครัว เครื่อง	kitchen utensil
 
-วัน เกิด		birthday
+วัน เกิด	birthday
+วันปีใหม่	new year's day
 
 -# when, how often?
 หน้า	F	next (for time)
@@ -70,7 +52,7 @@ Two days from now
 
 -# when, how many
 
-อีก	L	again, more
+อีก	again
 
 Patterns using อีก
 v o อีก
@@ -270,4 +252,75 @@ definitions
 บ้าง	1	adj	some, any, partially
 บ้าง	2	adv	sometimes, anytime
 
+
+# days
+วันจันทร์
+วันอังคาร
+วันพุธ
+วันพฤหัสบดี
+นศุกร์
+วันเสาร์
+นอาทิตย์
+
+# planets
+จันทร์
+อังคาร
+พุธ
+พฤหัสบดี
+ศุกร์
+เสาร์
+อาทิตย์
+
+# months
+มกราคม
+กุมภาพันธ์
+มีนาคม
+เมษายน
+พฤษภาคม
+มิถุนายน
+กรกฎาคม
+สิงหาคม
+กันยายน
+ตุลาคม
+พฤศจิกายน
+ธันวาคม
+
+# constellations
+มกร
+กุมภ์
+มีน
+เมษ
+พฤษภ
+มิถุน
+กรกฎ
+สิงห์
+กันย์
+ตุล
+พฤศจิก
+ธนู
+
+# suffixes
+คม
+ยน
+พันธ์
+
+# month abbreviations
+ม.ค.
+ก.พ.
+มี.ค.
+เม.ย.
+พ.ค.
+มิ.ย.
+ก.ค.
+ส.ค.
+ก.ย.
+ต.ค.
+พ.ย.
+ธ.ค.
+
+# advanced
+เมื่อวานซืน - เมื่อวาน - วันนี้ - พรุ่งนี้ - มะรืน
+เมื่อวานซืน	the day before yesterday
+มะรืน	day after tomorrow
+วาน	day before
 
