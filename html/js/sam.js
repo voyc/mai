@@ -269,7 +269,7 @@ voyc.Sam.prototype.respond = function(o) {
 					break;
 				case 'ready':
 				case 'nextlevel':
-					this.level = this.level.nextLevel();
+					this.level = this.level.next();
 					this.startLevel(this.level.id);
 					break;
 				break;
