@@ -23,4 +23,5 @@ psql -U voyccom_jhagstrand -d voyccom_mai -c "update mai.thaidict set leadingcon
 psql -U voyccom_jhagstrand -d voyccom_mai -c "update mai.thaidict set leadingconsonant='ข',finalconsonant='ด',tone='L',translit='kot' where id= 214; /* ขด   */"
 psql -U voyccom_jhagstrand -d voyccom_mai -c "update mai.thaidict set leadingconsonant='ช',finalconsonant='น',tone='M',translit='chon' where id= 381; /* ชน   */"
 psql -U voyccom_jhagstrand -d voyccom_mai -c "update mai.thaidict set leadingconsonant='ปลง',finalconsonant='ง',translit='blaaeng' where id= 743; /* แปลง */"
+psql -U voyccom_jhagstrand -d voyccom_mai -c "update mai.thaidict set leadingconsonant='ท',finalconsonant='น' where id in (598,599); /* แทน */"
  
