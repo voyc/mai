@@ -166,6 +166,14 @@ voyc.Curriculum.prototype.drawLevel = function(c, level) {
 			s += '</td></tr>';
 		}
 	}
+	else if (lvl.primaryDictType == 'dialog') {
+		var analysis = this.noam.analyzeDialog(lvl.dialog);
+		for (var i=0; i<analysis.dialog.length; i++) {
+			s += '<tr><td>';
+			s += analysis.dialog[i].display;
+			s += '</td></tr>';
+		}
+	}
 	s += '</table>';
 
 	function purgeArray(amerge, apurge) {

@@ -9,7 +9,27 @@
 
 	public methods:
 		collect()
-		parse()
+		parse(input) - return two arrays of words: matched and unmatched
+		parseSyllable(syllable) - return object of components
+		parseWordToGlyphs(word,options {newOnly t/f, format glyph/dict})
+		parseStoryBySpace(story,options {newOnly t/f, format word/dict})
+		parsePhrase() - obsolete
+		parseWord() - obsolete
+
+		parse by newlines - return array of lines
+		parse by speaker - return dialog
+		parse by whitespace - return list of contiguous strings
+		parse by dictionary - return list of words
+		analyze syllable - used only in preparing dictionary
+		analyze word - break into component syllables
+		parse by glyph - return array of glyphs 
+	
+		things we drill
+			glyphs
+			words, incl syllables
+			phrases
+			expressions
+			sentences	
 **/
 voyc.Noam = function(dictionary,vocab) {
 	this.dictionary = dictionary;
@@ -170,6 +190,7 @@ voyc.Noam.prototype.analyzeWord = function(word) {
 	return {new:dictNew, old:dictOld, err:wordErr, wordeng:wordEng};
 }
 
+// analyze phrases assuming a space between words
 voyc.Noam.prototype.analyzeStory = function(story) {
 	var word = [];
 	var wordEng = [];
@@ -206,6 +227,129 @@ voyc.Noam.prototype.analyzeStory = function(story) {
 		}
 	}, this);
 	return {new:dictNew, old:dictOld, err:wordErr, pheng:phraseEng};
+}
+
+/*
+analyze a story by parsing against the dictionary
+p
+		o.original = a[i];
+		o.speaker = assignSpeaker(o.original);
+		o.gendered = assignGender(o);
+		o.speech = prepSpeech(o.gendered);
+		o.display = prepDisplay(o.gendered,o);
+output for each line
+	speech
+	display
+	speaker
+*/
+/* 
+	input htmldoc story
+	output array of objects: original, gendered, speaker, display, speech
+	switch vocabulary for gender
+	add styles for display
+*/
+var speaker = {};
+
+initSpeaker = function() {
+	speaker = { 'x': {name:'narrator',age:40,gender:'male'} };
+}
+
+voyc.Noam.prototype.analyzeDialog = function(s) {
+	var d = {
+		dialog:[],
+		new:[],
+		old:[],
+		err:[]
+	};
+
+	// trim
+	var a = s.split('\n');
+	for (var i=0; i<a.length; i++) {
+		a[i] = a[i].trim();
+		if (a[i].length <= 1) {
+			a.splice(i,1);
+			i--;
+		}
+	}
+
+	// identify speakers
+	initSpeaker();
+	for (var i=0; i<a.length; i++) {
+		var s = a[i].split(':: ');
+		if (s.length > 1) {
+			var o = {};
+			var key = s[0];
+			var b = s[1].split(',');
+			o.name = b[0];
+			o.age = parseInt(b[1]);
+			o.gender = b[2].substr(0,1);
+			speaker[key] = o; 
+			a.splice(i,1);
+			i--;
+		}
+	}
+
+	// process each line of dialog
+	for (var i=0; i<a.length; i++) {
+		var o = {};
+		o.original = a[i];
+		o.speaker = assignSpeaker(o.original);
+		o.gendered = assignGender(o.original);
+		o.speech = prepSpeech(o.gendered);
+		o.display = prepDisplay(o.gendered,o);
+		d.dialog.push(o);
+	}
+	return d;
+
+	function assignSpeaker(orig) {
+		var key = 'x';
+		var c = orig.split(':');
+		if (c.length > 1) {
+			key = c[0];
+		}
+		return key;
+	}
+
+	function assignGender(orig) {
+		var gen = '';
+		gen = orig;
+		//dialog[i].proc = dialog[i].speech;
+		//dialog[i].proc = dialog[i].proc.replace(/me/g, gender.me);
+		//dialog[i].proc = dialog[i].proc.replace(/polite/g, gender.polite);
+		return gen;
+	}
+
+	function prepSpeech(orig) {
+		var sp = orig;
+		if (orig.substr(1,3) == ':: ') {
+			sp = '';
+		}
+		else if (orig.substr(1,2) == ': ') {
+			sp = orig.substr(3);
+		}
+		else if (orig == '.') {
+			sp = '';
+		}
+		sp = sp.replace(/ /g, '. ');
+		return sp;
+	}
+
+	function prepDisplay(orig,o) {
+		var disp = '';
+		if (orig.substr(0,1) == '.') {
+			disp = '&#xE5B;';
+		}
+		else if (orig.substr(1,3) == ':: ') {
+			disp = '';
+		}
+		else if (!o.speaker) {
+			disp = '<b>' + orig + '</b>';
+		}
+		else if (orig.length) {
+			disp = orig;
+		}
+		return disp;
+	}
 }
 
 /**
