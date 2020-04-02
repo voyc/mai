@@ -229,41 +229,26 @@ voyc.Noam.prototype.analyzeStory = function(story) {
 	return {new:dictNew, old:dictOld, err:wordErr, pheng:phraseEng};
 }
 
-/*
-analyze a story by parsing against the dictionary
-p
-		o.original = a[i];
-		o.speaker = assignSpeaker(o.original);
-		o.gendered = assignGender(o);
-		o.speech = prepSpeech(o.gendered);
-		o.display = prepDisplay(o.gendered,o);
-output for each line
-	speech
-	display
-	speaker
-*/
 /* 
-	input htmldoc story
+	input htmldoc
 	output array of objects: original, gendered, speaker, display, speech
 	switch vocabulary for gender
 	add styles for display
 */
-var speaker = {};
-
-initSpeaker = function() {
-	speaker = { 'x': {name:'narrator',age:40,gender:'male'} };
-}
 
 voyc.Noam.prototype.analyzeDialog = function(s) {
 	var d = {
+		speakers:{ 'x': {name:'narrator',age:40,gender:'male'} },
 		dialog:[],
 		new:[],
 		old:[],
 		err:[]
 	};
 
-	// trim
+	// treat input s as an array of lines
 	var a = s.split('\n');
+
+	// trim whitespace and remove empty lines
 	for (var i=0; i<a.length; i++) {
 		a[i] = a[i].trim();
 		if (a[i].length <= 1) {
@@ -272,8 +257,7 @@ voyc.Noam.prototype.analyzeDialog = function(s) {
 		}
 	}
 
-	// identify speakers
-	initSpeaker();
+	// identify speakers, remove speaker definition lines (key:: name,age,gender)
 	for (var i=0; i<a.length; i++) {
 		var s = a[i].split(':: ');
 		if (s.length > 1) {
@@ -283,22 +267,34 @@ voyc.Noam.prototype.analyzeDialog = function(s) {
 			o.name = b[0];
 			o.age = parseInt(b[1]);
 			o.gender = b[2].substr(0,1);
-			speaker[key] = o; 
+			d.speakers[key] = o; 
 			a.splice(i,1);
 			i--;
 		}
 	}
 
-	// process each line of dialog
+	// create one object for each line of dialog
 	for (var i=0; i<a.length; i++) {
 		var o = {};
 		o.original = a[i];
 		o.speaker = assignSpeaker(o.original);
-		o.gendered = assignGender(o.original);
-		o.speech = prepSpeech(o.gendered);
-		o.display = prepDisplay(o.gendered,o);
+		o.text = assignText(o.original);
+		o.speech = prepSpeech(o.text);
+		o.display = prepDisplay(o);
 		d.dialog.push(o);
 	}
+
+	// parse for words
+	for (var i=0; i<d.dialog.length; i++) {
+		var line = d.dialog[i].text;
+		var a = this.parse(line);
+		d.dialog[i].words = a.match;
+		d.dialog[i].nomatch = a.nomatch;
+		d.new = d.new.concat(a.match);
+		d.err = d.err.concat(a.nomatch);
+	}
+	d.new = this.eliminateDupes(d.new);
+	d.err = this.eliminateDupes(d.err);
 	return d;
 
 	function assignSpeaker(orig) {
@@ -310,43 +306,27 @@ voyc.Noam.prototype.analyzeDialog = function(s) {
 		return key;
 	}
 
-	function assignGender(orig) {
-		var gen = '';
-		gen = orig;
-		//dialog[i].proc = dialog[i].speech;
-		//dialog[i].proc = dialog[i].proc.replace(/me/g, gender.me);
-		//dialog[i].proc = dialog[i].proc.replace(/polite/g, gender.polite);
-		return gen;
+	function assignText(orig) {
+		var text = orig;
+		var c = orig.split(': ');
+		if (c.length > 1) {
+			text = c[1];
+		}
+		//gen.text = orig.replace(/me/g, gender.me);
+		//gen.text = orig.replace(/polite/g, gender.polite);
+		return text;
 	}
 
-	function prepSpeech(orig) {
-		var sp = orig;
-		if (orig.substr(1,3) == ':: ') {
-			sp = '';
-		}
-		else if (orig.substr(1,2) == ': ') {
-			sp = orig.substr(3);
-		}
-		else if (orig == '.') {
-			sp = '';
-		}
+	function prepSpeech(text) {
+		var sp = text;
 		sp = sp.replace(/ /g, '. ');
 		return sp;
 	}
 
-	function prepDisplay(orig,o) {
+	function prepDisplay(o) {
 		var disp = '';
-		if (orig.substr(0,1) == '.') {
-			disp = '&#xE5B;';
-		}
-		else if (orig.substr(1,3) == ':: ') {
-			disp = '';
-		}
-		else if (!o.speaker) {
-			disp = '<b>' + orig + '</b>';
-		}
-		else if (orig.length) {
-			disp = orig;
+		if (o.speaker != 'x') {
+			disp = o.speaker + ': ' + o.text;
 		}
 		return disp;
 	}
@@ -448,11 +428,11 @@ voyc.Noam.prototype.collectWords = function(target, options) {
 		var identifed = [],  // array of strings, entries in Dictionary
 		var unidentified = []  // array of strings, not found in Dictionary
 	]
-*/
-voyc.parse = function(input) {
-	// make a copy of the dictionary, sorted by length
-	var sortdict = voyc.clone(this.dictionary);
 
+	note: could we optimize by sorting he dictionary by length descending?
+*/
+//voyc.parse = function(input) {
+voyc.Noam.prototype.parse = function(input) {
 	function sto(s, i, b) {
 		if (b) {
 			matched.push(s);
@@ -472,18 +452,30 @@ voyc.parse = function(input) {
 	var us = '';	// unmatched string
 
 	// scan input char by char. i is starting index pos.  step forward.
+	//     scan consonants, continue over diacritic vowels and tone marks
+	//     skip spaces " ", end word at space, wrap this whole loop after split(" ")?
+	//
 	for (var i=0; i<slen; i++) {
 
 		// j is ending index pos. step backwards.
 		for (var j=slen; j>i; j--) {
 			t = s.substring(i,j);
-			if (t == s) {
-				continue;
+			if (j < slen) {	//if (t == s) {
+				// do not separate words between diacritics
+				var char = s.substr(j,1); 
+				var alpha = this.alphabet.lookup(char); 
+				if (alpha.a.length && 'abr'.includes(alpha.a))  { 
+					continue;
+				}
+				var nextalpha = this.alphabet.lookup(s.substr(j-1,1));
+				if (nextalpha.a == 'l') {
+					continue;
+				}
 			}
 			tlen = t.length;
-			m = this.dictionary.lookup(t);  // find t in Dictionary
+			m = this.dictionary.lookup(t,'t','om');  // find t in Dictionary
 			if (m.length) {
-				if (ui >= 0) {
+				if ((ui >= 0) && (ui < i)) {
 					us = s.substring(ui,i);
 					sto(us, ui, false);  // save unmatched part
 				}
@@ -509,10 +501,7 @@ voyc.parse = function(input) {
 		}
 	}
 	
-	return [
-		matched,
-		unmatched
-	];
+	return { match:matched, nomatch:unmatched };
 }
 
 /* static code tables */

@@ -7,9 +7,16 @@
 **/
 /**
 columns
-	t:thai language word
-	e:english language word
-	d:english language details
+	--- key ---	
+	id:id
+	g:type
+		g:glyph
+		s:syllable, not yet used
+		o:one-syllable word
+		m:multi-syllable word
+	t:thai, one word in thai language
+
+	--- meaning ---
 	s:source
 		0:86, unspecified
 		1:97, by hand
@@ -17,9 +24,9 @@ columns
 		3:66, original dict file, with tones and hints
 		4:6, ?
 		5:39, ?
-	n:definition number (1,2,3,...)
 	l:level (100,200,300,...)
-	p:part of speech
+	n:numdef, definition number (1,2,3,...)
+	p:pos, part of speech, can apply only to word (g=o, g=m)
 		n:noun
 		v:verb
 		c:conjunction
@@ -28,8 +35,45 @@ columns
 		e:adverb
 		r:pronoun
 		a:particle
-		g:glyph
-		s:syllable
+ 		?:proper noun
+	e:eng, one word in english language
+	d:details, phrase in english language
+
+	--- glyph ---
+	u:unicode
+	r:reference, for sanskrit consonant, the equivalent consonant
+	m:class
+		m:middle class consonant
+		l:low class consonant
+		h:high class consonant
+		v:vowel
+		u:unknown for glyph
+		o:obsolete glyph: ฃ, ฅ
+		s:symbol glyph: ฿, ๆ, ฯ 
+		t:tonemark
+		d:digit
+	a:subclass
+		d:diacritic vowel or tonemark - 
+		s:sonorant consonant
+		a:diacritic above
+		b:diacritic below
+		l:diacritic left
+		r:diacritic right
+	
+	--- syllable and one-syllable word ---
+	lc:leadingconsonant
+	fc:finalconsonant
+	vp:vowelpattern
+	tm:tonemark
+	tn:tone M,L,H,R,F
+	tl:translit
+	ru:rules
+	
+	--- multi-syllable word and phrase ---
+	ns:numsyllables
+	sn:syllablendx, csv
+	cp:components, csv
+	ps:parse, m:manual
 **/
 voyc.Dictionary = function() {
 	this.dict = [];
@@ -53,12 +97,15 @@ voyc.Dictionary.prototype.lang = function(s) {
 	return (this.isEnglish(s) ? 'e' : 't');
 }
 
-voyc.Dictionary.prototype.lookup = function(word, lang) {
-	lang = lang || this.lang(word);
+voyc.Dictionary.prototype.lookup = function(word, lang, typearray) {
+	var lang = lang || this.lang(word);
+	var typearray = typearray || false;
 	var m = [];
 	for (var i=0; i<this.dict.length; i++) {
 		if (this.dict[i][lang].toLowerCase() == word.toLowerCase()) {
-			m.push(this.dict[i]);
+			if (!typearray || typearray.includes(this.dict[i].g)) {
+				m.push(this.dict[i]);
+			}
 		}
 	}
 	return m;
