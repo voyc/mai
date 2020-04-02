@@ -423,16 +423,67 @@ voyc.Noam.prototype.collectWords = function(target, options) {
 	along with the parts that do not match a dictionary word.
 
 	@input string input
-	@return two-dimensional array
-	[
-		var identifed = [],  // array of strings, entries in Dictionary
-		var unidentified = []  // array of strings, not found in Dictionary
-	]
-
-	note: could we optimize by sorting he dictionary by length descending?
+	@return object with two arrays, matched and unmatched
 */
-//voyc.parse = function(input) {
 voyc.Noam.prototype.parse = function(input) {
+	var matched  = [];
+	var unmatched = [];
+
+	// split the input into multiple substrings separated by whitespace 
+	var sa = input.split(/\s+/); 
+	for (var n=0; n<sa.length; n++) {
+		var s = sa[n];
+		var slen = s.length;
+		var us = '';	// unmatched string
+		var ui = -1;	// starting index of unmatched substring
+		// scan input char by char. i is starting index pos.  step forward.
+		for (var i=0; i<slen; i++) {
+
+			// j is ending index pos. step backwards.
+			for (var j=slen; j>i; j--) {
+				var t = s.substring(i,j);
+				if (j < slen) {	//if (t == s) {
+					// do not separate words between diacritics
+					var char = s.substr(j,1); 
+					var alpha = this.alphabet.lookup(char); 
+					if (alpha.a.length && 'abr'.includes(alpha.a))  { 
+						continue;
+					}
+					var nextalpha = this.alphabet.lookup(s.substr(j-1,1));
+					if (nextalpha.a == 'l') {
+						continue;
+					}
+				}
+				var m = this.dictionary.lookup(t,'t','om');  // find t in Dictionary
+				if (m.length) {
+					if ((ui >= 0) && (ui < i)) {
+						us = s.substring(ui,i);
+						sto(us, ui, false);  // save unmatched part
+					}
+					ui = j;
+					us = m[0].t;
+					sto(us, i, true);  // save matched part
+					i += us.length-1;  // bump up to next start position
+					break;
+				}
+			}
+			// comment this please, wtf?
+			if (j <= i) {
+				if (ui < 0) {
+					ui = i;
+				}
+			}
+		}
+		// unmatched piece at end
+		if (ui >= 0 && i-1>ui) {
+			us = s.substring(ui,i);
+			if (us != s) {
+				sto(us, ui, false);  // save unrecognized part
+			}
+		}
+	}
+	return { match:matched, nomatch:unmatched };
+
 	function sto(s, i, b) {
 		if (b) {
 			matched.push(s);
@@ -441,67 +492,6 @@ voyc.Noam.prototype.parse = function(input) {
 			unmatched.push(s);
 		}
 	}
-	var matched  = [];
-	var unmatched = [];
-	var s = input;
-	var slen = s.length;
-	var t = '';	// test string to lookup
-	var tlen = t.length;
-	var m = '';	// matched dict entry, array of objects
-	var ui = -1;	// starting index of unmatched substring
-	var us = '';	// unmatched string
-
-	// scan input char by char. i is starting index pos.  step forward.
-	//     scan consonants, continue over diacritic vowels and tone marks
-	//     skip spaces " ", end word at space, wrap this whole loop after split(" ")?
-	//
-	for (var i=0; i<slen; i++) {
-
-		// j is ending index pos. step backwards.
-		for (var j=slen; j>i; j--) {
-			t = s.substring(i,j);
-			if (j < slen) {	//if (t == s) {
-				// do not separate words between diacritics
-				var char = s.substr(j,1); 
-				var alpha = this.alphabet.lookup(char); 
-				if (alpha.a.length && 'abr'.includes(alpha.a))  { 
-					continue;
-				}
-				var nextalpha = this.alphabet.lookup(s.substr(j-1,1));
-				if (nextalpha.a == 'l') {
-					continue;
-				}
-			}
-			tlen = t.length;
-			m = this.dictionary.lookup(t,'t','om');  // find t in Dictionary
-			if (m.length) {
-				if ((ui >= 0) && (ui < i)) {
-					us = s.substring(ui,i);
-					sto(us, ui, false);  // save unmatched part
-				}
-				ui = j;
-				us = m[0].t;
-				sto(us, i, true);  // save matched part
-				i += us.length-1;  // bump up to next start position
-				break;
-			}
-		}
-		// comment this please, wtf?
-		if (j <= i) {
-			if (ui < 0) {
-				ui = i;
-			}
-		}
-	}
-	// unmatched piece at end
-	if (ui >= 0 && i-1>ui) {
-		us = s.substring(ui,i);
-		if (us != s) {
-			sto(us, ui, false);  // save unrecognized part
-		}
-	}
-	
-	return { match:matched, nomatch:unmatched };
 }
 
 /* static code tables */
