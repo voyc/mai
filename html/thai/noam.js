@@ -13,7 +13,7 @@
 
 	sub methods:
 		parseStory(string) - return object of parsed components
-		parseString(string) - return two arrays of words: matched and unmatched
+		parseString(string, linenum) - return array of objects, one for each word
 		parseSyllable(syllable) - return object of components
 		parseWordToGlyphs(word,options {newOnly t/f, format glyph/dict})
 		parseStoryBySpace(story,options {newOnly t/f, format word/dict})
@@ -64,6 +64,20 @@ voyc.Noam = function(dictionary,vocab) {
 //voyc.Noam.prototype.parseWord = function(word) {
 //	return word.split('');
 //}
+
+voyc.Noam.prototype.combineArrays = function(combined, a) {
+	var c = combined;
+	var cwords = [];
+	c.forEach(function(item,index) {
+		cwords.push(item.text);
+	});
+	a.forEach(function(item,index) {
+		if (!cwords.includes(item.text)) {
+			c.push(item);
+		}
+	});
+	return c;
+}
 
 voyc.Noam.prototype.eliminateDupes = function(a) {
 	//a.sort();
@@ -375,9 +389,7 @@ voyc.Noam.prototype.parseStory = function(s) {
 	var d = {
 		speakers:{ 'x': {name:'narrator',age:40,gender:'male'} },
 		lines:[],
-		new:[],
-		old:[],
-		err:[]
+		words:[],
 	};
 
 	// treat input s as an array of lines
@@ -419,17 +431,12 @@ voyc.Noam.prototype.parseStory = function(s) {
 		d.lines.push(o);
 	}
 
-	// parse for words
+	// parse each line for words
 	for (var i=0; i<d.lines.length; i++) {
 		var line = d.lines[i].text;
-		var a = this.parseString(line);
-		d.lines[i].words = a.match;
-		d.lines[i].nomatch = a.nomatch;
-		d.new = d.new.concat(a.match);
-		d.err = d.err.concat(a.nomatch);
+		d.lines[i].words = this.parseString(line, i+1);
+		d.words = this.combineArrays(d.words, d.lines[i].words);
 	}
-	d.new = this.eliminateDupes(d.new);
-	d.err = this.eliminateDupes(d.err);
 	return d;
 
 	function assignSpeaker(orig) {
@@ -473,12 +480,11 @@ voyc.Noam.prototype.parseStory = function(s) {
 	along with the parts that do not match a dictionary word.
 
 	@input string input
-	@return object with two arrays, matched and unmatched
+	@return array of objects
 
 **/
-voyc.Noam.prototype.parseString = function(input) {
-	var matched  = [];
-	var unmatched = [];
+voyc.Noam.prototype.parseString = function(input, linenum) {
+	var words = [];
 
 	// split the input into multiple substrings separated by whitespace 
 	var sa = input.split(/\s+/); 
@@ -487,6 +493,7 @@ voyc.Noam.prototype.parseString = function(input) {
 		var slen = s.length;
 		var us = '';	// unmatched string
 		var ui = -1;	// starting index of unmatched substring
+		var startndx = input.indexOf(s);
 		// scan input char by char. i is starting index pos.  step forward.
 		for (var i=0; i<slen; i++) {
 
@@ -509,11 +516,12 @@ voyc.Noam.prototype.parseString = function(input) {
 				if (m.length) {
 					if ((ui >= 0) && (ui < i)) {
 						us = s.substring(ui,i);
-						sto(us, ui, false);  // save unmatched part
+						sto(us, linenum, startndx+ui, false, false);  // save unmatched part
 					}
 					ui = j;
 					us = m[0].t;
-					sto(us, i, true);  // save matched part
+					var v = this.vocab.get(us);
+					sto(us, linenum, startndx+i, m[0], v);  // save matched part
 					i += us.length-1;  // bump up to next start position
 					break;
 				}
@@ -528,20 +536,20 @@ voyc.Noam.prototype.parseString = function(input) {
 		// unmatched piece at end
 		if (ui >= 0 && i-1>ui) {
 			us = s.substring(ui,i);
-			//if (us != s) {
-				sto(us, ui, false);  // save unrecognized part
-			//}
+			sto(us, linenum, startndx+ui, false, false);  // save unrecognized part
 		}
 	}
-	return { match:matched, nomatch:unmatched };
+	return words;
 
-	function sto(s, i, b) {
-		if (b) {
-			matched.push(s);
-		}
-		else {
-			unmatched.push(s);
-		}
+	function sto(text, line, ndx, dict, vocab) {
+		var o = {
+			text:text,
+			line:line,
+			ndx:ndx,
+			dict:dict,
+			vocab:vocab
+		};
+		words.push(o);
 	}
 }
 
@@ -866,3 +874,4 @@ voyc.countObject = function(object) {
 	}
 	return length;
 }
+

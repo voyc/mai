@@ -393,7 +393,6 @@ voyc.Sam.prototype.parseRequest = function(s) {
 }
 	
 voyc.Sam.prototype.showParse = function(o,opt) {
-	br = '<br/>';
 	var s = '';
 	switch(opt.fmt) {
 		case 'summary':
@@ -404,21 +403,48 @@ voyc.Sam.prototype.showParse = function(o,opt) {
 			if (o.lines.length > 1) {
 				s += o.lines.length + ' lines<br/>';
 			}
-			s += o.new.length + ' words<br/>';
-			if (o.err.length > 0) {
-				s += o.err.length + ' errors<br/>';
+			var cntword = 0;
+			var cntnew = 0;
+			var cnterr = 0;
+			o.words.forEach(function(item,index) {
+				if (item.vocab) cntnew++;
+				if (item.dict) cntword++;
+				else cnterr++;
+			});
+			s += cntword + ' words<br/>';
+			s += cntnew + ' newvocab<br/>';
+			if (cnterr > 0) {
+				s += cnterr + ' errors<br/>';
 			}
 			break;
 		case 'words':
-			o.new.forEach(function(item,index) {
-				s += item + br;
+			o.words.forEach(function(item,index) {
+				if (item.dict) {
+					s += item.text + '<br/>';
+				}
+			});
+			break
+		case 'newvocab':
+			o.words.forEach(function(item,index) {
+				if (item.dict && !item.vocab) {
+					s += item.text + '<br/>';
+				}
 			});
 			break;
 		case 'errors':
-			o.err.forEach(function(item,index) {
-				s += item + br;
+			o.words.forEach(function(item,index) {
+				if (!item.dict) {
+					s += item.text + ' ' + item.line + '.' + item.ndx + '<br/>';
+				}
 			});
 			break;
+		case 'lines':
+			o.lines.forEach(function(item,index) {
+				s += item.text + '<br/>';
+			});
+			break;
+		default:
+			s += 'I can show errors, lines, words, or newvocab.<br/>';
 	}
 	return s;
 }
