@@ -167,7 +167,7 @@ voyc.Curriculum.prototype.drawLevel = function(c, level) {
 		}
 	}
 	else if (lvl.primaryDictType == 'dialog') {
-		var analysis = this.noam.analyzeDialog(lvl.dialog);
+		var analysis = this.noam.parse(lvl.dialog);
 		for (var i=0; i<analysis.dialog.length; i++) {
 			s += '<tr><td>';
 			s += analysis.dialog[i].display;

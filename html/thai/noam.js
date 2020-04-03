@@ -7,29 +7,18 @@
 
 	Requires the prescence of dictionary and vocab data.
 
-	public methods:
+	public methods (can be called from command-line):
 		collect()
-		parse(input) - return two arrays of words: matched and unmatched
+		parse(string) - return object of components
+
+	sub methods:
+		parseStory(string) - return object of parsed components
+		parseString(string) - return two arrays of words: matched and unmatched
 		parseSyllable(syllable) - return object of components
 		parseWordToGlyphs(word,options {newOnly t/f, format glyph/dict})
 		parseStoryBySpace(story,options {newOnly t/f, format word/dict})
 		parsePhrase() - obsolete
 		parseWord() - obsolete
-
-		parse by newlines - return array of lines
-		parse by speaker - return dialog
-		parse by whitespace - return list of contiguous strings
-		parse by dictionary - return list of words
-		analyze syllable - used only in preparing dictionary
-		analyze word - break into component syllables
-		parse by glyph - return array of glyphs 
-	
-		things we drill
-			glyphs
-			words, incl syllables
-			phrases
-			expressions
-			sentences	
 **/
 voyc.Noam = function(dictionary,vocab) {
 	this.dictionary = dictionary;
@@ -77,7 +66,7 @@ voyc.Noam = function(dictionary,vocab) {
 //}
 
 voyc.Noam.prototype.eliminateDupes = function(a) {
-	a.sort();
+	//a.sort();
 	var b = [];
 	var prev = '';
 	a.forEach(function(i) {
@@ -86,7 +75,7 @@ voyc.Noam.prototype.eliminateDupes = function(a) {
 		}
 		prev = i;
 	}, this);
-	b = voyc.shuffleArray(b);
+	//b = voyc.shuffleArray(b);
 	return b;
 }
 
@@ -229,109 +218,6 @@ voyc.Noam.prototype.analyzeStory = function(story) {
 	return {new:dictNew, old:dictOld, err:wordErr, pheng:phraseEng};
 }
 
-/* 
-	input htmldoc
-	output array of objects: original, gendered, speaker, display, speech
-	switch vocabulary for gender
-	add styles for display
-*/
-
-voyc.Noam.prototype.analyzeDialog = function(s) {
-	var d = {
-		speakers:{ 'x': {name:'narrator',age:40,gender:'male'} },
-		dialog:[],
-		new:[],
-		old:[],
-		err:[]
-	};
-
-	// treat input s as an array of lines
-	var a = s.split('\n');
-
-	// trim whitespace and remove empty lines
-	for (var i=0; i<a.length; i++) {
-		a[i] = a[i].trim();
-		if (a[i].length <= 1) {
-			a.splice(i,1);
-			i--;
-		}
-	}
-
-	// identify speakers, remove speaker definition lines (key:: name,age,gender)
-	for (var i=0; i<a.length; i++) {
-		var s = a[i].split(':: ');
-		if (s.length > 1) {
-			var o = {};
-			var key = s[0];
-			var b = s[1].split(',');
-			o.name = b[0];
-			o.age = parseInt(b[1]);
-			o.gender = b[2].substr(0,1);
-			d.speakers[key] = o; 
-			a.splice(i,1);
-			i--;
-		}
-	}
-
-	// create one object for each line of dialog
-	for (var i=0; i<a.length; i++) {
-		var o = {};
-		o.original = a[i];
-		o.speaker = assignSpeaker(o.original);
-		o.text = assignText(o.original);
-		o.speech = prepSpeech(o.text);
-		o.display = prepDisplay(o);
-		d.dialog.push(o);
-	}
-
-	// parse for words
-	for (var i=0; i<d.dialog.length; i++) {
-		var line = d.dialog[i].text;
-		var a = this.parse(line);
-		d.dialog[i].words = a.match;
-		d.dialog[i].nomatch = a.nomatch;
-		d.new = d.new.concat(a.match);
-		d.err = d.err.concat(a.nomatch);
-	}
-	d.new = this.eliminateDupes(d.new);
-	d.err = this.eliminateDupes(d.err);
-	return d;
-
-	function assignSpeaker(orig) {
-		var key = 'x';
-		var c = orig.split(':');
-		if (c.length > 1) {
-			key = c[0];
-		}
-		return key;
-	}
-
-	function assignText(orig) {
-		var text = orig;
-		var c = orig.split(': ');
-		if (c.length > 1) {
-			text = c[1];
-		}
-		//gen.text = orig.replace(/me/g, gender.me);
-		//gen.text = orig.replace(/polite/g, gender.polite);
-		return text;
-	}
-
-	function prepSpeech(text) {
-		var sp = text;
-		sp = sp.replace(/ /g, '. ');
-		return sp;
-	}
-
-	function prepDisplay(o) {
-		var disp = '';
-		if (o.speaker != 'x') {
-			disp = o.speaker + ': ' + o.text;
-		}
-		return disp;
-	}
-}
-
 /**
 	Collect a list of words that contain 
 	only glyphs already mastered or working.
@@ -418,14 +304,179 @@ voyc.Noam.prototype.collectWords = function(target, options) {
 }
 
 /**
-	Find all the parts within a string
-	that match a dictionary word,
+	parse(input, options)
+	
+	input string can be:
+		dialog 
+		story 
+		sentence 
+		phrase 
+		expression 
+		multi-syllable word 
+		single-syllable word 
+		syllable 
+		glyph
+
+	input options:
+		keep lines separate (yes for song, no for newspaper article)
+		match words against vocab
+		match glyphs against vocab
+		check parsed syllable against dictionary parsing
+
+	output object includes:
+		speakers
+		lines
+		words
+		word offsets
+		syllable offsets
+		glyphs (future)
+		syllables (future)
+		phrases (future)
+		expressions (future)
+		sentences (future)
+
+	operations:
+		1. parse into speakers and lines (dialog yes/no)
+		2. substitute patterns (pronouns, numbers, etc)
+		3. parse each string into words
+		4. combine words into phrases and sentences (match against grammar patterns)
+		5. parse each word into syllables
+		6. parse syllable into components
+
+	errors:
+		unidentified substring
+		unidentified glyph
+		invalid sequence of glyphs
+
+	test strings:
+		parse -keeplines เห็นด้วย
+		parse -keeplines ไปวันศุกร์ เสาร์ และอาทิตย์ดีไหม
+		parse -keeplines บทเรียนที่หนึ่ง
+		ก:: เมย์,25,female
+		ข:: แบงค์,25,male
+		ก: อาทิตย์หน้าเราไปเที่ยวปายกันเถอะ
+		ข: เราต้องรีบไปซื้อตั๋วรถตู้ล่วงหน้า
+		ก: ไปซื้อที่ไหน
+		parse -keeplines ไปวันศุกร์ เสะาร์ และอาทิตย์ดีพไหม
+**/
+voyc.Noam.prototype.parse = function(input,options) {
+	var parsed = this.parseStory(input);
+	//parseWord(parsed);
+	//parseSyllable(parsed);
+	return parsed;
+}
+
+/** 
+	method parseStory
+	input string
+	output object containing parsed components
+**/
+voyc.Noam.prototype.parseStory = function(s) {
+	var d = {
+		speakers:{ 'x': {name:'narrator',age:40,gender:'male'} },
+		lines:[],
+		new:[],
+		old:[],
+		err:[]
+	};
+
+	// treat input s as an array of lines
+	var a = s.split('\n');
+
+	// trim whitespace and remove empty lines
+	for (var i=0; i<a.length; i++) {
+		a[i] = a[i].trim();
+		if (a[i].length <= 1) {
+			a.splice(i,1);
+			i--;
+		}
+	}
+
+	// identify speakers, remove speaker definition lines (key:: name,age,gender)
+	for (var i=0; i<a.length; i++) {
+		var s = a[i].split(':: ');
+		if (s.length > 1) {
+			var o = {};
+			var key = s[0];
+			var b = s[1].split(',');
+			o.name = b[0];
+			o.age = parseInt(b[1]);
+			o.gender = b[2].substr(0,1);
+			d.speakers[key] = o; 
+			a.splice(i,1);
+			i--;
+		}
+	}
+
+	// create one object for each line of dialog
+	for (var i=0; i<a.length; i++) {
+		var o = {};
+		o.original = a[i];
+		o.speaker = assignSpeaker(o.original);
+		o.text = assignText(o.original);
+		o.speech = prepSpeech(o.text);
+		o.display = prepDisplay(o);
+		d.lines.push(o);
+	}
+
+	// parse for words
+	for (var i=0; i<d.lines.length; i++) {
+		var line = d.lines[i].text;
+		var a = this.parseString(line);
+		d.lines[i].words = a.match;
+		d.lines[i].nomatch = a.nomatch;
+		d.new = d.new.concat(a.match);
+		d.err = d.err.concat(a.nomatch);
+	}
+	d.new = this.eliminateDupes(d.new);
+	d.err = this.eliminateDupes(d.err);
+	return d;
+
+	function assignSpeaker(orig) {
+		var key = 'x';
+		var c = orig.split(':');
+		if (c.length > 1) {
+			key = c[0];
+		}
+		return key;
+	}
+
+	function assignText(orig) {
+		var text = orig;
+		var c = orig.split(': ');
+		if (c.length > 1) {
+			text = c[1];
+		}
+		//gen.text = orig.replace(/me/g, gender.me);
+		//gen.text = orig.replace(/polite/g, gender.polite);
+		return text;
+	}
+
+	function prepSpeech(text) {
+		var sp = text;
+		sp = sp.replace(/ /g, '. ');
+		return sp;
+	}
+
+	function prepDisplay(o) {
+		var disp = '';
+		if (o.speaker != 'x') {
+			disp = o.speaker + ': ' + o.text;
+		}
+		return disp;
+	}
+}
+
+/**
+	method parseString
+	Find all the parts within a string that match a dictionary word,
 	along with the parts that do not match a dictionary word.
 
 	@input string input
 	@return object with two arrays, matched and unmatched
-*/
-voyc.Noam.prototype.parse = function(input) {
+
+**/
+voyc.Noam.prototype.parseString = function(input) {
 	var matched  = [];
 	var unmatched = [];
 
@@ -467,7 +518,7 @@ voyc.Noam.prototype.parse = function(input) {
 					break;
 				}
 			}
-			// comment this please, wtf?
+			// first time, mark the beginning of an unmatched string
 			if (j <= i) {
 				if (ui < 0) {
 					ui = i;
@@ -477,9 +528,9 @@ voyc.Noam.prototype.parse = function(input) {
 		// unmatched piece at end
 		if (ui >= 0 && i-1>ui) {
 			us = s.substring(ui,i);
-			if (us != s) {
+			//if (us != s) {
 				sto(us, ui, false);  // save unrecognized part
-			}
+			//}
 		}
 	}
 	return { match:matched, nomatch:unmatched };
@@ -801,4 +852,17 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 		
 	
 	return syl;
+}
+
+/**
+	move to utils.js
+**/
+voyc.countObject = function(object) {
+	var length = 0;
+	for( var key in object ) {
+		if( object.hasOwnProperty(key) ) {
+			++length;
+		}
+	}
+	return length;
 }

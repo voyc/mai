@@ -16,6 +16,7 @@ voyc.Sam = function(chat) {
 	this.req = {};
 	this.setup();
 	this.state = '';
+	this.parsed = false;
 	this.lang = 'thai';
 }
 
@@ -259,6 +260,7 @@ voyc.Sam.prototype.respond = function(o) {
 	if (this.state ==  'drill')
 		return this.lee.respond(o);
 
+	var input = o.msg;
 	var w = o.msg.split(/\s+/);
 	switch (w[0]) {
 		case 'go':
@@ -346,10 +348,79 @@ voyc.Sam.prototype.respond = function(o) {
 			}		
 			this.chat.post(this.chatid, s);
 			break;
+		case 'parse':
+			var r = this.parseRequest(input);
+			var o = this.noam.parse(r.object,r.adj);	
+			var s = this.showParse(o,{fmt:'summary'});
+			this.parsed = o;
+			this.chat.post(this.chatid, s);
+			break;
+		case 'show':
+			var r = this.parseRequest(input);
+			if (this.parsed) {
+				var s = this.showParse(this.parsed, {fmt:r.object})
+				this.chat.post(this.chatid, s);
+			}
+			break;
 		default:
 			this.chat.post(this.chatid, 'Would you like an example sentence?', ['yes', 'no']);
 			break;
 	}
+}
+
+voyc.Sam.prototype.parseRequest = function(s) {
+	var w = s.split(' ');
+	var verb = '';
+	var adj = [];
+	var object = '';
+	w.forEach(function(item,index) {
+		if (index == 0) {
+			verb = item;
+		}
+		else if (item.substr(0,1) == '-') {
+			adj[item.substr(1)] = true;
+		}
+		else {
+			object += item + ' ';
+		}
+	});
+	object = object.trim();
+	return {
+		verb:verb,
+		adj:adj,
+		object:object
+	}
+}
+	
+voyc.Sam.prototype.showParse = function(o,opt) {
+	br = '<br/>';
+	var s = '';
+	switch(opt.fmt) {
+		case 'summary':
+			var cnt = voyc.countObject(o.speakers);
+			if (cnt > 1) {
+				s += cnt-1 + ' speakers<br/>';
+			}
+			if (o.lines.length > 1) {
+				s += o.lines.length + ' lines<br/>';
+			}
+			s += o.new.length + ' words<br/>';
+			if (o.err.length > 0) {
+				s += o.err.length + ' errors<br/>';
+			}
+			break;
+		case 'words':
+			o.new.forEach(function(item,index) {
+				s += item + br;
+			});
+			break;
+		case 'errors':
+			o.err.forEach(function(item,index) {
+				s += item + br;
+			});
+			break;
+	}
+	return s;
 }
 
 /**
