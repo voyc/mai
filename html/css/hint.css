@@ -1,0 +1,62 @@
+.thai {
+	font-size:1.5rem;
+}
+.english {
+	font-size:1rem;
+}
+sentence {
+	display:block;
+	border-bottom: 1px solid gray;
+}
+line {
+	display:block;
+}
+story[hint] line {
+	border:1px solid gray;
+}
+word {
+}
+story[hint] word {
+	margin-right: .5rem;
+}
+story[hint] word[error] {
+	color:red;
+}
+story[hint] word[newvocab] {
+	color:green;
+}
+sylcont {
+	position:relative;
+	margin-right: .5rem;
+}
+sylspc {
+	opacity:0.0;
+}
+syllable {
+	position:absolute;
+}
+syllable[hint=M] {
+	color:blue;
+}
+syllable[hint=H] {
+	transform: translate(0,-.5rem);
+	color:blue;
+}
+syllable[hint=M] {
+	color:green;
+}
+syllable[hint=L] {
+	transform: translate(0,.5rem);
+	color:brown;
+}
+syllable[hint=R] {
+	transform: rotate(-30deg);
+	color:red;
+}
+syllable[hint=F] {
+	transform: rotate(30deg);
+	color:orange;
+}
+button[a] {
+	margin-right:.3rem;
+}

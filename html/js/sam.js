@@ -351,16 +351,24 @@ voyc.Sam.prototype.respond = function(o) {
 		case 'parse':
 			var r = this.parseRequest(input);
 			var o = this.noam.parse(r.object,r.adj);	
-			var s = this.showParse(o,{fmt:'summary'});
+			var s = this.showParse(o,{object:'summary'});
 			this.parsed = o;
 			this.chat.post(this.chatid, s);
 			break;
 		case 'show':
 			var r = this.parseRequest(input);
 			if (this.parsed) {
-				var s = this.showParse(this.parsed, {fmt:r.object})
+				var s = this.showParse(this.parsed, r)
 				this.chat.post(this.chatid, s);
 			}
+			break;
+		case 'drill':
+			var r = this.parseRequest(input);
+			var s = 'Parse a story first.';
+			if (this.parsed) {
+				s = this.drillParse(this.parsed, r)
+			}
+			this.chat.post(this.chatid, s);
 			break;
 		default:
 			this.chat.post(this.chatid, 'Would you like an example sentence?', ['yes', 'no']);
@@ -378,7 +386,13 @@ voyc.Sam.prototype.parseRequest = function(s) {
 			verb = item;
 		}
 		else if (item.substr(0,1) == '-') {
-			adj[item.substr(1)] = true;
+			var x = item.substr(1).split(':');
+			var opt = x[0];
+			var parm = true;
+			if (x.length > 1) {
+				parm = x[1];
+			}
+			adj[opt] = parm;
 		}
 		else {
 			object += item + ' ';
@@ -392,9 +406,9 @@ voyc.Sam.prototype.parseRequest = function(s) {
 	}
 }
 	
-voyc.Sam.prototype.showParse = function(o,opt) {
+voyc.Sam.prototype.showParse = function(o,r) {
 	var s = '';
-	switch(opt.fmt) {
+	switch(r.object) {
 		case 'summary':
 			var cnt = voyc.countObject(o.speakers);
 			if (cnt > 1) {
@@ -407,22 +421,28 @@ voyc.Sam.prototype.showParse = function(o,opt) {
 			var cntnew = 0;
 			var cnterr = 0;
 			o.words.forEach(function(item,index) {
-				if (item.vocab) cntnew++;
+				if (item.dict && !item.vocab) cntnew++;
 				if (item.dict) cntword++;
 				else cnterr++;
 			});
-			s += cntword + ' words<br/>';
-			s += cntnew + ' newvocab<br/>';
+			s += cntword + ' words, ' + cntnew + ' new<br/>';
 			if (cnterr > 0) {
 				s += cnterr + ' errors<br/>';
 			}
 			break;
 		case 'words':
-			o.words.forEach(function(item,index) {
-				if (item.dict) {
-					s += item.text + '<br/>';
+			for (var i=0; i<o.words.length; i++) {
+				var w = o.words[i];
+				if (r.adj.new && w.vocab) {
+					continue;
 				}
-			});
+				if (r.adj.old && !w.vocab) {
+					continue;
+				}
+				if (w.dict) {
+					s += w.text + '<br/>';
+				}
+			}
 			break
 		case 'newvocab':
 			o.words.forEach(function(item,index) {
@@ -439,14 +459,70 @@ voyc.Sam.prototype.showParse = function(o,opt) {
 			});
 			break;
 		case 'lines':
-			o.lines.forEach(function(item,index) {
-				s += item.text + '<br/>';
-			});
+			s += '<story ';
+			if (r.adj.hint) {
+				s += 'hint';
+			}
+			s += '>';
+			for (var i=0; i<o.lines.length; i++) {
+				s += this.drawLine(o.lines[i]);
+			}
+			s += '</story>';
 			break;
 		default:
 			s += 'I can show errors, lines, words, or newvocab.<br/>';
 	}
 	return s;
+}
+
+voyc.Sam.prototype.drawLine = function(item) {
+	var s = '';
+	var x = item.text;
+	var n = 0;
+	s += '<line>';
+	if (item.speaker != 'x') {
+		s += item.speaker + ": ";
+	}
+	for (var i=0; i<x.length; i++) {
+		if ((n < item.words.length) && i == item.words[n].ndx) {
+			if (i > 0) {
+				s += '</word>';
+			}
+			s += '<word ';
+			if (!item.words[n].dict) {
+				s += 'error ';
+			}
+			else if (!item.words[n].vocab) {
+				s += 'newvocab ';
+			}
+			s += '>';
+			n++;
+		}
+		s += x[i];
+	} 
+	s += '</word>';
+	s += '</line>';
+	return s;
+}
+
+voyc.Sam.prototype.drillParse = function(o, r) {
+	var s = '';
+	switch(r.object) {
+		case 'words':
+			var sortme = [];
+			for (var i=0; i<o.words.length; i++) {
+				var w = o.words[i];
+				if (r.adj.new && w.vocab) {
+					continue;
+				}
+				sortme.push(w);
+			}
+			var sorted = sortme.sort(function(a,b) {
+				return a.text.length - b.text.length;
+			});
+			break;
+	}
+	return 'drill complete';
 }
 
 /**
