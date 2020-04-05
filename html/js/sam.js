@@ -16,7 +16,7 @@ voyc.Sam = function(chat) {
 	this.req = {};
 	this.setup();
 	this.state = '';
-	this.parsed = false;
+	this.story = false;
 	this.lang = 'thai';
 }
 
@@ -70,7 +70,7 @@ voyc.Sam.prototype.onGetVocabReceived = function() {
 	//this.level.loadPreviousLevelInProgress();
 	var interval = Date.now() - this.vocab.vocab.recency;
 	//this.setupFirstLevel(interval);
-	voyc.curriculum = new voyc.Curriculum(voyc.$('curriculum'), this.observer, this.vocab, this.noam);
+	//voyc.curriculum = new voyc.Curriculum(voyc.$('curriculum'), this.observer, this.vocab, this.noam);
 }
 
 /*
@@ -181,7 +181,7 @@ voyc.Sam.prototype.startDrill = function(level) {
 voyc.Sam.prototype.endDrill = function() {
 	this.chat.changeHost(this.chatid);
 	this.state = 'ready';
-
+return;
 	// next stack
 	this.level.currentStackNdx++;
 	if (this.level.currentStackNdx >= this.level.stacks.length) { 
@@ -350,25 +350,23 @@ voyc.Sam.prototype.respond = function(o) {
 			break;
 		case 'parse':
 			var r = this.parseRequest(input);
-			var o = this.noam.parse(r.object,r.adj);	
-			var s = this.showParse(o,{object:'summary'});
-			this.parsed = o;
+			this.story = this.noam.parse(r.object,r.adj);	
+			var s = this.showParse(this.story,{object:'summary'});
 			this.chat.post(this.chatid, s);
 			break;
 		case 'show':
 			var r = this.parseRequest(input);
-			if (this.parsed) {
-				var s = this.showParse(this.parsed, r)
+			if (this.story) {
+				var s = this.showParse(this.story, r)
 				this.chat.post(this.chatid, s);
 			}
 			break;
 		case 'drill':
 			var r = this.parseRequest(input);
 			var s = 'Parse a story first.';
-			if (this.parsed) {
-				s = this.drillParse(this.parsed, r)
+			if (this.story) {
+				this.drillParse(this.story, r)
 			}
-			this.chat.post(this.chatid, s);
 			break;
 		default:
 			this.chat.post(this.chatid, 'Would you like an example sentence?', ['yes', 'no']);
@@ -520,9 +518,31 @@ voyc.Sam.prototype.drillParse = function(o, r) {
 			var sorted = sortme.sort(function(a,b) {
 				return a.text.length - b.text.length;
 			});
+			var stack = this.prepStack(sorted, o,r);
+			var self = this;
+
+			this.state = 'drill';
+			this.lee.drill(stack, function(scores) {
+				self.reportScores(scores);
+			});
 			break;
 	}
-	return 'drill complete';
+	return;
+}
+
+voyc.Sam.prototype.prepStack = function(w, o, r) {
+	var stack = o;
+	o.id = 'cotravwh';
+	o.prereq = false;
+	o.postreq = false;
+	o.algorithm = 'progressive';
+	o.primaryDictType =  'word';
+	o.title = 'ning botti 1';
+	o.glyph = [];
+	o.word = w;
+	o.phrase = []; 
+	o.drill = w;
+	return stack;
 }
 
 /**

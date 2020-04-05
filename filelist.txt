@@ -1,0 +1,36 @@
+
+
+js/mai.js
+js/account.js
+js/accountview.js
+js/namespace.js
+js/user.js
+js/view.js
+js/vocab.js
+
+js/sam.js
+js/miyagi.js
+js/lee.js -- temporarily disabled
+js/curriculum.js -- temporarily disabled
+js/level.js -- temporarily disabled
+
+
+thai/alphabet.js
+thai/dict2.js -- obsolete
+thai/dictionary.js
+thai/dict.js
+thai/grammar.js
+thai/index2.html
+thai/keyboard2.js
+thai/keyboard.css
+thai/noam.js
+thai/numgen.js
+thai/sengen.js
+thai/th2.js
+thai/translit.js
+thai/vowelPatterns.js
+
+thai/course/
+thai/courselist.js
+thai/lesson.js -- obsolete
+

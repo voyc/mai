@@ -197,3 +197,28 @@ voyc.Dictionary.prototype.listAll = function() {
 	s = cnt + ' active' + '<br/>' + s;
 	return s;
 }
+
+
+voyc.Dictionary.prototype.compose = function(dict) {
+	var s = '';
+	if (dict.g == 'g' && dict.p == 't') {
+		s = dict.t + "  tone mark";
+	}
+	else if (dict.g == 'g' ) {
+		s = dict.t + "  " + voyc.strp[dict.p] + ", " + voyc.strm[dict.m] + ", sound: " + dict.e;
+	}
+	else if (dict.g == 'o') {
+		s = dict.t + "  " + dict.tl + "<sup>" + dict.tn + "</sup>  <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
+	}
+	else if (dict.g == 'm') {
+		s = dict.t + "  " + dict.tl + " <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
+	}
+	else if (dict.g == 's') {
+		s = dict.t + "  symbol";
+	}
+	else if (dict.g == 'x') {
+		s = dict.t + "  " + dict.tl + " " + dict.e;
+	}
+	return s;
+}
+
