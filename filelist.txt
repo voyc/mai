@@ -23,12 +23,14 @@ thai/grammar.js
 thai/index2.html
 thai/keyboard2.js
 thai/keyboard.css
-thai/noam.js
 thai/numgen.js
 thai/sengen.js
-thai/th2.js
-thai/translit.js
-thai/vowelPatterns.js
+thai/th2.js - obsolete, js table of alphabet
+
+move the following into dictionary
+thai/noam.js - includes "static code tables"
+thai/translit.js - translit table
+thai/vowelPatterns.js - table of vowelPatterns.js, and a lookup function
 
 thai/course/
 thai/courselist.js

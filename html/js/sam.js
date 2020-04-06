@@ -368,6 +368,15 @@ voyc.Sam.prototype.respond = function(o) {
 				this.drillParse(this.story, r)
 			}
 			break;
+		case 'lookup':
+			var r = this.parseRequest(input);
+			var m = voyc.dictionary.lookup(r.object);
+			var s = voyc.dictionary.compose(m);
+			var e = this.chat.post(this.chatid, s);
+			(new voyc.Minimal).attachAll(e);
+			(new voyc.Icon).attachAll(e);
+			(new voyc.Icon).drawAll(e);
+			break;
 		default:
 			this.chat.post(this.chatid, 'Would you like an example sentence?', ['yes', 'no']);
 			break;

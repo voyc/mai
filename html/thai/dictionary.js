@@ -198,27 +198,148 @@ voyc.Dictionary.prototype.listAll = function() {
 	return s;
 }
 
-
+/**
+	compose(dict)
+	input dict can be a single dict object or an array of dict objects
+	output is a string of html
+**/
 voyc.Dictionary.prototype.compose = function(dict) {
+	var da = dict;
+	if (!Array.isArray(da)) {
+		da = [];
+		da.push(dict);
+	}
+
 	var s = '';
-	if (dict.g == 'g' && dict.p == 't') {
-		s = dict.t + "  tone mark";
-	}
-	else if (dict.g == 'g' ) {
-		s = dict.t + "  " + voyc.strp[dict.p] + ", " + voyc.strm[dict.m] + ", sound: " + dict.e;
-	}
-	else if (dict.g == 'o') {
-		s = dict.t + "  " + dict.tl + "<sup>" + dict.tn + "</sup>  <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
-	}
-	else if (dict.g == 'm') {
-		s = dict.t + "  " + dict.tl + " <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
-	}
-	else if (dict.g == 's') {
-		s = dict.t + "  symbol";
-	}
-	else if (dict.g == 'x') {
-		s = dict.t + "  " + dict.tl + " " + dict.e;
+	for (var i=0; i<da.length; i++) {
+		s += this.composeOne(da[i]);
 	}
 	return s;
 }
+
+voyc.Dictionary.prototype.composeOne = function(dict) {
+	var s = '<lookup>';
+	switch (dict.g) {
+		case 'g':
+			if (dict.p == 't') {
+				s += dict.t + "  tone mark";
+			}
+			else {
+				s += dict.t + "  " + voyc.strp[dict.p] + ", " + voyc.strm[dict.m] + ", sound: " + dict.e;
+			}
+			break;
+		case 'o':
+			s += dict.t;
+			s += " <icon type='draw' name='speaker'></icon> &nbsp;";
+			s += dict.tl + "<sup>" + dict.tn + "</sup>  <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
+			s += "<span expand='more"+dict.id+"' class='expander'></span>";
+
+			s += "<div id='more"+dict.id+"'>";
+			s += dict.d;
+			var lc = this.lookup(dict.lc)[0];
+			s += '<br/>leading consonant ' + lc.t + ' ' + this.drawClass(lc.m);
+			var vp = voyc.vowelPatternsLookup(dict.vp);
+			s += '<br/>vowel pattern ' + vp.print + ' ' + this.drawClass(vp.l);
+
+			if (dict.fc) {
+				s += '<br/>final consonant ' + dict.fc;
+			}
+			if (dict.tm) {
+				var tm = this.lookup(dict.tm)[0];
+				s += '<br/>tone mark ' + this.drawDiacritic(tm);
+			}
+			s += '</div>';
+			break;
+		case 'm':
+			s += dict.t + "  " + dict.tl + " <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
+			break;	
+		case 's':
+			s += dict.t + "  symbol";
+			break;	
+		case 'x':
+			s += dict.t + "  " + dict.tl + " " + dict.e;
+			break;
+	}
+	s += '</lookup>';
+	return s;
+}
+
+voyc.Dictionary.prototype.drawClass = function(glyph) {
+	return voyc.strm[glyph];	
+}
+
+voyc.Dictionary.prototype.drawDiacritic = function(glyph) {
+	var t = glyph.t;
+	if ('abr'.includes(glyph.a)) {
+		t = '&#9676' + t;
+	}
+	if ('l' == glyph.a) {
+		t = t + '&#9676';
+	}
+	return t;
+}
+
+/* static code tables */
+voyc.pos = {
+	'n':'noun',
+	'v':'verb',
+	'c':'conj',
+	'p':'prep',
+	'j':'adj',
+	'e':'adv',
+	'r':'pron',
+	'a':'part',
+	'g':'glyph',
+	's':'syllable',
+};
+voyc.strp = {
+	c:"consonant",
+	v:"vowel",
+	t:"tone mark"
+}
+voyc.strm = {
+	s:"short",
+	o:"long",
+	m:"middle class",
+	l:"low class",
+	h:"high class"
+}
+
+/* static table of rules */ 
+voyc.ru = [
+	// endings
+	{code:'fsc', name:'final sonorant consonant: live'},
+	{code:'fnsc', name:'final non-sonorant consonant: dead'},
+
+	// tones
+	{code:'ovs', name:'Open vowel short: dead'},
+	{code:'ovl', name:'Open vowel long: live'},
+	{code:'mcl', name:'Mid-class live: M'},
+	{code:'mcd', name:'Mid-class dead: L'},
+	{code:'mc1', name:'Mid-class mai eak: L'},
+	{code:'mc2', name:'Mid-class mai toh: F'},
+	{code:'mc3', name:'Mid-class mai dtree: H'},
+	{code:'mc4', name:'Mid-class mai chatawa: R'},
+	{code:'hcl', name:'High-class live: R'},
+	{code:'hcd', name:'High-class dead: L'},
+	{code:'hc1', name:'High-class mai eak: L'},
+	{code:'hc2', name:'High-class mai toh: F'},
+	{code:'lcl', name:'Low-class live: M'},
+	{code:'lcds', name:'Low-class dead short: H'},
+	{code:'lcdl', name:'Low-class dead long: F'},
+	{code:'lc1', name:'Low-class mai eak: F'},
+	{code:'lc2', name:'Low-class mai toh: H'},
+
+	// silent tone mark on ending consonant
+
+	// consonant clusters
+	{code:'cct', name:'True consonant cluster', details:'English-speakers call this a dipthong.  Combine multiple consonants into a single sound. { ก, ข, ค, ต, ป, ผ, พ } + { ร, ล, ว } '},
+	{code:'ccf', name:'False consonant cluster', details:'One of five consonants (จ, ซ, ท, ส, ศ) followed by a silent ร.'},
+	{code:'cclh', name:'consonant cluster with leading ห', details:'The ห is not pronounced, but is used to raise the class of the next consonant in the cluster to high class.  Similar to how a tone mark is used.'},
+	{code:'cclha', name:'consonant cluster with leading อ', details:'The อ is not pronounced, but is used to raise the class of the next consonant in the cluster to high class.  This applies to only four words:  .'},
+	{code:'ccredup', name:'Reduplication', details:'A single consonant is used twice, as the end of the previous syllable, and the beginning of the next.'},
+	{code:'ccivo', name:'Inherent vowel, short o', details:'A short o sound invoked between initial and final consonant.'},
+	{code:'cciva', name:'Inherent vowel, short a', details:'A short a sound invoked with one standalone consonant.'},
+	{code:'ccive', name:'Inherent vowel, short a, enepenthetic', details:'A short a sound inserted between two incompatible consonants, creating an extra syllable instead of a dipthong.'},
+];
 
