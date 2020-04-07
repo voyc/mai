@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+<meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1'>
+<title>speech</title>
+<script>
+voyc = {};
+window.addEventListener('load', function() {
+	voyc.speech = new voyc.Speech();
+	document.getElementById('speakbtn').addEventListener('click', function(e) {
+		var s = document.getElementById('inputtext').value;
+		var g = document.querySelector('input[name="gender"]:checked').value;
+		var l = document.querySelector('input[name="lang"]:checked').value;
+		var r = document.getElementById('rate').value;
+		r = convertRate(r);
+		voyc.speech.speak(s,l,r,{gender:g});
+		function convertRate(i) {
+			// input i is 1 to 100 from slider
+			// output r is 0.1 to 1 to 10 for speech object
+			var r = 0;
+			if (i > 50) {  // 1 to 10
+				//r = 1 + (((i-50)/50)*10)
+				r = (((i-50)/50)*10);
+			}
+			else {  //  .1 to 1
+				r = (i / 50);
+				r = Math.max(r,0.1);
+			}
+			return r.toFixed(1);
+		}
+	}, false);
+},true);
+</script>
+<script src="speech.js"></script>
+<style>
+div {
+	display:inline;
+}
+</style>
+</head>
+<body>
+<div id='chatentry' class='chatentry'>
+	<div>
+        	<textarea id='inputtext'></textarea>
+	</div>
+        <div id='mchoices'>
+		<fieldset>
+		<legend>Language</legend>
+		<div style='white-space:nowrap'>
+			<input type="radio" name="lang" id="thai" value="t">
+			<label for="thai">Thai</label>
+		</div>
+		<div style='white-space:nowrap'>
+			<input type="radio" name="lang" id="eng" value="e" checked>
+			<label for="eng">English</label>
+		</div>
+		</fieldset>
+	</div>
+        <div id='mchoices'>
+		<fieldset>
+		<legend>Gender</legend>
+		<div style='white-space:nowrap'>
+			<input type="radio" name="gender" id="genf" value="f" checked>
+			<label for="genf">female</label>
+		</div>
+		<div style='white-space:nowrap'>
+			<input type="radio" name="gender" id="genm" value="m">
+			<label for="genm">male</label>
+		</div>
+		</fieldset>
+	</div>
+	<div class="slidecontainer">
+		<input type="range" min="1" max="100" value="50" class="slider" id="rate" />
+	</div>
+	<button id='speakbtn'>Speak</button>
+</div>
+</body>
+</html>

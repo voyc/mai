@@ -219,6 +219,7 @@ voyc.Dictionary.prototype.compose = function(dict) {
 
 voyc.Dictionary.prototype.composeOne = function(dict) {
 	var s = '<lookup>';
+	var unique = new Date().getTime();
 	switch (dict.g) {
 		case 'g':
 			if (dict.p == 't') {
@@ -230,16 +231,16 @@ voyc.Dictionary.prototype.composeOne = function(dict) {
 			break;
 		case 'o':
 			s += dict.t;
-			s += " <icon type='draw' name='speaker'></icon> &nbsp;";
+			s += " <icon type='draw' name='speaker' text='"+dict.t+"'></icon> &nbsp;";
 			s += dict.tl + "<sup>" + dict.tn + "</sup>  <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
-			s += "<span expand='more"+dict.id+"' class='expander'></span>";
+			s += "<span expand='more"+unique+"' class='expander'></span>";
 
-			s += "<div id='more"+dict.id+"'>";
+			s += "<div id='more"+unique+"'>";
 			s += dict.d;
-			var lc = this.lookup(dict.lc)[0];
+			var lc = this.lookup(dict.lc[dict.lc.length-1])[0];
 			s += '<br/>leading consonant ' + lc.t + ' ' + this.drawClass(lc.m);
 			var vp = voyc.vowelPatternsLookup(dict.vp);
-			s += '<br/>vowel pattern ' + vp.print + ' ' + this.drawClass(vp.l);
+			s += '<br/>vowel pattern ' + vp.print + ' ' + this.drawClass(vp.m);
 
 			if (dict.fc) {
 				s += '<br/>final consonant ' + dict.fc;
@@ -247,6 +248,13 @@ voyc.Dictionary.prototype.composeOne = function(dict) {
 			if (dict.tm) {
 				var tm = this.lookup(dict.tm)[0];
 				s += '<br/>tone mark ' + this.drawDiacritic(tm);
+			}
+			if (dict.ru.length) {
+				s += '<br/>Rules:';
+				var ru = dict.ru.split(',');
+				for (var i=0; i<ru.length; i++) {
+					s += '<br/> '+voyc.dictionary.drawRule(ru[i]);
+				}
 			}
 			s += '</div>';
 			break;
@@ -277,6 +285,18 @@ voyc.Dictionary.prototype.drawDiacritic = function(glyph) {
 		t = t + '&#9676';
 	}
 	return t;
+}
+
+voyc.Dictionary.prototype.drawRule = function(rule) {
+	var s = '';
+	for (var i=0; i<voyc.ru.length; i++) {
+		if (voyc.ru[i].code == rule) {
+			s += voyc.ru[i].name;
+			break;
+		}
+
+	}
+	return s;
 }
 
 /* static code tables */

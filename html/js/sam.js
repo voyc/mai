@@ -42,6 +42,7 @@ voyc.Sam.prototype.setup = function() {
 	this.observer.subscribe('getvocab-received','sam' ,function(note) { self.onGetVocabReceived(note);});
 	
 	this.lee = new voyc.Lee(this.chat, this.observer);
+	this.speech = new voyc.Speech();
 }
 
 voyc.intervalToString = function(ms) {
@@ -358,7 +359,21 @@ voyc.Sam.prototype.respond = function(o) {
 			var r = this.parseRequest(input);
 			if (this.story) {
 				var s = this.showParse(this.story, r)
-				this.chat.post(this.chatid, s);
+				var e = this.chat.post(this.chatid, s);
+				(new voyc.Minimal).attachAll(e);
+				(new voyc.Icon).attachAll(e);
+				(new voyc.Icon).drawAll(e);
+
+				//attach handler to speaker icons
+				var elist = e.querySelectorAll('icon[name="speaker"]');
+				var self = this;
+				for (var i=0; i<elist.length; i++) {
+					elist[i].addEventListener('click', function(e) {
+						var s = e.currentTarget.getAttribute('text');
+						var l = voyc.dictionary.lang(s);
+						self.speech.speak( s,l);
+					}, false);
+				}
 			}
 			break;
 		case 'drill':
@@ -376,6 +391,17 @@ voyc.Sam.prototype.respond = function(o) {
 			(new voyc.Minimal).attachAll(e);
 			(new voyc.Icon).attachAll(e);
 			(new voyc.Icon).drawAll(e);
+
+			//attach handler to speaker icons
+			var elist = e.querySelectorAll('icon[name="speaker"]');
+			var self = this;
+			for (var i=0; i<elist.length; i++) {
+				elist[i].addEventListener('click', function(e) {
+					var s = e.currentTarget.getAttribute('text');
+					var l = voyc.dictionary.lang(s);
+					self.speech.speak( s,l);
+				}, false);
+			}
 			break;
 		default:
 			this.chat.post(this.chatid, 'Would you like an example sentence?', ['yes', 'no']);
@@ -447,7 +473,9 @@ voyc.Sam.prototype.showParse = function(o,r) {
 					continue;
 				}
 				if (w.dict) {
-					s += w.text + '<br/>';
+					//s += w.text + '<br/>';
+					var dict = voyc.dictionary.lookup(w.text)[0];
+					s += voyc.dictionary.compose(dict);
 				}
 			}
 			break

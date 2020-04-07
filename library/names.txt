@@ -1,0 +1,24 @@
+
+// common thai names
+name = {
+	'f': [
+		'เมย์',
+		'พลอย',  // famous actress
+		'แนน',
+		'ไอซ์',
+		'นิว',
+		'ฟ้า',
+		'น้ำ',
+	],
+	'm': [
+		'แบงค์',
+		'บอล',
+		'นิว',
+		'ไอซ์',
+		'bird',
+		'atom',
+		'bodyslam',
+		'prayut',
+		'big joke',
+	],
+};
