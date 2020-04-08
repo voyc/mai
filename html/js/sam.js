@@ -18,6 +18,23 @@ voyc.Sam = function(chat) {
 	this.state = '';
 	this.story = false;
 	this.lang = 'thai';
+
+	// extend Chat object to do post processing of a chat post
+	voyc.Chat.prototype.postPost = function(e) {
+		(new voyc.Minimal()).attachAll(e);
+		(new voyc.Icon()).attachAll(e);
+		(new voyc.Icon()).drawAll(e);
+
+		//attach handler to speaker icons
+		var elist = e.querySelectorAll('icon[name="speaker"]');
+		for (var i=0; i<elist.length; i++) {
+			elist[i].addEventListener('click', function(e) {
+				var s = e.currentTarget.getAttribute('text');
+				var l = voyc.dictionary.lang(s);
+				voyc.mai.sam.speech.speak( s,l);
+			}, false);
+		}
+	}
 }
 
 voyc.Sam.prototype.setup = function() {
@@ -360,20 +377,7 @@ voyc.Sam.prototype.respond = function(o) {
 			if (this.story) {
 				var s = this.showParse(this.story, r)
 				var e = this.chat.post(this.chatid, s);
-				(new voyc.Minimal).attachAll(e);
-				(new voyc.Icon).attachAll(e);
-				(new voyc.Icon).drawAll(e);
-
-				//attach handler to speaker icons
-				var elist = e.querySelectorAll('icon[name="speaker"]');
-				var self = this;
-				for (var i=0; i<elist.length; i++) {
-					elist[i].addEventListener('click', function(e) {
-						var s = e.currentTarget.getAttribute('text');
-						var l = voyc.dictionary.lang(s);
-						self.speech.speak( s,l);
-					}, false);
-				}
+				this.chat.postPost(e);
 			}
 			break;
 		case 'drill':
@@ -388,20 +392,7 @@ voyc.Sam.prototype.respond = function(o) {
 			var m = voyc.dictionary.lookup(r.object);
 			var s = voyc.dictionary.compose(m);
 			var e = this.chat.post(this.chatid, s);
-			(new voyc.Minimal).attachAll(e);
-			(new voyc.Icon).attachAll(e);
-			(new voyc.Icon).drawAll(e);
-
-			//attach handler to speaker icons
-			var elist = e.querySelectorAll('icon[name="speaker"]');
-			var self = this;
-			for (var i=0; i<elist.length; i++) {
-				elist[i].addEventListener('click', function(e) {
-					var s = e.currentTarget.getAttribute('text');
-					var l = voyc.dictionary.lang(s);
-					self.speech.speak( s,l);
-				}, false);
-			}
+			this.chat.postPost(e);
 			break;
 		default:
 			this.chat.post(this.chatid, 'Would you like an example sentence?', ['yes', 'no']);

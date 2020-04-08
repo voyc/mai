@@ -276,7 +276,8 @@ voyc.Lee.prototype.respond = function(o) {
 				this.state = 'selfscore';
 			}
 			else {
-				this.chat.post(this.chatid, s, []);
+				var e = this.chat.post(this.chatid, s, []);
+				this.chat.postPost(e);
 				this.nextCard();
 				this.state = 'typing';
 			}

@@ -77,6 +77,7 @@ columns
 **/
 voyc.Dictionary = function() {
 	this.dict = [];
+	this.unique = 10001000;
 	this.load();
 }
 
@@ -219,7 +220,7 @@ voyc.Dictionary.prototype.compose = function(dict) {
 
 voyc.Dictionary.prototype.composeOne = function(dict) {
 	var s = '<lookup>';
-	var unique = new Date().getTime();
+	this.unique++;
 	switch (dict.g) {
 		case 'g':
 			if (dict.p == 't') {
@@ -233,9 +234,9 @@ voyc.Dictionary.prototype.composeOne = function(dict) {
 			s += dict.t;
 			s += " <icon type='draw' name='speaker' text='"+dict.t+"'></icon> &nbsp;";
 			s += dict.tl + "<sup>" + dict.tn + "</sup>  <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
-			s += "<span expand='more"+unique+"' class='expander'></span>";
+			s += "<span expand='more"+this.unique+"' class='expander'></span>";
 
-			s += "<div id='more"+unique+"'>";
+			s += "<div id='more"+this.unique+"'>";
 			s += dict.d;
 			var lc = this.lookup(dict.lc[dict.lc.length-1])[0];
 			s += '<br/>leading consonant ' + lc.t + ' ' + this.drawClass(lc.m);
@@ -259,7 +260,22 @@ voyc.Dictionary.prototype.composeOne = function(dict) {
 			s += '</div>';
 			break;
 		case 'm':
-			s += dict.t + "  " + dict.tl + " <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
+			s += dict.t;
+			s += " <icon type='draw' name='speaker' text='"+dict.t+"'></icon> &nbsp;";
+			s += this.drawTranslit(dict.tl) + " <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
+			s += "<span expand='more"+this.unique+"' class='expander'></span>";
+
+			s += "<div id='more"+this.unique+"'>";
+			s += dict.d;
+			s += "<br/>"+dict.ns+" syllables";
+			if (dict.ru.length) {
+				s += '<br/>Rules:';
+				var ru = dict.ru.split(',');
+				for (var i=0; i<ru.length; i++) {
+					s += '<br/> '+voyc.dictionary.drawRule(ru[i]);
+				}
+			}
+			s += '</div>';
 			break;	
 		case 's':
 			s += dict.t + "  symbol";
@@ -296,6 +312,14 @@ voyc.Dictionary.prototype.drawRule = function(rule) {
 		}
 
 	}
+	return s;
+}
+
+voyc.Dictionary.prototype.drawTranslit = function(tl) {
+	var s = '';
+	s += tl.replace(/([FRLMH])/g, function(x) {
+		return '<sup>'+x+'</sup>';
+	});
 	return s;
 }
 
