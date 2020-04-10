@@ -26,7 +26,7 @@ voyc.Sam = function(chat) {
 		(new voyc.Icon()).drawAll(e);
 
 		//attach handler to speaker icons
-		var elist = e.querySelectorAll('icon[name="speaker"]');
+		var elist = e.queryselectorall('icon[name="speaker"]');
 		for (var i=0; i<elist.length; i++) {
 			elist[i].addEventListener('click', function(e) {
 				var s = e.currentTarget.getAttribute('text');
@@ -89,6 +89,7 @@ voyc.Sam.prototype.onGetVocabReceived = function() {
 	var interval = Date.now() - this.vocab.vocab.recency;
 	//this.setupFirstLevel(interval);
 	//voyc.curriculum = new voyc.Curriculum(voyc.$('curriculum'), this.observer, this.vocab, this.noam);
+	voyc.editor = new voyc.Editor(voyc.$('editor'), this.observer, this.noam);
 }
 
 /*
@@ -394,6 +395,13 @@ voyc.Sam.prototype.respond = function(o) {
 			var e = this.chat.post(this.chatid, s);
 			this.chat.postPost(e);
 			break;
+		case 'edit':
+			var r = this.parseRequest(input);
+			(new voyc.BrowserHistory).nav('editor');
+			this.observer.publish('edit-requested', 'sam', {word:r.object});
+			var e = this.chat.post(this.chatid, 'edit complete');
+			break;
+			
 		default:
 			this.chat.post(this.chatid, 'Would you like an example sentence?', ['yes', 'no']);
 			break;

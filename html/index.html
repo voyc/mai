@@ -14,6 +14,7 @@
 		<link href='jslib/chat.css' rel='stylesheet' type='text/css'></link>
 		<link href='css/mai.css' rel='stylesheet' type='text/css'></link>
 		<link href='css/hint.css' rel='stylesheet' type='text/css'></link>
+		<link href='css/editor.css' rel='stylesheet' type='text/css'></link>
 		<link href='thai/keyboard.css' rel='stylesheet' type='text/css'></link>
 		<script src="js/namespace.js"></script>
 		<script src="js/mai.js"></script>
@@ -31,6 +32,7 @@
 		<script src="js/curriculum.js"></script>
 		<script src="thai/courselist.js"></script>
 -->
+		<script src="js/editor.js"></script>
 		<script src='thai/sengen.js'></script>
 		<script src='thai/numgen.js'></script>
 		<script src='thai/grammar.js'></script>
@@ -133,6 +135,10 @@
 				<h1>Curriculum</h1>
 				<section id='curriculum'></section>
 			</section>
+			<section hidden class='narrative' id='content-editor'>
+				<h1>Editor</h1>
+				<section id='editor'></section>
+			</section>
 			<section hidden class='narrative' id='content-course'>
 				<h1>Course</h1>
 				<section id='course'></section>
@@ -149,6 +155,7 @@
 			<p><button close class='anchor' nav='profile'  >User Profile</button></p>
 			<p><button close class='anchor' nav='keyboard' >Keyboard</button></p>
 			<p><button close class='anchor' nav='curriculum'>Curriculum</button></p>
+			<p><button close class='anchor' nav='editor'   >Editor</button></p>
 		</nav>
 		<aside initially hidden class='panel popup dropdown blu' id='settings-dialog'>
 			<div close class='closex'>&times;</div>
