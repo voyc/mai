@@ -514,6 +514,10 @@ voyc.Noam.prototype.parseString = function(input, linenum) {
 				}
 				var m = this.dictionary.lookup(t,'t','om');  // find t in Dictionary
 				if (m.length) {
+					if (t == sa) {
+						// sto and return only if no other components found
+						continue;
+					}
 					if ((ui >= 0) && (ui < i)) {
 						us = s.substring(ui,i);
 						sto(us, linenum, startndx+ui, false, false);  // save unmatched part
