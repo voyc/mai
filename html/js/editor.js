@@ -13,45 +13,40 @@ voyc.Editor = function(container, observer, noam) {
 	this.container = container;
 	this.observer = observer;
 	this.noam = noam;
+	
+	this.numTrans = 1;
+	this.maxTrans = 5;
 	this.setup();
 }
 
 voyc.Editor.prototype.setup = function() {
 	this.lang = 'thai';
 	var self = this;
-	this.isOpenAlready = false;
-	this.observer.subscribe('editor-requested', 'editor', function(note) {self.drawEditor();});
 	this.observer.subscribe('edit-requested', 'editor', function(note) {self.populate(note.payload);});
-}
 
-voyc.Editor.prototype.drawEditor = function() {
-	var s = '';
-	s += voyc.Editor.template;
-	this.container.innerHTML = s;
-	this.attachDomEventHandlers();
+	this.container.innerHTML = voyc.Editor.template.page;
+
+	var translate = this.container.querySelector('#translate');
+	for (var i=0; i<this.maxTrans; i++) {
+		var d = document.createElement('div');
+		d.id = 'trans'+i;
+		d.setAttribute('name', 'trans');
+		d.innerHTML = voyc.Editor.template.trans.replace(/%n/g,i);
+		translate.appendChild(d);
+	}		
+
 	(new voyc.Minimal).attachAll(this.container);
-}
 
-voyc.Editor.prototype.attachDomEventHandlers = function() {
-	var self = this;
-	voyc.$('pos').addEventListener('focus', function(e) {
-		posopen();
-	},false);
-	voyc.$('posselect').addEventListener('blur', function(e) {
-		posclose();
-	},false);
-	posset('nja');
-	voyc.$('tlbtn').addEventListener('click', function(e) {
-		var b = voyc.$('pronunciation').classList.contains('hidden');
-		if (b) {
-			voyc.$('pronunciation').classList.remove('hidden');
-			voyc.$('translations').classList.add('hidden');
-		}
-		else {
-			voyc.$('pronunciation').classList.add('hidden');
-			voyc.$('translations').classList.remove('hidden');
-		}
-	},false);
+	var list = this.container.querySelectorAll('[name=trans]');	
+	for (var i=0; i<list.length; i++) {
+		list[i].querySelector('[name=pos]').addEventListener('focus', function(e) {
+			self.posopen(e.currentTarget);
+		},false);
+		list[i].querySelector('[name=posselect]').addEventListener('blur', function(e) {
+			self.posclose(e.currentTarget);
+		},false);
+	}
+
 	voyc.$('cancelbtn').addEventListener('click', function(e) {
 		(new voyc.BrowserHistory).nav('home');
 	},false);
@@ -60,34 +55,56 @@ voyc.Editor.prototype.attachDomEventHandlers = function() {
 	},false);
 }
 
-voyc.Editor.prototype.populate = function(o) {
-	//lookup word
-	voyc.$('thai').value = o.word;
+voyc.Editor.prototype.populate = function(m) {
+	var r = m.m[0];
+	this.container.querySelector('#thai').value = r.t;
+	this.container.querySelector('#internals').innerHTML = [r.id,r.s,r.l,r.g].join();
+	this.container.querySelector('#translit').value = r.tl;
+	this.container.querySelector('#components').value = r.cp;
+
+	var t = this.container.querySelector('#translate');
+	this.numTrans = m.m.length;
+	for (var i=0; i<this.numTrans; i++) {
+		var rn = m.m[i];
+		var pos = t.querySelector('#pos'+i);
+		pos.setAttribute('data', rn.p);
+		pos.value = this.posdisplay(rn.p);
+		t.querySelector('#eng'+i).value = rn.e;
+		t.querySelector('#details'+i).value = rn.d;
+		t.querySelector('#trans'+i).classList.remove('hidden');
+	}
+	for (var i=this.numTrans; i<this.maxTrans; i++) {
+		t.querySelector('#trans'+i).classList.add('hidden');
+	}
 }
 
-/*
-	convert from data to display format
-		input data='nja'; 
-		output display='noun,adj,article';
-*/
-function posdisplay(data) {
+voyc.Editor.prototype.posdisplay = function(data) {
 	var s = '';
-	var a = data.split('');
+	var a = data.split(''); // input data='nja' 
 	for (var i=0; i<a.length; i++) {
 		if (s) s += ',';
 		s += voyc.pos[a[i]];
 	}
-	return s;
-}
-function posset(indata) {
-	var pos = voyc.$('pos');
-	pos.setAttribute('data', indata);
-	pos.value = posdisplay(indata);
+	return s; // output display='noun,adj,article'
 }
 
-function posopen() {
-	var pos = voyc.$('pos');
-	var possel = voyc.$('posselect');
+voyc.findParentWithTag = function(elem, tag, impatient) {
+	var parent = null;
+	for ( var e=elem; e && e !== document; e = e.parentNode ) {
+		if (e.tagName.toLowerCase() == tag.toLowerCase()) {
+			parent = e;
+			if (impatient) {
+				break;
+			}
+		}
+	}
+	return parent;
+}
+
+voyc.Editor.prototype.posopen = function(e) {
+	var p = voyc.findParentWithTag(e, 'div', true);
+	var pos = p.querySelector('[name=pos]');
+	var possel = p.querySelector('[name=posselect]');
 	var data = pos.getAttribute('data');
 	var nodes = possel.querySelectorAll('option');
 	for (var i=0; i<nodes.length; i++) {
@@ -99,9 +116,10 @@ function posopen() {
 	possel.focus();
 }
 
-function posclose() {
-	var pos = voyc.$('pos');
-	var possel = voyc.$('posselect');
+voyc.Editor.prototype.posclose = function(e) {
+	var p = voyc.findParentWithTag(e, 'div', true);
+	var pos = p.querySelector('[name=pos]');
+	var possel = p.querySelector('[name=posselect]');
 	var data = '';
 	var nodes = possel.querySelectorAll('option');
 	for (var i=0; i<nodes.length; i++) {
@@ -110,12 +128,14 @@ function posclose() {
 		}
 	}
 	pos.setAttribute('data', data);
-	pos.value = posdisplay(data);
+	pos.value = this.posdisplay(data);
 	pos.classList.remove('hidden');
-	posselect.classList.add('hidden');
+	possel.classList.add('hidden');
 }
 
-voyc.Editor.template = `
+voyc.Editor.template = {};
+voyc.Editor.template.page = `
+<div id='dpage'>
 <table class='dedit'>
 	<tr><td>
 		<label for='thai'>Thai word</label>
@@ -126,23 +146,34 @@ voyc.Editor.template = `
 		<label for='translit'>Transliteration</label>
 	</td><td>
 		<input id='translit' type='text' readonly/>
+		<label for='tlman'><input name='tlman' type='checkbox' id='tlman' value='co' /> Manual</label>
 		<button id='tlbtn' toggle>show</button>
+	</td></tr><tr><td>
+		<label for='components'>Components</label>
+	</td><td>
+		<input id='components' type='text' />
+		<label for='compexp'><input name='compexp' type='checkbox' id='compexp' value='co' /> Override</label>
 	</td></tr>
 </table>
+<div id='translate'></div>
+<div>
+	<button>+ Add Translation</button>
+</div>
+<div id='dbuttons'>
+	<button id='savebtn'>Save</button>
+	<button id='cancelbtn'>Cancel</button>	
+</div>
+</div>
+`;
 
-<div id='translations'>
-	<p>
-		<label for='components'>Components <input id='components' type='text' /></label>
-		<label for='compexp'><input name='compexp' type='checkbox' id='compexp' value='co' /> Override</label>
-		<button>Parse</button>
-	</p>
-<fieldset><legend>Translation 1</legend>
+voyc.Editor.template.trans = `
+<fieldset><legend>Translation %n</legend>
 <table class='dedit'>	
 	<tr><td>	
 		<label for='pos'>Parts of Speech</label>
 	</td><td>
-		<input id='pos' type='text' data='nja'/>
-		<select id='posselect' multiple class='hidden' size='8'>
+		<input id='pos%n' name='pos' type='text' data='nja'/>
+		<select id='posselect%n' name='posselect' multiple class='hidden' size='8'>
 			<option value='n'>noun</option>
 			<option value='v'>verb</option>
 			<option value='c'>conjunction</option>
@@ -155,68 +186,12 @@ voyc.Editor.template = `
 	</td></tr><tr><td>
 		<label for='eng'>Gloss</label>
 	</td><td>
-		<input id='eng' type='text' />
+		<input id='eng%n' name='eng' type='text' />
 	</td></tr><tr><td>
 		<label for='details'>Details</label
 	</td><td>
-		<input id='details' type='text' />
+		<input id='details%n' name='details' type='text' />
 	</td></tr>
 </table>
 </fieldset>	
-	
-	<button>+ Add Translation</button>
-</div>
-
-<div id='pronunciation' class='hidden'>
-	<p>
-		<label for='syllables'>Syllables<input id='syllables' type='text' /></label>
-		<label for='sylexp'><input name='sylexp' type='checkbox' id='compexp' value='co' /> Override</label>
-		<button>Parse</button>
-	</p>
-
-	<fieldset><legend>Syllables</legend>
-		<p><label for='syl1'>1: <input type='text' id='syl1'></input></label></p>
-		<p><label for='syl2'>2: <input type='text' id='syl2'></input></label></p>
-		<p><label for='syl3'>3: <input type='text' id='syl3'></input></label></p>
-		<p><label for='mrules'>Rules: <textarea id='mrules'></textarea></label></p>
-	</fieldset>
-
-<fieldset><legend>Syllable</legend>
-<table class='dedit'>
-	<tr><td>
-		<label for='lc'>Leading Consonant</label>
-	</td><td>
-		<input id='lc' type='text' class='char' />
-	</td></tr><tr><td>
-		<label for='vp'>Vowel Pattern</label>
-	</td><td>
-		<input id='vp' type='text' class='char' />
-	</td></tr><tr><td>
-		<label for='fc'>Final Consonant</label>
-	</td><td>
-		<input id='fc' type='text' class='char' />
-	</td></tr><tr><td>
-		<label for='tm'>Tone Mark</label>
-	</td><td>
-		<input id='tm' type='text' class='char' />
-	</td></tr><tr><td>
-		<label for='tone'>Tone
-	</td><td>
-		<select id='tone'>
-			<option value='H'>High</option>
-			<option value='M'>Mid</option>
-			<option value='L'>Low</option>
-			<option value='R'>Rising</option>
-			<option value='F'>Falling</option>
-		</select></label>
-	</td></tr><tr><td>
-		<label for='rules'>Rules</label>
-	</td><td>
-		<div id='rules' class='field'>rule 1<br/>exception<br/>ho my</div>
-	</td></tr>
-</table>
-</fieldset>
-</div>
-	<button id='savebtn'>Save</button>
-	<button id='cancelbtn'>Cancel</button>	
 `;

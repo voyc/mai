@@ -26,7 +26,7 @@ voyc.Sam = function(chat) {
 		(new voyc.Icon()).drawAll(e);
 
 		//attach handler to speaker icons
-		var elist = e.queryselectorall('icon[name="speaker"]');
+		var elist = e.querySelectorAll('icon[name="speaker"]');
 		for (var i=0; i<elist.length; i++) {
 			elist[i].addEventListener('click', function(e) {
 				var s = e.currentTarget.getAttribute('text');
@@ -398,7 +398,8 @@ voyc.Sam.prototype.respond = function(o) {
 		case 'edit':
 			var r = this.parseRequest(input);
 			(new voyc.BrowserHistory).nav('editor');
-			this.observer.publish('edit-requested', 'sam', {word:r.object});
+			var m = voyc.dictionary.lookup(r.object);
+			this.observer.publish('edit-requested', 'sam', {m:m});
 			var e = this.chat.post(this.chatid, 'edit complete');
 			break;
 			

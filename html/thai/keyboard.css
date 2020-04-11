@@ -5,6 +5,12 @@
 #analytics fieldset, #analytics button {
 	margin:1rem;
 }
+#analytics fieldset {
+	float:left;
+}
+#analytics fieldset label {
+	display:block;
+}
 
 table {
 	border-spacing:.3em;
@@ -61,13 +67,6 @@ table {
 	border-top:1px solid navy;
 	border-left:1px solid navy;
 	border-right:1px solid navy;
-}
-
-fieldset {
-	float:left;
-}
-fieldset label {
-	display:block;
 }
 
 #keypad .typingwindow {
