@@ -16,7 +16,8 @@ $supported_svcs = array(
 	'getprofile',
 	'setprofile',
 	'setvocab',
-	'getvocab'
+	'getvocab',
+	'setdict'
 );
 
 function validateSvc($taint) {

@@ -1,0 +1,9 @@
+
+http://www.postgresqltutorial.com/postgresql-python/query/
+
+https://github.com/Pithikos/python-websocket-server/blob/master/README.md
+
+https://blog.sessionstack.com/how-javascript-works-deep-dive-into-websockets-and-http-2-with-sse-how-to-pick-the-right-path-584e6b8e3bf7
+
+https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications
+
