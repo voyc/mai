@@ -36,4 +36,9 @@ cli
 		count word usage in all stories
 		including components
 
+alphabet
+	create alphabet table
+	load alphabet table in alphabet.js
+	move alphabet from noam to voyc
+	resolve lookup of space ' ', now returns @
 

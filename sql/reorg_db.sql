@@ -31,6 +31,10 @@ alter table mai.mean
 update mai.dict set tl = tl || split_part(cp,',',5) where g='o';
 UPDATE 815
 
+/* 14 April 2020 remove spaces from cp in dict (tone mark) */
+update mai.dict set cp = replace(cp,' ','') where position(' ' in cp) > 0;
+UPDATE 557
+
 -- example sql
 
 -- review table information

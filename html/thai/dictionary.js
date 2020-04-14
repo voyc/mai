@@ -268,30 +268,14 @@ voyc.Dictionary.prototype.composeOne = function(dict) {
 		case 'o':
 			s += dict.t;
 			s += " <icon type='draw' name='speaker' text='"+dict.t+"'></icon> &nbsp;";
-			s += dict.tl + "<sup>" + dict.tn + "</sup>  <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
+			s += "<span expand='rules"+this.unique+"'>" + this.drawTranslit(dict.tl) + "</span>";
+			s += " <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
 			s += "<span expand='more"+this.unique+"' class='expander'></span>";
-
 			s += "<div id='more"+this.unique+"'>";
 			s += dict.d;
-			var lc = this.lookup(dict.lc[dict.lc.length-1])[0];
-			s += '<br/>leading consonant ' + lc.t + ' ' + this.drawClass(lc.m);
-			var vp = voyc.vowelPatternsLookup(dict.vp);
-			s += '<br/>vowel pattern ' + vp.print + ' ' + this.drawClass(vp.m);
-
-			if (dict.fc) {
-				s += '<br/>final consonant ' + dict.fc;
-			}
-			if (dict.tm) {
-				var tm = this.lookup(dict.tm)[0];
-				s += '<br/>tone mark ' + this.drawDiacritic(tm);
-			}
-			if (dict.ru.length) {
-				s += '<br/>Rules:';
-				var ru = dict.ru.split(',');
-				for (var i=0; i<ru.length; i++) {
-					s += '<br/> '+voyc.dictionary.drawRule(ru[i]);
-				}
-			}
+			s += '</div>';
+			s += "<div id='rules"+this.unique+"'>";
+			s += this.drawComponents(dict.cp, dict.ru);
 			s += '</div>';
 			break;
 		case 'm':
@@ -355,6 +339,40 @@ voyc.Dictionary.prototype.drawTranslit = function(tl) {
 	s += tl.replace(/([FRLMH])/g, function(x) {
 		return '<sup>'+x+'</sup>';
 	});
+	return s;
+}
+
+voyc.Dictionary.prototype.joinComponents = function(lc,vp,fc,tm,tn) {
+	var cp = [lc,vp,fc,tm,tn].join(',');
+}
+
+voyc.Dictionary.prototype.splitComponents = function(cp) {
+	var p = cp.split(',');
+	return { lc:p[0], vp:p[1], fc:p[2], tm:p[3], tn:p[4] };
+}
+
+voyc.Dictionary.prototype.drawComponents = function(cp,ru) {
+	var s = '';
+	var cpo = this.splitComponents(cp);
+	var lc = voyc.mai.sam.noam.alphabet.lookup(cpo.lc[cpo.lc.length-1]);
+	s += 'leading consonant ' + lc.t + ' ' + this.drawClass(lc.m);
+	var vp = voyc.vowelPatternsLookup(cpo.vp);
+	s += '<br/>vowel pattern ' + vp.print + ' ' + this.drawClass(vp.m);
+
+	if (cpo.fc) {
+		s += '<br/>final consonant ' + cpo.fc;
+	}
+	if (cpo.tm) {
+		var tm = voyc.mai.sam.noam.alphabet.lookup(cpo.tm);
+		s += '<br/>tone mark ' + this.drawDiacritic(tm);
+	}
+	if (ru.length) {
+		s += '<br/>Rules:';
+		var ru = ru.split(',');
+		for (var i=0; i<ru.length; i++) {
+			s += '<br/> '+this.drawRule(ru[i]);
+		}
+	}
 	return s;
 }
 

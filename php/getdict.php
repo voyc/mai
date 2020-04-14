@@ -48,7 +48,7 @@ function getdict() {
 	$whereclause = $cw[0];	
 	$bindvariables = $cw[1];
 
-	$sql = 'select d.id, m.n, d.t, m.e';
+	$sql = 'select d.id,d.g,d.t,d.tl,d.tlm,d.cp,d.cpm,d.ru,m.n,m.e,m.d,m.p,m.s,m.l';
 	$sql .= ' from mai.mean m, mai.dict d';
 	$sql .= ' where m.did = d.id'; 
 	$sql .= " and $whereclause;";
@@ -70,15 +70,31 @@ function getdict() {
                 $row = pg_fetch_array($result, $i, PGSQL_ASSOC);
                 $dict = array();
 		$dict['id'] = $row['id'];
-		$dict['n'] = $row['n'];
+		$dict['g'] = $row['g'];
 		$dict['t'] = $row['t'];
+		$dict['tl'] = $row['tl'];
+		$dict['tlm'] = $row['tlm'];
+		$dict['cp'] = $row['cp'];
+		$dict['cpm'] = $row['cpm'];
+		$dict['ru'] = $row['ru'];
+
+		$dict['n'] = $row['n'];
 		$dict['e'] = $row['e'];
+		$dict['d'] = $row['d'];
+		$dict['p'] = $row['p'];
+		$dict['s'] = $row['s'];
+		$dict['l'] = $row['l'];
+
                 $dicts[] = $dict;
         }
-
+/*
+voyc.dict = [
+{id:88,g:'o',t:'ไก่',s:1,l:100,n:1,p:'n',e:'chicken',d:'',u:'',r:'',m:'',a:'',ns:1,lc:'ก',fc:'',vp:'ไo',tm:'่',tn:'L',tl:'gai',ru:'ovl,mc1',sn:'',cp:'',ps:''},
+{id:893,g:'o',t:'เมล็ด',s:2,l:400,n:1,p:'n',e:'seed',d:'seed; grain; tiny piece; bean',u:'',r:'',m:'',a:'',ns:1,lc:'มล',fc:'ด',vp:'เo็',tm:'',tn:'H',tl:'mlet',ru:'fnsc,lcds',sn:'',cp:'',ps:''},
+*/
 	// success
 	$a['status'] = 'ok';
-	$a['list'] = $dict;
+	$a['list'] = $dicts;
 	return $a;
 }
 
@@ -91,11 +107,11 @@ function validateLookup($taint) {
 }
 
 function isEnglish($s) {
-	return (!preg_match('/[^A-Za-z0-9]/', $s));
+	return (!preg_match('/[^A-Za-z]/', $s));
 }
 
 function isId($s) {
-	return (!preg_match('/[^0-9]\//', $s));
+	return (!preg_match('/[^0-9]/', $s));
 }
 
 function whatType($s) {
@@ -104,7 +120,7 @@ function whatType($s) {
 		$r = 'm.e';
 	}
 	else if (isId($s)) {
-		$r = 'd.i';
+		$r = 'd.id';
 	}
 	else {
 		$r = 'd.t';

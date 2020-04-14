@@ -57,6 +57,7 @@ voyc.Sam.prototype.setup = function() {
 	this.observer.subscribe('restart-anonymous','sam' ,function(note) { self.onAnonymous       (note);});
 	this.observer.subscribe('logout-received'  ,'sam' ,function(note) { self.onLogoutReceived  (note);});
 	this.observer.subscribe('getvocab-received','sam' ,function(note) { self.onGetVocabReceived(note);});
+	this.observer.subscribe('getdict-received','sam' ,function(note) { self.onGetDictReceived(note);});
 	
 	this.lee = new voyc.Lee(this.chat, this.observer);
 	this.speech = new voyc.Speech();
@@ -80,6 +81,13 @@ voyc.intervalToString = function(ms) {
 	else if (d > 0) s = d + 'days';
 	else if (h > 0) s = h + 'hours';
 	return s;
+}
+
+voyc.Sam.prototype.onGetDictReceived = function(note) {
+	var m = note.payload.list;
+	var s = voyc.dictionary.compose(m);
+	var e = this.chat.post(this.chatid, s);
+	this.chat.postPost(e);
 }
 
 voyc.Sam.prototype.onGetVocabReceived = function() {
@@ -391,9 +399,9 @@ voyc.Sam.prototype.respond = function(o) {
 		case 'lookup':
 			var r = this.parseRequest(input);
 			var m = voyc.dictionary.lookup(r.object);
-			var s = 'temporarily out of order.'; //voyc.dictionary.compose(m);
+			var s = 'looking...'; //voyc.dictionary.compose(m);
 			var e = this.chat.post(this.chatid, s);
-			this.chat.postPost(e);
+			//this.chat.postPost(e);
 			break;
 		case 'edit':
 			var r = this.parseRequest(input);
