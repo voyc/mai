@@ -17,7 +17,8 @@ $supported_svcs = array(
 	'setprofile',
 	'setvocab',
 	'getvocab',
-	'setdict'
+	'setdict',
+	'getdict'
 );
 
 function validateSvc($taint) {
@@ -29,6 +30,11 @@ function validateSvc($taint) {
 function svchub() {
 	// get the svc name
 	$taint_svc = isset($_POST['svc']) ? $_POST['svc'] : 0;
+
+	//ini_set('display_errors', 1);  // not secure
+	error_reporting(E_ALL);
+	ini_set('log_errors', 'on');
+	ini_set('error_log', Config::$log_logfile);
 
 	// validate the svc name
 	$svc = validateSvc($taint_svc);

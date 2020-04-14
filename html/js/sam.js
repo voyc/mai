@@ -391,7 +391,7 @@ voyc.Sam.prototype.respond = function(o) {
 		case 'lookup':
 			var r = this.parseRequest(input);
 			var m = voyc.dictionary.lookup(r.object);
-			var s = voyc.dictionary.compose(m);
+			var s = 'temporarily out of order.'; //voyc.dictionary.compose(m);
 			var e = this.chat.post(this.chatid, s);
 			this.chat.postPost(e);
 			break;

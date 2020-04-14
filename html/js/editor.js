@@ -57,6 +57,7 @@ voyc.Editor.prototype.setup = function() {
 }
 
 voyc.Editor.prototype.save = function() {
+/*
 	var r = this.dbarray[0];
 	if (new) {
 		r = {};
@@ -80,19 +81,20 @@ voyc.Editor.prototype.save = function() {
 	    d:details, phrase in english language
 	    s:source (0-5)
 	    l:level (100,200,300,...)
+*/
 }
 
-voyc.Editor.prototype.joinComponents(lc,vp,fc,tm,tn) {
+voyc.Editor.prototype.joinComponents = function(lc,vp,fc,tm,tn) {
 	var cp = [lc,vp,fc,tm,tn].join(',');
 }
 
-voyc.Editor.prototype.splitComponents(cp) {
+voyc.Editor.prototype.splitComponents = function(cp) {
 	var p = cp.split(',');
 	return { lc:p[0], vp:p[1], fc:p[2], tm:p[3], tn:p[4] };
 }
 
 voyc.Editor.prototype.populate = function(m) {
-	var this.dbarray = m.m;
+	this.dbarray = m.m;
 	var r = this.dbarray[0];
 	this.container.querySelector('#thai').value = r.t;
 	this.container.querySelector('#internals').innerHTML = [r.id,r.s,r.l,r.g].join();

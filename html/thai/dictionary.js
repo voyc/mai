@@ -79,6 +79,13 @@ voyc.Dictionary = function() {
 	this.dict = [];
 	this.unique = 10001000;
 	this.load();
+
+	var url = '/svc/';
+	if (window.location.origin == 'file://') {
+		url = 'http://mai.voyc.com/svc';  // for local testing
+	}
+	this.comm = new voyc.Comm(url, 'acomm', 2, true);
+	this.observer = new voyc.Observer();
 }
 
 voyc.Dictionary.prototype.load = function() {
@@ -99,6 +106,34 @@ voyc.Dictionary.prototype.lang = function(s) {
 }
 
 voyc.Dictionary.prototype.lookup = function(word, lang, typearray) {
+
+	var svcname = 'getdict';
+
+	// build data array of name/value pairs from user input
+	var data = {};
+	data['si'] = voyc.getSessionId();
+	data['lk' ] = word;
+
+	// call svc
+	var self = this;
+	this.comm.request(svcname, data, function(ok, response, xhr) {
+		if (!ok) {
+			response = { 'status':'system-error'};
+		}
+
+		self.observer.publish('getdict-received', 'mai', response);
+
+		if (response['status'] == 'ok') {
+			console.log('getdict success');
+		}
+		else {
+			console.log('getdict failed');
+		}
+	});
+
+	this.observer.publish('getdict-posted', 'mai', {});
+	return;
+
 	var lang = lang || this.lang(word);
 	var typearray = typearray || false;
 	var m = [];

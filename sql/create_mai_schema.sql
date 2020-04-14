@@ -55,3 +55,26 @@ create table mai.thaidict (
         components varchar(500)       /* cp */
 	parse char(1)                 /* ps */
 );
+
+create table mai.dict (
+	id serial primary key,
+	g char(1),          /* type o:one-syllable, m:multi-syllable */
+	t varchar(100),     /* thai */
+        tl varchar(100),    /* translit */
+	tlm char(1)         /* translit a:auto, m:manual */
+        cp varchar(100),    /* components, csv */
+	cpm char(1)         /* components, a:auto, m:manual */
+        ru varchar(100),    /* rules, csv */
+);
+
+create table mai.mean (
+	id serial primary key,
+	did int,            /* foreign key to dict table */
+	n int,              /* num of definition, 1-based index */
+	s int,              /* source 0:unspecified, 1:, 2:, 3: */
+	l int,              /* level, 0 to 1000 */
+	p char(1),          /* pos, part of speech, nvjeipr */
+	e varchar(100),     /* english word, gloss */
+	d varchar(500),     /* details */
+);
+

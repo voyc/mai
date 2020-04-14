@@ -1,126 +1,39 @@
-
-original thaidict db table
-	--- key ---	
-	id:id
-	g:type
-		g:glyph
-		s:syllable, not yet used
-		o:one-syllable word
-		m:multi-syllable word
-	t:thai, one word in thai language
-
-	--- meaning ---
-	s:source
-		0:86, unspecified
-		1:97, by hand
-		2:1150, thai-language.com/starred
-		3:66, original dict file, with tones and hints
-		4:6, ?
-		5:39, ?
-	l:level (100,200,300,...)
-	n:numdef, definition number (1,2,3,...)
-	p:pos, part of speech, can apply only to word (g=o, g=m)
-		n:noun
-		v:verb
-		c:conjunction
-		p:preposition
-		j:adjective
-		e:adverb
-		r:pronoun
-		a:particle
- 		?:proper noun
-	e:eng, one word in english language
-	d:details, phrase in english language
-
-	--- glyph ---
-	u:unicode
-	r:reference, for sanskrit consonant, the equivalent consonant
-	m:class
-		m:middle class consonant
-		l:low class consonant
-		h:high class consonant
-		v:vowel
-		u:unknown for glyph
-		o:obsolete glyph: ฃ, ฅ
-		s:symbol glyph: ฿, ๆ, ฯ 
-		t:tonemark
-		d:digit
-	a:subclass
-		d:diacritic vowel or tonemark - 
-		s:sonorant consonant
-		a:diacritic above
-		b:diacritic below
-		l:diacritic left
-		r:diacritic right
-	
-	--- syllable and one-syllable word ---
-	lc:leadingconsonant
-	fc:finalconsonant
-	vp:vowelpattern
-	tm:tonemark
-	tn:tone M,L,H,R,F
-	tl:translit
-	ru:rules
-	
-	--- multi-syllable word and phrase ---
-	ns:numsyllables
-	sn:syllablendx, csv
-	cp:components, csv
-	ps:parse, m:manual
-
-new ----------------------
-	id:id
-	g:type (o,m)
-	t:thai, one word in thai language
-	ru:rules (csv)
-	tl:translit
-	tlm:translit method (a:auto, m:manual)
-	cp:components (csv)
-	cpm:components method (a:auto, m:manual)
-
-	loop --- meaning ---
-	    id:serial unique key
-	    fid:did (foreign key to dict table)
-	    n:numdef, definition number (1,2,3,...)
-	    p:pos, (n,v,c,p,j,e,r,a)
-	    e:eng, one word in english language
-	    d:details, phrase in english language
-	    s:source (0-5)
-	    l:level (100,200,300,...)
-
-	lc:leadingconsonant
-	fc:finalconsonant
-	vp:vowelpattern
-	tm:tonemark
-	tn:tone M,L,H,R,F
-
-	
-
-select type, id, thai, components from mai.thaidict where components is not null;
-select type, id, thai, components, parse from mai.thaidict where parse is not null;
-
+12 apr 2020
+executed against thaidict--------------------
 alter table mai.thaidict add column tlm char(1);
 alter table mai.thaidict add column cpm char(1);
-(ps:parse, m:manual  - obsolete, replaced by tlm)
-
 update mai.thaidict set components = concat_ws(',', leadingconsonant, vowelpattern, finalconsonant, tonemark, tone) where type = 'o';
 update mai.thaidict set cpm = 'm' where type='o';
 
-update mai.thaidict set translit = translit || tone where type='o';
+13 apr 2020 
+create dict and mean tables, split from thaidict
+see sql/db-reorg.sql
 
-/* select parts from components field */
-select id, thai, leadingconsonant, split_part(components, ',', 1) from mai.thaidict where type='o' limit 20;
-lc = split_part(components, ',', 1)
-vp = split_part(components, ',', 2)
-fc = split_part(components, ',', 3)
-tm = split_part(components, ',', 4)
-tn = split_part(components, ',', 5)
+todo---------------------------
 
+new svc
+	parsestring
+	parsestory
+		support meanings available/chosen for each word
+	getdict (lookup)
+	setdict (insert/update)
+		call parsestring for cp when g=m
+	setstory (insert/update)
+		call parsestory
+	getstory (return parsed object, html ready?)
+	getstorylist
 
-/* join dict and meaning tables */
-select d.id, d.thai, m.eng from mai.dict d, mai.meaning m where d.id = m.did order by m.numdef;
+refresh client functions
+	parse syllable
 
-/* words with multiple meanings.  one with 8, one with 5, most with 2 */
-psql -U voyccom_jhagstrand -d voyccom_mai -c "select thai, count(*), max(numdef) from mai.thaidict group by thai having max(numdef) > 1 order by max(numdef)"
+new client
+	lookup story
+	edit story
+	after parse story, let user resolve multiple meanings
+
+cli
+	recalc and reset level of every word/meaning
+		count word usage in all stories
+		including components
 
 
