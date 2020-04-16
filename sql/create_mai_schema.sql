@@ -66,7 +66,6 @@ create table mai.dict (
 	cpm char(1)         /* components, a:auto, m:manual */
         ru varchar(100),    /* rules, csv */
 );
-
 create table mai.mean (
 	id serial primary key,
 	did int,            /* foreign key to dict table */
@@ -77,4 +76,9 @@ create table mai.mean (
 	e varchar(100),     /* english word, gloss */
 	d varchar(500),     /* details */
 );
+
+create sequence mai.dict_id_seq;
+select setval('mai.dict_id_seq',  (select max(id) from mai.dict));
+create sequence mai.mean_id_seq;
+select setval('mai.mean_id_seq',  (select max(id) from mai.mean));
 

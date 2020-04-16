@@ -15,9 +15,10 @@ voyc.Sam = function(chat) {
 	this.chatidguest = 0;
 	this.req = {};
 	this.setup();
-	this.state = '';
+	this.state = 'ready';
 	this.story = false;
 	this.lang = 'thai';
+	this.editdict = {};
 
 	// extend Chat object to do post processing of a chat post
 	voyc.Chat.prototype.postPost = function(e) {
@@ -34,8 +35,26 @@ voyc.Sam = function(chat) {
 				voyc.mai.sam.speech.speak( s,l);
 			}, false);
 		}
+
+		//attach handler to pencil icons
+		var elist = e.querySelectorAll('icon[name="pencil"]');
+		for (var i=0; i<elist.length; i++) {
+			elist[i].addEventListener('click', function(e) {
+				var s = e.currentTarget.getAttribute('text');
+				var l = voyc.dictionary.lang(s);
+				voyc.mai.sam.speech.speak( s,l);
+			}, false);
+		}
 	}
 }
+
+voyc.Sam.prototype.dochat = function(s,bpost) {
+	var e = this.chat.post(this.chatid, s);
+	if (bpost) {
+		this.chat.postPost(e);
+	}
+}
+
 
 voyc.Sam.prototype.setup = function() {
 	this.vocab = new voyc.Vocab();
@@ -57,7 +76,9 @@ voyc.Sam.prototype.setup = function() {
 	this.observer.subscribe('restart-anonymous','sam' ,function(note) { self.onAnonymous       (note);});
 	this.observer.subscribe('logout-received'  ,'sam' ,function(note) { self.onLogoutReceived  (note);});
 	this.observer.subscribe('getvocab-received','sam' ,function(note) { self.onGetVocabReceived(note);});
-	this.observer.subscribe('getdict-received','sam' ,function(note) { self.onGetDictReceived(note);});
+	this.observer.subscribe('getdict-received' ,'sam' ,function(note) { self.onGetDictReceived (note);});
+	this.observer.subscribe('edit-cancelled'   ,'sam' ,function(note) { self.onEditCancelled   (note);});
+	this.observer.subscribe('setdict-received' ,'sam' ,function(note) { self.onSetDictReceived (note);});
 	
 	this.lee = new voyc.Lee(this.chat, this.observer);
 	this.speech = new voyc.Speech();
@@ -85,9 +106,27 @@ voyc.intervalToString = function(ms) {
 
 voyc.Sam.prototype.onGetDictReceived = function(note) {
 	var m = note.payload.list;
-	var s = voyc.dictionary.compose(m);
-	var e = this.chat.post(this.chatid, s);
-	this.chat.postPost(e);
+	switch (this.state) {
+		case 'edit':
+			if (!m || !m.length) {
+				this.dochat('not found');
+				this.state = 'ready';
+			}	
+			else {
+				this.observer.publish('edit-requested', 'sam', {m:m});
+			}
+			break;
+		case 'lookup':
+			if (!m || !m.length) {
+				this.dochat('not found');
+			}	
+			else {
+				var s = voyc.dictionary.compose(m);
+				this.dochat(s,true);
+			}
+			this.state = 'ready';
+			break;
+	}
 }
 
 voyc.Sam.prototype.onGetVocabReceived = function() {
@@ -398,23 +437,70 @@ voyc.Sam.prototype.respond = function(o) {
 			break;
 		case 'lookup':
 			var r = this.parseRequest(input);
-			var m = voyc.dictionary.lookup(r.object);
-			var s = 'looking...'; //voyc.dictionary.compose(m);
-			var e = this.chat.post(this.chatid, s);
-			//this.chat.postPost(e);
+			this.cmdLookup(r);
 			break;
 		case 'edit':
 			var r = this.parseRequest(input);
-			(new voyc.BrowserHistory).nav('editor');
-			var m = voyc.dictionary.lookup(r.object);
-			this.observer.publish('edit-requested', 'sam', {m:m});
-			var e = this.chat.post(this.chatid, 'edit complete');
+			this.cmdEdit(r);
+			break;
+
+		case 'kill':
+			this.state = 'ready';
+			this.dochat('ready');
 			break;
 			
 		default:
 			this.chat.post(this.chatid, 'Would you like an example sentence?', ['yes', 'no']);
 			break;
 	}
+}
+
+voyc.Sam.prototype.cmdLookup = function(r) {
+	if (this.state != 'ready') {
+		this.dochat('busy already');
+	}
+	if (!r.object) {
+		this.dochat('lookup what?');
+	}
+	else {
+		this.state = 'lookup';
+		var m = voyc.dictionary.lookupx(r.object);
+		this.dochat('looking...');
+	}
+}
+
+voyc.Sam.prototype.cmdEdit = function(r) {
+	if (this.state != 'ready') {
+		this.dochat('busy already');
+	}
+	else if (!r.adj['new'] && !r.object) {
+		this.dochat('edit what?');
+	}
+	else if (r.adj['new']) {
+		this.state = 'insert';
+		this.observer.publish('edit-requested', 'sam', {t:'i',n:r.object});
+	}
+	else {
+		this.state = 'edit';
+		var m = voyc.dictionary.lookupx(r.object);
+	}
+}
+
+voyc.Sam.prototype.onEditCancelled = function(note) {
+	this.dochat('edit cancelled');
+	this.state = 'ready';
+	(new voyc.BrowserHistory).nav('home');
+}
+
+voyc.Sam.prototype.onSetDictReceived = function(note) {
+	if (note.payload.status == 'ok') {
+		this.dochat('edit saved');
+	}
+	else {
+		this.dochat('edit save failed.');
+	}
+	this.state = 'ready';
+	(new voyc.BrowserHistory).nav('home');
 }
 
 voyc.Sam.prototype.parseRequest = function(s) {

@@ -35,6 +35,14 @@ UPDATE 815
 update mai.dict set cp = replace(cp,' ','') where position(' ' in cp) > 0;
 UPDATE 557
 
+/* 15 April 2020 create sequences for dict and main */
+create sequence mai.dict_id_seq;
+select setval('mai.dict_id_seq',  (select max(id) from mai.dict));
+create sequence mai.mean_id_seq;
+select setval('mai.mean_id_seq',  (select max(id) from mai.mean));
+
+
+
 -- example sql
 
 -- review table information

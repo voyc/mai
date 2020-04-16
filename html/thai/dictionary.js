@@ -105,7 +105,38 @@ voyc.Dictionary.prototype.lang = function(s) {
 	return (this.isEnglish(s) ? 'e' : 't');
 }
 
-voyc.Dictionary.prototype.lookup = function(word, lang, typearray) {
+voyc.Dictionary.prototype.update = function(o) {
+
+	var svcname = 'setdict';
+
+	// build data array of name/value pairs from user input
+	var data = {};
+	data['si'] = voyc.getSessionId();
+	data['up' ] = JSON.stringify(o);
+
+	// call svc
+	var self = this;
+	this.comm.request(svcname, data, function(ok, response, xhr) {
+		if (!ok) {
+			response = { 'status':'system-error'};
+		}
+
+		self.observer.publish('setdict-received', 'mai', response);
+
+		if (response['status'] == 'ok') {
+			console.log('setdict success');
+		}
+		else {
+			console.log('setdict failed');
+		}
+	});
+
+	this.observer.publish('setdict-posted', 'mai', {});
+	return;
+}
+
+
+voyc.Dictionary.prototype.lookupx = function(word, lang, typearray) {
 
 	var svcname = 'getdict';
 
@@ -133,7 +164,9 @@ voyc.Dictionary.prototype.lookup = function(word, lang, typearray) {
 
 	this.observer.publish('getdict-posted', 'mai', {});
 	return;
+}
 
+voyc.Dictionary.prototype.lookup = function(word, lang, typearray) {
 	var lang = lang || this.lang(word);
 	var typearray = typearray || false;
 	var m = [];
@@ -271,6 +304,7 @@ voyc.Dictionary.prototype.composeOne = function(dict) {
 			s += "<span expand='rules"+this.unique+"'>" + this.drawTranslit(dict.tl) + "</span>";
 			s += " <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
 			s += "<span expand='more"+this.unique+"' class='expander'></span>";
+			s += "<icon type='char', name='pencil'></icon>";
 			s += "<div id='more"+this.unique+"'>";
 			s += dict.d;
 			s += '</div>';

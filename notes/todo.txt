@@ -1,4 +1,45 @@
 
+edit/insert - do lookup first, if object supplied
+
+lookup
+	no input, error message in sam chat "lookup what?" 
+	not found, error message in sam chat "not found"
+	found, display in sam chat
+insert (edit -new <new thai word>)
+	already exists, error message in sam chat "already"
+	no input, blank form
+	with input, blank form with t filled in
+edit (edit <word>)
+	no input, go to insert
+	not found, error message in sam chat "not found"
+	found, edit with completed form
+
+sam
+svc
+editor
+
+syntax of lookup and edit should be the same except for -new
+
+specify language requirement on each field
+allow only thai in thai field, and components
+allow only eng in other fields
+
+handler when focus on manual components for type o
+
+db testing starts with sequence ids here
+select * from mai.mean where id > 1365;
+select * from mai.dict where id > 1465;
+
+==============================
+
+voyc.editor, instantiated by sam, points to observer and noam
+sam, instantiated by ?, points to chat
+sam.vocab, instantiated by sam
+voyc.dictionary, instantiated by sam
+voyc.sengen, instantiated by sam
+
+=====================================
+
 postreq
 	reimplement sengen
 	include sengen within noam?

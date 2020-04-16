@@ -13,6 +13,7 @@ voyc.Editor = function(container, observer, noam) {
 	this.container = container;
 	this.observer = observer;
 	this.noam = noam;
+	this.dictionary = voyc.dictionary;
 	
 	this.numTrans = 1;
 	this.maxTrans = 5;
@@ -31,12 +32,26 @@ voyc.Editor.prototype.setup = function() {
 		var d = document.createElement('div');
 		d.id = 'trans'+i;
 		d.setAttribute('name', 'trans');
-		d.innerHTML = voyc.Editor.template.trans.replace(/%n/g,i);
+		var s = voyc.Editor.template.trans.replace(/%n/g,i);
+		d.innerHTML = s.replace(/%n1/g,i+1);
 		translate.appendChild(d);
-	}		
+	}
 
 	(new voyc.Minimal).attachAll(this.container);
 
+	this.container.querySelector('#translit').readOnly = true;
+	this.container.querySelector('#components').readOnly = true;
+
+	this.container.querySelector('#tlm').addEventListener('click', function(e) {
+		var tl = self.container.querySelector('#translit');
+		tl.readOnly = !e.currentTarget.checked;
+	},false);
+	
+	this.container.querySelector('#cpm').addEventListener('click', function(e) {
+		var cp = self.container.querySelector('#components');
+		cp.readOnly = !e.currentTarget.checked;
+	},false);
+	
 	var list = this.container.querySelectorAll('[name=trans]');	
 	for (var i=0; i<list.length; i++) {
 		list[i].querySelector('[name=pos]').addEventListener('focus', function(e) {
@@ -48,40 +63,42 @@ voyc.Editor.prototype.setup = function() {
 	}
 
 	voyc.$('cancelbtn').addEventListener('click', function(e) {
-		(new voyc.BrowserHistory).nav('home');
+		self.clear();
+		self.observer.publish('edit-cancelled', 'sam', {});
 	},false);
 	voyc.$('savebtn').addEventListener('click', function(e) {
 		self.save();
-		(new voyc.BrowserHistory).nav('home');
+		//(new voyc.BrowserHistory).nav('home');
 	},false);
 }
 
 voyc.Editor.prototype.save = function() {
-/*
-	var r = this.dbarray[0];
-	if (new) {
-		r = {};
-	}
+	// assume new
+	var r = {};
+	r.t = this.container.querySelector('#thai').value;
 	r.tlm = (this.container.querySelector('#tlm').checked) ? 'm' : 'a';
 	r.tl = this.container.querySelector('#translit').value;
 	r.cpm = (this.container.querySelector('#cpm').checked) ? 'm' : 'a';
 	r.cp = this.container.querySelector('#components').value;
-	
-	id:id
-	g:type (o,m)
-	ru:rules (csv)
+	r.g = 'o';
+	r.ru = 'cciov';
 
-	for (this.dbarray
-	loop --- meaning ---
-	    id:serial unique key
-	    fid:did (foreign key to dict table)
-	    n:numdef, definition number (1,2,3,...)
-	    p:pos, (n,v,c,p,j,e,r,a)
-	    e:eng, one word in english language
-	    d:details, phrase in english language
-	    s:source (0-5)
-	    l:level (100,200,300,...)
-*/
+	r.trx = 'i';  //insert
+
+	r.mean = [];
+
+	for (var i=0; i<this.numTrans; i++) {
+		var m = {};
+		m.n = i;
+		m.p = this.container.querySelector('#pos'+i).value;
+		m.e = this.container.querySelector('#eng'+i).value;
+		m.d = this.container.querySelector('#details'+i).value;
+		m.s = 0;
+		m.l = 500;
+		m.trx = 'i';  // insert
+		r.mean.push(m);
+	}
+	this.dictionary.update(r);
 }
 
 voyc.Editor.prototype.joinComponents = function(lc,vp,fc,tm,tn) {
@@ -93,14 +110,51 @@ voyc.Editor.prototype.splitComponents = function(cp) {
 	return { lc:p[0], vp:p[1], fc:p[2], tm:p[3], tn:p[4] };
 }
 
+voyc.Editor.prototype.initiate = function(w) {
+	this.clear();
+	this.container.querySelector('#thai').value = w;
+}
+
+voyc.Editor.prototype.clear = function() {
+	this.container.querySelector('#thai').value = '';
+	this.container.querySelector('#internals').innerHTML = '  '; 
+	this.container.querySelector('#translit').value = '';
+	this.container.querySelector('#translit').readOnly = true;
+	this.container.querySelector('#tlm').checked = false;
+	this.container.querySelector('#components').value = '';
+	this.container.querySelector('#components').readOnly = true;
+	this.container.querySelector('#cpm').checked = false;
+
+	var t = this.container.querySelector('#translate');
+	var i=0;
+	var pos = t.querySelector('#pos'+i);
+	pos.setAttribute('data', '');
+	pos.value = this.posdisplay('');
+	t.querySelector('#eng'+i).value = '';
+	t.querySelector('#details'+i).value = '';
+	t.querySelector('#trans'+i).classList.remove('hidden');
+
+	this.numTrans = 1;
+	for (var i=this.numTrans; i<this.maxTrans; i++) {
+		t.querySelector('#trans'+i).classList.add('hidden');
+	}
+}
+
 voyc.Editor.prototype.populate = function(m) {
+	if (m.t == 'i') {
+		this.initiate(m.n);
+		(new voyc.BrowserHistory).nav('editor');
+		return;
+	}
 	this.dbarray = m.m;
 	var r = this.dbarray[0];
 	this.container.querySelector('#thai').value = r.t;
 	this.container.querySelector('#internals').innerHTML = [r.id,r.s,r.l,r.g].join();
 	this.container.querySelector('#translit').value = r.tl;
+	this.container.querySelector('#translit').readOnly = !(r.tlm == 'm');
 	this.container.querySelector('#tlm').checked = (r.tlm == 'm');
 	this.container.querySelector('#components').value = r.cp;
+	this.container.querySelector('#components').readOnly = !(r.cpm == 'm');
 	this.container.querySelector('#cpm').checked = (r.cpm == 'm');
 
 	var t = this.container.querySelector('#translate');
@@ -117,6 +171,7 @@ voyc.Editor.prototype.populate = function(m) {
 	for (var i=this.numTrans; i<this.maxTrans; i++) {
 		t.querySelector('#trans'+i).classList.add('hidden');
 	}
+	(new voyc.BrowserHistory).nav('editor');
 }
 
 voyc.Editor.prototype.posdisplay = function(data) {
@@ -186,14 +241,14 @@ voyc.Editor.template.page = `
 	</td></tr><tr><td>
 		<label for='translit'>Transliteration</label>
 	</td><td>
-		<input id='translit' type='text' readonly/>
-		<label for='tlman'><input name='tlman' type='checkbox' id='tlman' value='co' /> Manual</label>
-		<button id='tlbtn' toggle>show</button>
+		<input id='translit' type='text'/>
+		<label for='tlm'><input type='checkbox' id='tlm' /> Manual</label>
+		<button id='tlbtn' toggle>Parse</button>
 	</td></tr><tr><td>
 		<label for='components'>Components</label>
 	</td><td>
-		<input id='components' type='text' />
-		<label for='compexp'><input name='compexp' type='checkbox' id='compexp' value='co' /> Override</label>
+		<input id='components' type='text'/>
+		<label for='cpm'><input type='checkbox' id='cpm' /> Manual</label>
 	</td></tr>
 </table>
 <div id='translate'></div>
@@ -208,10 +263,10 @@ voyc.Editor.template.page = `
 `;
 
 voyc.Editor.template.trans = `
-<fieldset><legend>Translation %n</legend>
+<fieldset><legend>Translation %n1</legend>
 <table class='dedit'>	
 	<tr><td>	
-		<label for='pos'>Parts of Speech</label>
+		<label for='pos%n'>Parts of Speech</label>
 	</td><td>
 		<input id='pos%n' name='pos' type='text' data='nja'/>
 		<select id='posselect%n' name='posselect' multiple class='hidden' size='8'>
