@@ -43,6 +43,8 @@ select setval('mai.mean_id_seq',  (select max(id) from mai.mean));
 
 
 
+
+
 -- example sql
 
 -- review table information

@@ -113,10 +113,10 @@ voyc.Sam.prototype.onGetDictReceived = function(note) {
 				this.state = 'ready';
 			}	
 			else {
-				this.observer.publish('edit-requested', 'sam', {m:m});
+				this.observer.publish('edit-requested', 'sam', {t:'u',m:m});
 			}
 			break;
-		case 'lookup':
+		case 'search':
 			if (!m || !m.length) {
 				this.dochat('not found');
 			}	
@@ -435,7 +435,7 @@ voyc.Sam.prototype.respond = function(o) {
 				this.drillParse(this.story, r)
 			}
 			break;
-		case 'lookup':
+		case 'search':
 			var r = this.parseRequest(input);
 			this.cmdLookup(r);
 			break;
@@ -460,11 +460,11 @@ voyc.Sam.prototype.cmdLookup = function(r) {
 		this.dochat('busy already');
 	}
 	if (!r.object) {
-		this.dochat('lookup what?');
+		this.dochat('search for what?');
 	}
 	else {
-		this.state = 'lookup';
-		var m = voyc.dictionary.lookupx(r.object);
+		this.state = 'search';
+		var m = voyc.dictionary.searchx(r.object);
 		this.dochat('looking...');
 	}
 }
@@ -482,7 +482,7 @@ voyc.Sam.prototype.cmdEdit = function(r) {
 	}
 	else {
 		this.state = 'edit';
-		var m = voyc.dictionary.lookupx(r.object);
+		var m = voyc.dictionary.searchx(r.object);
 	}
 }
 
@@ -568,7 +568,7 @@ voyc.Sam.prototype.showParse = function(o,r) {
 				}
 				if (w.dict) {
 					//s += w.text + '<br/>';
-					var dict = voyc.dictionary.lookup(w.text)[0];
+					var dict = voyc.dictionary.search(w.text)[0];
 					s += voyc.dictionary.compose(dict);
 				}
 			}

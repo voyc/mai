@@ -136,7 +136,7 @@ voyc.Dictionary.prototype.update = function(o) {
 }
 
 
-voyc.Dictionary.prototype.lookupx = function(word, lang, typearray) {
+voyc.Dictionary.prototype.searchx = function(word, lang, typearray) {
 
 	var svcname = 'getdict';
 
@@ -166,7 +166,7 @@ voyc.Dictionary.prototype.lookupx = function(word, lang, typearray) {
 	return;
 }
 
-voyc.Dictionary.prototype.lookup = function(word, lang, typearray) {
+voyc.Dictionary.prototype.search = function(word, lang, typearray) {
 	var lang = lang || this.lang(word);
 	var typearray = typearray || false;
 	var m = [];
@@ -187,7 +187,7 @@ voyc.Dictionary.prototype.translate = function(passage, lang) {
 	var s = '';
 	var w = passage.split(' ');
 	for (var i=0; i<w.length; i++) {
-		var m = this.lookup(w[i], ilang);
+		var m = this.search(w[i], ilang);
 		var e = '###';
 		if (m && m.length && m[0][ilang]) {
 			e = m[0][olang];
@@ -205,7 +205,7 @@ voyc.Dictionary.prototype.translit = function(passage, lang) {
 	var s = '';
 	var w = passage.split(' ');
 	for (var i=0; i<w.length; i++) {
-		var m = this.lookup(w[i], ilang);
+		var m = this.search(w[i], ilang);
 		var e = '###';
 		if (m && m.length && m[0][ilang]) {
 			e = m[0]['tl'];
@@ -287,7 +287,7 @@ voyc.Dictionary.prototype.compose = function(dict) {
 }
 
 voyc.Dictionary.prototype.composeOne = function(dict) {
-	var s = '<lookup>';
+	var s = '<search>';
 	this.unique++;
 	switch (dict.g) {
 		case 'g':
@@ -337,7 +337,7 @@ voyc.Dictionary.prototype.composeOne = function(dict) {
 			s += dict.t + "  " + dict.tl + " " + dict.e;
 			break;
 	}
-	s += '</lookup>';
+	s += '</search>';
 	return s;
 }
 

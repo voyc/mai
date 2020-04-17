@@ -162,6 +162,27 @@ if noaction
 		}
 	}
 	else if ($aup['trx'] == 'u') {
+		// update the dict record
+		$name = 'update-dict';
+		$sql  = "update mai.dict set t=$2,tl=$3,tlm=$4,cp=$5,cpm=$6,g=$7,ru=$8 where id = $1";
+		$params = array($aup['id'],$aup['t'],$aup['tl'],$aup['tlm'],$aup['cp'],$aup['cpm'],$aup['g'],$aup['ru']);
+		$result = execSql($conn, $name, $sql, $params, true);
+		if (!$result) {
+			return $a;
+		}
+	
+		// update the mean records
+		$name = 'update-mean';
+		$sql  = "update mai.mean set p=$2,e=$3,d=$4,s=$5,l=$6 where id = $1";
+	
+		foreach($aup['mean'] as $m) {
+			$params = array($mid,$m['p'],$m['e'],$m['d'],$m['s'],$m['l']);
+			$result = execSql($conn, $name, $sql, $params, true);
+			if (!$result) {
+				return $a;
+			}
+		}
+
 	}
 	else if ($aup['trx'] == 'd') {
 	}

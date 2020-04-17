@@ -1,9 +1,9 @@
 <?php
 /*
-	svc getdict
+	svc search
 	Read and return dict/mean records for requested lookup.
 */
-function getdict() {
+function search() {
 	$a = array(
 		'status' => 'system-error'
 	);

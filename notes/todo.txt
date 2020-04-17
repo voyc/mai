@@ -30,6 +30,8 @@ db testing starts with sequence ids here
 select * from mai.mean where id > 1365;
 select * from mai.dict where id > 1465;
 
+support column rules
+implement parse, auto and manual
 ==============================
 
 voyc.editor, instantiated by sam, points to observer and noam

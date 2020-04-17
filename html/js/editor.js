@@ -23,7 +23,7 @@ voyc.Editor = function(container, observer, noam) {
 voyc.Editor.prototype.setup = function() {
 	this.lang = 'thai';
 	var self = this;
-	this.observer.subscribe('edit-requested', 'editor', function(note) {self.populate(note.payload);});
+	this.observer.subscribe('edit-requested', 'editor', function(note) {self.onEditRequested(note.payload);});
 
 	this.container.innerHTML = voyc.Editor.template.page;
 
@@ -45,11 +45,13 @@ voyc.Editor.prototype.setup = function() {
 	this.container.querySelector('#tlm').addEventListener('click', function(e) {
 		var tl = self.container.querySelector('#translit');
 		tl.readOnly = !e.currentTarget.checked;
+		tl.focus();
 	},false);
 	
 	this.container.querySelector('#cpm').addEventListener('click', function(e) {
 		var cp = self.container.querySelector('#components');
 		cp.readOnly = !e.currentTarget.checked;
+		cp.focus();
 	},false);
 	
 	var list = this.container.querySelectorAll('[name=trans]');	
@@ -64,18 +66,20 @@ voyc.Editor.prototype.setup = function() {
 
 	voyc.$('cancelbtn').addEventListener('click', function(e) {
 		self.clear();
-		self.observer.publish('edit-cancelled', 'sam', {});
+		self.observer.publish('edit-cancelled', 'editor', {});
 	},false);
 	voyc.$('savebtn').addEventListener('click', function(e) {
 		self.save();
-		//(new voyc.BrowserHistory).nav('home');
 	},false);
 }
 
 voyc.Editor.prototype.save = function() {
-	// assume new
 	var r = {};
-	r.t = this.container.querySelector('#thai').value;
+	d = this.container.querySelector('#thai');
+	r.t = d.value;
+	r.trx = d.getAttribute('trx');
+	r.id = d.getAttribute('did');
+	r.g = d.getAttribute('g');
 	r.tlm = (this.container.querySelector('#tlm').checked) ? 'm' : 'a';
 	r.tl = this.container.querySelector('#translit').value;
 	r.cpm = (this.container.querySelector('#cpm').checked) ? 'm' : 'a';
@@ -83,19 +87,18 @@ voyc.Editor.prototype.save = function() {
 	r.g = 'o';
 	r.ru = 'cciov';
 
-	r.trx = 'i';  //insert
-
 	r.mean = [];
-
 	for (var i=0; i<this.numTrans; i++) {
 		var m = {};
-		m.n = i;
-		m.p = this.container.querySelector('#pos'+i).value;
+		var p = this.container.querySelector('#pos'+i);
+		m.trx = p.getAttribute('trx');
+		m.mid = p.getAttribute('mid');
+		m.n = p.getAttribute('numdef');
+		m.s = p.getAttribute('s');
+		m.l = p.getAttribute('l');
+		m.p = p.getAttribute('data');
 		m.e = this.container.querySelector('#eng'+i).value;
 		m.d = this.container.querySelector('#details'+i).value;
-		m.s = 0;
-		m.l = 500;
-		m.trx = 'i';  // insert
 		r.mean.push(m);
 	}
 	this.dictionary.update(r);
@@ -111,12 +114,14 @@ voyc.Editor.prototype.splitComponents = function(cp) {
 }
 
 voyc.Editor.prototype.initiate = function(w) {
-	this.clear();
-	this.container.querySelector('#thai').value = w;
 }
 
 voyc.Editor.prototype.clear = function() {
-	this.container.querySelector('#thai').value = '';
+	var d = this.container.querySelector('#thai');
+	d.value = '';
+	d.setAttribute('trx','i');
+	d.setAttribute('did',0);
+	d.setAttribute('g','o');
 	this.container.querySelector('#internals').innerHTML = '  '; 
 	this.container.querySelector('#translit').value = '';
 	this.container.querySelector('#translit').readOnly = true;
@@ -130,6 +135,11 @@ voyc.Editor.prototype.clear = function() {
 	var pos = t.querySelector('#pos'+i);
 	pos.setAttribute('data', '');
 	pos.value = this.posdisplay('');
+	pos.setAttribute('trx','i');
+	pos.setAttribute('mid',0);
+	pos.setAttribute('numdef',1);
+	pos.setAttribute('s',1);
+	pos.setAttribute('l',100);
 	t.querySelector('#eng'+i).value = '';
 	t.querySelector('#details'+i).value = '';
 	t.querySelector('#trans'+i).classList.remove('hidden');
@@ -140,16 +150,27 @@ voyc.Editor.prototype.clear = function() {
 	}
 }
 
-voyc.Editor.prototype.populate = function(m) {
+voyc.Editor.prototype.onEditRequested = function(m) {
 	if (m.t == 'i') {
-		this.initiate(m.n);
-		(new voyc.BrowserHistory).nav('editor');
-		return;
+		this.clear();
+		this.container.querySelector('#thai').value = m.n;
 	}
-	this.dbarray = m.m;
-	var r = this.dbarray[0];
-	this.container.querySelector('#thai').value = r.t;
-	this.container.querySelector('#internals').innerHTML = [r.id,r.s,r.l,r.g].join();
+	else if (m.t == 'u') {
+		this.populate(m.m);
+	}
+	(new voyc.BrowserHistory).nav('editor');
+	this.container.querySelector('#thai').focus();
+}
+
+voyc.Editor.prototype.populate = function(m) {
+	var r = m[0];
+	var trx = 'u';
+	var d = this.container.querySelector('#thai');
+	d.value = r.t;
+	d.setAttribute('trx',trx);
+	d.setAttribute('did',r.id);
+	d.setAttribute('g',r.g);
+	this.container.querySelector('#internals').innerHTML = [r.id,r.g].join();
 	this.container.querySelector('#translit').value = r.tl;
 	this.container.querySelector('#translit').readOnly = !(r.tlm == 'm');
 	this.container.querySelector('#tlm').checked = (r.tlm == 'm');
@@ -158,10 +179,15 @@ voyc.Editor.prototype.populate = function(m) {
 	this.container.querySelector('#cpm').checked = (r.cpm == 'm');
 
 	var t = this.container.querySelector('#translate');
-	this.numTrans = this.dbarray.length;
+	this.numTrans = m.length;
 	for (var i=0; i<this.numTrans; i++) {
-		var rn = this.dbarray[i];
+		var rn = m[i];
 		var pos = t.querySelector('#pos'+i);
+		pos.setAttribute('trx', trx);  // must be changed when new meanings added
+		pos.setAttribute('mid', rn.mid);
+		pos.setAttribute('numdef', rn.n);
+		pos.setAttribute('s',r.s);
+		pos.setAttribute('l',r.l);
 		pos.setAttribute('data', rn.p);
 		pos.value = this.posdisplay(rn.p);
 		t.querySelector('#eng'+i).value = rn.e;
@@ -172,6 +198,7 @@ voyc.Editor.prototype.populate = function(m) {
 		t.querySelector('#trans'+i).classList.add('hidden');
 	}
 	(new voyc.BrowserHistory).nav('editor');
+	d.focus();
 }
 
 voyc.Editor.prototype.posdisplay = function(data) {
