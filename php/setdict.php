@@ -118,7 +118,7 @@ function setdict() {
 				return $a;
 			}
 			$params = array($mid,$did,$m['n'],$m['p'],$m['e'],$m['d'],$m['s'],$m['l']);
-			$result = execSql($conn, $name, $sql, $params, true);
+			$result = execSql($conn, $insname, $inssql, $params, true);
 		}
 		else if ($m['trx'] == 'u') { // update
 			$params = array($m['mid'],$m['p'],$m['e'],$m['d'],$m['s'],$m['l']);

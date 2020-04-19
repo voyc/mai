@@ -560,8 +560,8 @@ voyc.Sam.prototype.showParse = function(o,r) {
 			var cntnew = 0;
 			var cnterr = 0;
 			o.words.forEach(function(item,index) {
-				if (item.dict && !item.vocab) cntnew++;
-				if (item.dict) cntword++;
+				if (item.id && !item.vocab) cntnew++;
+				if (item.id) cntword++;
 				else cnterr++;
 			});
 			s += cntword + ' words (' + cntnew + ' new)<br/>';
@@ -578,23 +578,23 @@ voyc.Sam.prototype.showParse = function(o,r) {
 				if (r.adj.old && !w.vocab) {
 					continue;
 				}
-				if (w.dict) {
-					//s += w.text + '<br/>';
+				if (w.id) {
+					s += w.text + '<br/>';
 					//var dict = voyc.dictionary.search(w.text)[0];
-					s += voyc.dictionary.compose(w.dict);
+					//s += voyc.dictionary.compose(w.dict);
 				}
 			}
 			break
 		case 'newvocab':
 			o.words.forEach(function(item,index) {
-				if (item.dict && !item.vocab) {
+				if (item.id && !item.vocab) {
 					s += item.text + '<br/>';
 				}
 			});
 			break;
 		case 'errors':
 			o.words.forEach(function(item,index) {
-				if (!item.dict) {
+				if (!item.id) {
 					s += item.text + ' ' + item.line + '.' + item.ndx + '<br/>';
 				}
 			});
