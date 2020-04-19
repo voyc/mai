@@ -20,31 +20,34 @@ voyc.Sam = function(chat) {
 	this.lang = 'thai';
 	this.editdict = {};
 
+	// move this to chat?
 	// extend Chat object to do post processing of a chat post
 	voyc.Chat.prototype.postPost = function(e) {
 		(new voyc.Minimal()).attachAll(e);
 		(new voyc.Icon()).attachAll(e);
 		(new voyc.Icon()).drawAll(e);
+	}
+}
 
-		//attach handler to speaker icons
-		var elist = e.querySelectorAll('icon[name="speaker"]');
-		for (var i=0; i<elist.length; i++) {
-			elist[i].addEventListener('click', function(e) {
-				var s = e.currentTarget.getAttribute('text');
-				var l = voyc.dictionary.lang(s);
-				voyc.mai.sam.speech.speak( s,l);
-			}, false);
-		}
+voyc.Sam.prototype.postPost = function(e) {
+	//attach handler to speaker icons
+	var elist = e.querySelectorAll('icon[name="speaker"]');
+	for (var i=0; i<elist.length; i++) {
+		elist[i].addEventListener('click', function(e) {
+			var s = e.currentTarget.getAttribute('text');
+			var l = voyc.dictionary.lang(s);
+			voyc.mai.sam.speech.speak( s,l);
+		}, false);
+	}
 
-		//attach handler to pencil icons
-		var elist = e.querySelectorAll('icon[name="pencil"]');
-		for (var i=0; i<elist.length; i++) {
-			elist[i].addEventListener('click', function(e) {
-				var s = e.currentTarget.getAttribute('text');
-				var l = voyc.dictionary.lang(s);
-				voyc.mai.sam.speech.speak( s,l);
-			}, false);
-		}
+	//attach handler to pencil icons
+	var self = this;
+	var elist = e.querySelectorAll('icon[name="pencil"]');
+	for (var i=0; i<elist.length; i++) {
+		elist[i].addEventListener('click', function(e) {
+			var s = e.currentTarget.getAttribute('text');
+			self.cmdEdit({object:s,adj:[]});
+		}, false);
 	}
 }
 
@@ -52,9 +55,9 @@ voyc.Sam.prototype.dochat = function(s,bpost) {
 	var e = this.chat.post(this.chatid, s);
 	if (bpost) {
 		this.chat.postPost(e);
+		this.postPost(e);
 	}
 }
-
 
 voyc.Sam.prototype.setup = function() {
 	this.vocab = new voyc.Vocab();
@@ -414,8 +417,17 @@ voyc.Sam.prototype.respond = function(o) {
 			}		
 			this.chat.post(this.chatid, s);
 			break;
+
+		// new commands following
+
 		case 'parse':
 			var r = this.parseRequest(input);
+			if (r.adj['syllable']) {
+				var po = this.noam.parse(r.object,r.adj);	
+				var s = this.showParse(po,{object:'syllable'});
+				this.dochat(s);
+				break;
+			}
 			this.story = this.noam.parse(r.object,r.adj);	
 			var s = this.showParse(this.story,{object:'summary'});
 			this.chat.post(this.chatid, s);
@@ -465,7 +477,7 @@ voyc.Sam.prototype.cmdLookup = function(r) {
 	else {
 		this.state = 'search';
 		var m = voyc.dictionary.searchx(r.object);
-		this.dochat('looking...');
+		this.dochat('searching...');
 	}
 }
 
@@ -552,7 +564,7 @@ voyc.Sam.prototype.showParse = function(o,r) {
 				if (item.dict) cntword++;
 				else cnterr++;
 			});
-			s += cntword + ' words, ' + cntnew + ' new<br/>';
+			s += cntword + ' words (' + cntnew + ' new)<br/>';
 			if (cnterr > 0) {
 				s += cnterr + ' errors<br/>';
 			}
@@ -568,8 +580,8 @@ voyc.Sam.prototype.showParse = function(o,r) {
 				}
 				if (w.dict) {
 					//s += w.text + '<br/>';
-					var dict = voyc.dictionary.search(w.text)[0];
-					s += voyc.dictionary.compose(dict);
+					//var dict = voyc.dictionary.search(w.text)[0];
+					s += voyc.dictionary.compose(w.dict);
 				}
 			}
 			break
@@ -597,6 +609,15 @@ voyc.Sam.prototype.showParse = function(o,r) {
 				s += this.drawLine(o.lines[i]);
 			}
 			s += '</story>';
+			break;
+		case 'syllable':
+			var lb = '<br/>';
+			s += 'leading consonant: '+o.lc+lb;
+			s += 'vowel pattern: '+o.vp+lb;
+			s += 'tone mark: '+o.tm+lb;
+			s += 'final consonant: '+o.fc+lb;
+			s += 'tone: '+o.tn+lb;
+			s += 'rules: '+o.ru+lb;
 			break;
 		default:
 			s += 'I can show errors, lines, words, or newvocab.<br/>';

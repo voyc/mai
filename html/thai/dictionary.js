@@ -86,6 +86,15 @@ voyc.Dictionary = function() {
 	}
 	this.comm = new voyc.Comm(url, 'acomm', 2, true);
 	this.observer = new voyc.Observer();
+	this.fast = [];
+	this.setup();
+}
+voyc.Dictionary.prototype.setup = function() {
+	var self = this;
+	this.observer.subscribe('getfast-received'   ,'dictionary' ,function(note) { 
+		self.onGetfastReceived   (note);
+	});
+	this.getFast();
 }
 
 voyc.Dictionary.prototype.load = function() {
@@ -93,6 +102,39 @@ voyc.Dictionary.prototype.load = function() {
 //	this.dict.sort(function(a,b) {
 //		return a.t.localeCompare(b.t);
 //	});
+}
+
+voyc.Dictionary.prototype.getFast = function(o) {
+
+	var svcname = 'getfast';
+
+	// build data array of name/value pairs from user input
+	var data = {};
+	data['si'] = voyc.getSessionId();
+
+	// call svc
+	var self = this;
+	this.comm.request(svcname, data, function(ok, response, xhr) {
+		if (!ok) {
+			response = { 'status':'system-error'};
+		}
+
+		self.observer.publish('getfast-received', 'mai', response);
+
+		if (response['status'] == 'ok') {
+			console.log('getfast success');
+		}
+		else {
+			console.log('getfast failed');
+		}
+	});
+
+	this.observer.publish('getfast-posted', 'mai', {});
+	return;
+}
+
+voyc.Dictionary.prototype.onGetfastReceived = function(note) {
+	this.fast = note.payload.list;
 }
 
 voyc.Dictionary.prototype.isEnglish = function(s) {
@@ -164,6 +206,19 @@ voyc.Dictionary.prototype.searchx = function(word, lang, typearray) {
 
 	this.observer.publish('getdict-posted', 'mai', {});
 	return;
+}
+
+voyc.Dictionary.prototype.lookup = function(word, lang, typearray) {
+	return this.search(word, lang, typearray);
+}
+
+voyc.Dictionary.prototype.fastMatch = function(t) {
+	for (var i=0; i<this.fast.length; i++) {
+		if (this.fast[i].t.toLowerCase() == t.toLowerCase()) {
+			return this.fast[i];
+		}
+	}
+	return false;
 }
 
 voyc.Dictionary.prototype.search = function(word, lang, typearray) {
@@ -304,7 +359,7 @@ voyc.Dictionary.prototype.composeOne = function(dict) {
 			s += "<span expand='rules"+this.unique+"'>" + this.drawTranslit(dict.tl) + "</span>";
 			s += " <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
 			s += "<span expand='more"+this.unique+"' class='expander'></span>";
-			s += "<icon type='char', name='pencil'></icon>";
+			s += "<icon type='char' name='pencil' text='"+dict.t+"'></icon>";
 			s += "<div id='more"+this.unique+"'>";
 			s += dict.d;
 			s += '</div>';
@@ -317,11 +372,10 @@ voyc.Dictionary.prototype.composeOne = function(dict) {
 			s += " <icon type='draw' name='speaker' text='"+dict.t+"'></icon> &nbsp;";
 			s += this.drawTranslit(dict.tl) + " <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
 			s += "<span expand='more"+this.unique+"' class='expander'></span>";
-
+			s += "<icon type='char' name='pencil' text='"+dict.t+"'></icon>";
 			s += "<div id='more"+this.unique+"'>";
 			s += dict.d;
-			s += "<br/>"+dict.ns+" syllables";
-			if (dict.ru.length) {
+			if (dict.ru && dict.ru.length) {
 				s += '<br/>Rules:';
 				var ru = dict.ru.split(',');
 				for (var i=0; i<ru.length; i++) {
@@ -369,6 +423,7 @@ voyc.Dictionary.prototype.drawRule = function(rule) {
 }
 
 voyc.Dictionary.prototype.drawTranslit = function(tl) {
+	if (!tl) return '';
 	var s = '';
 	s += tl.replace(/([FRLMH])/g, function(x) {
 		return '<sup>'+x+'</sup>';
@@ -387,18 +442,20 @@ voyc.Dictionary.prototype.splitComponents = function(cp) {
 
 voyc.Dictionary.prototype.drawComponents = function(cp,ru) {
 	var s = '';
-	var cpo = this.splitComponents(cp);
-	var lc = voyc.mai.sam.noam.alphabet.lookup(cpo.lc[cpo.lc.length-1]);
-	s += 'leading consonant ' + lc.t + ' ' + this.drawClass(lc.m);
-	var vp = voyc.vowelPatternsLookup(cpo.vp);
-	s += '<br/>vowel pattern ' + vp.print + ' ' + this.drawClass(vp.m);
+	if (cp && cp.length) {
+		var cpo = this.splitComponents(cp);
+		var lc = voyc.mai.sam.noam.alphabet.lookup(cpo.lc[cpo.lc.length-1]);
+		s += 'leading consonant ' + lc.t + ' ' + this.drawClass(lc.m);
+		var vp = voyc.vowelPatternsLookup(cpo.vp);
+		s += '<br/>vowel pattern ' + vp.print + ' ' + this.drawClass(vp.m);
 
-	if (cpo.fc) {
-		s += '<br/>final consonant ' + cpo.fc;
-	}
-	if (cpo.tm) {
-		var tm = voyc.mai.sam.noam.alphabet.lookup(cpo.tm);
-		s += '<br/>tone mark ' + this.drawDiacritic(tm);
+		if (cpo.fc) {
+			s += '<br/>final consonant ' + cpo.fc;
+		}
+		if (cpo.tm) {
+			var tm = voyc.mai.sam.noam.alphabet.lookup(cpo.tm);
+			s += '<br/>tone mark ' + this.drawDiacritic(tm);
+		}
 	}
 	if (ru.length) {
 		s += '<br/>Rules:';

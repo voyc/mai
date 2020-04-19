@@ -24,6 +24,7 @@ voyc.Editor.prototype.setup = function() {
 	this.lang = 'thai';
 	var self = this;
 	this.observer.subscribe('edit-requested', 'editor', function(note) {self.onEditRequested(note.payload);});
+	this.observer.subscribe('acceptparse-submitted', 'editor', function(note) {self.onAcceptParse(note.payload);});
 
 	this.container.innerHTML = voyc.Editor.template.page;
 
@@ -46,6 +47,17 @@ voyc.Editor.prototype.setup = function() {
 		var tl = self.container.querySelector('#translit');
 		tl.readOnly = !e.currentTarget.checked;
 		tl.focus();
+	},false);
+	
+	this.container.querySelector('#tlbtn').addEventListener('click', function(e) {
+		//dictionary parse
+		//display results in popup, with accept or reject
+		//first time, on edit -new, parse and accept automatically
+		//set g = o or m
+		//set components
+		//set translit
+		var s = self.container.querySelector('#thai').value;
+		self.parse(s);
 	},false);
 	
 	this.container.querySelector('#cpm').addEventListener('click', function(e) {
@@ -79,13 +91,12 @@ voyc.Editor.prototype.save = function() {
 	r.t = d.value;
 	r.trx = d.getAttribute('trx');
 	r.id = d.getAttribute('did');
-	r.g = d.getAttribute('g');
 	r.tlm = (this.container.querySelector('#tlm').checked) ? 'm' : 'a';
 	r.tl = this.container.querySelector('#translit').value;
 	r.cpm = (this.container.querySelector('#cpm').checked) ? 'm' : 'a';
 	r.cp = this.container.querySelector('#components').value;
-	r.g = 'o';
-	r.ru = 'cciov';
+	r.g = this.container.querySelector('#g').value;
+	r.ru = this.container.querySelector('#rules').value;
 
 	r.mean = [];
 	for (var i=0; i<this.numTrans; i++) {
@@ -104,8 +115,9 @@ voyc.Editor.prototype.save = function() {
 	this.dictionary.update(r);
 }
 
-voyc.Editor.prototype.joinComponents = function(lc,vp,fc,tm,tn) {
-	var cp = [lc,vp,fc,tm,tn].join(',');
+voyc.Editor.prototype.joinComponents = function(o) {
+	var cp = [o.lc,o.vp,o.fc,o.tm,o.tn].join(',');
+	return cp;
 }
 
 voyc.Editor.prototype.splitComponents = function(cp) {
@@ -113,15 +125,11 @@ voyc.Editor.prototype.splitComponents = function(cp) {
 	return { lc:p[0], vp:p[1], fc:p[2], tm:p[3], tn:p[4] };
 }
 
-voyc.Editor.prototype.initiate = function(w) {
-}
-
 voyc.Editor.prototype.clear = function() {
 	var d = this.container.querySelector('#thai');
 	d.value = '';
 	d.setAttribute('trx','i');
 	d.setAttribute('did',0);
-	d.setAttribute('g','o');
 	this.container.querySelector('#internals').innerHTML = '  '; 
 	this.container.querySelector('#translit').value = '';
 	this.container.querySelector('#translit').readOnly = true;
@@ -129,6 +137,8 @@ voyc.Editor.prototype.clear = function() {
 	this.container.querySelector('#components').value = '';
 	this.container.querySelector('#components').readOnly = true;
 	this.container.querySelector('#cpm').checked = false;
+	this.container.querySelector('#g').value = '';
+	this.container.querySelector('#rules').value = '';
 
 	var t = this.container.querySelector('#translate');
 	var i=0;
@@ -154,6 +164,7 @@ voyc.Editor.prototype.onEditRequested = function(m) {
 	if (m.t == 'i') {
 		this.clear();
 		this.container.querySelector('#thai').value = m.n;
+		this.parse(m.n);
 	}
 	else if (m.t == 'u') {
 		this.populate(m.m);
@@ -169,7 +180,6 @@ voyc.Editor.prototype.populate = function(m) {
 	d.value = r.t;
 	d.setAttribute('trx',trx);
 	d.setAttribute('did',r.id);
-	d.setAttribute('g',r.g);
 	this.container.querySelector('#internals').innerHTML = [r.id,r.g].join();
 	this.container.querySelector('#translit').value = r.tl;
 	this.container.querySelector('#translit').readOnly = !(r.tlm == 'm');
@@ -177,6 +187,8 @@ voyc.Editor.prototype.populate = function(m) {
 	this.container.querySelector('#components').value = r.cp;
 	this.container.querySelector('#components').readOnly = !(r.cpm == 'm');
 	this.container.querySelector('#cpm').checked = (r.cpm == 'm');
+	this.container.querySelector('#g').value = r.g;
+	this.container.querySelector('#rules').value = r.ru;
 
 	var t = this.container.querySelector('#translate');
 	this.numTrans = m.length;
@@ -199,6 +211,43 @@ voyc.Editor.prototype.populate = function(m) {
 	}
 	(new voyc.BrowserHistory).nav('editor');
 	d.focus();
+}
+
+voyc.Editor.prototype.parse = function(s) {
+	var ps = this.noam.parseString(s,1);  // returns array of objects
+	if (ps && ps.length > 1) {
+		var cpa = [];
+		var tla = [];
+		for (var i=0; i<ps.length; i++) {
+			cpa.push(ps[i].text);
+			tla.push(ps[i].tl);
+		}
+		document.getElementById('ptranslit').value = tla.join(' ');
+		document.getElementById('pcomponents').value = cpa.join(',');
+		document.getElementById('pg').value = 'm';
+		document.getElementById('prules').value = '';
+		(new voyc.Minimal).openPopup('acceptparse');
+		voyc.fixOpen('acceptparse'); // really only need to do this once, but must wait til it's open
+	}
+	else {
+		var pw = this.noam.parseSyllable(s); // returns object
+		document.getElementById('ptranslit').value = pw.tl;
+		document.getElementById('pcomponents').value = this.joinComponents(pw);
+		document.getElementById('pg').value = 'o';
+		document.getElementById('prules').value = pw.ru;
+		(new voyc.Minimal).openPopup('acceptparse');
+		voyc.fixOpen('acceptparse'); // really only need to do this once, but must wait til it's open
+	}
+}
+
+voyc.Editor.prototype.onAcceptParse = function(data) {
+	voyc.$('translit').value = voyc.$('ptranslit').value;
+	voyc.$('tlm').checked = false;
+	voyc.$('components').value = voyc.$('pcomponents').value;
+	voyc.$('cpm').checked = false;
+	voyc.$('g').value = voyc.$('pg').value;
+	voyc.$('rules').value = voyc.$('prules').value;
+	(new voyc.Minimal).closePopup('acceptparse');
 }
 
 voyc.Editor.prototype.posdisplay = function(data) {
@@ -270,12 +319,20 @@ voyc.Editor.template.page = `
 	</td><td>
 		<input id='translit' type='text'/>
 		<label for='tlm'><input type='checkbox' id='tlm' /> Manual</label>
-		<button id='tlbtn' toggle>Parse</button>
+		<button id='tlbtn'>Parse</button>
 	</td></tr><tr><td>
 		<label for='components'>Components</label>
 	</td><td>
 		<input id='components' type='text'/>
 		<label for='cpm'><input type='checkbox' id='cpm' /> Manual</label>
+	</td></tr><tr><td>
+		<label for='g'>Type</label>
+	</td><td>
+		<input id='g' type='text'/>
+	</td></tr><tr><td>
+		<label for='rules'>Rules</label>
+	</td><td>
+		<input id='rules' type='text'/>
 	</td></tr>
 </table>
 <div id='translate'></div>
@@ -318,3 +375,21 @@ voyc.Editor.template.trans = `
 </table>
 </fieldset>	
 `;
+
+// add this to Minimal on open dialog
+voyc.fixOpen = function(eid) {
+	// width must be odd, else left borders of input fields disappear
+	// height must be even, else top borders disappear
+	// I think it's a Chrome bug
+	function isOdd(num) { return num % 2;}
+	var pdialog = document.getElementById(eid);
+	var w =  pdialog.offsetWidth;
+	if (isOdd(w)) {
+		pdialog.style.width = (w+1) + 'px';
+	}
+	var h =  pdialog.offsetWidth;
+	if (!isOdd(h)) {
+		pdialog.style.height = (h+1) + 'px';
+	}
+}
+

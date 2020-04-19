@@ -374,9 +374,13 @@ voyc.Noam.prototype.collectWords = function(target, options) {
 		parse -keeplines ไปวันศุกร์ เสะาร์ และอาทิตย์ดีพไหม
 **/
 voyc.Noam.prototype.parse = function(input,options) {
-	var parsed = this.parseStory(input);
-	//parseWord(parsed);
-	//parseSyllable(parsed);
+	var parsed = '';
+	if (options['syllable']) {
+		parsed = this.parseSyllable(input);
+	}
+	else {
+		parsed = this.parseStory(input);
+	}
 	return parsed;
 }
 
@@ -489,6 +493,7 @@ voyc.Noam.prototype.parseString = function(input, linenum) {
 	// split the input into multiple substrings separated by whitespace 
 	var sa = input.split(/\s+/); 
 	for (var n=0; n<sa.length; n++) {
+		var fullStringMatch = {};
 		var s = sa[n];
 		var slen = s.length;
 		var us = '';	// unmatched string
@@ -500,7 +505,7 @@ voyc.Noam.prototype.parseString = function(input, linenum) {
 			// j is ending index pos. step backwards.
 			for (var j=slen; j>i; j--) {
 				var t = s.substring(i,j);
-				if (j < slen) {	//if (t == s) {
+				if (j < slen) {	//if (t == s) 
 					// do not separate words between diacritics
 					var char = s.substr(j,1); 
 					var alpha = this.alphabet.lookup(char); 
@@ -512,20 +517,29 @@ voyc.Noam.prototype.parseString = function(input, linenum) {
 						continue;
 					}
 				}
-				var m = this.dictionary.lookup(t,'t','om');  // find t in Dictionary
-				if (m.length) {
+				//var m = this.dictionary.lookup(t,'t','om');  // find t in Dictionary
+				var m = this.dictionary.fastMatch(t);  // find t in Dictionary
+				if (m) {
 					if (t == sa) {
 						// sto and return only if no other components found
+						fullStringMatch = {
+							text:t,
+							line:linenum,
+							ndx:startndx,
+							id:m.id,
+							tl:m.tl,
+							vocab:this.vocab.get(t)
+						};
 						continue;
 					}
 					if ((ui >= 0) && (ui < i)) {
 						us = s.substring(ui,i);
-						sto(us, linenum, startndx+ui, false, false);  // save unmatched part
+						sto(us, linenum, startndx+ui, 0, '', false);  // save unmatched part
 					}
 					ui = j;
-					us = m[0].t;
+					us = m.t;
 					var v = this.vocab.get(us);
-					sto(us, linenum, startndx+i, m[0], v);  // save matched part
+					sto(us, linenum, startndx+i, m.id, m.tl, v);  // save matched part
 					i += us.length-1;  // bump up to next start position
 					break;
 				}
@@ -540,17 +554,21 @@ voyc.Noam.prototype.parseString = function(input, linenum) {
 		// unmatched piece at end
 		if (ui >= 0 && i-1>ui) {
 			us = s.substring(ui,i);
-			sto(us, linenum, startndx+ui, false, false);  // save unrecognized part
+			sto(us, linenum, startndx+ui, 0, '', false);  // save unrecognized part
+		}
+		if (!words.length) {
+			words.push(fullStringMatch);
 		}
 	}
 	return words;
 
-	function sto(text, line, ndx, dict, vocab) {
+	function sto(text, line, ndx, id, tl, vocab) {
 		var o = {
 			text:text,
 			line:line,
 			ndx:ndx,
-			dict:dict,
+			id:id,
+			tl:tl,
 			vocab:vocab
 		};
 		words.push(o);
@@ -627,12 +645,17 @@ method:	parseSyllable(syllable)
 		rules
 */
 voyc.Noam.prototype.parseSyllable = function(syllable) {
+	var syl = {};
+
 	// remove silent consonant marked with garaan
 	var garaan = "์";
 	var syllabl = '';
+	syl.silent = '';
 	for (var i=syllable.length-1; i>=0; i--) {
 		if (syllable[i] == garaan) {
+			syl.silent = syllable[i] + syl.silent;
 			i--;
+			syl.silent = syllable[i] + syl.silent;
 		}
 		else {
 			syllabl = syllable[i] + syllabl;
@@ -640,36 +663,32 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	}
 
 	// find the dictionary entry for this syllable
-	var dic = this.dictionary.lookup(syllable)[0]; // used only to include id in output
+	//var dic = this.dictionary.lookup(syllable)[0]; // used only to include id in output
 
 	// find matching vowel pattern
-	var syl = false;
 	for (var k in voyc.vowelPatterns) {
-		syl = false;
 		var pattern = new RegExp(voyc.vowelPatterns[k].syllablePattern, 'g');
 		var m = [];
 		if (m = pattern.exec(syllabl)) {
-			m.t = syllable;
-			m.id = dic.id;
-			m.k = k;
-			m.m = m[0];
-			m.vp = voyc.vowelPatterns[k].t;
-			m.lc = m[1];
-			m.tm = '';
+			syl.t = syllable;
+		//	syl.id = dic.id;
+			syl.k = k;
+			syl.m = m[0];
+			syl.vp = voyc.vowelPatterns[k].t;
+			syl.lc = m[1];
+			syl.tm = '';
 			if (m.length > 2) {
-				m.tm = m[2];
+				syl.tm = m[2];
 			}
-			m.fc = '';
+			syl.fc = '';
 			if (m.length > 3) {
-				m.fc = m[3];
+				syl.fc = m[3];
 			}
-			m.tn = '';
-
-			syl = m;
+			syl.tn = '';
 			break;
 		}
 	}
-	if (!syl) return false;
+	if (!m) return false;
 
 	// append final consonant	
 	if (syllabl.length == syl.m.length+1) {
@@ -788,7 +807,7 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 		lce += this.alphabet.lookup(lc[i]).e;
 	}
 	var v = vowelMeta.e;
-	syl.tl = lce + v + fs;	
+	syl.tl = lce + v + fs + syl.tn;	
 
 	// transliteration custom
 	var lce = '';
@@ -796,9 +815,8 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 		lce += voyc.translit[this.alphabet.lookup(lc[i]).e];
 	}
 	var v = voyc.translit[vowelMeta.e];
-	syl.tlc = lce + v + voyc.translit['-'+fs];	
-		
-	
+	syl.tlc = lce + v + voyc.translit['-'+fs] + syl.tn;
+
 	return syl;
 }
 

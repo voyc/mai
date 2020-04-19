@@ -32,6 +32,11 @@ select * from mai.dict where id > 1465;
 
 support column rules
 implement parse, auto and manual
+
+
+after db update
+	download a new copy of the fastdict
+	implement fastdict within parseString()
 ==============================
 
 voyc.editor, instantiated by sam, points to observer and noam
@@ -39,6 +44,22 @@ sam, instantiated by ?, points to chat
 sam.vocab, instantiated by sam
 voyc.dictionary, instantiated by sam
 voyc.sengen, instantiated by sam
+
+noam.html
+test1 - ไมตรี
+	noam.parse -> noam.parseStory -> noam.parseString 
+	return an array of word objects, each word object has dict or false
+
+parse -syllable ไม
+parse -syllable ตรี
+parse -string ไมตรี
+edit ไม : save (update)
+edit -new ตรี : save (insert)
+edit -new ไมตรี : save (insert)
+
+make parsing on server vs client decisions
+	keep small array on client, words only
+	anything using dict arrays has to be replaced or moved to server
 
 =====================================
 
@@ -132,9 +153,6 @@ during word-reverse, nope try again requires hints
 tired, beef, alike are too advanced for keyboard lesson
 add tone buttons to reply (also add speech)
 
-sengen - avoid words recently used
-
-attach polarity to vocab, reimplement vocab as memory
 On refresh how long has it been?  check recency
 
 lesson 3 ring fingers and pinkies, phrase: hair beautiful
@@ -260,6 +278,9 @@ graphic design
 language learning
 
 marketing:
+Statistics show
+Students learn more faster , enjoy it more, an stick with it. Students are more likely to come to Thailand, enjoy it more, stay longer.
+Coaches earn more money, get more clients, and clients stay longer and are more satisfied.
 Statistics show
 Students learn more faster , enjoy it more, an stick with it. Students are more likely to come to Thailand, enjoy it more, stay longer.
 Coaches earn more money, get more clients, and clients stay longer and are more satisfied.
