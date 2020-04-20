@@ -41,6 +41,11 @@ select setval('mai.dict_id_seq',  (select max(id) from mai.dict));
 create sequence mai.mean_id_seq;
 select setval('mai.mean_id_seq',  (select max(id) from mai.mean));
 
+/* 20 april 2020 create alphabet table from thaidict */
+insert into mai.alphabet (t,e,u,r,m,a)
+select thai,eng,unicode,reference,class,subclass 
+from mai.thaidict
+where type = 'g';
 
 
 

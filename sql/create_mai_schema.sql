@@ -82,3 +82,27 @@ select setval('mai.dict_id_seq',  (select max(id) from mai.dict));
 create sequence mai.mean_id_seq;
 select setval('mai.mean_id_seq',  (select max(id) from mai.mean));
 
+create table mai.alphabet (
+	id serial primary key,
+	t char(1),	/* thai glyph */
+	e varchar(4),	/* english translit */
+	u char(6),	/* unicode */
+	r char(1),	/* reference, for sanskrit consonant, the equivalent consonant */
+	m char(1),	/* m:class
+				m:middle class consonant
+				l:low class consonant
+				h:high class consonant
+				v:vowel
+				u:unknown for glyph
+				o:obsolete glyph: ฃ, ฅ
+				s:symbol glyph: ฿, ๆ, ฯ 
+				t:tonemark
+				d:digit */
+	a char(1)	/* subclass
+				s:sonorant consonant
+				a:diacritic above
+				b:diacritic below
+				l:diacritic left
+				r:diacritic right */
+);
+create unique index alphabet_t_index on mai.alphabet(t);

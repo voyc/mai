@@ -1,7 +1,7 @@
 <?php
 /*
 	svc getfast
-	Prep list of words in length order for parsing strings.
+	Prep list of words for use on client.
 */
 function getfast() {
 	$a = array(

@@ -20,7 +20,8 @@ $supported_svcs = array(
 	'setdict',
 	'getdict',
 	'search',
-	'getfast'
+	'getfast',
+	'getalpha'
 );
 
 function validateSvc($taint) {

@@ -129,6 +129,11 @@ voyc.Sam.prototype.onGetDictReceived = function(note) {
 			}
 			this.state = 'ready';
 			break;
+		case 'prep':
+			this.mergeWordLists(this.story.words, m);
+			this.dochat('ready');
+			this.state = 'ready';
+			break;
 	}
 }
 
@@ -434,10 +439,23 @@ voyc.Sam.prototype.respond = function(o) {
 			break;
 		case 'show':
 			var r = this.parseRequest(input);
+			if (r.object == 'alphabet') {
+				var s = voyc.alphabet.listAll();
+				this.dochat(s);
+			}
 			if (this.story) {
 				var s = this.showParse(this.story, r)
 				var e = this.chat.post(this.chatid, s);
 				this.chat.postPost(e);
+			}
+			break;
+		case 'prep':
+			var r = this.parseRequest(input);
+			if (this.story) {
+				this.cmdPrep(r,this.story);
+			}
+			else {
+				this.dochat('parse a story first');
 			}
 			break;
 		case 'drill':
@@ -475,9 +493,16 @@ voyc.Sam.prototype.cmdLookup = function(r) {
 		this.dochat('search for what?');
 	}
 	else {
-		this.state = 'search';
-		var m = voyc.dictionary.searchx(r.object);
-		this.dochat('searching...');
+		if (r.adj['glyph']) {
+			var o = voyc.alphabet.search(r.object);
+			var s = voyc.alphabet.compose(o);
+			this.dochat(s);
+		}
+		else {
+			this.state = 'search';
+			var m = voyc.dictionary.searchx(r.object);
+			this.dochat('searching...');
+		}
 	}
 }
 
@@ -653,6 +678,18 @@ voyc.Sam.prototype.drawLine = function(item) {
 	s += '</word>';
 	s += '</line>';
 	return s;
+}
+
+voyc.Sam.prototype.cmdPrep = function(r, story) {
+	// build list of ids
+	//story.words
+	// h
+	// call server search with options: 
+	// k
+	// send words to server, get back list of dicts
+	debugger;	
+}
+voyc.Sam.prototype.onPrepReturned = function(note) {
 }
 
 voyc.Sam.prototype.drillParse = function(o, r) {

@@ -33,6 +33,10 @@ voyc.Mai.prototype.setup = function () {
 	}
 	this.comm = new voyc.Comm(url, 'acomm', 2, true);
 
+	voyc.comm = this.comm;
+	voyc.observer = this.observer;
+	voyc.alphabet = new voyc.Alphabet();
+
 	// attach app events
 	var self = this;
 	this.observer.subscribe('profile-requested'   ,'mai' ,function(note) { self.onProfileRequested    (note); });

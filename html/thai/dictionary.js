@@ -98,7 +98,7 @@ voyc.Dictionary.prototype.setup = function() {
 }
 
 voyc.Dictionary.prototype.load = function() {
-	this.dict = voyc.dict;
+	//this.dict = voyc.dict;
 //	this.dict.sort(function(a,b) {
 //		return a.t.localeCompare(b.t);
 //	});
@@ -208,10 +208,6 @@ voyc.Dictionary.prototype.searchx = function(word, lang, typearray) {
 	return;
 }
 
-voyc.Dictionary.prototype.lookup = function(word, lang, typearray) {
-	return this.search(word, lang, typearray);
-}
-
 voyc.Dictionary.prototype.fastMatch = function(t) {
 	for (var i=0; i<this.fast.length; i++) {
 		if (this.fast[i].t.toLowerCase() == t.toLowerCase()) {
@@ -221,19 +217,23 @@ voyc.Dictionary.prototype.fastMatch = function(t) {
 	return false;
 }
 
-voyc.Dictionary.prototype.search = function(word, lang, typearray) {
-	var lang = lang || this.lang(word);
-	var typearray = typearray || false;
-	var m = [];
-	for (var i=0; i<this.dict.length; i++) {
-		if (this.dict[i][lang].toLowerCase() == word.toLowerCase()) {
-			if (!typearray || typearray.includes(this.dict[i].g)) {
-				m.push(this.dict[i]);
-			}
-		}
-	}
-	return m;
-}
+//voyc.Dictionary.prototype.lookup = function(word, lang, typearray) {
+//	return this.search(word, lang, typearray);
+//}
+//
+//voyc.Dictionary.prototype.search = function(word, lang, typearray) {
+//	var lang = lang || this.lang(word);
+//	var typearray = typearray || false;
+//	var m = [];
+//	for (var i=0; i<this.dict.length; i++) {
+//		if (this.dict[i][lang].toLowerCase() == word.toLowerCase()) {
+//			if (!typearray || typearray.includes(this.dict[i].g)) {
+//				m.push(this.dict[i]);
+//			}
+//		}
+//	}
+//	return m;
+//}
 
 voyc.Dictionary.prototype.translate = function(passage, lang) {
 	var ilang = lang || this.lang(passage);
