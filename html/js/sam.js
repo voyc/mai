@@ -80,6 +80,7 @@ voyc.Sam.prototype.setup = function() {
 	this.observer.subscribe('logout-received'  ,'sam' ,function(note) { self.onLogoutReceived  (note);});
 	this.observer.subscribe('getvocab-received','sam' ,function(note) { self.onGetVocabReceived(note);});
 	this.observer.subscribe('getdict-received' ,'sam' ,function(note) { self.onGetDictReceived (note);});
+	this.observer.subscribe('search-received' ,'sam' ,function(note)  { self.onSearchReceived (note);});
 	this.observer.subscribe('edit-cancelled'   ,'sam' ,function(note) { self.onEditCancelled   (note);});
 	this.observer.subscribe('setdict-received' ,'sam' ,function(note) { self.onSetDictReceived (note);});
 	
@@ -108,6 +109,9 @@ voyc.intervalToString = function(ms) {
 }
 
 voyc.Sam.prototype.onGetDictReceived = function(note) {
+}
+
+voyc.Sam.prototype.onSearchReceived = function(note) {
 	var m = note.payload.list;
 	switch (this.state) {
 		case 'edit':
@@ -467,7 +471,7 @@ voyc.Sam.prototype.respond = function(o) {
 			break;
 		case 'search':
 			var r = this.parseRequest(input);
-			this.cmdLookup(r);
+			this.cmdSearch(r);
 			break;
 		case 'edit':
 			var r = this.parseRequest(input);
@@ -485,7 +489,7 @@ voyc.Sam.prototype.respond = function(o) {
 	}
 }
 
-voyc.Sam.prototype.cmdLookup = function(r) {
+voyc.Sam.prototype.cmdSearch = function(r) {
 	if (this.state != 'ready') {
 		this.dochat('busy already');
 	}
@@ -495,12 +499,15 @@ voyc.Sam.prototype.cmdLookup = function(r) {
 	else {
 		if (r.adj['glyph']) {
 			var o = voyc.alphabet.search(r.object);
-			var s = voyc.alphabet.compose(o);
+			var s = 'not found';
+			if (o) {
+				s = voyc.alphabet.compose(o);
+			}
 			this.dochat(s);
 		}
 		else {
 			this.state = 'search';
-			var m = voyc.dictionary.searchx(r.object);
+			var m = voyc.dictionary.search(r.object);
 			this.dochat('searching...');
 		}
 	}
@@ -519,7 +526,7 @@ voyc.Sam.prototype.cmdEdit = function(r) {
 	}
 	else {
 		this.state = 'edit';
-		var m = voyc.dictionary.searchx(r.object);
+		var m = voyc.dictionary.search(r.object);
 	}
 }
 
@@ -659,7 +666,7 @@ voyc.Sam.prototype.drawLine = function(item) {
 		s += item.speaker + ": ";
 	}
 	for (var i=0; i<x.length; i++) {
-		if ((n < item.words.length) && i == item.words[n].ndx) {
+		if ((n < item.words.length) && i == item.words[n].where[0].ndx) {
 			if (i > 0) {
 				s += '</word>';
 			}
@@ -682,11 +689,14 @@ voyc.Sam.prototype.drawLine = function(item) {
 
 voyc.Sam.prototype.cmdPrep = function(r, story) {
 	// build list of ids
-	//story.words
-	// h
 	// call server search with options: 
-	// k
 	// send words to server, get back list of dicts
+	
+	//svc prep
+	//input list of ids
+	//output mini dict
+	//return a mini dict, keyed by id
+
 	debugger;	
 }
 voyc.Sam.prototype.onPrepReturned = function(note) {

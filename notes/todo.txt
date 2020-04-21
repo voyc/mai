@@ -17,6 +17,91 @@ refresh fastdict, in dictionary
 rearrange vowel components
 	reverse fc and tm
 
+after parse
+	send object to server
+	process it
+		lookup words, phrases, multiple meanings
+	save it
+	return updated object to client (now ready for drills)
+
+lookup vs search vs getdict
+	dict, alphabet, vowels, expressions, phrases, grammars
+	lookup returns single item
+	search returns array of multiple items, deprecate but in use
+	getdict takes input array of ids, outputs a mini-dict with dict/mean
+
+sam search calls cmdLookup calls dictionary.searchx calls svc-getdict
+
+in dictionary.js, 
+	searchx calls getdict svc
+	search has been commented out, it used the old client-side dict
+		translate() and translit() are now broken
+
+noam calls dictionary.search 
+	all broken
+
+search.php and getdict.php are identical
+	sam calls dictionary.searchx
+
+should be
+	sam search calls cmdSearch calls dictionary.search calls svc-search
+	sam parse calls cmdParse calls dictionary.parse calls svc-getdict
+
+step 1.  rename current to search
+	x sam cmdLookup -> cmdSearch
+	x dictionary.searchx -> dictionary.search
+	x dictionary.get-dict -> search
+step 2.  re-implement getdict to support parse
+
+implement up/down arrow in chat window, for mobile also
+
+prep
+	call server
+		save story, insert or update, by username
+		first line is name and key of story
+		lookup all words
+		in word object, replace id and tl with dict/mean
+
+show lines
+	insert color-coding html to identify errors and multi-meanings
+	when the user clicks on an error, give a popup to let him correct the typo, or edit a new word
+	when the user clicks on a multi-meaning, give him a popup to let him choose the meaning
+		add the numdef to the where object
+	add numdef to where-section of words array
+	separate words
+	allow lookup on each word
+	show eng along with thai
+
+prep
+	update server with user's numdef contributions
+
+==============================
+chat commands, part of sam.js documentation
+
+developer
+kill
+__reload dictionary
+__reload alphabet
+show alphabet
+search -glyph <letter thai>
+search -glyph <letter english>
+search <word>
+
+author
+parse -syllable <word>
+parse <story>
+show (parse results) summary
+show (parse results) words
+show (parse results) -new words
+show (parse results) errors
+show (parse results) lines
+show (parse results) -hint lines
+prep
+edit <word>
+edit -new <word>
+
+student
+drill
 ==============================
 
 map object structure

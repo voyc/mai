@@ -2,15 +2,23 @@
 	class Alphabet
 	singleton
 	
-	public function:
+	represent a list of glyph objects, one object for each char in the alphabet
+
+	public methods:
+		search(char) - return glyph object
+		reverseSearch(char) - input english language char, return glyph object
+		printDiacritic(glyph) - return string
+		compose(glyph) - return string
+		listall(none) - return string
+		iterate(callback) - return none
 **/
 voyc.Alphabet = function() {
 	this.list = [];
 	this.key = {};
-	this.loadTable();
+	this.loadList();
 }
 
-voyc.Alphabet.prototype.loadTable = function() {
+voyc.Alphabet.prototype.loadList = function() {
 	var svcname = 'getalpha';
 	var data = {};
 	var self = this;
@@ -33,31 +41,38 @@ voyc.Alphabet.prototype.loadTable = function() {
 	voyc.observer.publish(svcname + '-posted', 'alphabet', {});
 }
 
-voyc.Alphabet.prototype.search = function(glyph) {
-	return this.list[this.key[glyph]];
-}
-/*
-voyc.Alphabet.prototype.isEnglish = function(s) {
-	return (s.match(/^[ \?\-A-Za-z0-9]*$/));
-}
-
-voyc.Alphabet.prototype.lang = function(s) {
-	return (this.isEnglish(s) ? 'e' : 't');
-}
-
-voyc.Alphabet.prototype.xlookup = function(word,lang) {
-	var lang = lang || this.lang(word);
-	var m = {};
-	if (word) {
-		this.iterate(function(a) {
-			if (a[lang].toLowerCase() == word.toLowerCase()) {
-				m = a;
-			}
-		});
+/**
+	search, public method 
+		input one char
+		return one glyph object in the list, using char as key
+**/
+voyc.Alphabet.prototype.search = function(char) {
+	var g = this.list[this.key[char]];
+	if (g) {
+		return g;
 	}
-	return m;
+	return this.reverseSearch(char);
 }
-*/
+
+/**
+	reverseSearch, public method 
+		input one english char
+		return one glyph object in the list, using char as key
+**/
+voyc.Alphabet.prototype.reverseSearch = function(char) {
+	for (var i=0; i<this.list.length; i++) {
+		if (this.list[i].e == char) {
+			return this.list[i];
+		}
+	}
+	return null;
+}
+
+/**
+	printDiacritic, public method 
+		input glyph object
+		return string printable glyph supporting diacritics
+**/
 voyc.Alphabet.prototype.printDiacritic = function(glyph) {
 	var t = glyph.t;
 	if (glyph.a == 'a' || glyph.a == 'b') {
@@ -66,16 +81,20 @@ voyc.Alphabet.prototype.printDiacritic = function(glyph) {
 	return t;
 }
 
-voyc.Alphabet.prototype.iterate = function(cb) {
-	for (var i=0; i<this.list.length; i++) {
-		cb(this.list[i],i);
-	}
-}
-
+/**
+	compose, public method 
+		input glyph object
+		return string printable glyph for command how -glyph <char>
+**/
 voyc.Alphabet.prototype.compose = function(m) {
 	return this.printDiacritic(m) + ', ' + m.e + ', ' + voyc.Alphabet.strm[m.m] + ', ' + voyc.Alphabet.stra[m.a] + '<br/>';
 }
 
+/**
+	compose, public method 
+		input none
+		return string printable entire alphabet, compose
+**/
 voyc.Alphabet.prototype.listAll = function() {
 	var s = ''
 	var cnt = 0;
@@ -85,6 +104,18 @@ voyc.Alphabet.prototype.listAll = function() {
 		cnt++;
 	});
 	return s;
+}
+
+/**
+	iterate, public method 
+		input callback function
+		execute the callback on every item in the alphabet
+		return none
+**/
+voyc.Alphabet.prototype.iterate = function(cb) {
+	for (var i=0; i<this.list.length; i++) {
+		cb(this.list[i],i);
+	}
 }
 
 /* static code tables */

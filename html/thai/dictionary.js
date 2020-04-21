@@ -177,8 +177,7 @@ voyc.Dictionary.prototype.update = function(o) {
 	return;
 }
 
-
-voyc.Dictionary.prototype.searchx = function(word, lang, typearray) {
+voyc.Dictionary.prototype.getDict = function(word, lang, typearray) {
 
 	var svcname = 'getdict';
 
@@ -205,6 +204,35 @@ voyc.Dictionary.prototype.searchx = function(word, lang, typearray) {
 	});
 
 	this.observer.publish('getdict-posted', 'mai', {});
+	return;
+}
+
+voyc.Dictionary.prototype.search = function(word, lang, typearray) {
+	var svcname = 'search';
+
+	// build data array of name/value pairs from user input
+	var data = {};
+	data['si'] = voyc.getSessionId();
+	data['lk' ] = word;
+
+	// call svc
+	var self = this;
+	this.comm.request(svcname, data, function(ok, response, xhr) {
+		if (!ok) {
+			response = { 'status':'system-error'};
+		}
+
+		self.observer.publish('search-received', 'mai', response);
+
+		if (response['status'] == 'ok') {
+			console.log('search success');
+		}
+		else {
+			console.log('search failed');
+		}
+	});
+
+	this.observer.publish('search-posted', 'mai', {});
 	return;
 }
 
@@ -242,7 +270,7 @@ voyc.Dictionary.prototype.translate = function(passage, lang) {
 	var s = '';
 	var w = passage.split(' ');
 	for (var i=0; i<w.length; i++) {
-		var m = this.search(w[i], ilang);
+		var m = this.search(w[i], ilang); // broken
 		var e = '###';
 		if (m && m.length && m[0][ilang]) {
 			e = m[0][olang];
@@ -260,7 +288,7 @@ voyc.Dictionary.prototype.translit = function(passage, lang) {
 	var s = '';
 	var w = passage.split(' ');
 	for (var i=0; i<w.length; i++) {
-		var m = this.search(w[i], ilang);
+		var m = this.search(w[i], ilang);  // broken
 		var e = '###';
 		if (m && m.length && m[0][ilang]) {
 			e = m[0]['tl'];
@@ -444,7 +472,7 @@ voyc.Dictionary.prototype.drawComponents = function(cp,ru) {
 	var s = '';
 	if (cp && cp.length) {
 		var cpo = this.splitComponents(cp);
-		var lc = voyc.mai.sam.noam.alphabet.lookup(cpo.lc[cpo.lc.length-1]);
+		var lc = voyc.alphabet.search(cpo.lc[cpo.lc.length-1]);
 		s += 'leading consonant ' + lc.t + ' ' + this.drawClass(lc.m);
 		var vp = voyc.vowelPatternsLookup(cpo.vp);
 		s += '<br/>vowel pattern ' + vp.print + ' ' + this.drawClass(vp.m);
@@ -453,7 +481,7 @@ voyc.Dictionary.prototype.drawComponents = function(cp,ru) {
 			s += '<br/>final consonant ' + cpo.fc;
 		}
 		if (cpo.tm) {
-			var tm = voyc.mai.sam.noam.alphabet.lookup(cpo.tm);
+			var tm = voyc.alphabet.search(cpo.tm);
 			s += '<br/>tone mark ' + this.drawDiacritic(tm);
 		}
 	}
