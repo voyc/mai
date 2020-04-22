@@ -677,6 +677,9 @@ voyc.Sam.prototype.drawLine = function(item) {
 			else if (!item.words[n].vocab) {
 				s += 'newvocab ';
 			}
+			else if (item.words[n].dict.mean.length > 1) {
+				s += 'multimean ';
+			}
 			s += '>';
 			n++;
 		}
@@ -688,18 +691,28 @@ voyc.Sam.prototype.drawLine = function(item) {
 }
 
 voyc.Sam.prototype.cmdPrep = function(r, story) {
-	// build list of ids
-	// call server search with options: 
-	// send words to server, get back list of dicts
-	
-	//svc prep
-	//input list of ids
-	//output mini dict
-	//return a mini dict, keyed by id
-
-	debugger;	
+	var ids = [];
+	for (var i=0; i<story.words.length; i++) {
+		var id = story.words[i].id;
+		if (id) {
+			ids.push(id);
+		}
+	}
+	voyc.dictionary.getDict(ids);
 }
-voyc.Sam.prototype.onPrepReturned = function(note) {
+voyc.Sam.prototype.onGetDictReceived = function(note) {
+	// add dict info to lines and words
+	for (var i=0; i<this.story.words.length; i++) {
+		var item = this.story.words[i];
+		item.dict = voyc.dictionary.miniDict(item.id);
+	}
+	for (var i=0; i<this.story.lines.length; i++) {
+		var line = this.story.lines[i];
+		for (var j=0; j<line.words.length; j++) {
+			var word = line.words[j];
+			word.dict = voyc.dictionary.miniDict(word.id);
+		}
+	}
 }
 
 voyc.Sam.prototype.drillParse = function(o, r) {

@@ -5,103 +5,34 @@
 	public function:
 		translate(phrase)
 **/
-/**
-columns
-	--- key ---	
-	id:id
-	g:type
-		g:glyph
-		s:syllable, not yet used
-		o:one-syllable word
-		m:multi-syllable word
-	t:thai, one word in thai language
-
-	--- meaning ---
-	s:source
-		0:86, unspecified
-		1:97, by hand
-		2:1150, thai-language.com/starred
-		3:66, original dict file, with tones and hints
-		4:6, ?
-		5:39, ?
-	l:level (100,200,300,...)
-	n:numdef, definition number (1,2,3,...)
-	p:pos, part of speech, can apply only to word (g=o, g=m)
-		n:noun
-		v:verb
-		c:conjunction
-		p:preposition
-		j:adjective
-		e:adverb
-		r:pronoun
-		a:particle
- 		?:proper noun
-	e:eng, one word in english language
-	d:details, phrase in english language
-
-	--- glyph ---
-	u:unicode
-	r:reference, for sanskrit consonant, the equivalent consonant
-	m:class
-		m:middle class consonant
-		l:low class consonant
-		h:high class consonant
-		v:vowel
-		u:unknown for glyph
-		o:obsolete glyph: ฃ, ฅ
-		s:symbol glyph: ฿, ๆ, ฯ 
-		t:tonemark
-		d:digit
-	a:subclass
-		d:diacritic vowel or tonemark - 
-		s:sonorant consonant
-		a:diacritic above
-		b:diacritic below
-		l:diacritic left
-		r:diacritic right
-	
-	--- syllable and one-syllable word ---
-	lc:leadingconsonant
-	fc:finalconsonant
-	vp:vowelpattern
-	tm:tonemark
-	tn:tone M,L,H,R,F
-	tl:translit
-	ru:rules
-	
-	--- multi-syllable word and phrase ---
-	ns:numsyllables
-	sn:syllablendx, csv
-	cp:components, csv
-	ps:parse, m:manual
-**/
 voyc.Dictionary = function() {
-	this.dict = [];
 	this.unique = 10001000;
-	this.load();
 
 	var url = '/svc/';
 	if (window.location.origin == 'file://') {
 		url = 'http://mai.voyc.com/svc';  // for local testing
 	}
+
 	this.comm = new voyc.Comm(url, 'acomm', 2, true);
 	this.observer = new voyc.Observer();
+
 	this.fast = [];
 	this.setup();
-}
-voyc.Dictionary.prototype.setup = function() {
-	var self = this;
-	this.observer.subscribe('getfast-received'   ,'dictionary' ,function(note) { 
-		self.onGetfastReceived   (note);
-	});
-	this.getFast();
+
+	this.mini = {
+		list: [],
+		key: {}
+	}
 }
 
-voyc.Dictionary.prototype.load = function() {
-	//this.dict = voyc.dict;
-//	this.dict.sort(function(a,b) {
-//		return a.t.localeCompare(b.t);
-//	});
+voyc.Dictionary.prototype.miniDict = function(id) {
+	return this.mini.list[this.mini.key[id]];
+}
+
+voyc.Dictionary.prototype.setup = function() {
+	var self = this;
+	this.observer.subscribe('getfast-received' ,'dictionary' ,function(note) { self.onGetFastReceived (note); });
+	this.getFast();
 }
 
 voyc.Dictionary.prototype.getFast = function(o) {
@@ -133,7 +64,7 @@ voyc.Dictionary.prototype.getFast = function(o) {
 	return;
 }
 
-voyc.Dictionary.prototype.onGetfastReceived = function(note) {
+voyc.Dictionary.prototype.onGetFastReceived = function(note) {
 	this.fast = note.payload.list;
 }
 
@@ -177,30 +108,30 @@ voyc.Dictionary.prototype.update = function(o) {
 	return;
 }
 
-voyc.Dictionary.prototype.getDict = function(word, lang, typearray) {
-
+/* get a set of words from the db, store in this.mini */
+voyc.Dictionary.prototype.getDict = function(ida) {
 	var svcname = 'getdict';
-
-	// build data array of name/value pairs from user input
 	var data = {};
 	data['si'] = voyc.getSessionId();
-	data['lk' ] = word;
-
-	// call svc
+	data['lk' ] = ida;
 	var self = this;
 	this.comm.request(svcname, data, function(ok, response, xhr) {
 		if (!ok) {
 			response = { 'status':'system-error'};
 		}
-
-		self.observer.publish('getdict-received', 'mai', response);
-
 		if (response['status'] == 'ok') {
+			self.mini.list = response.list;
+			self.mini.key = {};
+			for (var i = 0; i<self.mini.list.length; i++) {
+				var item = self.mini.list[i];
+				self.mini.key[item.id] = i;
+			}
 			console.log('getdict success');
 		}
 		else {
 			console.log('getdict failed');
 		}
+		self.observer.publish('getdict-received', 'mai', response);
 	});
 
 	this.observer.publish('getdict-posted', 'mai', {});
@@ -245,10 +176,6 @@ voyc.Dictionary.prototype.fastMatch = function(t) {
 	return false;
 }
 
-//voyc.Dictionary.prototype.lookup = function(word, lang, typearray) {
-//	return this.search(word, lang, typearray);
-//}
-//
 //voyc.Dictionary.prototype.search = function(word, lang, typearray) {
 //	var lang = lang || this.lang(word);
 //	var typearray = typearray || false;
@@ -558,4 +485,5 @@ voyc.ru = [
 	{code:'cciva', name:'Inherent vowel, short a', details:'A short a sound invoked with one standalone consonant.'},
 	{code:'ccive', name:'Inherent vowel, short a, enepenthetic', details:'A short a sound inserted between two incompatible consonants, creating an extra syllable instead of a dipthong.'},
 ];
+
 

@@ -25,6 +25,9 @@ story[hint] word[error] {
 story[hint] word[newvocab] {
 	color:green;
 }
+story[hint] word[multimean] {
+	color:cyan;
+}
 sylcont {
 	position:relative;
 	margin-right: .5rem;
