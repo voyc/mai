@@ -21,12 +21,14 @@ story[hint] word {
 }
 story[hint] word[error] {
 	color:red;
+	cursor:pointer;
 }
 story[hint] word[newvocab] {
 	color:green;
 }
 story[hint] word[multimean] {
 	color:cyan;
+	cursor:pointer;
 }
 sylcont {
 	position:relative;

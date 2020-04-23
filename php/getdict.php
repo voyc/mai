@@ -50,7 +50,8 @@ function getdict() {
 	$sql = 'select d.id,d.g,d.t,d.tl,d.tlm,d.cp,d.cpm,d.ru,m.id as mid,m.n,m.e,m.d,m.p,m.s,m.l';
 	$sql .= ' from mai.mean m, mai.dict d';
 	$sql .= ' where m.did = d.id'; 
-	$sql .= " and $whereclause;";
+	$sql .= " and $whereclause";
+	$sql .= ' order by d.id, m.n;';
 
 	// read dict/mean for query
 	$name = 'query-join';
@@ -66,7 +67,7 @@ function getdict() {
         $numrows = pg_num_rows($result);
         for ($i=0; $i<$numrows; $i++) {
                 $row = pg_fetch_array($result, $i, PGSQL_ASSOC);
-		
+ 	
 		$id = $row['id'];
 		if ($id != $previd) {
 			if ($previd > 0) {
@@ -95,6 +96,11 @@ function getdict() {
 		$mean['l'] = $row['l'];
 		$dict['mean'][] = $mean;
         }
+
+	// last one
+	if ($previd > 0) {
+		$dicts[] = $dict;
+	}
 
 	// success
 	$a['status'] = 'ok';

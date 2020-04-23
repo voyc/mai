@@ -51,6 +51,12 @@ let author add translate to story
 
 how many ordinals to put in dictionary as separate words
 
+implement getdict as callback
+
+search, show, cannot display multiple pos 
+
+learn how to position a popup
+
 ==============================
 automated test suite, compare chat window to baseline
 

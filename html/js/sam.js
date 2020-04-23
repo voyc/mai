@@ -49,6 +49,72 @@ voyc.Sam.prototype.postPost = function(e) {
 			self.cmdEdit({object:s,adj:[]});
 		}, false);
 	}
+
+	// attach handler to unrecognized words in story
+	var elist = e.querySelectorAll('word[error]');
+	for (var i=0; i<elist.length; i++) {
+		elist[i].addEventListener('click', function(e) {
+			var s = e.currentTarget.innerHTML;
+			self.cmdEdit({object:s,adj:['new']});
+		}, false);
+	}
+
+	// attach handler to multimean words in story
+	var elist = e.querySelectorAll('word[multimean]');
+	for (var i=0; i<elist.length; i++) {
+		elist[i].addEventListener('click', function(e) {
+			var wid = e.currentTarget.getAttribute('wid');
+			self.popupMultiMean(wid,e.clientX,e.clientY);
+		}, false);
+	}
+}
+
+voyc.Sam.prototype.popupMultiMean = function(wid,x,y) {
+	var a = wid.split('.');
+	var did = a[0];
+	var dict = voyc.dictionary.miniDict(did);
+	var s = '';
+	for (var i=0; i<dict.mean.length; i++) {
+		var mean = dict.mean[i];
+		s += '<p>' + mean.n + '. <button type="button" multimeanoption wid="'+wid+'.'+mean.n+'" class="anchor">' + mean.e + '</button>; ' + mean.d + '</p>';
+	}
+	var sel = document.querySelector('form#multimean div#options');
+	sel.innerHTML = s;
+
+	// this doesn't work, so I leave it centered
+	//var form = document.querySelector('div#modalcontainer div');
+	//form.style.left = x + 'px';
+	//form.style.top = y + 'px';
+
+	(new voyc.Minimal).openPopup('multimean');
+
+	// attach handlers 	
+	var self = this;
+	var opts = sel.querySelectorAll('button[multimeanoption]');
+	for (var i=0; i<opts.length; i++) {
+		opts[i].addEventListener('click',function(e) {
+			var wid = e.currentTarget.getAttribute('wid');
+			self.chooseMean(wid);
+			(new voyc.Minimal).closePopup();
+		}, false);
+	}
+}
+voyc.Sam.prototype.chooseMean = function(wid) {
+	//find line, word
+	//find where object (linendx, wordndx)
+	//insert numdef in where object, line,ndx,numdef}
+	var a = wid.split('.');
+	var did = a[0];
+	var line= a[1];
+	var ndx = a[2];
+	var numdef = a[3];
+	var words = this.story.lines[line-1].words;
+	for (var i=0; i<words.length; i++) {
+		var w = words[i];
+		if (w.where[0].ndx == ndx) {
+			w.where[0].n = numdef;
+		}
+	}	
 }
 
 voyc.Sam.prototype.dochat = function(s,bpost) {
@@ -449,8 +515,7 @@ voyc.Sam.prototype.respond = function(o) {
 			}
 			if (this.story) {
 				var s = this.showParse(this.story, r)
-				var e = this.chat.post(this.chatid, s);
-				this.chat.postPost(e);
+				this.dochat(s,true);
 			}
 			break;
 		case 'prep':
@@ -666,19 +731,20 @@ voyc.Sam.prototype.drawLine = function(item) {
 		s += item.speaker + ": ";
 	}
 	for (var i=0; i<x.length; i++) {
-		if ((n < item.words.length) && i == item.words[n].where[0].ndx) {
+		var word = item.words[n];
+		if ((n < item.words.length) && i == word.where[0].ndx) {
 			if (i > 0) {
 				s += '</word>';
 			}
-			s += '<word ';
-			if (!item.words[n].dict) {
-				s += 'error ';
+			s += '<word wid="'+word.id+'.'+word.where[0].line+'.'+word.where[0].ndx+'"';
+			if (!word.dict) {
+				s += ' error';
 			}
-			else if (!item.words[n].vocab) {
-				s += 'newvocab ';
+			else if (!word.vocab) {
+				s += ' newvocab ';
 			}
-			else if (item.words[n].dict.mean.length > 1) {
-				s += 'multimean ';
+			else if (word.dict.mean.length > 1) {
+				s += ' multimean ';
 			}
 			s += '>';
 			n++;
