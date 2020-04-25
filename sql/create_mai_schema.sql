@@ -106,3 +106,12 @@ create table mai.alphabet (
 				r:diacritic right */
 );
 create unique index alphabet_t_index on mai.alphabet(t);
+
+create table mai.story (
+	id serial primary key,
+	authorid int,		/* foreign key to user table */
+	title varchar(100),
+	language char(2),	/* constant "th" */
+	original text
+);
+create unique index story_title_index on mai.story(title);

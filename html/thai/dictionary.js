@@ -312,11 +312,11 @@ voyc.Dictionary.prototype.composeOne = function(dict) {
 			s += dict.t;
 			s += " <icon type='draw' name='speaker' text='"+dict.t+"'></icon> &nbsp;";
 			s += "<span expand='rules"+this.unique+"'>" + this.drawTranslit(dict.tl) + "</span>";
-			s += " <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
+			s += " <i>" + voyc.pos[dict.mean[0].p] + "</i> " + dict.mean[0].e;
 			s += "<span expand='more"+this.unique+"' class='expander'></span>";
 			s += "<icon type='char' name='pencil' text='"+dict.t+"'></icon>";
 			s += "<div id='more"+this.unique+"'>";
-			s += dict.d;
+			s += dict.mean[0].d;
 			s += '</div>';
 			s += "<div id='rules"+this.unique+"'>";
 			s += this.drawComponents(dict.cp, dict.ru);

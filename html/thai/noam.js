@@ -394,12 +394,8 @@ voyc.Noam.prototype.parse = function(input,options) {
 	input string
 	output object containing parsed components
 **/
-voyc.Noam.prototype.parseStory = function(s) {
-	var d = {
-		speakers:{ 'x': {name:'narrator',age:40,gender:'male'} },
-		lines:[],
-		words:[],
-	};
+voyc.Noam.prototype.parseStory = function(story) {
+	var s = story.original;
 
 	// treat input s as an array of lines
 	var a = s.split('\n');
@@ -423,7 +419,7 @@ voyc.Noam.prototype.parseStory = function(s) {
 			o.name = b[0];
 			o.age = parseInt(b[1]);
 			o.gender = b[2].substr(0,1);
-			d.speakers[key] = o; 
+			story.speakers[key] = o; 
 			a.splice(i,1);
 			i--;
 		}
@@ -437,16 +433,18 @@ voyc.Noam.prototype.parseStory = function(s) {
 		o.text = assignText(o.original);
 		o.speech = prepSpeech(o.text);
 		o.display = prepDisplay(o);
-		d.lines.push(o);
+		story.lines.push(o);
 	}
 
 	// parse each line for words
-	for (var i=0; i<d.lines.length; i++) {
-		var line = d.lines[i].text;
-		d.lines[i].words = this.parseString(line, i+1);
-		d.words = this.combineArrays(d.words, d.lines[i].words);
+	for (var i=0; i<story.lines.length; i++) {
+		var line = story.lines[i].text;
+		story.lines[i].words = this.parseString(line, i+1);
+		story.words = this.combineArrays(story.words, story.lines[i].words);
 	}
-	return d;
+
+	story.title = story.lines[0].text;
+	return;
 
 	function assignSpeaker(orig) {
 		var key = 'x';

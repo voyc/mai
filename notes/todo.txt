@@ -57,7 +57,103 @@ search, show, cannot display multiple pos
 
 learn how to position a popup
 
+pencil edit from drill (no post post)
+
+phrases, using grammar, drive car, drive bus, ride horse, ride motorcycle, ascend airplane, sit car
+drill phrases
+
+create user samantha_voyc, save stories
+create user ning, save stories
+
+two extra cancel buttons at the bottom of html
+
+in drill answer, multiple pos, จอง jaawngM undefined reserve, pos=nv, noun,verb
+
+setvocab.php  is failing
+
+ทะเล    undefined undefined
+
+เทอม dicionary.js line 405 		s += '<br/>vowel pattern ' + vp.print + ' ' + this.drawClass(vp.m);
+
+in show lines
+<word multimean chosen
+in choose()
+add attribute to original word
+
+dict popup (replace expander)
+	options
+		show all meanings
+		show one meaning
+		show all meanings with choose menu
+	show translit
+	show pronunciation detail (for syllable)
+	click on component?
+		nested popup
+		cancel back to this one
+
+mouse select
+	add big word
+	add phrase
+	add expression
+
+parse or read
+show summary
+prep
+show
 ==============================
+mai.use
+	id
+	did
+	cnt
+	lvl index based on use count
+
+mai.story - saved in db
+	id
+	uid
+	blob
+	type: encyclopedia, news, song, conversation
+	lines
+		words
+	words with multimeans, line, ndx, id, numdef
+		(blob can be reparsed, then multimeans inserted)
+		(as opposed to storing numdef in the text in the blob)
+		(linenum, wordnum)
+	num words
+	avg lvl
+
+story object after parse
+	words
+	phrases
+	new words
+	new
+
+Calculate appropriateness of a story for a user
+	number of known words
+	number of new words
+	new/total
+	easy, sweet, hard
+
+read all the stories
+	make a table counting words/meanings
+	find highest use count, and lowest use count
+	interpolate an index from 0 to 100 for each use count
+	store count and level for all words in dict
+	
+x Create user ming: bvyznrw@sharklasers.com/ninghill1
+Create command save story.
+
+Show stories
+Parse story
+Save
+Like prep
+Choose story from list
+    Parse, show summary
+List, title, num words, num new, average level
+
+
+
+	
+===================================
 automated test suite, compare chat window to baseline
 
 chat commands, part of sam.js documentation

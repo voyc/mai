@@ -149,6 +149,7 @@ voyc.Sam.prototype.setup = function() {
 	this.observer.subscribe('search-received' ,'sam' ,function(note)  { self.onSearchReceived (note);});
 	this.observer.subscribe('edit-cancelled'   ,'sam' ,function(note) { self.onEditCancelled   (note);});
 	this.observer.subscribe('setdict-received' ,'sam' ,function(note) { self.onSetDictReceived (note);});
+	this.observer.subscribe('getstory-received' ,'sam' ,function(note) { self.onGetStoryReceived (note);});
 	
 	this.lee = new voyc.Lee(this.chat, this.observer);
 	this.speech = new voyc.Speech();
@@ -172,9 +173,6 @@ voyc.intervalToString = function(ms) {
 	else if (d > 0) s = d + 'days';
 	else if (h > 0) s = h + 'hours';
 	return s;
-}
-
-voyc.Sam.prototype.onGetDictReceived = function(note) {
 }
 
 voyc.Sam.prototype.onSearchReceived = function(note) {
@@ -503,9 +501,10 @@ voyc.Sam.prototype.respond = function(o) {
 				this.dochat(s);
 				break;
 			}
-			this.story = this.noam.parse(r.object,r.adj);	
-			var s = this.showParse(this.story,{object:'summary'});
-			this.chat.post(this.chatid, s);
+			this.story = new voyc.Story();
+			this.story.original = r.object;
+			this.noam.parseStory(this.story);	
+			this.prepStory(this.story);
 			break;
 		case 'show':
 			var r = this.parseRequest(input);
@@ -516,15 +515,6 @@ voyc.Sam.prototype.respond = function(o) {
 			if (this.story) {
 				var s = this.showParse(this.story, r)
 				this.dochat(s,true);
-			}
-			break;
-		case 'prep':
-			var r = this.parseRequest(input);
-			if (this.story) {
-				this.cmdPrep(r,this.story);
-			}
-			else {
-				this.dochat('parse a story first');
 			}
 			break;
 		case 'drill':
@@ -542,6 +532,14 @@ voyc.Sam.prototype.respond = function(o) {
 			var r = this.parseRequest(input);
 			this.cmdEdit(r);
 			break;
+		case 'save':
+			var r = this.parseRequest(input);
+			this.cmdSave(r);
+			break;
+		case 'read':
+			var r = this.parseRequest(input);
+			this.cmdRead(r);
+			break;
 
 		case 'kill':
 			this.state = 'ready';
@@ -551,6 +549,27 @@ voyc.Sam.prototype.respond = function(o) {
 		default:
 			this.chat.post(this.chatid, 'Would you like an example sentence?', ['yes', 'no']);
 			break;
+	}
+}
+
+voyc.Sam.prototype.cmdSave = function(r) {
+	if (this.story) {
+		this.story.save();
+	}
+}
+
+voyc.Sam.prototype.cmdRead = function(r) {
+	this.story = new voyc.Story();
+	this.story.read(r.object);
+}
+
+voyc.Sam.prototype.onGetStoryReceived = function(note) {
+	if (note.payload.status == 'ok') {
+		this.noam.parseStory(this.story);	
+		this.prepStory(this.story);
+	}
+	else {
+		this.dochat('not found');
 	}
 }
 
@@ -646,6 +665,7 @@ voyc.Sam.prototype.showParse = function(o,r) {
 	var s = '';
 	switch(r.object) {
 		case 'summary':
+			s += o.title + '<br/>';
 			var cnt = voyc.countObject(o.speakers);
 			if (cnt > 1) {
 				s += cnt-1 + ' speakers<br/>';
@@ -756,7 +776,8 @@ voyc.Sam.prototype.drawLine = function(item) {
 	return s;
 }
 
-voyc.Sam.prototype.cmdPrep = function(r, story) {
+// get a miniDict for all the words in the story
+voyc.Sam.prototype.prepStory = function(story) {
 	var ids = [];
 	for (var i=0; i<story.words.length; i++) {
 		var id = story.words[i].id;
@@ -779,6 +800,8 @@ voyc.Sam.prototype.onGetDictReceived = function(note) {
 			word.dict = voyc.dictionary.miniDict(word.id);
 		}
 	}
+	var s = this.showParse(this.story,{object:'summary'});
+	this.chat.post(this.chatid, s);
 }
 
 voyc.Sam.prototype.drillParse = function(o, r) {
@@ -788,6 +811,9 @@ voyc.Sam.prototype.drillParse = function(o, r) {
 			var sortme = [];
 			for (var i=0; i<o.words.length; i++) {
 				var w = o.words[i];
+				if (!w.id) {
+					continue;
+				}
 				if (r.adj.new && w.vocab) {
 					continue;
 				}

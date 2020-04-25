@@ -60,7 +60,7 @@ function setvocab() {
 		$sql = "select id from mai.vocab where userid = $1 and word = $2 and language = $3 and type = $4";
 		$params = array($userid, $word, $language, $type);
 		$result = execSql($conn, $name, $sql, $params, false);
-		if ($result) {
+		if ($result && pg_num_rows($result)) {
 			$row = pg_fetch_array($result, 0, PGSQL_ASSOC);
 			$vocabid = $row['id'];
 		}

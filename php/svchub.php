@@ -21,7 +21,9 @@ $supported_svcs = array(
 	'getdict',
 	'search',
 	'getfast',
-	'getalpha'
+	'getalpha',
+	'setstory',
+	'getstory'
 );
 
 function validateSvc($taint) {
