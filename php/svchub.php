@@ -23,7 +23,8 @@ $supported_svcs = array(
 	'getfast',
 	'getalpha',
 	'setstory',
-	'getstory'
+	'getstory',
+	'getstories'
 );
 
 function validateSvc($taint) {

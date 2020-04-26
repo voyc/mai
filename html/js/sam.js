@@ -117,11 +117,14 @@ voyc.Sam.prototype.chooseMean = function(wid) {
 	}	
 }
 
-voyc.Sam.prototype.dochat = function(s,bpost) {
+voyc.Sam.prototype.dochat = function(s,bpost,cb) {
 	var e = this.chat.post(this.chatid, s);
 	if (bpost) {
 		this.chat.postPost(e);
 		this.postPost(e);
+	}
+	if (cb) {
+		cb(e);
 	}
 }
 
@@ -150,6 +153,7 @@ voyc.Sam.prototype.setup = function() {
 	this.observer.subscribe('edit-cancelled'   ,'sam' ,function(note) { self.onEditCancelled   (note);});
 	this.observer.subscribe('setdict-received' ,'sam' ,function(note) { self.onSetDictReceived (note);});
 	this.observer.subscribe('getstory-received' ,'sam' ,function(note) { self.onGetStoryReceived (note);});
+	this.observer.subscribe('getstories-received' ,'sam' ,function(note) { self.onGetStoriesReceived (note);});
 	
 	this.lee = new voyc.Lee(this.chat, this.observer);
 	this.speech = new voyc.Speech();
@@ -493,6 +497,10 @@ voyc.Sam.prototype.respond = function(o) {
 
 		// new commands following
 
+		case 'list':
+			var r = this.parseRequest(input);
+			this.cmdListStories(r);
+			break;
 		case 'parse':
 			var r = this.parseRequest(input);
 			if (r.adj['syllable']) {
@@ -550,6 +558,37 @@ voyc.Sam.prototype.respond = function(o) {
 			this.chat.post(this.chatid, 'Would you like an example sentence?', ['yes', 'no']);
 			break;
 	}
+}
+
+voyc.Sam.prototype.cmdListStories = function(r) {
+	if (!this.story) {
+		this.story = new voyc.Story();
+	}
+	var s = this.story.list();
+}
+
+voyc.Sam.prototype.onGetStoriesReceived = function(note) {
+	if (note.payload.status != 'ok') {
+		this.dochat('not found');
+		return;
+	}
+	var s = '';
+	var list = note.payload.list;
+	for (var i=0; i<list.length; i++) {
+		s += '<button type="button" class="anchor" sid="'+list[i].id+'">';
+		s += list[i].title;
+		s += '</button><br/>';
+	}
+	var self = this;
+	this.dochat(s,false,function(e){
+		var elist = e.querySelectorAll('button[sid]');
+		for (var i=0; i<elist.length; i++) {
+			elist[i].addEventListener('click', function(e) {
+				var sid = e.currentTarget.getAttribute('sid');
+				self.cmdRead({object:sid});
+			}, false);
+		}
+	});
 }
 
 voyc.Sam.prototype.cmdSave = function(r) {

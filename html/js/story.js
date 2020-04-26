@@ -69,3 +69,16 @@ voyc.Story.prototype.read = function(id) {
 	});
 	this.observer.publish(svcname+'-posted', 'mai', {});
 }
+
+voyc.Story.prototype.list = function() {
+	var svcname = 'getstories';
+	var data = {};
+	data['si'] = voyc.getSessionId();
+	var self = this;
+	this.comm.request(svcname, data, function(ok, response, xhr) {
+		if (!ok) { response = { 'status':'system-error'}; }
+		console.log(svcname + ' status ' + response['status']);
+		self.observer.publish(svcname+'-received', 'mai', response);
+	});
+	this.observer.publish(svcname+'-posted', 'mai', {});
+}
