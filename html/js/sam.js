@@ -514,6 +514,12 @@ voyc.Sam.prototype.respond = function(o) {
 			this.noam.parseStory(this.story);	
 			this.prepStory(this.story);
 			break;
+		case 'replace':
+			var r = this.parseRequest(input);
+			this.story.replace(r.object);
+			this.noam.parseStory(this.story);	
+			this.prepStory(this.story);
+			break;
 		case 'show':
 			var r = this.parseRequest(input);
 			if (r.object == 'alphabet') {
@@ -522,7 +528,20 @@ voyc.Sam.prototype.respond = function(o) {
 			}
 			if (this.story) {
 				var s = this.showParse(this.story, r)
-				this.dochat(s,true);
+				this.dochat(s,true,function(e) {
+					var list = e.querySelectorAll('button[line]');
+					for (var i=0; i<list.length; i++) {
+						list[i].addEventListener('click', function(btn) {
+							console.log('button clicked');
+							var linenum = btn.currentTarget.getAttribute('line');
+							var elline = e.querySelector('line[num="'+linenum+'"]');
+							var hint = elline.getAttribute('hint');
+							hint++;
+							if (hint>=2) hint = 0;
+							elline.setAttribute('hint',hint);
+						}, false);
+					}
+				});
 			}
 			break;
 		case 'drill':
@@ -757,12 +776,15 @@ voyc.Sam.prototype.showParse = function(o,r) {
 			break;
 		case 'lines':
 			s += '<story ';
+			if (r.adj.author) {
+				s += 'author';
+			}
 			if (r.adj.hint) {
 				s += 'hint';
 			}
 			s += '>';
 			for (var i=0; i<o.lines.length; i++) {
-				s += this.drawLine(o.lines[i]);
+				s += this.drawLine(r,o.lines[i]);
 			}
 			s += '</story>';
 			break;
@@ -781,11 +803,46 @@ voyc.Sam.prototype.showParse = function(o,r) {
 	return s;
 }
 
-voyc.Sam.prototype.drawLine = function(item) {
+voyc.Sam.prototype.drawLine = function(r,item) {
+	var s = '';
+	var x = item.text;
+	var linenum = item.words[0].where[0].line;
+	s += '<line num='+linenum+' hint=0>';
+	if (item.speaker != 'x') {
+		s += '<speaker>'+item.speaker + ':</speaker>';
+	}
+	for (var n=0; n<item.words.length; n++) {
+		var word = item.words[n];
+		if (n > 0) {
+			s += '</word>';
+		}
+		s += '<word wid="'+word.id+'.'+word.where[0].line+'.'+word.where[0].ndx+'"';
+		if (!word.dict) {
+			s += ' error';
+		}
+		else if (!word.vocab) {
+			s += ' newvocab ';
+		}
+		else if (word.dict.mean.length > 1) {
+			s += ' multimean ';
+		}
+		s += '>';
+		s += '<t>'+word.text+'</t>';
+		s += '<e>'+word.dict.mean[0].e+'</e>';
+	} 
+	s += '</word>';
+	if (r.adj['hint']) {
+		s += '<button line="'+linenum+'">H</button>';
+	}
+	s += '</line>';
+	return s;
+}
+voyc.Sam.prototype.xdrawLine = function(r,item) {
 	var s = '';
 	var x = item.text;
 	var n = 0;
-	s += '<line>';
+	var linenum = item.words[0].where[0].line;
+	s += '<line num='+linenum+'>';
 	if (item.speaker != 'x') {
 		s += item.speaker + ": ";
 	}
@@ -811,6 +868,9 @@ voyc.Sam.prototype.drawLine = function(item) {
 		s += x[i];
 	} 
 	s += '</word>';
+	if (r.adj['hint']) {
+		s += '<button hint=0.'+linenum+'>H</button>';
+	}
 	s += '</line>';
 	return s;
 }
@@ -840,7 +900,7 @@ voyc.Sam.prototype.onGetDictReceived = function(note) {
 		}
 	}
 	var s = this.showParse(this.story,{object:'summary'});
-	this.chat.post(this.chatid, s);
+	this.dochat(s);
 }
 
 voyc.Sam.prototype.drillParse = function(o, r) {

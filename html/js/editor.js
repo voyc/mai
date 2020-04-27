@@ -353,7 +353,7 @@ voyc.Editor.template.trans = `
 		<label for='pos%n'>Parts of Speech</label>
 	</td><td>
 		<input id='pos%n' name='pos' type='text' data='nja'/>
-		<select id='posselect%n' name='posselect' multiple class='hidden' size='8'>
+		<select id='posselect%n' name='posselect' multiple class='hidden' size='11'>
 			<option value='n'>noun</option>
 			<option value='v'>verb</option>
 			<option value='c'>conjunction</option>
@@ -362,6 +362,9 @@ voyc.Editor.template.trans = `
 			<option value='e'>adverb</option>
 			<option value='r'>pronoun</option>
 			<option value='a'>particle</option>
+			<option value='g'>symbol</option>
+			<option value='s'>syllable</option>
+			<option value='x'>expression</option>
 		</select>
 	</td></tr><tr><td>
 		<label for='eng'>Gloss</label>

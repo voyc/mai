@@ -11,22 +11,22 @@ sentence {
 line {
 	display:block;
 }
-story[hint] line {
+story[author] line, story[hint] line {
 	border:1px solid gray;
 }
 word {
 }
-story[hint] word {
+story[author] word, story[hint] word, speaker {
 	margin-right: .5rem;
 }
-story[hint] word[error] {
+story[author] word[error] {
 	color:red;
 	cursor:pointer;
 }
-story[hint] word[newvocab] {
+story[author] word[newvocab] {
 	color:green;
 }
-story[hint] word[multimean] {
+story[author] word[multimean] {
 	color:cyan;
 	cursor:pointer;
 }
@@ -40,28 +40,43 @@ sylspc {
 syllable {
 	position:absolute;
 }
-syllable[hint=M] {
+syllable[tone=M] {
 	color:blue;
 }
-syllable[hint=H] {
+syllable[tone=H] {
 	transform: translate(0,-.5rem);
 	color:blue;
 }
-syllable[hint=M] {
+syllable[tone=M] {
 	color:green;
 }
-syllable[hint=L] {
+syllable[tone=L] {
 	transform: translate(0,.5rem);
 	color:brown;
 }
-syllable[hint=R] {
+syllable[tone=R] {
 	transform: rotate(-30deg);
 	color:red;
 }
-syllable[hint=F] {
+syllable[tone=F] {
 	transform: rotate(30deg);
 	color:orange;
 }
 button[a] {
 	margin-right:.3rem;
+}
+button[line] {
+	border-radius:10px;
+}
+story line[hint] word t {
+	display:none;
+}
+story line[hint] word e {
+	display:none;
+}
+story line[hint="0"] word t {
+	display:inline;
+}
+story line[hint="1"] word e {
+	display:inline;
 }

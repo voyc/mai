@@ -113,6 +113,33 @@ read all the stories
 Show stories List, title, num words, num new, average level
 Choose story from list
 
+keyboard
+	uppercase
+	learning: Homekeys,etc, known/new
+	alphabet consonants
+	alphabet vowel patterns
+
+reverse drill
+
+show components
+show expressions
+drill components
+drill expressions
+drill lines
+
+draw pos with multi pos values
+
+can you edit a word and then return to a drill?
+
+in story parse, replace pronouns with grammar codes
+in story draw, replace grammar codes with pronouns, depending on speaker age and gender
+allow this draw during drill lines, as well as show lines
+
+on each line, put a button to rotate hints:
+	normal, spaced, toned, wo, translate
+	translate requires content switch
+	the other four options can be done by switching css class
+
 ===================================
 automated test suite, compare chat window to baseline
 
@@ -120,7 +147,9 @@ chat commands, part of sam.js documentation
 
 developer
 kill
-__reload dictionary
+__reload dictionary, fastdict, minidict, auto after relevant update
+	reload fastdict and minidict after insert or update dict/mean
+	set dirty flag after edit
 __reload alphabet
 show alphabet
 search -glyph <letter thai>
@@ -129,20 +158,27 @@ search <word>
 
 author
 parse -syllable <word>
+
+list
+read <n>
 parse <story>
+replace
+save
+
 show (parse results) summary
 show (parse results) words
 show (parse results) -new words
 show (parse results) errors
 show (parse results) lines
 show (parse results) -hint lines
+
 edit <word>
 edit -new <word>
-read <n>
-save
 
 student
-drill
+drill -new words
+quit
+
 ==============================
 
 map object structure

@@ -8,9 +8,7 @@ voyc.Story = function() {
 	this.original = '';
 	this.title = '';
 	this.language = 'th';
-	this.speakers = {
-		x: {name: "narrator", age: 40, gender: "male"}
-	};
+	this.speakers = { x: {name: "narrator", age: 40, gender: "male"} };
 	this.lines = [];
 	this.words = [];
 
@@ -21,6 +19,14 @@ voyc.Story = function() {
 	this.comm = new voyc.Comm(url, 'acomm', 2, true);
 	this.observer = new voyc.Observer();
 	var self = this;
+}
+
+voyc.Story.prototype.replace = function(newtext) {
+	this.original = newtext;
+	this.title = '';
+	this.speakers = { x: {name: "narrator", age: 40, gender: "male"} };
+	this.lines = [];
+	this.words = [];
 }
 
 voyc.Story.prototype.save = function() {

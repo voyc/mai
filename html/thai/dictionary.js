@@ -325,18 +325,12 @@ voyc.Dictionary.prototype.composeOne = function(dict) {
 		case 'm':
 			s += dict.t;
 			s += " <icon type='draw' name='speaker' text='"+dict.t+"'></icon> &nbsp;";
-			s += this.drawTranslit(dict.tl) + " <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
+			s += this.drawTranslit(dict.tl);
+			s += " <i>" + voyc.pos[dict.mean[0].p] + "</i> " + dict.mean[0].e;
 			s += "<span expand='more"+this.unique+"' class='expander'></span>";
 			s += "<icon type='char' name='pencil' text='"+dict.t+"'></icon>";
 			s += "<div id='more"+this.unique+"'>";
-			s += dict.d;
-			if (dict.ru && dict.ru.length) {
-				s += '<br/>Rules:';
-				var ru = dict.ru.split(',');
-				for (var i=0; i<ru.length; i++) {
-					s += '<br/> '+voyc.dictionary.drawRule(ru[i]);
-				}
-			}
+			s += dict.mean[0].d;
 			s += '</div>';
 			break;	
 		case 's':
@@ -412,7 +406,7 @@ voyc.Dictionary.prototype.drawComponents = function(cp,ru) {
 			s += '<br/>tone mark ' + this.drawDiacritic(tm);
 		}
 	}
-	if (ru.length) {
+	if (ru && ru.length) {
 		s += '<br/>Rules:';
 		var ru = ru.split(',');
 		for (var i=0; i<ru.length; i++) {
@@ -432,8 +426,9 @@ voyc.pos = {
 	'e':'adv',
 	'r':'pron',
 	'a':'part',
-	'g':'glyph',
+	'g':'symbol',
 	's':'syllable',
+	'x':'expression',
 };
 voyc.strp = {
 	c:"consonant",
