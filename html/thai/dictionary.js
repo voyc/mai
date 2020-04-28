@@ -420,14 +420,15 @@ voyc.Dictionary.prototype.drawComponents = function(cp,ru) {
 voyc.pos = {
 	'n':'noun',
 	'v':'verb',
-	'c':'conj',
-	'p':'prep',
-	'j':'adj',
-	'e':'adv',
-	'r':'pron',
-	'a':'part',
+	'c':'conjunction',
+	'p':'preposition',
+	'j':'adjective',
+	'e':'adverb',
+	'r':'pronoun',
+	'a':'particle',
 	'g':'symbol',
 	's':'syllable',
+	'h':'phrase',
 	'x':'expression',
 };
 voyc.strp = {

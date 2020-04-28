@@ -71,7 +71,7 @@ voyc.Noam.prototype.combineArrays = function(combined, a) {
 	for (var i=0; i<a.length; i++) { // a[i] incoming
 		matched = false;
 		for (var j=0; j<c.length; j++) { // c[j] master
-			if (c[j].text == a[i].text) {
+			if (c[j].t == a[i].t) {
 				c[j].where.push(voyc.clone(a[i].where[0]));
 				matched = true;
 				break;
@@ -488,7 +488,6 @@ voyc.Noam.prototype.parseStory = function(story) {
 
 	@input string input
 	@return array of objects
-
 **/
 voyc.Noam.prototype.parseString = function(input, linenum) {
 	var words = [];
@@ -565,12 +564,13 @@ voyc.Noam.prototype.parseString = function(input, linenum) {
 	}
 	return words;
 
-	function sto(text, line, ndx, id, tl, vocab) {
+	function sto(t, line, ndx, id, tl, vocab) {
 		var o = {
-			text:text,
-			where:[{line:line,ndx:ndx}],
+			t:t,
+			where:[{line:line,wndx:words.length,tndx:ndx}],
 			id:id,
 			tl:tl,
+			n:0,
 			vocab:vocab
 		};
 		words.push(o);

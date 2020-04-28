@@ -58,7 +58,7 @@ voyc.Sam.prototype.postPost = function(e) {
 			self.cmdEdit({object:s,adj:['new']});
 		}, false);
 	}
-
+/*
 	// attach handler to multimean words in story
 	var elist = e.querySelectorAll('word[multimean]');
 	for (var i=0; i<elist.length; i++) {
@@ -67,8 +67,9 @@ voyc.Sam.prototype.postPost = function(e) {
 			self.popupMultiMean(wid,e.clientX,e.clientY);
 		}, false);
 	}
+*/
 }
-
+/*
 voyc.Sam.prototype.popupMultiMean = function(wid,x,y) {
 	var a = wid.split('.');
 	var did = a[0];
@@ -99,15 +100,24 @@ voyc.Sam.prototype.popupMultiMean = function(wid,x,y) {
 		}, false);
 	}
 }
-voyc.Sam.prototype.chooseMean = function(wid) {
-	//find line, word
-	//find where object (linendx, wordndx)
-	//insert numdef in where object, line,ndx,numdef}
-	var a = wid.split('.');
+*/
+voyc.Sam.prototype.chooseMean = function(mm) {
+	var a = mm.split('.');
 	var did = a[0];
 	var line= a[1];
-	var ndx = a[2];
-	var numdef = a[3];
+	var wndx = a[2];
+	var n = a[3];
+	this.story.mm.push({did:did,line:line,wndx:wndx,n:n});
+
+	this.story.lines[line-1].words[wndx].n = n;
+
+	// this works only on the first "show lines"
+	var wid = [did,line,wndx].join('.');
+	var el = document.querySelector('word[wid="'+wid+'"]');
+	el.removeAttribute('multimean');
+}
+
+voyc.Sam.prototype.mergeMM = function(wid) {
 	var words = this.story.lines[line-1].words;
 	for (var i=0; i<words.length; i++) {
 		var w = words[i];
@@ -517,7 +527,7 @@ voyc.Sam.prototype.respond = function(o) {
 		case 'replace':
 			var r = this.parseRequest(input);
 			this.story.replace(r.object);
-			this.noam.parseStory(this.story);	
+			this.noam.parseStory(this.story);
 			this.prepStory(this.story);
 			break;
 		case 'show':
@@ -537,8 +547,37 @@ voyc.Sam.prototype.respond = function(o) {
 							var elline = e.querySelector('line[num="'+linenum+'"]');
 							var hint = elline.getAttribute('hint');
 							hint++;
-							if (hint>=2) hint = 0;
+							if (hint>=3) hint = 0;
 							elline.setAttribute('hint',hint);
+						}, false);
+					}
+					var list = e.querySelectorAll('story line word');
+					for (var i=0; i<list.length; i++) {
+						list[i].addEventListener('click', function(clk) {
+							console.log('word clicked');
+							var wrd = clk.currentTarget;
+							var wid = wrd.getAttribute('wid');
+							var w = wid.split('.');
+							var did = w[0];
+							var line= w[1];
+							var wndx = w[2];
+							var word = voyc.mai.sam.story.lines[line-1].words[wndx];
+							var s = voyc.mai.sam.composeWord(word,r,wid);
+							var sel = document.querySelector('form#worddetails div#details');
+							sel.innerHTML = s;
+							(new voyc.Minimal()).openPopup('worddetails');
+							(new voyc.Minimal()).attachAll(sel);
+							(new voyc.Icon()).attachAll(sel);
+							(new voyc.Icon()).drawAll(sel);
+							// attach handlers 	
+							var opts = sel.querySelectorAll('button[mm]');
+							for (var i=0; i<opts.length; i++) {
+								opts[i].addEventListener('click',function(e) {
+									var mm = e.currentTarget.getAttribute('mm');
+									voyc.mai.sam.chooseMean(mm);
+									(new voyc.Minimal).closePopup();
+								}, false);
+							}
 						}, false);
 					}
 				});
@@ -577,6 +616,39 @@ voyc.Sam.prototype.respond = function(o) {
 			this.chat.post(this.chatid, 'Would you like an example sentence?', ['yes', 'no']);
 			break;
 	}
+}
+
+voyc.Sam.prototype.composeWord = function(word,r,wid) {
+	var s = '';
+	s += '<p>'+word.t;
+	s += " <icon type='draw' name='speaker' text='"+word.t+"'></icon> &nbsp;";
+	s += voyc.dictionary.drawTranslit(word.dict.tl);
+	s += "<icon type='char' name='pencil' text='"+word.t+"'></icon>";
+	s += '</p>';
+	var numdefs = word.dict.mean.length;
+	var mean = word.dict.mean[0];
+	if (numdefs == 1) {
+		s += '<p><b>'+mean.e+'</b> <i>'+voyc.pos[mean.p]+'</i> '+mean.d+'</p>';
+	}
+	else {
+		for (var i=0; i<word.dict.mean.length; i++) {
+			mean = word.dict.mean[i];
+			var num = mean.n + '. ';
+			var cls = '';
+			var eng = '';
+			if (word.n > 0 && word.n == (i+1)) {
+				eng = '<b>'+mean.e+'</b>';
+			}
+			else if (r.adj['author']) {
+				var mm = wid+'.'+mean.n;
+				eng = '<button type=button mm='+mm+' class=anchor>'+mean.e+'</button>';
+			}
+			s += '<p>'+num+eng+' <i>'+voyc.pos[mean.p]+'</i> '+mean.d+'</p>';
+		}
+	}
+	//type=o components and pronunciation rules
+	//type=m components with click
+	return s;
 }
 
 voyc.Sam.prototype.cmdListStories = function(r) {
@@ -816,7 +888,7 @@ voyc.Sam.prototype.drawLine = function(r,item) {
 		if (n > 0) {
 			s += '</word>';
 		}
-		s += '<word wid="'+word.id+'.'+word.where[0].line+'.'+word.where[0].ndx+'"';
+		s += '<word wid="'+word.id+'.'+word.where[0].line+'.'+word.where[0].wndx+'"';
 		if (!word.dict) {
 			s += ' error';
 		}
@@ -827,8 +899,9 @@ voyc.Sam.prototype.drawLine = function(r,item) {
 			s += ' multimean ';
 		}
 		s += '>';
-		s += '<t>'+word.text+'</t>';
-		s += '<e>'+word.dict.mean[0].e+'</e>';
+		s += '<t>'+word.t+'</t>';
+		s += '<e>'+word.dict.mean[word.n].e+'</e>';
+		s += '<tl>'+voyc.dictionary.drawTranslit(word.dict.tl)+'</tl>';
 	} 
 	s += '</word>';
 	if (r.adj['hint']) {

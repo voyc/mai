@@ -16,8 +16,12 @@ story[author] line, story[hint] line {
 }
 word {
 }
-story[author] word, story[hint] word, speaker {
+speaker {
 	margin-right: .5rem;
+}
+story[author] word, story[hint] word {
+	margin-right: .5rem;
+	cursor:pointer;
 }
 story[author] word[error] {
 	color:red;
@@ -68,10 +72,7 @@ button[a] {
 button[line] {
 	border-radius:10px;
 }
-story line[hint] word t {
-	display:none;
-}
-story line[hint] word e {
+story line[hint] word t, story line[hint] word e, story line[hint] word tl  {
 	display:none;
 }
 story line[hint="0"] word t {
@@ -79,4 +80,16 @@ story line[hint="0"] word t {
 }
 story line[hint="1"] word e {
 	display:inline;
+}
+story line[hint="2"] word tl {
+	display:inline;
+}
+div#details i {
+	font-size:10pt;
+}
+div#details icon[name=pencil] {
+	float:right;
+}
+button[mm].chosen {
+	font-weight:bold:
 }
