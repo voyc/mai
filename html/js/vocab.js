@@ -1,7 +1,7 @@
 /**
 	class Vocab
 	singleton
-	Maintain a list of vocabulary words.
+	Maintain a list of vocabulary words, in db and in localStorage.
 	Each entry in the list looks like this:
 		{
 			w:'กิน', // word

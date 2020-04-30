@@ -3,69 +3,95 @@
 	singleton
 	
 	public function:
-		translate(phrase)
+		constructor
+		setup
+		getFast - read the fast list from the db
+		fastMatch(t) - lookup fastdict by thai word
+		
+		isEnglish(s)
+		lang(s) - return e or t
+		update(o) - update one word in the dictionary
+		
+		getDict(ida) - input array of ids, load mini.list and mini.key from db
+		miniDict(id) - a lookup function
+		
+		search(word,lang,typearray)
+			onSearchReceived
+		
+		translate(passage,lang)
+		translit(passage,lang)
+		iterate(cb,primaryOnly)
+		checkDupes()
+		listAll()
+		
+		compose(dict)
+		composeOne(dict)
+		drawClass(glyph) - using static table
+		drawDiacritic(glyph) - add dotted-circle char
+		drawRule - using static table
+		drawTranslit(tl) - insert sup html
+		joinComponents(lc,vp,fc,tm,tn)
+		splitComponents(cp)
+		drawComponents(cp,ru)
+		
+		static code tables
+		pos
+		p - consonant/vowel/tonemark - move to Alphabet ?
+		m - short/long, low/middle/high - move to Alphabet ?
+		ru - rule codes
+		
+	todo:
+	rename voyc.ru to voyc.Dictionary.rulecodes
+	rename voyc.pos to voyc.Dictionary.poscodes
+	move p and m tables to alphabet
+	x call getfast on login, not startup, or skip si check
+	keep dirty flag, reload fast and mini db changes
 **/
 voyc.Dictionary = function() {
-	this.unique = 10001000;
+	this.unique = 10001000; // used in composeOne() to make unique attribute names
+	this.fast = [];  // sfast lookup
+	this.mini = {
+		list: [], // subset of complete dict/mean records
+		key: {}
+	}
+	this.setup();
+}
 
+voyc.Dictionary.prototype.setup = function() {
 	var url = '/svc/';
 	if (window.location.origin == 'file://') {
 		url = 'http://mai.voyc.com/svc';  // for local testing
 	}
-
 	this.comm = new voyc.Comm(url, 'acomm', 2, true);
 	this.observer = new voyc.Observer();
-
-	this.fast = [];
-	this.setup();
-
-	this.mini = {
-		list: [],
-		key: {}
-	}
-}
-
-voyc.Dictionary.prototype.miniDict = function(id) {
-	return this.mini.list[this.mini.key[id]];
-}
-
-voyc.Dictionary.prototype.setup = function() {
-	var self = this;
-	this.observer.subscribe('getfast-received' ,'dictionary' ,function(note) { self.onGetFastReceived (note); });
 	this.getFast();
 }
 
 voyc.Dictionary.prototype.getFast = function(o) {
-
 	var svcname = 'getfast';
-
-	// build data array of name/value pairs from user input
 	var data = {};
-	data['si'] = voyc.getSessionId();
-
-	// call svc
 	var self = this;
 	this.comm.request(svcname, data, function(ok, response, xhr) {
 		if (!ok) {
 			response = { 'status':'system-error'};
 		}
-
-		self.observer.publish('getfast-received', 'mai', response);
-
 		if (response['status'] == 'ok') {
-			console.log('getfast success');
+			self.fast = response.list;
 		}
-		else {
-			console.log('getfast failed');
-		}
+		self.observer.publish(svcname+'-received', 'mai', response);
+		console.log(svcname+(response['status']=='ok') ? ' success' : ' failed');
 	});
-
-	this.observer.publish('getfast-posted', 'mai', {});
+	this.observer.publish(svcname+'-posted', 'mai', {});
 	return;
 }
 
-voyc.Dictionary.prototype.onGetFastReceived = function(note) {
-	this.fast = note.payload.list;
+voyc.Dictionary.prototype.fastMatch = function(t) {
+	for (var i=0; i<this.fast.length; i++) {
+		if (this.fast[i].t.toLowerCase() == t.toLowerCase()) {
+			return this.fast[i];
+		}
+	}
+	return false;
 }
 
 voyc.Dictionary.prototype.isEnglish = function(s) {
@@ -138,6 +164,12 @@ voyc.Dictionary.prototype.getDict = function(ida) {
 	return;
 }
 
+// lookup word in mini by id
+voyc.Dictionary.prototype.miniDict = function(id) {
+	return this.mini.list[this.mini.key[id]];
+}
+
+
 voyc.Dictionary.prototype.search = function(word, lang, typearray) {
 	var svcname = 'search';
 
@@ -166,29 +198,6 @@ voyc.Dictionary.prototype.search = function(word, lang, typearray) {
 	this.observer.publish('search-posted', 'mai', {});
 	return;
 }
-
-voyc.Dictionary.prototype.fastMatch = function(t) {
-	for (var i=0; i<this.fast.length; i++) {
-		if (this.fast[i].t.toLowerCase() == t.toLowerCase()) {
-			return this.fast[i];
-		}
-	}
-	return false;
-}
-
-//voyc.Dictionary.prototype.search = function(word, lang, typearray) {
-//	var lang = lang || this.lang(word);
-//	var typearray = typearray || false;
-//	var m = [];
-//	for (var i=0; i<this.dict.length; i++) {
-//		if (this.dict[i][lang].toLowerCase() == word.toLowerCase()) {
-//			if (!typearray || typearray.includes(this.dict[i].g)) {
-//				m.push(this.dict[i]);
-//			}
-//		}
-//	}
-//	return m;
-//}
 
 voyc.Dictionary.prototype.translate = function(passage, lang) {
 	var ilang = lang || this.lang(passage);
@@ -481,5 +490,4 @@ voyc.ru = [
 	{code:'cciva', name:'Inherent vowel, short a', details:'A short a sound invoked with one standalone consonant.'},
 	{code:'ccive', name:'Inherent vowel, short a, enepenthetic', details:'A short a sound inserted between two incompatible consonants, creating an extra syllable instead of a dipthong.'},
 ];
-
 
