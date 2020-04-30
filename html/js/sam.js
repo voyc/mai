@@ -8,6 +8,10 @@
 	Sam is short for Samantha, 
 	the AI character played by Scarlett Johannson
 	in the 2013 Spike Jonez movie "Her".
+
+	public methods
+		postPost(e)	
+		
 **/
 voyc.Sam = function(chat) {
 	this.chat = chat;
@@ -58,49 +62,8 @@ voyc.Sam.prototype.postPost = function(e) {
 			self.cmdEdit({object:s,adj:['new']});
 		}, false);
 	}
-/*
-	// attach handler to multimean words in story
-	var elist = e.querySelectorAll('word[multimean]');
-	for (var i=0; i<elist.length; i++) {
-		elist[i].addEventListener('click', function(e) {
-			var wid = e.currentTarget.getAttribute('wid');
-			self.popupMultiMean(wid,e.clientX,e.clientY);
-		}, false);
-	}
-*/
 }
-/*
-voyc.Sam.prototype.popupMultiMean = function(wid,x,y) {
-	var a = wid.split('.');
-	var did = a[0];
-	var dict = voyc.dictionary.miniDict(did);
-	var s = '';
-	for (var i=0; i<dict.mean.length; i++) {
-		var mean = dict.mean[i];
-		s += '<p>' + mean.n + '. <button type="button" multimeanoption wid="'+wid+'.'+mean.n+'" class="anchor">' + mean.e + '</button>; ' + mean.d + '</p>';
-	}
-	var sel = document.querySelector('form#multimean div#options');
-	sel.innerHTML = s;
 
-	// this doesn't work, so I leave it centered
-	//var form = document.querySelector('div#modalcontainer div');
-	//form.style.left = x + 'px';
-	//form.style.top = y + 'px';
-
-	(new voyc.Minimal).openPopup('multimean');
-
-	// attach handlers 	
-	var self = this;
-	var opts = sel.querySelectorAll('button[multimeanoption]');
-	for (var i=0; i<opts.length; i++) {
-		opts[i].addEventListener('click',function(e) {
-			var wid = e.currentTarget.getAttribute('wid');
-			self.chooseMean(wid);
-			(new voyc.Minimal).closePopup();
-		}, false);
-	}
-}
-*/
 voyc.Sam.prototype.chooseMean = function(e,mm,wid) {
 	var n = parseInt(mm);
 	var a = wid.split('.');
@@ -121,17 +84,6 @@ voyc.Sam.prototype.chooseMean = function(e,mm,wid) {
 	el.setAttribute('chosen',true);
 }
 
-/*
-voyc.Sam.prototype.mergeMM = function(wid) {
-	var words = this.story.lines[line-1].words;
-	for (var i=0; i<words.length; i++) {
-		var w = words[i];
-		if (w.loc[0].ndx == ndx) {
-			w.loc[0].n = numdef;
-		}
-	}	
-}
-*/
 voyc.Sam.prototype.dochat = function(s,bpost,cb) {
 	var e = this.chat.post(this.chatid, s);
 	if (bpost) {
@@ -884,19 +836,6 @@ voyc.Sam.prototype.showParse = function(o,r) {
 
 voyc.printf = function(s,a) {
 	var t = s;
-	var m = t.match(/\$(.*?)(\s|\$|$)/g)
-	for (var i=0; i<m.length; i++) {
-		var u = m[i];
-		var r = a[i];
-		if (u.substr(u.length-1) == '$') {
-			r = '"' + r + '"';
-		}
-		t = t.replace(u, r);		
-	}
-	return t;
-}
-voyc.printf = function(s,a) {
-	var t = s;
 	var m = t.match(/\$\d/g)
 	for (var i=0; i<m.length; i++) {
 		var u = m[i];
@@ -949,45 +888,6 @@ voyc.Sam.prototype.drawLine = function(r,item) {
 	s += '</line>';
 	return s;
 }
-/*
-voyc.Sam.prototype.xdrawLine = function(r,item) {
-	var s = '';
-	var x = item.text;
-	var n = 0;
-	var linenum = item.words[0].loc[0].line;
-	s += '<line num='+linenum+'>';
-	if (item.speaker != 'x') {
-		s += item.speaker + ": ";
-	}
-	for (var i=0; i<x.length; i++) {
-		var word = item.words[n];
-		if ((n < item.words.length) && i == word.loc[0].ndx) {
-			if (i > 0) {
-				s += '</word>';
-			}
-			s += '<word wid="'+word.id+'.'+word.loc[0].line+'.'+word.loc[0].ndx+'"';
-			if (!word.dict) {
-				s += ' error';
-			}
-			else if (!word.vocab) {
-				s += ' newvocab ';
-			}
-			else if (word.dict.mean.length > 1) {
-				s += ' multimean ';
-			}
-			s += '>';
-			n++;
-		}
-		s += x[i];
-	} 
-	s += '</word>';
-	if (r.adj['hint']) {
-		s += '<button hint=0.'+linenum+'>H</button>';
-	}
-	s += '</line>';
-	return s;
-}
-*/
 
 // get a miniDict for all the words in the story
 voyc.Sam.prototype.prepStory = function(story) {
