@@ -135,6 +135,11 @@ in story parse, replace pronouns with grammar codes
 	in story draw, replace grammar codes with pronouns, depending on speaker age and gender
 	allow this draw during drill lines, as well as show lines
 
+fast dict loaded on startup
+	if fails if not logged in
+	and is never loaded again after login
+	(we don't really need logged in user to get access to dict, but still, load it after login)
+
 ===================================
 automated test suite, compare chat window to baseline
 

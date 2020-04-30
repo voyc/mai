@@ -10,8 +10,52 @@
 	in the 2013 Spike Jonez movie "Her".
 
 	public methods
-		postPost(e)	
+		constructor
+		setup
+		onGetVocabReceived - setup continued, instantiate noam & editor
+		dochat
+		postPost
+		onLoginReceived
+		onLogoutReceived
+		onAnonymous
 		
+		onSearchReceived - state edit, search, prep?
+		
+		startLevel
+		startDrill
+		endDrill
+		endLevel
+		reportScores
+		drillStory
+		prepStack
+		
+		respond - state machine, command processor, conversational engine
+		parseRequest
+		
+		cmdListStories
+		onGetStoriesReceived
+		cmdSaveStory
+		cmdReadStory
+		onGetStoryReceived
+		prepStory
+		onGetDictReceived
+		showStory
+		drawLine
+		composeWord
+		chooseMean
+		
+		
+		cmdSearch
+		cmdEdit
+		onEditCancelled
+		onSetDictReceived
+		
+		cmdSetVocab
+		cmdGetVocab
+		cmdRemoveVocab
+		
+		voyc.printf
+		voyc.intervalToString
 **/
 voyc.Sam = function(chat) {
 	this.chat = chat;
@@ -23,6 +67,37 @@ voyc.Sam = function(chat) {
 	this.story = false;
 	this.lang = 'thai';
 	this.editdict = {};
+}
+
+voyc.Sam.prototype.setup = function() {
+	this.vocab = new voyc.Vocab();
+	voyc.dictionary = new voyc.Dictionary();
+	voyc.sengen = new voyc.SenGen(this.vocab);
+
+	this.chatid = this.chat.addUser('Sam', true, false);
+
+	this.observer = new voyc.Observer();
+	var self = this;
+	this.observer.subscribe( "chat-posted", 'sam', function(note) {
+		console.log('on post');
+		if (note.payload.userid == self.chatidguest) {
+			self.respond(note.payload);
+		}
+	});
+	this.observer.subscribe('login-received'   ,'sam' ,function(note) { self.onLoginReceived   (note);});
+	this.observer.subscribe('relogin-received' ,'sam' ,function(note) { self.onLoginReceived   (note);});
+	this.observer.subscribe('restart-anonymous','sam' ,function(note) { self.onAnonymous       (note);});
+	this.observer.subscribe('logout-received'  ,'sam' ,function(note) { self.onLogoutReceived  (note);});
+	this.observer.subscribe('getvocab-received','sam' ,function(note) { self.onGetVocabReceived(note);});
+	this.observer.subscribe('getdict-received' ,'sam' ,function(note) { self.onGetDictReceived (note);});
+	this.observer.subscribe('search-received' ,'sam' ,function(note)  { self.onSearchReceived (note);});
+	this.observer.subscribe('edit-cancelled'   ,'sam' ,function(note) { self.onEditCancelled   (note);});
+	this.observer.subscribe('setdict-received' ,'sam' ,function(note) { self.onSetDictReceived (note);});
+	this.observer.subscribe('getstory-received' ,'sam' ,function(note) { self.onGetStoryReceived (note);});
+	this.observer.subscribe('getstories-received' ,'sam' ,function(note) { self.onGetStoriesReceived (note);});
+	
+	this.lee = new voyc.Lee(this.chat, this.observer);
+	this.speech = new voyc.Speech();
 
 	// move this to chat?
 	// extend Chat object to do post processing of a chat post
@@ -30,6 +105,27 @@ voyc.Sam = function(chat) {
 		(new voyc.Minimal()).attachAll(e);
 		(new voyc.Icon()).attachAll(e);
 		(new voyc.Icon()).drawAll(e);
+	}
+}
+
+voyc.Sam.prototype.onGetVocabReceived = function() {
+	// setup continued
+	this.noam = new voyc.Noam(voyc.dictionary, this.vocab);
+	//this.level.loadPreviousLevelInProgress();
+	var interval = Date.now() - this.vocab.vocab.recency;
+	//this.setupFirstLevel(interval);
+	//voyc.curriculum = new voyc.Curriculum(voyc.$('curriculum'), this.observer, this.vocab, this.noam);
+	voyc.editor = new voyc.Editor(voyc.$('editor'), this.observer, this.noam);
+}
+
+voyc.Sam.prototype.dochat = function(s,bpost,cb) {
+	var e = this.chat.post(this.chatid, s);
+	if (bpost) {
+		this.chat.postPost(e);
+		this.postPost(e);
+	}
+	if (cb) {
+		cb(e);
 	}
 }
 
@@ -64,86 +160,19 @@ voyc.Sam.prototype.postPost = function(e) {
 	}
 }
 
-voyc.Sam.prototype.chooseMean = function(e,mm,wid) {
-	var n = parseInt(mm);
-	var a = wid.split('.');
-	var did = parseInt(a[0]);
-	var line= parseInt(a[1]);
-	var wndx = parseInt(a[2]);
-
-	// insert the chosen mean into the lines/words array
-	var word = this.story.lines[line-1].words[wndx];
-	word.loc[0].n = n;
-
-	// insert the chosen mean into the story/words array
-	
-
-	// set the UI
-	var parent = voyc.findParentWithTag(voyc.cheat,'story');
-	var el = parent.querySelector('word[wid="'+wid+'"]');
-	el.setAttribute('chosen',true);
+voyc.Sam.prototype.onLoginReceived = function(note) {
+	this.chatidguest = this.chat.addUser(note.payload.uname, false, true);
+	this.chat.post(this.chatid, "Welcome back, " + note.payload.uname);
 }
 
-voyc.Sam.prototype.dochat = function(s,bpost,cb) {
-	var e = this.chat.post(this.chatid, s);
-	if (bpost) {
-		this.chat.postPost(e);
-		this.postPost(e);
-	}
-	if (cb) {
-		cb(e);
-	}
+voyc.Sam.prototype.onLogoutReceived = function(note) {
+	this.chat.post(this.chatid, "Goodbye.");
 }
 
-voyc.Sam.prototype.setup = function() {
-	this.vocab = new voyc.Vocab();
-	voyc.dictionary = new voyc.Dictionary();
-	voyc.sengen = new voyc.SenGen(this.vocab);
-
-	this.chatid = this.chat.addUser('Sam', true, false);
-
-	this.observer = new voyc.Observer();
-	var self = this;
-	this.observer.subscribe( "chat-posted", 'sam', function(note) {
-		console.log('on post');
-		if (note.payload.userid == self.chatidguest) {
-			self.respond(note.payload);
-		}
-	});
-	this.observer.subscribe('login-received'   ,'sam' ,function(note) { self.onLoginReceived   (note);});
-	this.observer.subscribe('relogin-received' ,'sam' ,function(note) { self.onLoginReceived   (note);});
-	this.observer.subscribe('restart-anonymous','sam' ,function(note) { self.onAnonymous       (note);});
-	this.observer.subscribe('logout-received'  ,'sam' ,function(note) { self.onLogoutReceived  (note);});
-	this.observer.subscribe('getvocab-received','sam' ,function(note) { self.onGetVocabReceived(note);});
-	this.observer.subscribe('getdict-received' ,'sam' ,function(note) { self.onGetDictReceived (note);});
-	this.observer.subscribe('search-received' ,'sam' ,function(note)  { self.onSearchReceived (note);});
-	this.observer.subscribe('edit-cancelled'   ,'sam' ,function(note) { self.onEditCancelled   (note);});
-	this.observer.subscribe('setdict-received' ,'sam' ,function(note) { self.onSetDictReceived (note);});
-	this.observer.subscribe('getstory-received' ,'sam' ,function(note) { self.onGetStoryReceived (note);});
-	this.observer.subscribe('getstories-received' ,'sam' ,function(note) { self.onGetStoriesReceived (note);});
-	
-	this.lee = new voyc.Lee(this.chat, this.observer);
-	this.speech = new voyc.Speech();
-}
-
-voyc.intervalToString = function(ms) {
-	var msPerHour  = 1000*3600;
-	var msPerDay   = 1000*3600*24;
-	var msPerWeek  = 1000*3600*24*7;
-	var msPerMonth = 1000*3600*24*30;
-	var msPerYear  = 1000*3600*24*365;
-	var y = Math.floor(ms/msPerYear);
-	var m = Math.floor(ms/msPerMonth);
-	var w = Math.floor(ms/msPerWeek);
-	var d = Math.floor(ms/msPerDay);
-	var h = Math.floor(ms/msPerHour);
-	var s = '';
-	if (y > 0) s = y + 'years';
-	else if (m > 0) s = m + 'months';
-	else if (w > 0) s = w + 'weeks';
-	else if (d > 0) s = d + 'days';
-	else if (h > 0) s = h + 'hours';
-	return s;
+voyc.Sam.prototype.onAnonymous = function(note) {
+	this.chatidguest = this.chat.addUser('Guest', false, true);
+	this.chat.post(this.chatid, "Welcome to mai.voyc, the Online Language School.", []);
+	this.chat.post(this.chatid, "Please login or register to begin.", []);
 }
 
 voyc.Sam.prototype.onSearchReceived = function(note) {
@@ -174,16 +203,6 @@ voyc.Sam.prototype.onSearchReceived = function(note) {
 			this.state = 'ready';
 			break;
 	}
-}
-
-voyc.Sam.prototype.onGetVocabReceived = function() {
-	// setup continued
-	this.noam = new voyc.Noam(voyc.dictionary, this.vocab);
-	//this.level.loadPreviousLevelInProgress();
-	var interval = Date.now() - this.vocab.vocab.recency;
-	//this.setupFirstLevel(interval);
-	//voyc.curriculum = new voyc.Curriculum(voyc.$('curriculum'), this.observer, this.vocab, this.noam);
-	voyc.editor = new voyc.Editor(voyc.$('editor'), this.observer, this.noam);
 }
 
 /*
@@ -354,21 +373,56 @@ voyc.Sam.prototype.reportScores = function(scores) {
 	}
 }
 
-voyc.Sam.prototype.onLoginReceived = function(note) {
-	this.chatidguest = this.chat.addUser(note.payload.uname, false, true);
-	this.chat.post(this.chatid, "Welcome back, " + note.payload.uname);
+voyc.Sam.prototype.drillStory = function(o, r) {
+	var s = '';
+	switch(r.object) {
+		case 'words':
+			var sortme = [];
+			for (var i=0; i<o.words.length; i++) {
+				var w = o.words[i];
+				if (!w.id) {
+					continue;
+				}
+				if (r.adj.new && w.vocab) {
+					continue;
+				}
+				sortme.push(w);
+			}
+			var sorted = sortme.sort(function(a,b) {
+				return a.text.length - b.text.length;
+			});
+			var stack = this.prepStack(sorted, o,r);
+			var self = this;
+
+			this.state = 'drill';
+			this.lee.drill(stack, function(scores) {
+				self.reportScores(scores);
+			});
+			break;
+	}
+	return;
 }
 
-voyc.Sam.prototype.onLogoutReceived = function(note) {
-	this.chat.post(this.chatid, "Goodbye.");
+voyc.Sam.prototype.prepStack = function(w, o, r) {
+	var stack = o;
+	o.id = 'cotravwh';
+	o.prereq = false;
+	o.postreq = false;
+	o.algorithm = 'progressive';
+	o.primaryDictType =  'word';
+	o.title = 'ning botti 1';
+	o.glyph = [];
+	o.word = w;
+	o.phrase = []; 
+	o.drill = w;
+	return stack;
 }
 
-voyc.Sam.prototype.onAnonymous = function(note) {
-	this.chatidguest = this.chat.addUser('Guest', false, true);
-	this.chat.post(this.chatid, "Welcome to mai.voyc, the Online Language School.", []);
-	this.chat.post(this.chatid, "Please login or register to begin.", []);
-}
-
+/*
+	respond to chat commands
+	state machine
+	command processor
+*/
 voyc.Sam.prototype.respond = function(o) {
 	if (this.state ==  'drill')
 		return this.lee.respond(o);
@@ -401,16 +455,16 @@ voyc.Sam.prototype.respond = function(o) {
 			this.startLevel(this.level.id);
 			break;
 		case 'set':
-			this.setVocab(o.msg);
+			this.cmdSetVocab(o.msg);
 			this.chat.post(this.chatid, 'done');
 			break;
 		case 'get':
-			var r = this.getVocab(o.msg);
+			var r = this.cmdGetVocab(o.msg);
 			var s = voyc.printArray(r,voyc.breakSentence);
 			this.chat.post(this.chatid, s);
 			break;
 		case 'remove':
-			this.removeVocab(o.msg);
+			this.cmdRemoveVocab(o.msg);
 			this.chat.post(this.chatid, 'done');
 		case 'sample':
 			this.req.target = voyc.cloneArray(w);
@@ -472,7 +526,7 @@ voyc.Sam.prototype.respond = function(o) {
 			var r = this.parseRequest(input);
 			if (r.adj['syllable']) {
 				var po = this.noam.parse(r.object,r.adj);	
-				var s = this.showParse(po,{object:'syllable'});
+				var s = this.showStory(po,{object:'syllable'});
 				this.dochat(s);
 				break;
 			}
@@ -494,7 +548,7 @@ voyc.Sam.prototype.respond = function(o) {
 				this.dochat(s);
 			}
 			if (this.story) {
-				var s = this.showParse(this.story, r)
+				var s = this.showStory(this.story, r)
 				this.dochat(s,true,function(e) {
 					var list = e.querySelectorAll('button[line]');
 					for (var i=0; i<list.length; i++) {
@@ -546,7 +600,7 @@ voyc.Sam.prototype.respond = function(o) {
 			var r = this.parseRequest(input);
 			var s = 'Parse a story first.';
 			if (this.story) {
-				this.drillParse(this.story, r)
+				this.drillStory(this.story, r)
 			}
 			break;
 		case 'search':
@@ -559,11 +613,11 @@ voyc.Sam.prototype.respond = function(o) {
 			break;
 		case 'save':
 			var r = this.parseRequest(input);
-			this.cmdSave(r);
+			this.cmdSaveStory(r);
 			break;
 		case 'read':
 			var r = this.parseRequest(input);
-			this.cmdRead(r);
+			this.cmdReadStory(r);
 			break;
 
 		case 'kill':
@@ -575,149 +629,6 @@ voyc.Sam.prototype.respond = function(o) {
 			this.chat.post(this.chatid, 'Would you like an example sentence?', ['yes', 'no']);
 			break;
 	}
-}
-
-voyc.Sam.prototype.composeWord = function(word,r,wid) {
-	var s = '';
-	s += '<p>'+word.dict.t;
-	s += " <icon type='draw' name='speaker' text='"+word.dict.t+"'></icon> &nbsp;";
-	s += voyc.dictionary.drawTranslit(word.dict.tl);
-	s += "<icon type='char' name='pencil' text='"+word.dict.t+"'></icon>";
-	s += '</p>';
-	var numdefs = word.dict.mean.length;
-	var mean = word.dict.mean[0];
-	if (numdefs == 1) {
-		s += '<p><b>'+mean.e+'</b> <i>'+voyc.pos[mean.p]+'</i> '+mean.d+'</p>';
-	}
-	else {
-		for (var i=0; i<word.dict.mean.length; i++) {
-			mean = word.dict.mean[i];
-			var num = mean.n + '. ';
-			var mm = mean.n;
-			var eng = '';
-			if (word.loc[0].n > 0 && word.loc[0].n == (i+1)) {
-				eng = '<b>'+mean.e+'</b>';
-			}
-			else if (r.adj['author']) {
-				eng = voyc.printf('<button type=button wid="$1" mm=$2 class=anchor>$3</button>',[wid,mm,mean.e]);
-				//eng = '<button type=button mm='+mm+' class=anchor>'+mean.e+'</button>';
-			}
-			s += '<p>'+num+eng+' <i>'+voyc.pos[mean.p]+'</i> '+mean.d+'</p>';
-		}
-	}
-	//type=o components and pronunciation rules
-	//type=m components with click
-	return s;
-}
-
-voyc.Sam.prototype.cmdListStories = function(r) {
-	if (!this.story) {
-		this.story = new voyc.Story();
-	}
-	var s = this.story.list();
-}
-
-voyc.Sam.prototype.onGetStoriesReceived = function(note) {
-	if (note.payload.status != 'ok') {
-		this.dochat('not found');
-		return;
-	}
-	var s = '';
-	var list = note.payload.list;
-	for (var i=0; i<list.length; i++) {
-		s += '<button type="button" class="anchor" sid="'+list[i].id+'">';
-		s += list[i].title;
-		s += '</button><br/>';
-	}
-	var self = this;
-	this.dochat(s,false,function(e){
-		var elist = e.querySelectorAll('button[sid]');
-		for (var i=0; i<elist.length; i++) {
-			elist[i].addEventListener('click', function(e) {
-				var sid = e.currentTarget.getAttribute('sid');
-				self.cmdRead({object:sid});
-			}, false);
-		}
-	});
-}
-
-voyc.Sam.prototype.cmdSave = function(r) {
-	if (this.story) {
-		this.story.save();
-	}
-}
-
-voyc.Sam.prototype.cmdRead = function(r) {
-	this.story = new voyc.Story();
-	this.story.read(r.object);
-}
-
-voyc.Sam.prototype.onGetStoryReceived = function(note) {
-	if (note.payload.status == 'ok') {
-		this.noam.parseStory(this.story);	
-		this.prepStory(this.story);
-	}
-	else {
-		this.dochat('not found');
-	}
-}
-
-voyc.Sam.prototype.cmdSearch = function(r) {
-	if (this.state != 'ready') {
-		this.dochat('busy already');
-	}
-	if (!r.object) {
-		this.dochat('search for what?');
-	}
-	else {
-		if (r.adj['glyph']) {
-			var o = voyc.alphabet.search(r.object);
-			var s = 'not found';
-			if (o) {
-				s = voyc.alphabet.compose(o);
-			}
-			this.dochat(s);
-		}
-		else {
-			this.state = 'search';
-			var m = voyc.dictionary.search(r.object);
-			this.dochat('searching...');
-		}
-	}
-}
-
-voyc.Sam.prototype.cmdEdit = function(r) {
-	if (this.state != 'ready') {
-		this.dochat('busy already');
-	}
-	else if (!r.adj['new'] && !r.object) {
-		this.dochat('edit what?');
-	}
-	else if (r.adj['new']) {
-		this.state = 'insert';
-		this.observer.publish('edit-requested', 'sam', {t:'i',n:r.object});
-	}
-	else {
-		this.state = 'edit';
-		var m = voyc.dictionary.search(r.object);
-	}
-}
-
-voyc.Sam.prototype.onEditCancelled = function(note) {
-	this.dochat('edit cancelled');
-	this.state = 'ready';
-	(new voyc.BrowserHistory).nav('home');
-}
-
-voyc.Sam.prototype.onSetDictReceived = function(note) {
-	if (note.payload.status == 'ok') {
-		this.dochat('edit saved');
-	}
-	else {
-		this.dochat('edit save failed.');
-	}
-	this.state = 'ready';
-	(new voyc.BrowserHistory).nav('home');
 }
 
 voyc.Sam.prototype.parseRequest = function(s) {
@@ -750,7 +661,87 @@ voyc.Sam.prototype.parseRequest = function(s) {
 	}
 }
 	
-voyc.Sam.prototype.showParse = function(o,r) {
+voyc.Sam.prototype.cmdListStories = function(r) {
+	if (!this.story) {
+		this.story = new voyc.Story();
+	}
+	var s = this.story.list();
+}
+
+voyc.Sam.prototype.onGetStoriesReceived = function(note) {
+	if (note.payload.status != 'ok') {
+		this.dochat('not found');
+		return;
+	}
+	var s = '';
+	var list = note.payload.list;
+	for (var i=0; i<list.length; i++) {
+		s += '<button type="button" class="anchor" sid="'+list[i].id+'">';
+		s += list[i].title;
+		s += '</button><br/>';
+	}
+	var self = this;
+	this.dochat(s,false,function(e){
+		var elist = e.querySelectorAll('button[sid]');
+		for (var i=0; i<elist.length; i++) {
+			elist[i].addEventListener('click', function(e) {
+				var sid = e.currentTarget.getAttribute('sid');
+				self.cmdReadStory({object:sid});
+			}, false);
+		}
+	});
+}
+
+voyc.Sam.prototype.cmdSaveStory = function(r) {
+	if (this.story) {
+		this.story.save();
+	}
+}
+
+voyc.Sam.prototype.cmdReadStory = function(r) {
+	this.story = new voyc.Story();
+	this.story.read(r.object);
+}
+
+voyc.Sam.prototype.onGetStoryReceived = function(note) {
+	if (note.payload.status == 'ok') {
+		this.noam.parseStory(this.story);	
+		this.prepStory(this.story);
+	}
+	else {
+		this.dochat('not found');
+	}
+}
+
+// get a miniDict for all the words in the story
+voyc.Sam.prototype.prepStory = function(story) {
+	var ids = [];
+	for (var i=0; i<story.words.length; i++) {
+		var id = story.words[i].id;
+		if (id) {
+			ids.push(id);
+		}
+	}
+	voyc.dictionary.getDict(ids);
+}
+voyc.Sam.prototype.onGetDictReceived = function(note) {
+	// add dict info to lines and words
+	for (var i=0; i<this.story.words.length; i++) {
+		var item = this.story.words[i];
+		item.dict = voyc.dictionary.miniDict(item.id);
+	}
+	for (var i=0; i<this.story.lines.length; i++) {
+		var line = this.story.lines[i];
+		for (var j=0; j<line.words.length; j++) {
+			var word = line.words[j];
+			word.dict = voyc.dictionary.miniDict(word.id);
+		}
+	}
+	var s = this.showStory(this.story,{object:'summary'});
+	this.dochat(s);
+}
+
+voyc.Sam.prototype.showStory = function(o,r) {
 	var s = '';
 	switch(r.object) {
 		case 'summary':
@@ -834,18 +825,6 @@ voyc.Sam.prototype.showParse = function(o,r) {
 	return s;
 }
 
-voyc.printf = function(s,a) {
-	var t = s;
-	var m = t.match(/\$\d/g)
-	for (var i=0; i<m.length; i++) {
-		var u = m[i];
-		var d = parseInt(u.substr(1));
-		var r = a[d-1];
-		t = t.replace(u, r);		
-	}
-	return t;
-}
-
 voyc.Sam.prototype.drawLine = function(r,item) {
 	var s = '';
 	var x = item.text;
@@ -889,83 +868,121 @@ voyc.Sam.prototype.drawLine = function(r,item) {
 	return s;
 }
 
-// get a miniDict for all the words in the story
-voyc.Sam.prototype.prepStory = function(story) {
-	var ids = [];
-	for (var i=0; i<story.words.length; i++) {
-		var id = story.words[i].id;
-		if (id) {
-			ids.push(id);
-		}
-	}
-	voyc.dictionary.getDict(ids);
-}
-voyc.Sam.prototype.onGetDictReceived = function(note) {
-	// add dict info to lines and words
-	for (var i=0; i<this.story.words.length; i++) {
-		var item = this.story.words[i];
-		item.dict = voyc.dictionary.miniDict(item.id);
-	}
-	for (var i=0; i<this.story.lines.length; i++) {
-		var line = this.story.lines[i];
-		for (var j=0; j<line.words.length; j++) {
-			var word = line.words[j];
-			word.dict = voyc.dictionary.miniDict(word.id);
-		}
-	}
-	var s = this.showParse(this.story,{object:'summary'});
-	this.dochat(s);
-}
-
-voyc.Sam.prototype.drillParse = function(o, r) {
+voyc.Sam.prototype.composeWord = function(word,r,wid) {
 	var s = '';
-	switch(r.object) {
-		case 'words':
-			var sortme = [];
-			for (var i=0; i<o.words.length; i++) {
-				var w = o.words[i];
-				if (!w.id) {
-					continue;
-				}
-				if (r.adj.new && w.vocab) {
-					continue;
-				}
-				sortme.push(w);
-			}
-			var sorted = sortme.sort(function(a,b) {
-				return a.text.length - b.text.length;
-			});
-			var stack = this.prepStack(sorted, o,r);
-			var self = this;
-
-			this.state = 'drill';
-			this.lee.drill(stack, function(scores) {
-				self.reportScores(scores);
-			});
-			break;
+	s += '<p>'+word.dict.t;
+	s += " <icon type='draw' name='speaker' text='"+word.dict.t+"'></icon> &nbsp;";
+	s += voyc.dictionary.drawTranslit(word.dict.tl);
+	s += "<icon type='char' name='pencil' text='"+word.dict.t+"'></icon>";
+	s += '</p>';
+	var numdefs = word.dict.mean.length;
+	var mean = word.dict.mean[0];
+	if (numdefs == 1) {
+		s += '<p><b>'+mean.e+'</b> <i>'+voyc.pos[mean.p]+'</i> '+mean.d+'</p>';
 	}
-	return;
+	else {
+		for (var i=0; i<word.dict.mean.length; i++) {
+			mean = word.dict.mean[i];
+			var num = mean.n + '. ';
+			var mm = mean.n;
+			var eng = '';
+			if (word.loc[0].n > 0 && word.loc[0].n == (i+1)) {
+				eng = '<b>'+mean.e+'</b>';
+			}
+			else if (r.adj['author']) {
+				eng = voyc.printf('<button type=button wid="$1" mm=$2 class=anchor>$3</button>',[wid,mm,mean.e]);
+				//eng = '<button type=button mm='+mm+' class=anchor>'+mean.e+'</button>';
+			}
+			s += '<p>'+num+eng+' <i>'+voyc.pos[mean.p]+'</i> '+mean.d+'</p>';
+		}
+	}
+	//type=o components and pronunciation rules
+	//type=m components with click
+	return s;
 }
 
-voyc.Sam.prototype.prepStack = function(w, o, r) {
-	var stack = o;
-	o.id = 'cotravwh';
-	o.prereq = false;
-	o.postreq = false;
-	o.algorithm = 'progressive';
-	o.primaryDictType =  'word';
-	o.title = 'ning botti 1';
-	o.glyph = [];
-	o.word = w;
-	o.phrase = []; 
-	o.drill = w;
-	return stack;
+voyc.Sam.prototype.chooseMean = function(e,mm,wid) {
+	var n = parseInt(mm);
+	var a = wid.split('.');
+	var did = parseInt(a[0]);
+	var line= parseInt(a[1]);
+	var wndx = parseInt(a[2]);
+
+	// insert the chosen mean into the lines/words array
+	var word = this.story.lines[line-1].words[wndx];
+	word.loc[0].n = n;
+
+	// insert the chosen mean into the story/words array
+	
+
+	// set the UI
+	var parent = voyc.findParentWithTag(voyc.cheat,'story');
+	var el = parent.querySelector('word[wid="'+wid+'"]');
+	el.setAttribute('chosen',true);
+}
+
+voyc.Sam.prototype.cmdSearch = function(r) {
+	if (this.state != 'ready') {
+		this.dochat('busy already');
+	}
+	if (!r.object) {
+		this.dochat('search for what?');
+	}
+	else {
+		if (r.adj['glyph']) {
+			var o = voyc.alphabet.search(r.object);
+			var s = 'not found';
+			if (o) {
+				s = voyc.alphabet.compose(o);
+			}
+			this.dochat(s);
+		}
+		else {
+			this.state = 'search';
+			var m = voyc.dictionary.search(r.object);
+			this.dochat('searching...');
+		}
+	}
+}
+
+voyc.Sam.prototype.cmdEdit = function(r) {
+	if (this.state != 'ready') {
+		this.dochat('busy already');
+	}
+	else if (!r.adj['new'] && !r.object) {
+		this.dochat('edit what?');
+	}
+	else if (r.adj['new']) {
+		this.state = 'insert';
+		this.observer.publish('edit-requested', 'sam', {t:'i',n:r.object});
+	}
+	else {
+		this.state = 'edit';
+		var m = voyc.dictionary.search(r.object);
+	}
+}
+
+voyc.Sam.prototype.onEditCancelled = function(note) {
+	this.dochat('edit cancelled');
+	this.state = 'ready';
+	(new voyc.BrowserHistory).nav('home');
+}
+
+voyc.Sam.prototype.onSetDictReceived = function(note) {
+	if (note.payload.status == 'ok') {
+		this.dochat('edit saved');
+	}
+	else {
+		this.dochat('edit save failed.');
+	}
+	this.state = 'ready';
+	(new voyc.BrowserHistory).nav('home');
 }
 
 /**
 	process and respond to a "set" request
 **/
-voyc.Sam.prototype.setVocab = function(msg) {
+voyc.Sam.prototype.cmdSetVocab = function(msg) {
 	// set word type state
 	function validateType(type) {
 		return ('gowx'.indexOf(type) > -1);
@@ -986,7 +1003,7 @@ voyc.Sam.prototype.setVocab = function(msg) {
 	}
 }
 
-voyc.Sam.prototype.getVocab = function(msg) {
+voyc.Sam.prototype.cmdGetVocab = function(msg) {
 	/** usage
 		get word
 		get all status
@@ -1015,9 +1032,46 @@ voyc.Sam.prototype.getVocab = function(msg) {
 	return r;
 }
 
-voyc.Sam.prototype.removeVocab = function(msg) {
+voyc.Sam.prototype.cmdRemoveVocab = function(msg) {
 	var w = msg.split(/\s/);
 	// w[0] == 'set'
 	var word = w[1];
 	this.vocab.remove(word);
 }
+
+//------------------
+// add to jslib/utils.js
+
+voyc.printf = function(s,a) {
+	var t = s;
+	var m = t.match(/\$\d/g)
+	for (var i=0; i<m.length; i++) {
+		var u = m[i];
+		var d = parseInt(u.substr(1));
+		var r = a[d-1];
+		t = t.replace(u, r);		
+	}
+	return t;
+}
+
+
+voyc.intervalToString = function(ms) {
+	var msPerHour  = 1000*3600;
+	var msPerDay   = 1000*3600*24;
+	var msPerWeek  = 1000*3600*24*7;
+	var msPerMonth = 1000*3600*24*30;
+	var msPerYear  = 1000*3600*24*365;
+	var y = Math.floor(ms/msPerYear);
+	var m = Math.floor(ms/msPerMonth);
+	var w = Math.floor(ms/msPerWeek);
+	var d = Math.floor(ms/msPerDay);
+	var h = Math.floor(ms/msPerHour);
+	var s = '';
+	if (y > 0) s = y + 'years';
+	else if (m > 0) s = m + 'months';
+	else if (w > 0) s = w + 'weeks';
+	else if (d > 0) s = d + 'days';
+	else if (h > 0) s = h + 'hours';
+	return s;
+}
+
