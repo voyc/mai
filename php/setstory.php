@@ -14,6 +14,7 @@ function setstory() {
         $taint_language = isset($_POST['language']) ? $_POST['language'] : '';
         $taint_title = isset($_POST['title']) ? $_POST['title'] : '';
         $taint_original = isset($_POST['original']) ? $_POST['original'] : '';
+        $taint_words = isset($_POST['words']) ? $_POST['words'] : '';
 
         // validate inputs
         $si = validateToken($taint_si);
@@ -21,6 +22,7 @@ function setstory() {
         $language = validateLanguage($taint_language);
         $title = validateThaiText($taint_title);
         $original = validateThaiText($taint_original);
+        $words = validateArray($taint_words);
 
         // validate parameter set
         if (!$si){
@@ -48,8 +50,8 @@ function setstory() {
 
 	if ($id) {
 		$name = 'update-story';
-		$sql = "update mai.story set title=$2, original=$3 where id = $1";
-		$params = array( $id, $title, $original);
+		$sql = "update mai.story set title=$2, original=$3, words=$4 where id = $1";
+		$params = array( $id, $title, $original, $words);
 		$result = execSql($conn, $name, $sql, $params, true);
 		if (!$result) {
 			Log::write(LOG_WARNING, "$name failed");
@@ -58,8 +60,8 @@ function setstory() {
 	}
 	else {
 		$name = 'insert-story';
-		$sql = "insert into mai.story (authorid, language, title, original) values ($1,$2,$3,$4)";
-		$params = array($authorid, $language, $title, $original);
+		$sql = "insert into mai.story (authorid, language, title, original, words) values ($1,$2,$3,$4)";
+		$params = array($authorid, $language, $title, $original, $words);
 		$result = execSql($conn, $name, $sql, $params, true);
 		if (!$result) {
 			Log::write(LOG_WARNING, "$name failed");
@@ -91,6 +93,12 @@ function validateId($taint) {
 	if (is_numeric($taint)) {
 		$clean = $taint;
 	}
+	return $clean;
+}
+
+function validateArray($taint) {
+	$clean = false;
+	$clean = $taint;
 	return $clean;
 }
 ?>

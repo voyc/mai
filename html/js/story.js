@@ -11,7 +11,6 @@ voyc.Story = function() {
 	this.speakers = { x: {name: "narrator", age: 40, gender: "male"} };
 	this.lines = [];
 	this.words = [];
-	this.mm = [];
 
 	var url = '/svc/';
 	if (window.location.origin == 'file://') {
@@ -30,6 +29,44 @@ voyc.Story.prototype.replace = function(newtext) {
 	this.words = [];
 }
 
+voyc.Story.prototype.consolidateWords = function() {
+	var a = [];
+	for (var i=0; i<this.lines.length; i++) {
+		a = this.combineArrays(a, this.lines[i].words);
+	}
+	return a;
+}
+voyc.Story.prototype.combineArrays = function(combined, a) {
+	var c = combined;
+	var matched = false;
+	for (var i=0; i<a.length; i++) { // a[i] incoming
+		matched = false;
+		for (var j=0; j<c.length; j++) { // c[j] master
+			if (c[j].id == a[i].id) {
+				c[j].loc.push(voyc.clone(a[i].loc[0]));
+				matched = true;
+				break;
+			}
+		}
+		if (!matched) {
+			var b = voyc.clone(a[i]);
+			c.push(b);
+		}
+	}
+	return c;
+}
+
+voyc.Story.prototype.condenseWords = function(words) {
+	var a = [];
+	for (var i=0; i<words.length; i++) {
+		var word = voyc.clone(words[i]);
+		delete word.dict;
+		delete word.vocab;
+		a.push(word);
+	}
+	return a;
+}
+
 voyc.Story.prototype.save = function() {
 	var svcname = 'setstory';
 	var data = {};
@@ -38,6 +75,7 @@ voyc.Story.prototype.save = function() {
 	data['language' ] = this.language;
 	data['title' ] = this.title;
 	data['original'] = this.original;
+	data['words'] = JSON.stringify( this.condenseWords(this.consolidateWords(this.words)));
 	var self = this;
 	this.comm.request(svcname, data, function(ok, response, xhr) {
 		if (!ok) {
@@ -71,6 +109,7 @@ voyc.Story.prototype.read = function(id) {
 			self.language = story.language;
 			self.title    = story.title;
 			self.original = story.original;
+			self.words = (story.words) ? JSON.parse(story.words) : [];
 		}
 		self.observer.publish(svcname+'-received', 'mai', response);
 	});

@@ -47,7 +47,10 @@ select thai,eng,unicode,reference,class,subclass
 from mai.thaidict
 where type = 'g';
 
-
+/* 29 april 2020 add mm, no words, to story table */
+alter table mai.story add column mm text;
+alter table mai.story drop column mm;
+alter table mai.story add column words text;
 
 
 -- example sql

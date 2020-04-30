@@ -40,7 +40,7 @@ function getstory() {
 
 	// read story
 	$name = 'query-story';
-	$sql = "select id, authorid, language, title, original from mai.story where id = $1";
+	$sql = "select id, authorid, language, title, original, words from mai.story where id = $1";
 	$params = array($id);
 	$result = execSql($conn, $name, $sql, $params, false);
 	if (!$result || !pg_num_rows($result)) {
@@ -55,6 +55,7 @@ function getstory() {
 	$story['language'] = $row['language'];
 	$story['title'] = $row['title'];
 	$story['original'] = $row['original'];
+	$story['words'] = $row['words'];
 
 	// success
 	$a['status'] = 'ok';

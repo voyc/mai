@@ -34,6 +34,9 @@ story[author] word[multimean] {
 	color:cyan;
 	cursor:pointer;
 }
+story[author] word[chosen] {
+	color:purple;
+}
 sylcont {
 	position:relative;
 	margin-right: .5rem;

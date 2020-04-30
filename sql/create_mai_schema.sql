@@ -112,6 +112,7 @@ create table mai.story (
 	authorid int,		/* foreign key to user table */
 	title varchar(100),
 	language char(2),	/* constant "th" */
-	original text
+	original text,
+	words text
 );
 create unique index story_title_index on mai.story(title);

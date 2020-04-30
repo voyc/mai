@@ -65,25 +65,6 @@ voyc.Noam = function(dictionary,vocab) {
 //	return word.split('');
 //}
 
-voyc.Noam.prototype.combineArrays = function(combined, a) {
-	var c = combined;
-	var matched = false;
-	for (var i=0; i<a.length; i++) { // a[i] incoming
-		matched = false;
-		for (var j=0; j<c.length; j++) { // c[j] master
-			if (c[j].t == a[i].t) {
-				c[j].where.push(voyc.clone(a[i].where[0]));
-				matched = true;
-				break;
-			}
-		}
-		if (!matched) {
-			c.push(voyc.clone(a[i]));
-		}
-	}
-	return c;
-}
-
 voyc.Noam.prototype.eliminateDupes = function(a) {
 	//a.sort();
 	var b = [];
@@ -440,9 +421,24 @@ voyc.Noam.prototype.parseStory = function(story) {
 	for (var i=0; i<story.lines.length; i++) {
 		var line = story.lines[i].text;
 		story.lines[i].words = this.parseString(line, i+1);
-		story.words = this.combineArrays(story.words, story.lines[i].words);
 	}
 
+	// set chosen meaning of multimeans, from old story.words from db
+	if (story.words) {
+		for (var i=0; i<story.words.length; i++) {
+			var w = story.words[i];
+			for (var j=0; j<w.loc.length; j++) {
+				var ww = w.loc[j];
+				var word = story.lines[ww.line-1].words[ww.wndx];
+				word.loc[0].n = ww.n;
+			}
+		}
+	}
+
+	// consolidate words from newly parsed lines/words
+	story.words = story.consolidateWords();
+
+	// set title
 	story.title = story.lines[0].text;
 	return;
 
@@ -566,11 +562,10 @@ voyc.Noam.prototype.parseString = function(input, linenum) {
 
 	function sto(t, line, ndx, id, tl, vocab) {
 		var o = {
-			t:t,
-			where:[{line:line,wndx:words.length,tndx:ndx}],
 			id:id,
-			tl:tl,
-			n:0,
+			//t:t,
+			//tl:tl,
+			loc:[{line:line,wndx:words.length,tndx:ndx,n:0}],
 			vocab:vocab
 		};
 		words.push(o);

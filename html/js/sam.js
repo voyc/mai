@@ -101,32 +101,37 @@ voyc.Sam.prototype.popupMultiMean = function(wid,x,y) {
 	}
 }
 */
-voyc.Sam.prototype.chooseMean = function(mm) {
-	var a = mm.split('.');
-	var did = a[0];
-	var line= a[1];
-	var wndx = a[2];
-	var n = a[3];
-	this.story.mm.push({did:did,line:line,wndx:wndx,n:n});
+voyc.Sam.prototype.chooseMean = function(e,mm,wid) {
+	var n = parseInt(mm);
+	var a = wid.split('.');
+	var did = parseInt(a[0]);
+	var line= parseInt(a[1]);
+	var wndx = parseInt(a[2]);
 
-	this.story.lines[line-1].words[wndx].n = n;
+	// insert the chosen mean into the lines/words array
+	var word = this.story.lines[line-1].words[wndx];
+	word.loc[0].n = n;
 
-	// this works only on the first "show lines"
-	var wid = [did,line,wndx].join('.');
-	var el = document.querySelector('word[wid="'+wid+'"]');
-	el.removeAttribute('multimean');
+	// insert the chosen mean into the story/words array
+	
+
+	// set the UI
+	var parent = voyc.findParentWithTag(voyc.cheat,'story');
+	var el = parent.querySelector('word[wid="'+wid+'"]');
+	el.setAttribute('chosen',true);
 }
 
+/*
 voyc.Sam.prototype.mergeMM = function(wid) {
 	var words = this.story.lines[line-1].words;
 	for (var i=0; i<words.length; i++) {
 		var w = words[i];
-		if (w.where[0].ndx == ndx) {
-			w.where[0].n = numdef;
+		if (w.loc[0].ndx == ndx) {
+			w.loc[0].n = numdef;
 		}
 	}	
 }
-
+*/
 voyc.Sam.prototype.dochat = function(s,bpost,cb) {
 	var e = this.chat.post(this.chatid, s);
 	if (bpost) {
@@ -558,13 +563,14 @@ voyc.Sam.prototype.respond = function(o) {
 							var wrd = clk.currentTarget;
 							var wid = wrd.getAttribute('wid');
 							var w = wid.split('.');
-							var did = w[0];
-							var line= w[1];
-							var wndx = w[2];
+							var did =  parseInt(w[0]);
+							var line=  parseInt(w[1]);
+							var wndx = parseInt(w[2]);
 							var word = voyc.mai.sam.story.lines[line-1].words[wndx];
 							var s = voyc.mai.sam.composeWord(word,r,wid);
 							var sel = document.querySelector('form#worddetails div#details');
 							sel.innerHTML = s;
+							voyc.cheat = wrd;
 							(new voyc.Minimal()).openPopup('worddetails');
 							(new voyc.Minimal()).attachAll(sel);
 							(new voyc.Icon()).attachAll(sel);
@@ -573,8 +579,9 @@ voyc.Sam.prototype.respond = function(o) {
 							var opts = sel.querySelectorAll('button[mm]');
 							for (var i=0; i<opts.length; i++) {
 								opts[i].addEventListener('click',function(e) {
+									var wid= e.currentTarget.getAttribute('wid');
 									var mm = e.currentTarget.getAttribute('mm');
-									voyc.mai.sam.chooseMean(mm);
+									voyc.mai.sam.chooseMean(e,mm,wid);
 									(new voyc.Minimal).closePopup();
 								}, false);
 							}
@@ -620,10 +627,10 @@ voyc.Sam.prototype.respond = function(o) {
 
 voyc.Sam.prototype.composeWord = function(word,r,wid) {
 	var s = '';
-	s += '<p>'+word.t;
-	s += " <icon type='draw' name='speaker' text='"+word.t+"'></icon> &nbsp;";
+	s += '<p>'+word.dict.t;
+	s += " <icon type='draw' name='speaker' text='"+word.dict.t+"'></icon> &nbsp;";
 	s += voyc.dictionary.drawTranslit(word.dict.tl);
-	s += "<icon type='char' name='pencil' text='"+word.t+"'></icon>";
+	s += "<icon type='char' name='pencil' text='"+word.dict.t+"'></icon>";
 	s += '</p>';
 	var numdefs = word.dict.mean.length;
 	var mean = word.dict.mean[0];
@@ -634,14 +641,14 @@ voyc.Sam.prototype.composeWord = function(word,r,wid) {
 		for (var i=0; i<word.dict.mean.length; i++) {
 			mean = word.dict.mean[i];
 			var num = mean.n + '. ';
-			var cls = '';
+			var mm = mean.n;
 			var eng = '';
-			if (word.n > 0 && word.n == (i+1)) {
+			if (word.loc[0].n > 0 && word.loc[0].n == (i+1)) {
 				eng = '<b>'+mean.e+'</b>';
 			}
 			else if (r.adj['author']) {
-				var mm = wid+'.'+mean.n;
-				eng = '<button type=button mm='+mm+' class=anchor>'+mean.e+'</button>';
+				eng = voyc.printf('<button type=button wid="$1" mm=$2 class=anchor>$3</button>',[wid,mm,mean.e]);
+				//eng = '<button type=button mm='+mm+' class=anchor>'+mean.e+'</button>';
 			}
 			s += '<p>'+num+eng+' <i>'+voyc.pos[mean.p]+'</i> '+mean.d+'</p>';
 		}
@@ -826,7 +833,7 @@ voyc.Sam.prototype.showParse = function(o,r) {
 					continue;
 				}
 				if (w.id) {
-					s += w.text + '<br/>';
+					s += w.dict.t + '<br/>';
 					//var dict = voyc.dictionary.search(w.text)[0];
 					//s += voyc.dictionary.compose(w.dict);
 				}
@@ -835,14 +842,14 @@ voyc.Sam.prototype.showParse = function(o,r) {
 		case 'newvocab':
 			o.words.forEach(function(item,index) {
 				if (item.id && !item.vocab) {
-					s += item.text + '<br/>';
+					s += item.dict.t + '<br/>';
 				}
 			});
 			break;
 		case 'errors':
 			o.words.forEach(function(item,index) {
 				if (!item.id) {
-					s += item.text + ' ' + item.line + '.' + item.ndx + '<br/>';
+					s += item.dict.t + ' ' + item.loc[0].line + '.' + item[0].tndx + '<br/>';
 				}
 			});
 			break;
@@ -875,10 +882,35 @@ voyc.Sam.prototype.showParse = function(o,r) {
 	return s;
 }
 
+voyc.printf = function(s,a) {
+	var t = s;
+	var m = t.match(/\$(.*?)(\s|\$|$)/g)
+	for (var i=0; i<m.length; i++) {
+		var u = m[i];
+		var r = a[i];
+		if (u.substr(u.length-1) == '$') {
+			r = '"' + r + '"';
+		}
+		t = t.replace(u, r);		
+	}
+	return t;
+}
+voyc.printf = function(s,a) {
+	var t = s;
+	var m = t.match(/\$\d/g)
+	for (var i=0; i<m.length; i++) {
+		var u = m[i];
+		var d = parseInt(u.substr(1));
+		var r = a[d-1];
+		t = t.replace(u, r);		
+	}
+	return t;
+}
+
 voyc.Sam.prototype.drawLine = function(r,item) {
 	var s = '';
 	var x = item.text;
-	var linenum = item.words[0].where[0].line;
+	var linenum = item.words[0].loc[0].line;
 	s += '<line num='+linenum+' hint=0>';
 	if (item.speaker != 'x') {
 		s += '<speaker>'+item.speaker + ':</speaker>';
@@ -888,7 +920,10 @@ voyc.Sam.prototype.drawLine = function(r,item) {
 		if (n > 0) {
 			s += '</word>';
 		}
-		s += '<word wid="'+word.id+'.'+word.where[0].line+'.'+word.where[0].wndx+'"';
+		var wid = [word.id,word.loc[0].line,word.loc[0].wndx].join('.');
+		var mm = word.loc[0].n;
+		s += voyc.printf('<word wid="$1" mm=$2',[wid,mm]);
+		//s += '<word wid="'+wid+'"';
 		if (!word.dict) {
 			s += ' error';
 		}
@@ -897,10 +932,14 @@ voyc.Sam.prototype.drawLine = function(r,item) {
 		}
 		else if (word.dict.mean.length > 1) {
 			s += ' multimean ';
+			if (word.loc[0].n) {
+				s += ' chosen ';
+			}
 		}
 		s += '>';
-		s += '<t>'+word.t+'</t>';
-		s += '<e>'+word.dict.mean[word.n].e+'</e>';
+		s += '<t>'+word.dict.t+'</t>';
+		var locn = (word.loc[0].n) ? word.loc[0].n-1 : 0;
+		s += '<e>'+word.dict.mean[locn].e+'</e>';
 		s += '<tl>'+voyc.dictionary.drawTranslit(word.dict.tl)+'</tl>';
 	} 
 	s += '</word>';
@@ -910,22 +949,23 @@ voyc.Sam.prototype.drawLine = function(r,item) {
 	s += '</line>';
 	return s;
 }
+/*
 voyc.Sam.prototype.xdrawLine = function(r,item) {
 	var s = '';
 	var x = item.text;
 	var n = 0;
-	var linenum = item.words[0].where[0].line;
+	var linenum = item.words[0].loc[0].line;
 	s += '<line num='+linenum+'>';
 	if (item.speaker != 'x') {
 		s += item.speaker + ": ";
 	}
 	for (var i=0; i<x.length; i++) {
 		var word = item.words[n];
-		if ((n < item.words.length) && i == word.where[0].ndx) {
+		if ((n < item.words.length) && i == word.loc[0].ndx) {
 			if (i > 0) {
 				s += '</word>';
 			}
-			s += '<word wid="'+word.id+'.'+word.where[0].line+'.'+word.where[0].ndx+'"';
+			s += '<word wid="'+word.id+'.'+word.loc[0].line+'.'+word.loc[0].ndx+'"';
 			if (!word.dict) {
 				s += ' error';
 			}
@@ -947,6 +987,7 @@ voyc.Sam.prototype.xdrawLine = function(r,item) {
 	s += '</line>';
 	return s;
 }
+*/
 
 // get a miniDict for all the words in the story
 voyc.Sam.prototype.prepStory = function(story) {

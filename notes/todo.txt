@@ -127,18 +127,13 @@ drill components
 drill expressions
 drill lines
 
-draw pos with multi pos values
+draw pos with multi pos values, or eliminate multi pos
 
 can you edit a word and then return to a drill?
 
 in story parse, replace pronouns with grammar codes
-in story draw, replace grammar codes with pronouns, depending on speaker age and gender
-allow this draw during drill lines, as well as show lines
-
-on each line, put a button to rotate hints:
-	normal, spaced, toned, wo, translate
-	translate requires content switch
-	the other four options can be done by switching css class
+	in story draw, replace grammar codes with pronouns, depending on speaker age and gender
+	allow this draw during drill lines, as well as show lines
 
 ===================================
 automated test suite, compare chat window to baseline
