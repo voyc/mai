@@ -562,8 +562,8 @@ voyc.Noam.prototype.parseString = function(input, linenum) {
 
 	function sto(t, line, ndx, id, tl, vocab) {
 		var o = {
+			t:t,
 			id:id,
-			//t:t,
 			//tl:tl,
 			loc:[{line:line,wndx:words.length,tndx:ndx,n:0}],
 			vocab:vocab

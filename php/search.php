@@ -9,20 +9,13 @@ function search() {
 	);
 
 	// raw inputs
-	$taint_si = isset($_POST['si']) ? $_POST['si'] : 0;
 	$taint_lk = isset($_POST['lk']) ? $_POST['lk'] : 0;
 
 	// validate inputs
-	$si = validateToken($taint_si);
 	$lk = validateLookup($taint_lk);
 
 	// validate parameter set
-	if (!$si){
-		Log::write(LOG_WARNING, 'attempt with invalid parameter set');
-		return $a;
-	}
-	//$numParm = $i + $e $t	
-	if (!$si){
+	if (!$lk){
 		Log::write(LOG_WARNING, 'attempt with invalid parameter set');
 		return $a;
 	}
@@ -32,16 +25,6 @@ function search() {
 	if (!$conn) {
 		return $a;
 	}
-
-	// get logged-in user
-	$result = getUserByToken($conn, $si);
-	if (!$result) {
-		return $a;
-	}
-	$row = pg_fetch_array($result, 0, PGSQL_ASSOC);
-	$userid = $row['id'];
-
-	// does this user have rights to view dict records?
 
 	// compose sql
 	$cw = composeWhere($lk);

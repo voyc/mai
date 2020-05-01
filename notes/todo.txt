@@ -135,6 +135,38 @@ in story parse, replace pronouns with grammar codes
 	in story draw, replace grammar codes with pronouns, depending on speaker age and gender
 	allow this draw during drill lines, as well as show lines
 
+add english translation to stories
+	separated by ~
+	change "original" to "raw"
+	parse t and e out of raw
+	side-by-side view (float left,right) vs replacement view
+
+organization
+	reference
+		alphabet
+			consonants
+			vowel patterns
+			digits
+			symbols
+			keyboard, typing tutor
+		dictionary
+			phrase book, expressions
+			gazetteer, place names
+			who's who, proper names?
+		lessons
+			grammar
+			pronunciation
+			numbers
+	stories
+		encyclopedia
+		conversations
+		news stories
+		songs
+		essays
+		poems
+
+search partial lookup, thai or english
+
 ===================================
 automated test suite, compare chat window to baseline
 

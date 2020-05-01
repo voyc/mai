@@ -42,7 +42,7 @@ voyc.Story.prototype.combineArrays = function(combined, a) {
 	for (var i=0; i<a.length; i++) { // a[i] incoming
 		matched = false;
 		for (var j=0; j<c.length; j++) { // c[j] master
-			if (c[j].id == a[i].id) {
+			if (c[j].t == a[i].t) {
 				c[j].loc.push(voyc.clone(a[i].loc[0]));
 				matched = true;
 				break;

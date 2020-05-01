@@ -29,8 +29,12 @@ function setstory() {
                 Log::write(LOG_WARNING, 'attempt with invalid parameter set');
                 return $a;
         }
-        if (!$language && !$list) {
-                Log::write(LOG_WARNING, 'no inputs');
+	if ($id && !($title && $original && $words)) {
+                Log::write(LOG_WARNING, 'attempt with invalid parameter set');
+                return $a;
+        }
+	if (!$id && !($title && $original && $words && $language)) {
+                Log::write(LOG_WARNING, 'attempt with invalid parameter set');
                 return $a;
         }
 
@@ -60,7 +64,7 @@ function setstory() {
 	}
 	else {
 		$name = 'insert-story';
-		$sql = "insert into mai.story (authorid, language, title, original, words) values ($1,$2,$3,$4)";
+		$sql = "insert into mai.story (authorid, language, title, original, words) values ($1,$2,$3,$4,$5)";
 		$params = array($authorid, $language, $title, $original, $words);
 		$result = execSql($conn, $name, $sql, $params, true);
 		if (!$result) {

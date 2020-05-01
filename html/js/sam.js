@@ -792,7 +792,7 @@ voyc.Sam.prototype.showStory = function(o,r) {
 		case 'errors':
 			o.words.forEach(function(item,index) {
 				if (!item.id) {
-					s += item.dict.t + ' ' + item.loc[0].line + '.' + item[0].tndx + '<br/>';
+					s += item.t + ' ' + item.loc[0].line + ',' + item.loc[0].tndx + '<br/>';
 				}
 			});
 			break;
@@ -855,10 +855,12 @@ voyc.Sam.prototype.drawLine = function(r,item) {
 			}
 		}
 		s += '>';
-		s += '<t>'+word.dict.t+'</t>';
+		s += '<t>'+word.t+'</t>';
 		var locn = (word.loc[0].n) ? word.loc[0].n-1 : 0;
-		s += '<e>'+word.dict.mean[locn].e+'</e>';
-		s += '<tl>'+voyc.dictionary.drawTranslit(word.dict.tl)+'</tl>';
+		var eng = (word.dict) ? word.dict.mean[locn].e : '';
+		s += '<e>'+eng+'</e>';
+		var tl = (word.dict) ? voyc.dictionary.drawTranslit(word.dict.tl) : '';
+		s += '<tl>'+tl+'</tl>';
 	} 
 	s += '</word>';
 	if (r.adj['hint']) {
