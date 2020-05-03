@@ -220,7 +220,7 @@ voyc.Lee.prototype.respond = function(o) {
 			}		
 			if (o.msg == 'hint') {
 				var dict = this.scores[this.ndxCard].dict;
-				var s = voyc.dictionary.compose(dict);
+				var s = voyc.dictionary.drawOne(dict);
 				this.chat.post(this.chatid, s, []);
 				this.displayQuestion(dict);
 				break;
@@ -270,7 +270,7 @@ voyc.Lee.prototype.respond = function(o) {
 		case 'showanswer':
 			var s = 'Correct.</br/>';
 			var dict = this.scores[this.ndxCard].dict;
-			s += voyc.dictionary.compose(dict);
+			s += voyc.dictionary.drawOne(dict);
 			if (this.setting.selfScore) {
 				this.chat.post(this.chatid, s, ['right', 'wrong','details','mastered']);
 				this.state = 'selfscore';

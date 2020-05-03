@@ -40,8 +40,8 @@
 		prepStory
 		onGetDictReceived
 		showStory
-		drawLine
-		composeWord
+		* drawLine
+		* composeWord
 		chooseMean
 		
 		
@@ -176,7 +176,7 @@ voyc.Sam.prototype.onAnonymous = function(note) {
 }
 
 voyc.Sam.prototype.onSearchReceived = function(note) {
-	var m = note.payload.list;
+	var m = note.payload.flat;
 	switch (this.state) {
 		case 'edit':
 			if (!m || !m.length) {
@@ -192,7 +192,7 @@ voyc.Sam.prototype.onSearchReceived = function(note) {
 				this.dochat('not found');
 			}	
 			else {
-				var s = voyc.dictionary.compose(m);
+				var s = voyc.dictionary.drawFlatList(m);
 				this.dochat(s,true);
 			}
 			this.state = 'ready';
@@ -389,7 +389,7 @@ voyc.Sam.prototype.drillStory = function(o, r) {
 				sortme.push(w);
 			}
 			var sorted = sortme.sort(function(a,b) {
-				return a.text.length - b.text.length;
+				return a.t.length - b.t.length;
 			});
 			var stack = this.prepStack(sorted, o,r);
 			var self = this;

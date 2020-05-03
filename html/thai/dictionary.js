@@ -24,8 +24,8 @@
 		checkDupes()
 		listAll()
 		
-		compose(dict)
-		composeOne(dict)
+		* draw(dict)
+		* drawOne(dict)
 		drawClass(glyph) - using static table
 		drawDiacritic(glyph) - add dotted-circle char
 		drawRule - using static table
@@ -44,11 +44,10 @@
 	rename voyc.ru to voyc.Dictionary.rulecodes
 	rename voyc.pos to voyc.Dictionary.poscodes
 	move p and m tables to alphabet
-	x call getfast on login, not startup, or skip si check
 	keep dirty flag, reload fast and mini db changes
 **/
 voyc.Dictionary = function() {
-	this.unique = 10001000; // used in composeOne() to make unique attribute names
+	this.unique = 10001000; // used in drawOne() to make unique attribute names
 	this.fast = [];  // sfast lookup
 	this.mini = {
 		list: [], // subset of complete dict/mean records
@@ -286,46 +285,28 @@ voyc.Dictionary.prototype.listAll = function() {
 	return s;
 }
 
-/**
-	compose(dict)
-	input dict can be a single dict object or an array of dict objects
-	output is a string of html
-**/
-voyc.Dictionary.prototype.compose = function(dict) {
-	var da = dict;
-	if (!Array.isArray(da)) {
-		da = [];
-		da.push(dict);
-	}
-
+voyc.Dictionary.prototype.drawFlatList = function(flats) {
 	var s = '';
-	for (var i=0; i<da.length; i++) {
-		s += this.composeOne(da[i]);
+	for (var i=0; i<flats.length; i++) {
+		s += this.drawFlat(flats[i]);
 	}
 	return s;
 }
-
-voyc.Dictionary.prototype.composeOne = function(dict) {
+voyc.Dictionary.prototype.drawFlat = function(flat) {
 	var s = '<search>';
 	this.unique++;
+	var dict = flat.dict;
+	var mean = flat.mean;
 	switch (dict.g) {
-		case 'g':
-			if (dict.p == 't') {
-				s += dict.t + "  tone mark";
-			}
-			else {
-				s += dict.t + "  " + voyc.strp[dict.p] + ", " + voyc.strm[dict.m] + ", sound: " + dict.e;
-			}
-			break;
 		case 'o':
 			s += dict.t;
 			s += " <icon type='draw' name='speaker' text='"+dict.t+"'></icon> &nbsp;";
 			s += "<span expand='rules"+this.unique+"'>" + this.drawTranslit(dict.tl) + "</span>";
-			s += " <i>" + voyc.pos[dict.mean[0].p] + "</i> " + dict.mean[0].e;
+			s += " <i>" + voyc.pos[mean.p] + "</i> " + mean.e;
 			s += "<span expand='more"+this.unique+"' class='expander'></span>";
 			s += "<icon type='char' name='pencil' text='"+dict.t+"'></icon>";
 			s += "<div id='more"+this.unique+"'>";
-			s += dict.mean[0].d;
+			s += mean.d;
 			s += '</div>';
 			s += "<div id='rules"+this.unique+"'>";
 			s += this.drawComponents(dict.cp, dict.ru);
@@ -335,19 +316,13 @@ voyc.Dictionary.prototype.composeOne = function(dict) {
 			s += dict.t;
 			s += " <icon type='draw' name='speaker' text='"+dict.t+"'></icon> &nbsp;";
 			s += this.drawTranslit(dict.tl);
-			s += " <i>" + voyc.pos[dict.mean[0].p] + "</i> " + dict.mean[0].e;
+			s += " <i>" + voyc.pos[mean.p] + "</i> " + mean.e;
 			s += "<span expand='more"+this.unique+"' class='expander'></span>";
 			s += "<icon type='char' name='pencil' text='"+dict.t+"'></icon>";
 			s += "<div id='more"+this.unique+"'>";
-			s += dict.mean[0].d;
+			s += mean.d;
 			s += '</div>';
 			break;	
-		case 's':
-			s += dict.t + "  symbol";
-			break;	
-		case 'x':
-			s += dict.t + "  " + dict.tl + " " + dict.e;
-			break;
 	}
 	s += '</search>';
 	return s;

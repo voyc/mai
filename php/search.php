@@ -3,6 +3,7 @@
 	svc search
 	Read and return dict/mean records for requested lookup.
 */
+require_once('getdict.php');
 function search() {
 	$a = array(
 		'status' => 'system-error'
@@ -34,9 +35,8 @@ function search() {
 	$sql = 'select d.id,d.g,d.t,d.tl,d.tlm,d.cp,d.cpm,d.ru,m.id as mid,m.n,m.e,m.d,m.p,m.s,m.l';
 	$sql .= ' from mai.mean m, mai.dict d';
 	$sql .= ' where m.did = d.id'; 
-	$sql .= " and $whereclause;";
-	// example lk: เรียน,six,blue/4,ขา/3,245,477/3
-	// result: and ((d.t='เรียน') or (m.e='six') or (m.e='blue' and m.n=4) or (d.t='ขา' and m.n=3) or (d.id=245) or (d.id=477 and m.n=3));
+	$sql .= " and $whereclause";
+	$sql .= " order by d.id, m.n;";
 
 	// read dict/mean for query
 	$name = 'query-dict';
@@ -46,13 +46,17 @@ function search() {
                 return $a;
 	}
 
-        // build array of output dict rows
-        $dicts = array();
+        // build array of output flat rows
+        $flats = array();
+        $ids = '';
+	$previd = 0;
         $numrows = pg_num_rows($result);
         for ($i=0; $i<$numrows; $i++) {
                 $row = pg_fetch_array($result, $i, PGSQL_ASSOC);
+ 	
+		$id = $row['id'];
                 $dict = array();
-		$dict['id'] = $row['id'];
+		$dict['id'] = $id;
 		$dict['g'] = $row['g'];
 		$dict['t'] = $row['t'];
 		$dict['tl'] = $row['tl'];
@@ -61,81 +65,76 @@ function search() {
 		$dict['cpm'] = $row['cpm'];
 		$dict['ru'] = $row['ru'];
 
-		$dict['mid'] = $row['mid'];
-		$dict['n'] = $row['n'];
-		$dict['e'] = $row['e'];
-		$dict['d'] = $row['d'];
-		$dict['p'] = $row['p'];
-		$dict['s'] = $row['s'];
-		$dict['l'] = $row['l'];
+		$mean = array();
+		$mean['mid'] = $row['mid'];
+		$mean['n'] = $row['n'];
+		$mean['e'] = $row['e'];
+		$mean['d'] = $row['d'];
+		$mean['p'] = $row['p'];
+		$mean['s'] = $row['s'];
+		$mean['l'] = $row['l'];
 
-                $dicts[] = $dict;
+                $flat = array();
+		$flat['id'] = $id;
+		$flat['t'] = $row['t'];
+		$flat['n'] = intval($row['n']);
+		$flat['dict'] = $dict;
+		$flat['mean'] = $mean;
+
+		$flats[] = $flat;
+
+		if ($ids) $ids .= ',';
+		$ids .= $id;
         }
-	/*
-	output format: dict/mean joined
-	voyc.dict = [
-		{id:88,g:'o',t:'ไก่',s:1,l:100,n:1,p:'n',e:'chicken',d:'',u:'',r:'',m:'',a:'',ns:1,lc:'ก',fc:'',vp:'ไo',tm:'่',tn:'L',tl:'gai',ru:'ovl,mc1',sn:'',cp:'',ps:''},
-		{id:893,g:'o',t:'เมล็ด',s:2,l:400,n:1,p:'n',e:'seed',d:'seed; grain; tiny piece; bean',u:'',r:'',m:'',a:'',ns:1,lc:'มล',fc:'ด',vp:'เo็',tm:'',tn:'H',tl:'mlet',ru:'fnsc,lcds',sn:'',cp:'',ps:''},
-	*/
+
+	$dict = getdictsub($ids);
+
 	// success
 	$a['status'] = 'ok';
-	$a['list'] = $dicts;
+	$a['flat'] = $flats;
+	$a['dict'] = $dict['list'];
 	return $a;
-}
-
-function validateLookup($taint) {
-	$clean = $taint;
-	//input may be an array or a single item
-	//each item may be a thai word, an english word, an id
-	//and each item may be appended with /n where n is the numdef
-	return $clean;
 }
 
 function isEnglish($s) {
 	return (!preg_match('/[^A-Za-z]/', $s));
 }
-
 function isId($s) {
 	return (!preg_match('/[^0-9]/', $s));
 }
-
 function whatType($s) {
 	$r = false;
 	if (isEnglish($s)) {
-		$r = 'm.e';
+		$r = 'e';
 	}
 	else if (isId($s)) {
-		$r = 'd.id';
+		$r = 'i';
 	}
 	else {
-		$r = 'd.t';
+		$r = 't';
 	}
 	return $r;
 }
 
-function composeWhere($s) {
-	$w = '';
-	$a = explode(',',$s);
-	$b = 1;
-	$bind = array();
-	foreach ($a as $v) {
-		if ($w) {
-			$w .= ' or ';
-		}
-		$a2 = explode('/',$v);
-		$v = $a2[0];
-		$f = whatType($v);
-		$w .= "($f = \$$b";
-		$b++;
-		$bind[] = $v;	
-		if (count($a2) > 1) {
-			$w .= "and m.n = \$$b";
-			$b++;
-			$bind[] = $a2[1];
-		}
-		$w .= ')';
+function composeWhere($lk) {
+	$s = '';
+	$a = array();
+
+	switch (whatType($lk)) {
+		case 'e':
+			$s = "(m.e like $1 or m.d like $1)";
+			$a[] = "%$lk%";
+			break;
+		case 't':
+			$s = "d.t like $1";
+			$a[] = "%$lk%";
+			break;
+		case 'i':
+			$s = "d.id = $1";
+			$a[] = $lk;
+			break;
 	}
-	return [$w, $bind];
-}	
+	return [$s,$a];
+}
 
 ?>

@@ -17,40 +17,34 @@ function getdict() {
 	$lk = validateLookup($taint_lk);
 
 	// validate parameter set
-	if (!$si){
-		Log::write(LOG_WARNING, 'attempt with invalid parameter set');
-		return $a;
-	}
-	//$numParm = $i + $e $t	
-	if (!$si){
+	if (!$lk){
 		Log::write(LOG_WARNING, 'attempt with invalid parameter set');
 		return $a;
 	}
 
+	$list = getdictsub($lk);
+
+	if ($list) {
+		$a['status'] = 'ok';
+		$a['list'] = $list;
+	}
+	return $a;
+}
+
+function getdictsub($ids) {
 	// get database connection
 	$conn = getConnection();
 	if (!$conn) {
-		return $a;
+		return false;
 	}
-
-	// get logged-in user
-	$result = getUserByToken($conn, $si);
-	if (!$result) {
-		return $a;
-	}
-	$row = pg_fetch_array($result, 0, PGSQL_ASSOC);
-	$userid = $row['id'];
-
-	// does this user have rights to view dict records?
 
 	// compose sql
-	$whereclause = composeWhere($lk);
 	$bindvariables = array();
 
 	$sql = 'select d.id,d.g,d.t,d.tl,d.tlm,d.cp,d.cpm,d.ru,m.id as mid,m.n,m.e,m.d,m.p,m.s,m.l';
 	$sql .= ' from mai.mean m, mai.dict d';
 	$sql .= ' where m.did = d.id'; 
-	$sql .= " and $whereclause";
+	$sql .= " and d.id in ($ids)";
 	$sql .= ' order by d.id, m.n;';
 
 	// read dict/mean for query
@@ -58,7 +52,7 @@ function getdict() {
 	$params = $bindvariables;
 	$result = execSql($conn, $name, $sql, $params, false);
 	if (!$result) {
-                return $a;
+                return false;
 	}
 
         // build array of output dict rows
@@ -108,35 +102,12 @@ function getdict() {
 	return $a;
 }
 
+//input $lk is a csv string of ids
 function validateLookup($taint) {
 	$clean = $taint;
-	//input is an array of ids
 	return $clean;
 }
-
-function isEnglish($s) {
-	return (!preg_match('/[^A-Za-z]/', $s));
-}
-
-function isId($s) {
-	return (!preg_match('/[^0-9]/', $s));
-}
-
-function whatType($s) {
-	$r = false;
-	if (isEnglish($s)) {
-		$r = 'm.e';
-	}
-	else if (isId($s)) {
-		$r = 'd.id';
-	}
-	else {
-		$r = 'd.t';
-	}
-	return $r;
-}
-
-function composeWhere($s) {
-	return 'd.id in ('.$s.')';
-}	
+//function composeWhere($lk) {
+//	return 'd.id in ('.$lk.')';
+//}	
 ?>

@@ -165,7 +165,6 @@ organization
 		essays
 		poems
 
-search partial lookup, thai or english
 
 ===================================
 automated test suite, compare chat window to baseline
