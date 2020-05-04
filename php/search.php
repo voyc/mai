@@ -87,7 +87,10 @@ function search() {
 		$ids .= $id;
         }
 
-	$dict = getdictsub($ids);
+	$dict = array('list'=>array());
+	if ($ids) {
+		$dict = getdictsub($ids);
+	}
 
 	// success
 	$a['status'] = 'ok';

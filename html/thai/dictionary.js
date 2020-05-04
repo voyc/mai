@@ -78,7 +78,7 @@ voyc.Dictionary.prototype.getFast = function(o) {
 			self.fast = response.list;
 		}
 		self.observer.publish(svcname+'-received', 'mai', response);
-		console.log(svcname+(response['status']=='ok') ? ' success' : ' failed');
+		console.log(svcname+((response['status']=='ok') ? ' success' : ' failed'));
 	});
 	this.observer.publish(svcname+'-posted', 'mai', {});
 	return;
@@ -168,33 +168,33 @@ voyc.Dictionary.prototype.miniDict = function(id) {
 	return this.mini.list[this.mini.key[id]];
 }
 
-
 voyc.Dictionary.prototype.search = function(word, lang, typearray) {
 	var svcname = 'search';
-
-	// build data array of name/value pairs from user input
 	var data = {};
 	data['si'] = voyc.getSessionId();
 	data['lk' ] = word;
-
-	// call svc
 	var self = this;
 	this.comm.request(svcname, data, function(ok, response, xhr) {
 		if (!ok) {
 			response = { 'status':'system-error'};
 		}
-
-		self.observer.publish('search-received', 'mai', response);
-
+		self.observer.publish(svcname+'-received', 'dictionary', response);
+		console.log(svcname+(response['status'] == 'ok') ? ' success' : ' failed');
 		if (response['status'] == 'ok') {
-			console.log('search success');
-		}
-		else {
-			console.log('search failed');
+			// add new items to the dict
+			var dictlist = response.dict;
+			var ndx = self.mini.list.length;
+			for (var i = 0; i<dictlist.length; i++) {
+				var dict = dictlist[i];
+				if (!self.miniDict(dict.id)) {
+					self.mini.list.push(dict);
+					self.mini.key[dict.id] = ndx++;
+				}
+			}
 		}
 	});
 
-	this.observer.publish('search-posted', 'mai', {});
+	this.observer.publish(svcname+'-posted', 'mai', {});
 	return;
 }
 
@@ -304,7 +304,7 @@ voyc.Dictionary.prototype.drawFlat = function(flat) {
 			s += "<span expand='rules"+this.unique+"'>" + this.drawTranslit(dict.tl) + "</span>";
 			s += " <i>" + voyc.pos[mean.p] + "</i> " + mean.e;
 			s += "<span expand='more"+this.unique+"' class='expander'></span>";
-			s += "<icon type='char' name='pencil' text='"+dict.t+"'></icon>";
+			s += "<icon type='char' name='pencil' did='"+dict.id+"'></icon>";
 			s += "<div id='more"+this.unique+"'>";
 			s += mean.d;
 			s += '</div>';
@@ -318,7 +318,7 @@ voyc.Dictionary.prototype.drawFlat = function(flat) {
 			s += this.drawTranslit(dict.tl);
 			s += " <i>" + voyc.pos[mean.p] + "</i> " + mean.e;
 			s += "<span expand='more"+this.unique+"' class='expander'></span>";
-			s += "<icon type='char' name='pencil' text='"+dict.t+"'></icon>";
+			s += "<icon type='char' name='pencil' did='"+dict.id+"'></icon>";
 			s += "<div id='more"+this.unique+"'>";
 			s += mean.d;
 			s += '</div>';

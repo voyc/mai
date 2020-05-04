@@ -106,10 +106,10 @@ function setdict() {
 	
 	// insert or update the mean records
 	$updname = 'update-mean';
-	$updsql  = "update mai.mean set p=$2,e=$3,d=$4,s=$5,l=$6 where id = $1";
+	$updsql  = "update mai.mean set p=$2,e=$3,d=$4 where id = $1";
 
 	$insname = 'insert-mean';
-	$inssql  = "insert into mai.mean (id,did,n,p,e,d,s,l) values ($1,$2,$3,$4,$5,$6,$7,$8)";
+	$inssql  = "insert into mai.mean (id,did,n,p,e,d) values ($1,$2,$3,$4,$5,$6)";
 
 	foreach($aup['mean'] as $m) {
 		if ($m['trx'] == 'i') { // insert
@@ -117,11 +117,11 @@ function setdict() {
 			if ($mid < 0) {
 				return $a;
 			}
-			$params = array($mid,$did,$m['n'],$m['p'],$m['e'],$m['d'],$m['s'],$m['l']);
+			$params = array($mid,$did,$m['n'],$m['p'],$m['e'],$m['d']);
 			$result = execSql($conn, $insname, $inssql, $params, true);
 		}
 		else if ($m['trx'] == 'u') { // update
-			$params = array($m['mid'],$m['p'],$m['e'],$m['d'],$m['s'],$m['l']);
+			$params = array($m['mid'],$m['p'],$m['e'],$m['d']);
 			$result = execSql($conn, $updname, $updsql, $params, true);
 		}
 		if (!$result) {

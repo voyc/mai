@@ -21,10 +21,8 @@
 		
 		onSearchReceived - state edit, search, prep?
 		
-		startLevel
 		startDrill
 		endDrill
-		endLevel
 		reportScores
 		cmdDrill
 		prepStack
@@ -112,10 +110,7 @@ voyc.Sam.prototype.setup = function() {
 voyc.Sam.prototype.onGetVocabReceived = function() {
 	// setup continued
 	this.noam = new voyc.Noam(voyc.dictionary, this.vocab);
-	//this.level.loadPreviousLevelInProgress();
 	var interval = Date.now() - this.vocab.vocab.recency;
-	//this.setupFirstLevel(interval);
-	//voyc.curriculum = new voyc.Curriculum(voyc.$('curriculum'), this.observer, this.vocab, this.noam);
 	voyc.editor = new voyc.Editor(voyc.$('editor'), this.observer, this.noam);
 }
 
@@ -146,8 +141,8 @@ voyc.Sam.prototype.postPost = function(e) {
 	var elist = e.querySelectorAll('icon[name="pencil"]');
 	for (var i=0; i<elist.length; i++) {
 		elist[i].addEventListener('click', function(e) {
-			var s = e.currentTarget.getAttribute('text');
-			self.cmdEdit({object:s,adj:[]});
+			var id = e.currentTarget.getAttribute('did');
+			self.cmdEdit({object:id,adj:[]});
 		}, false);
 	}
 
@@ -177,129 +172,28 @@ voyc.Sam.prototype.onAnonymous = function(note) {
 }
 
 voyc.Sam.prototype.onSearchReceived = function(note) {
-	var m = note.payload.flat;
+	var flats = note.payload.flat;
+	var dicts = note.payload.dict;
+	if (!flats || !flats.length) {
+		this.dochat('not found');
+		this.state = 'ready';
+		return;
+	}
 	switch (this.state) {
 		case 'edit':
-			if (!m || !m.length) {
-				this.dochat('not found');
-				this.state = 'ready';
-			}	
-			else {
-				this.observer.publish('edit-requested', 'sam', {t:'u',m:m});
+			if (dicts.length == 1) {
+				this.observer.publish('edit-requested', 'sam', {act:'u',dict:dicts[0]});
+				break;
 			}
-			break;
+			//else, multiple results, fall thru to search
 		case 'search':
-			if (!m || !m.length) {
-				this.dochat('not found');
-			}	
-			else {
-				var s = voyc.dictionary.drawFlatList(m);
-				this.dochat(s,true);
-			}
-			this.state = 'ready';
-			break;
-		case 'prep':
-			this.mergeWordLists(this.story.words, m);
-			this.dochat('ready');
+			var s = voyc.dictionary.drawFlatList(flats);
+			this.dochat(s,true);
 			this.state = 'ready';
 			break;
 	}
 }
 
-/*
-voyc.Sam.prototype.setupFirstLevel = function(interval) {
-	var sInterval = voyc.intervalToString(interval);
-	var level = this.level;
-	if (level.currentStackNdx < 0) {
-		// welcome new student
-		level.currentStackNdx = 0;
-		this.level.store();
-		var s = 'Welcome to the jungle.';
-		s += 'We recommend you start with ' + this.level.getName() + '.';
-		s += 'Click go when ready.';
-		this.chat.post(this.chatid, s, ['go']);
-	}
-	else if (this.level.isLevelFinished()) {
-		// start next level
-		var s = "At your last session " + sInterval + " ago, ";
-		s += "you cleared " + this.level.getName() + '. ';
-		this.chat.post(this.chatid, s);
-		
-		this.level.next();
-		s = 'The next level is ' + this.level.getName() + '. ';
-		s += 'Click go to proceed.';
-		this.chat.post(this.chatid, s, ['go']);
-	}
-	else if (!sInterval) {
-		// restart level silently
-		var s = 'Click go to continue.';
-		this.chat.post(this.chatid, s, ['go']);
-	}
-	else {
-		// restart level with confirmation
-		var s = 'It has been ' + sInterval + '.';
-		s += 'You were working on ' + this.level.getName() + '.';
-		s += 'Click go to continue.';
-		this.chat.post(this.chatid, s, ['go']);
-	}
-
-	this.state = 'ready';
-}
-*/
-/*
-voyc.Sam.prototype.startLevel = function(id) {
-	var sectionid = id.substr(0,2);
-	var courseid = id.substr(2,4);
-	var levelid = id.substr(6,2);
-	var lvl = voyc[this.lang].course[sectionid][courseid][levelid];
-	this.level = new voyc.Level(this.lang,lvl);
-
-	// vet this story
-	var words = this.noam.parseStoryBySpace(this.level.phrase, {newWordsOnly:false, format:'dict'});
-		
-		// find new glyphs within new words
-		var glyphs = this.noam.parseWordToGlyphs(words, {newGlyphsOnly:true, format:'dict'});
-		this.level.glyph = this.level.glyph.concat(glyphs);
-	
-	
-	// parse prerequisites
-	if (this.level.prereq) {
-		// find new words within story
-		var words = this.noam.parseStoryBySpace(this.level.phrase, {newWordsOnly:true, format:'dict'});
-		this.level.word = this.level.word.concat(words);
-		
-		// find new glyphs within new words
-		var glyphs = this.noam.parseWordToGlyphs(words, {newGlyphsOnly:true, format:'dict'});
-		this.level.glyph = this.level.glyph.concat(glyphs);
-	}
-
-	// collect postrequisites
-	if (this.level.postreq) {
-		// if glyphs, collect words
-		if (this.level.glyph.length > 0 && this.level.word < this.lee.setting.optStackSize) {
-			var target = this.level['glyph'];
-			var limit = this.lee.setting.optStackSize - this.level.word.length;
-			if (limit > 0) {
-				var collection = this.noam.collectWords(target, {limit:limit, format:'word'});
-				this.level.word = this.level.word.concat(collection);
-			}
-		}
-
-		// if words, generate phrases
-		if (this.level.word.length > 0 && this.level.phrase < this.lee.setting.optStackSize) {
-			var collection = voyc.sengen.genSentence({count:8,shuffle:1,pattern:'',target:[]});
-			this.level.phrase = this.level.phrase.concat(collection);
-		}
-	}
-
-	//var analysis = this.noam.analyzeStory(this.level.phrase);
-
-	this.level.initStacks();
-	this.level.store();
-	(new voyc.BrowserHistory).nav('home');
-	this.startDrill(this.level);
-}
-*/
 voyc.Sam.prototype.startDrill = function() {
 	this.state = 'drill';
 	var self = this;
@@ -341,29 +235,6 @@ voyc.Sam.prototype.continueDrill = function() {
 	}
 }
 
-/*
-voyc.Sam.prototype.endLevel = function() {
-	this.chat.changeHost(this.chatid);
-	this.state = 'nextlevel';
-
-	this.level.currentStackNdx = 'm';
-	this.vocab.set(this.level.id, 'l', this.level.currentStackNdx.toString());
-	this.level.store();
-
-	var prevLevelName = this.level.getName();
-	var nextLevel = this.level.next();
-	var nextLevelName = this.level.getName(nextLevel)
-	if (nextLevel) {
-		var s = 'Congratulations.  You have cleared level ' + prevLevelName + '.<br/>';
-		s += 'The next level is ' + nextLevelName + '.<br/>';
-		s += 'Continue with next level?';
-		this.chat.post(this.chatid, s, ['yes', 'no']);
-	}
-	else {
-		this.chat.post(this.chatid, 'Congratulations.  You have cleared all of the levels.');
-	}
-}
-*/
 voyc.Sam.prototype.reportScores = function(scores) {
 	console.log("report scores");
 	if (scores === false) {
@@ -442,11 +313,7 @@ voyc.Sam.prototype.prepStack = function(story,r) {
 	return stack;
 }
 
-/*
-	respond to chat commands
-	state machine
-	command processor
-*/
+/* respond to chat commands, state machine, command processor */
 voyc.Sam.prototype.respond = function(o) {
 	if (this.state ==  'drill')
 		return this.lee.respond(o);
@@ -461,23 +328,14 @@ voyc.Sam.prototype.respond = function(o) {
 				case 'nextstack':
 					this.startDrill();
 					break;
-				case 'ready':
-				case 'nextlevel':
-					this.level = this.level.next();
-					this.startLevel(this.level.id);
-					break;
 				break;
 			}
-		case 'showalllevels':
 			break;
 		case 'debug':
 			debugger;
 			break;
 		case 'no':
 			this.chat.post(this.chatid, 'OK');
-			break;
-		case 'start':
-			this.startLevel(this.level.id);
 			break;
 		case 'set':
 			this.cmdSetVocab(o.msg);
@@ -499,9 +357,6 @@ voyc.Sam.prototype.respond = function(o) {
 			var r = voyc.sengen.genSentence(this.req);
 			if (r.length > 0) {
 				this.chat.post(this.chatid, r[0], ['again']);
-			}
-			else {
-				this.chat.post(this.chatid, "Try a level first");
 			}
 			break;
 		case 'translate':
@@ -894,7 +749,7 @@ voyc.Sam.prototype.composeWord = function(word,r,wid) {
 	s += '<p>'+word.dict.t;
 	s += " <icon type='draw' name='speaker' text='"+word.dict.t+"'></icon> &nbsp;";
 	s += voyc.dictionary.drawTranslit(word.dict.tl);
-	s += "<icon type='char' name='pencil' text='"+word.dict.t+"'></icon>";
+	s += "<icon type='char' name='pencil' did='"+word.dict.id+"'></icon>";
 	s += '</p>';
 	var numdefs = word.dict.mean.length;
 	var mean = word.dict.mean[0];
@@ -966,6 +821,7 @@ voyc.Sam.prototype.cmdSearch = function(r) {
 	}
 }
 
+/* call the editor with state 'edit' or 'insert' */
 voyc.Sam.prototype.cmdEdit = function(r) {
 	if (this.state != 'ready') {
 		this.dochat('busy already');
@@ -975,7 +831,7 @@ voyc.Sam.prototype.cmdEdit = function(r) {
 	}
 	else if (r.adj['new']) {
 		this.state = 'insert';
-		this.observer.publish('edit-requested', 'sam', {t:'i',n:r.object});
+		this.observer.publish('edit-requested', 'sam', {act:'i',t:r.object});
 	}
 	else {
 		this.state = 'edit';

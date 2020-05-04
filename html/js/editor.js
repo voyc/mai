@@ -33,8 +33,9 @@ voyc.Editor.prototype.setup = function() {
 		var d = document.createElement('div');
 		d.id = 'trans'+i;
 		d.setAttribute('name', 'trans');
-		var s = voyc.Editor.template.trans.replace(/%n/g,i);
-		d.innerHTML = s.replace(/%n1/g,i+1);
+		var s = voyc.Editor.template.trans.replace(/%n1/g,i+1);
+		s = s.replace(/%n/g,i);
+		d.innerHTML = s;
 		translate.appendChild(d);
 	}
 
@@ -105,8 +106,8 @@ voyc.Editor.prototype.save = function() {
 		m.trx = p.getAttribute('trx');
 		m.mid = p.getAttribute('mid');
 		m.n = p.getAttribute('numdef');
-		m.s = p.getAttribute('s');
-		m.l = p.getAttribute('l');
+		//m.s = p.getAttribute('s');
+		//m.l = p.getAttribute('l');
 		m.p = p.getAttribute('data');
 		m.e = this.container.querySelector('#eng'+i).value;
 		m.d = this.container.querySelector('#details'+i).value;
@@ -161,49 +162,48 @@ voyc.Editor.prototype.clear = function() {
 }
 
 voyc.Editor.prototype.onEditRequested = function(m) {
-	if (m.t == 'i') {
+	if (m.act == 'i') {
 		this.clear();
-		this.container.querySelector('#thai').value = m.n;
-		this.parse(m.n);
+		this.container.querySelector('#thai').value = m.t;
+		this.parse(m.t);
 	}
-	else if (m.t == 'u') {
-		this.populate(m.m);
+	else if (m.act == 'u') {
+		this.populate(m.dict);
 	}
 	(new voyc.BrowserHistory).nav('editor');
 	this.container.querySelector('#thai').focus();
 }
 
-voyc.Editor.prototype.populate = function(m) {
-	var r = m[0];
+voyc.Editor.prototype.populate = function(dict) {
 	var trx = 'u';
 	var d = this.container.querySelector('#thai');
-	d.value = r.t;
+	d.value = dict.t;
 	d.setAttribute('trx',trx);
-	d.setAttribute('did',r.id);
-	this.container.querySelector('#internals').innerHTML = [r.id,r.g].join();
-	this.container.querySelector('#translit').value = r.tl;
-	this.container.querySelector('#translit').readOnly = !(r.tlm == 'm');
-	this.container.querySelector('#tlm').checked = (r.tlm == 'm');
-	this.container.querySelector('#components').value = r.cp;
-	this.container.querySelector('#components').readOnly = !(r.cpm == 'm');
-	this.container.querySelector('#cpm').checked = (r.cpm == 'm');
-	this.container.querySelector('#g').value = r.g;
-	this.container.querySelector('#rules').value = r.ru;
+	d.setAttribute('did',dict.id);
+	this.container.querySelector('#internals').innerHTML = [dict.id,dict.g].join();
+	this.container.querySelector('#translit').value = dict.tl;
+	this.container.querySelector('#translit').readOnly = !(dict.tlm == 'm');
+	this.container.querySelector('#tlm').checked = (dict.tlm == 'm');
+	this.container.querySelector('#components').value = dict.cp;
+	this.container.querySelector('#components').readOnly = !(dict.cpm == 'm');
+	this.container.querySelector('#cpm').checked = (dict.cpm == 'm');
+	this.container.querySelector('#g').value = dict.g;
+	this.container.querySelector('#rules').value = dict.ru;
 
 	var t = this.container.querySelector('#translate');
-	this.numTrans = m.length;
+	this.numTrans = dict.mean.length;
 	for (var i=0; i<this.numTrans; i++) {
-		var rn = m[i];
+		var mean = dict.mean[i];
 		var pos = t.querySelector('#pos'+i);
 		pos.setAttribute('trx', trx);  // must be changed when new meanings added
-		pos.setAttribute('mid', rn.mid);
-		pos.setAttribute('numdef', rn.n);
-		pos.setAttribute('s',r.s);
-		pos.setAttribute('l',r.l);
-		pos.setAttribute('data', rn.p);
-		pos.value = this.posdisplay(rn.p);
-		t.querySelector('#eng'+i).value = rn.e;
-		t.querySelector('#details'+i).value = rn.d;
+		pos.setAttribute('mid', mean.mid);
+		pos.setAttribute('numdef', mean.n);
+		pos.setAttribute('s',dict.s);
+		pos.setAttribute('l',dict.l);
+		pos.setAttribute('data', mean.p);
+		pos.value = this.posdisplay(mean.p);
+		t.querySelector('#eng'+i).value = mean.e;
+		t.querySelector('#details'+i).value = mean.d;
 		t.querySelector('#trans'+i).classList.remove('hidden');
 	}
 	for (var i=this.numTrans; i<this.maxTrans; i++) {
@@ -390,7 +390,7 @@ voyc.fixOpen = function(eid) {
 	if (isOdd(w)) {
 		pdialog.style.width = (w+1) + 'px';
 	}
-	var h =  pdialog.offsetWidth;
+	var h =  pdialog.offsetHeight;
 	if (!isOdd(h)) {
 		pdialog.style.height = (h+1) + 'px';
 	}

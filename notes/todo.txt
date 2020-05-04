@@ -24,10 +24,6 @@ refresh fastdict, in dictionary
 rearrange vowel components
 	reverse fc and tm
 
-save and restore stories, parsed
-	first line is title and key
-	save story, insert or update, by username
-
 noam translate and translit are broken because of new search
 
 implement up/down arrow in chat window, for mobile also
@@ -60,19 +56,10 @@ how many ordinals to put in dictionary as separate words
 
 implement getdict as callback
 
-search, show, cannot display multiple pos 
-
 learn how to position a popup
-
-pencil edit from drill (no post post)
 
 phrases, using grammar, drive car, drive bus, ride horse, ride motorcycle, ascend airplane, sit car
 drill phrases
-
-
-two extra cancel buttons at the bottom of html
-
-in drill answer, multiple pos, จอง jaawngM undefined reserve, pos=nv, noun,verb
 
 dictionary data
 	? เทอม dicionary.js line 405 s += '<br/>vowel pattern ' + vp.print + ' ' + this.drawClass(vp.m);
@@ -111,7 +98,6 @@ read all the stories
 	store count and level for all words in dict
 	
 Show stories List, title, num words, num new, average level
-Choose story from list
 
 keyboard
 	uppercase
@@ -124,10 +110,6 @@ show expressions
 drill components
 drill expressions
 drill lines
-
-draw pos with multi pos values, or eliminate multi pos
-
-can you edit a word and then return to a drill?
 
 in story parse, replace pronouns with grammar codes
 	in story draw, replace grammar codes with pronouns, depending on speaker age and gender
@@ -166,6 +148,12 @@ organization
 learn consonant class
 
 learn syllable tone, add tone buttons to reply (also add speech)
+
+drill continue
+
+draw pos with multi pos values, or eliminate multi pos
+	in drill answer, multiple pos, จอง jaawngM undefined reserve, pos=nv, noun,verb
+	search, show, cannot display multiple pos 
 
 ===================================
 automated test suite, compare chat window to baseline
