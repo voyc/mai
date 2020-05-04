@@ -3,15 +3,15 @@
 	singleton
 
 	Lee conducts the drills.
-	A drill is run on a story of flash cards.
-	The drill continues until the student masters all the cards in the story.
+	A drill is run on a stack of flash cards.
+	The drill continues until the student masters all the cards in the stack.
 
 	Lee is named after R Lee Avery, 
 	the actor who played Drill Sargeant Hartman 
 	in the 1987 Stanley Kubrick Movie "Full Metal Jacket".
 
 	structure:
-		drill - start story: priming nextCard
+		drill - start stack: priming nextCard
 		choose - choose next card per algorithm
 		countState - utility
 		nextCard - calls choose, readDictionary
@@ -37,7 +37,7 @@ voyc.Lee = function(chat,observer) {
 	this.chat = chat;
 	this.observer = observer;
 	this.chatid = 0;
-	this.story = {};
+	this.stack = {};
 	this.ndxCard = 0;  // index into the scores array, and into the glyph/word/phrase array
 	this.reportCallback = false;
 	this.lastReportRecency = 0;
@@ -65,31 +65,17 @@ voyc.Lee = function(chat,observer) {
 	this.chatid = this.chat.addUser('Lee', false, false);
 }
 
-voyc.Lee.prototype.drill = function(story,callback) {
-	this.story = story;
+voyc.Lee.prototype.drill = function(stack,callback) {
+	this.stack = stack;
 	this.reportCallback = callback;
 	this.ndxCard = -1;
 	this.chat.changeHost(this.chatid);
 
 	// create the scores array
 	this.scores = [];
-
-	//for (var i=0; i<this.story.data.length; i++) {
-	//	var t = this.story.data[i];
-
-	//	if (this.story.dictType == 'word' || this.story.dictType == 'glyph') {
-	//		var dict = this.readDictionary(t);
-	//	}
-	//	else if (this.story.dictType == 'phrase') {
-	//		var e = voyc.dictionary.translate(t);
-	//		var tl = voyc.dictionary.translit(t);
-	//		var dict = {t:t, g:'x', e:e, tl:tl};
-	//	}
-	//	this.scores.push({ndx:i, dict:dict, acnt:0, ccnt:0, pct:0, recency:0, state:'u', consecutive:0});
-	//}
-	for (var i=0; i<this.story.drill.length; i++) {
-		var t = this.story.drill[i];
-		this.scores.push({ndx:i, dict:t.dict, acnt:0, ccnt:0, pct:0, recency:0, state:'u', consecutive:0});
+	for (var i=0; i<this.stack.flats.length; i++) {
+		var flat = this.stack.flats[i];
+		this.scores.push({ndx:i, flat:flat, acnt:0, ccnt:0, pct:0, recency:0, state:'u', consecutive:0});
 	}
 
 	// choose the first card
@@ -106,7 +92,7 @@ voyc.Lee.prototype.choose = function() {
 		}
 		return r;
 	}
-	switch(this.story.algorithm) {
+	switch(this.stack.algorithm) {
 		case 'sequential':
 			var n = this.ndxCard;
 			var start = n-1;
@@ -135,7 +121,7 @@ voyc.Lee.prototype.choose = function() {
 			}
 				
 			// copy state work scores to separate array
-			var workstory = [];
+			var workstack = [];
 			for (var i=0; i<this.scores.length; i++) {
 				var score = this.scores[i];
 				if (score.state == 'w') {
@@ -143,32 +129,32 @@ voyc.Lee.prototype.choose = function() {
 						chosen = i;
 						break;
 					}
-					workstory.push(score);
+					workstack.push(score);
 				}
 			}
 			if (chosen !== false) {
 				break;
 			}
 
-			if (workstory.length <= 0) {
+			if (workstack.length <= 0) {
 				break;
 			}
 
 			// sort array by recency
-			workstory.sort(function(a,b) {
+			workstack.sort(function(a,b) {
 				return (a.recency - b.recency);
 			});
 
 			// delete half most recent
-			var nhalf = Math.floor(workstory.length/2);
+			var nhalf = Math.floor(workstack.length/2);
 			for (i=0; i<nhalf; i++) {
-				workstory.pop();
+				workstack.pop();
 			}
 
 			// choose random from remaining half
-			var n = Math.floor(Math.random() * workstory.length);
+			var n = Math.floor(Math.random() * workstack.length);
 
-			chosen = workstory[n].ndx;  // this.ndxCard
+			chosen = workstack[n].ndx;  // this.ndxCard
 			break;
 	}
 	return chosen;
@@ -192,20 +178,20 @@ voyc.Lee.prototype.nextCard = function() {
 		this.reportCallback(false);
 		return;
 	}
-	var s = this.displayQuestion( this.scores[this.ndxCard].dict);
+	var s = this.displayQuestion( this.scores[this.ndxCard].flat);
 	console.log('next card: ' + s);
 }
 
-voyc.Lee.prototype.displayQuestion = function(dict) {
-	var s = this.composeQuestion( dict);
+voyc.Lee.prototype.displayQuestion = function(flat) {
+	var s = this.composeQuestion( flat);
 	this.chat.post(this.chatid, s, ['hint']);
 	console.log('question displayed: ' + s);
 }
 
-voyc.Lee.prototype.composeQuestion = function(dict) {
-	var s = dict.t;
-	if (this.story.direction == 'reverse') {
-		s = dict.e;
+voyc.Lee.prototype.composeQuestion = function(flat) {
+	var s = flat.dict.t;
+	if (this.stack.reversed) {
+		s = flat.mean.e;
 	}
 	return s;
 }
@@ -214,15 +200,15 @@ voyc.Lee.prototype.respond = function(o) {
 	switch (this.state) {
 		case 'typing':
 			if (o.msg == 'quit' || o.msg == 'cancel') {
-				this.chat.post(this.chatid, "Finished.", []);
+				this.chat.post(this.chatid, "Stopped.", []);
 				this.reportCallback(false);
 				break;
 			}		
 			if (o.msg == 'hint') {
-				var dict = this.scores[this.ndxCard].dict;
-				var s = voyc.dictionary.drawOne(dict);
+				var flat = this.scores[this.ndxCard].flat;
+				var s = voyc.dictionary.drawFlat(flat);
 				this.chat.post(this.chatid, s, []);
-				this.displayQuestion(dict);
+				this.displayQuestion(flat);
 				break;
 			}
 			var b = this.checkAnswer(o);
@@ -230,7 +216,8 @@ voyc.Lee.prototype.respond = function(o) {
 			if (!b) {
 				var s = "Nope. Try again.";
 				this.chat.post(this.chatid, s, []);
-				this.displayQuestion(dict);
+				var flat = this.scores[this.ndxCard].flat;
+				this.displayQuestion(flat);
 			}
 			else {
 				if (this.setting.askTone && this.scores[this.ndxCard].dict.g == 'o') {
@@ -269,8 +256,8 @@ voyc.Lee.prototype.respond = function(o) {
 			break;
 		case 'showanswer':
 			var s = 'Correct.</br/>';
-			var dict = this.scores[this.ndxCard].dict;
-			s += voyc.dictionary.drawOne(dict);
+			var flat = this.scores[this.ndxCard].flat;
+			s += voyc.dictionary.drawFlat(flat);
 			if (this.setting.selfScore) {
 				this.chat.post(this.chatid, s, ['right', 'wrong','details','mastered']);
 				this.state = 'selfscore';
@@ -289,11 +276,11 @@ voyc.Lee.prototype.respond = function(o) {
 }
 
 voyc.Lee.prototype.checkAnswer = function(o) {
-	return (o.msg == this.scores[this.ndxCard].dict.t);
+	return (o.msg == this.scores[this.ndxCard].flat.t);
 }
 
 voyc.Lee.prototype.checkToneAnswer = function(o) {
-	return (o.msg == this.scores[this.ndxCard].dict.tn);
+	return (o.msg == this.scores[this.ndxCard].dict.tn); // fix
 }
 
 voyc.Lee.prototype.scoreAnswer = function(bool) {

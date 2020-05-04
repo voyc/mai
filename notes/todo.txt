@@ -119,8 +119,6 @@ keyboard
 	alphabet consonants
 	alphabet vowel patterns
 
-reverse drill
-
 show components
 show expressions
 drill components
@@ -165,6 +163,9 @@ organization
 		essays
 		poems
 
+learn consonant class
+
+learn syllable tone, add tone buttons to reply (also add speech)
 
 ===================================
 automated test suite, compare chat window to baseline
@@ -325,9 +326,7 @@ translit for leading ห
 ผม pmoL noun hair pomR
 สวัส swatL noun good-fortune  2 syllables
 review between lessons
-during word-reverse, nope try again requires hints
 tired, beef, alike are too advanced for keyboard lesson
-add tone buttons to reply (also add speech)
 
 On refresh how long has it been?  check recency
 

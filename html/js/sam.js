@@ -26,7 +26,7 @@
 		endDrill
 		endLevel
 		reportScores
-		drillStory
+		cmdDrill
 		prepStack
 		
 		respond - state machine, command processor, conversational engine
@@ -65,6 +65,7 @@ voyc.Sam = function(chat) {
 	this.setup();
 	this.state = 'ready';
 	this.story = false;
+	this.stack = false;
 	this.lang = 'thai';
 	this.editdict = {};
 }
@@ -245,7 +246,7 @@ voyc.Sam.prototype.setupFirstLevel = function(interval) {
 	this.state = 'ready';
 }
 */
-
+/*
 voyc.Sam.prototype.startLevel = function(id) {
 	var sectionid = id.substr(0,2);
 	var courseid = id.substr(2,4);
@@ -298,14 +299,12 @@ voyc.Sam.prototype.startLevel = function(id) {
 	(new voyc.BrowserHistory).nav('home');
 	this.startDrill(this.level);
 }
-
-voyc.Sam.prototype.startDrill = function(level) {
-	this.vocab.set(level.id, 'l', level.currentStackNdx.toString());
-	this.level.store();
-	var self = this;
+*/
+voyc.Sam.prototype.startDrill = function() {
 	this.state = 'drill';
-	var stack = level.stacks[level.currentStackNdx];
-	this.lee.drill(stack, function(scores) {
+	var self = this;
+	this.stack.flats = this.stack.sets[this.stack.setndx];
+	this.lee.drill(this.stack, function(scores) {
 		self.reportScores(scores);
 	});
 }
@@ -313,32 +312,36 @@ voyc.Sam.prototype.startDrill = function(level) {
 voyc.Sam.prototype.endDrill = function() {
 	this.chat.changeHost(this.chatid);
 	this.state = 'ready';
-return;
-	// next stack
-	this.level.currentStackNdx++;
-	if (this.level.currentStackNdx >= this.level.stacks.length) { 
-		this.endLevel();
-		return;
-	}
-	this.vocab.set(this.level.id, 'l', this.level.currentStackNdx.toString());
-	this.level.store();
-
-	// proceed with next stack?
-	var stack = this.level.stacks[this.level.currentStackNdx];
-	var s = 'Good job.<br/>';
-	if (stack.direction == 'normal') {
-		s += 'Let\'s try some '+stack.dictType+'s.<br/>';
-	}
-	else if (stack.direction == 'reverse') {
-		s += 'Let\'s translate from English.<br/>';
-	}
-	s += 'Click go when ready.';
-	this.chat.post(this.chatid, s, ['go']);
-	
-	// wait for user command
-	this.state = 'nextstack';
+	this.dochat('Good job.');
+	this.continueDrill();
 }
 
+voyc.Sam.prototype.continueDrill = function() {
+	if (this.stack.reversible && !this.stack.reversed) {
+		var s = 'Let\'s translate from English.<br/>';
+		s += 'Click go when ready.';
+		this.stack.reversed = true;
+		this.state = 'nextstack';
+		this.chat.post(this.chatid, s, ['go']);
+	}
+	else {
+		this.stack.set++;
+		if (this.stack.set >= this.stack.sets.length) {
+			this.state = 'ready';
+			this.dochat('Congratulations.  You finished the drill.');
+		}
+		else {		
+			this.stack.reversed = false;	
+			this.stack.setndx++;
+			var s = 'Let\'s do another set.<br/>';
+			s += 'Click go when ready.';
+			this.state = 'nextstack';
+			this.chat.post(this.chatid, s, ['go']);
+		}
+	}
+}
+
+/*
 voyc.Sam.prototype.endLevel = function() {
 	this.chat.changeHost(this.chatid);
 	this.state = 'nextlevel';
@@ -360,7 +363,7 @@ voyc.Sam.prototype.endLevel = function() {
 		this.chat.post(this.chatid, 'Congratulations.  You have cleared all of the levels.');
 	}
 }
-
+*/
 voyc.Sam.prototype.reportScores = function(scores) {
 	console.log("report scores");
 	if (scores === false) {
@@ -369,52 +372,73 @@ voyc.Sam.prototype.reportScores = function(scores) {
 	}
 	for (var i=0; i<scores.length; i++) {
 		var score = scores[i];
-		this.vocab.set(score.dict.t, score.dict.g, score.state);
+		this.vocab.set(score.flat.dict.t, score.flat.dict.g, score.state);
 	}
 }
 
-voyc.Sam.prototype.drillStory = function(o, r) {
-	var s = '';
+voyc.Sam.prototype.cmdDrill = function(story, r) {
+	if (!this.story) {
+		this.dochat('Parse a story first.');
+		return;
+	}
+	if (!r.adj['continue']) {
+		this.stack = this.prepStack(story, r);
+	}
+	this.startDrill();
+}
+
+voyc.Sam.prototype.prepStack = function(story,r) {
+	var stack = {
+		algorithm: 'progressive',
+		reversible: true,
+		reversed: false,
+		setsize:3,
+	}
+	var flats = [];
 	switch(r.object) {
 		case 'words':
-			var sortme = [];
-			for (var i=0; i<o.words.length; i++) {
-				var w = o.words[i];
+			for (var i=0; i<story.words.length; i++) {
+				var w = story.words[i];
 				if (!w.id) {
 					continue;
 				}
 				if (r.adj.new && w.vocab) {
 					continue;
 				}
-				sortme.push(w);
+				var n = parseInt(w.loc[0].n)
+				n = (n > 0) ? n-1 : 0;
+				flat = {
+					id:w.id,
+					t:w.t,
+					n:n,
+					dict:w.dict,
+					mean:w.dict.mean[n],
+					vocab:w.vocab,
+				}
+				flats.push(flat);
 			}
-			var sorted = sortme.sort(function(a,b) {
-				return a.t.length - b.t.length;
-			});
-			var stack = this.prepStack(sorted, o,r);
-			var self = this;
-
-			this.state = 'drill';
-			this.lee.drill(stack, function(scores) {
-				self.reportScores(scores);
-			});
-			break;
+			break;	
 	}
-	return;
-}
-
-voyc.Sam.prototype.prepStack = function(w, o, r) {
-	var stack = o;
-	o.id = 'cotravwh';
-	o.prereq = false;
-	o.postreq = false;
-	o.algorithm = 'progressive';
-	o.primaryDictType =  'word';
-	o.title = 'ning botti 1';
-	o.glyph = [];
-	o.word = w;
-	o.phrase = []; 
-	o.drill = w;
+	var flats = flats.sort(function(a,b) {
+		return a.t.length - b.t.length;
+	});
+		
+	var sets = [];
+	var s = 0;
+	sets[s] = [];
+	var n = 0;
+	for (var i=0; i<flats.length; i++) {
+		var flat = flats[i];
+		sets[s].push(flat);		
+		n++;
+		if (n >= stack.setsize) {
+			n=0;
+			s++;
+			sets[s] = [];
+		}
+	}
+	stack.sets = sets;
+	stack.setndx = 0;
 	return stack;
 }
 
@@ -429,12 +453,13 @@ voyc.Sam.prototype.respond = function(o) {
 
 	var input = o.msg;
 	var w = o.msg.split(/\s+/);
+	var r = this.parseRequest(input);
 	switch (w[0]) {
 		case 'go':
 		case 'yes':
 			switch (this.state) {
 				case 'nextstack':
-					this.startDrill(this.level);
+					this.startDrill();
 					break;
 				case 'ready':
 				case 'nextlevel':
@@ -596,13 +621,7 @@ voyc.Sam.prototype.respond = function(o) {
 				});
 			}
 			break;
-		case 'drill':
-			var r = this.parseRequest(input);
-			var s = 'Parse a story first.';
-			if (this.story) {
-				this.drillStory(this.story, r)
-			}
-			break;
+		case 'drill': this.cmdDrill(this.story, r); break;
 		case 'search':
 			var r = this.parseRequest(input);
 			this.cmdSearch(r);
@@ -927,7 +946,7 @@ voyc.Sam.prototype.cmdSearch = function(r) {
 	if (this.state != 'ready') {
 		this.dochat('busy already');
 	}
-	if (!r.object) {
+	else if (!r.object) {
 		this.dochat('search for what?');
 	}
 	else {
@@ -981,9 +1000,6 @@ voyc.Sam.prototype.onSetDictReceived = function(note) {
 	(new voyc.BrowserHistory).nav('home');
 }
 
-/**
-	process and respond to a "set" request
-**/
 voyc.Sam.prototype.cmdSetVocab = function(msg) {
 	// set word type state
 	function validateType(type) {

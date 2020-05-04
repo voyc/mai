@@ -22,12 +22,8 @@ function getdict() {
 		return $a;
 	}
 
-	$list = getdictsub($lk);
+	$a = getdictsub($lk);
 
-	if ($list) {
-		$a['status'] = 'ok';
-		$a['list'] = $list;
-	}
 	return $a;
 }
 
