@@ -211,22 +211,31 @@ voyc.Sam.prototype.endDrill = function() {
 }
 
 voyc.Sam.prototype.continueDrill = function() {
-	if (this.stack.reversible && !this.stack.reversed) {
-		var s = 'Let\'s translate from English.<br/>';
+	// increment through the steps
+	this.stack.stepndx++;
+	var s = '';
+	if (this.stack.stepndx < this.stack.steps.length) {
+		switch (this.stack.steps[this.stack.stepndx]) {
+			case 'class': s = 'What is the class of the leading consonant?'; break;
+			case 'tone': s = 'What is the tone of the syllable?'; break;
+			case 'translate': s = 'Translate to English.'; break;
+			case 'reverse': s = 'Reverse translate back to Thai.'; break;
+		}
 		s += 'Click go when ready.';
-		this.stack.reversed = true;
 		this.state = 'nextstack';
 		this.chat.post(this.chatid, s, ['go']);
 	}
+	// increment through the sets
 	else {
+		this.stack.stepndx = 0;
 		this.stack.set++;
 		if (this.stack.set >= this.stack.sets.length) {
 			this.state = 'ready';
 			this.dochat('Congratulations.  You finished the drill.');
 		}
 		else {		
-			this.stack.reversed = false;	
 			this.stack.setndx++;
+			this.stack.flats = this.stack.sets[this.stack.setndx];
 			var s = 'Let\'s do another set.<br/>';
 			s += 'Click go when ready.';
 			this.state = 'nextstack';
@@ -261,12 +270,15 @@ voyc.Sam.prototype.cmdDrill = function(story, r) {
 voyc.Sam.prototype.prepStack = function(story,r) {
 	var stack = {
 		algorithm: 'progressive',
-		reversible: true,
-		reversed: false,
 		setsize:3,
+		stepndx:0,
+		steps:['translate','reverse'],
+		setndx:0,
 	}
 	var flats = [];
 	switch(r.object) {
+		case 'syllables':
+			stack.steps = ['class','tone','translate','reverse'];
 		case 'words':
 			for (var i=0; i<story.words.length; i++) {
 				var w = story.words[i];
@@ -274,6 +286,9 @@ voyc.Sam.prototype.prepStack = function(story,r) {
 					continue;
 				}
 				if (r.adj.new && w.vocab) {
+					continue;
+				}
+				if (r.object == 'syllables' && w.dict.g != 'o') {
 					continue;
 				}
 				var n = parseInt(w.loc[0].n)
@@ -290,10 +305,13 @@ voyc.Sam.prototype.prepStack = function(story,r) {
 			}
 			break;	
 	}
-	var flats = flats.sort(function(a,b) {
+
+	// sort by length of thai word
+	flats.sort(function(a,b) {
 		return a.t.length - b.t.length;
 	});
 		
+	// group words into sets
 	var sets = [];
 	var s = 0;
 	sets[s] = [];
@@ -302,25 +320,26 @@ voyc.Sam.prototype.prepStack = function(story,r) {
 		var flat = flats[i];
 		sets[s].push(flat);		
 		n++;
-		if (n >= stack.setsize) {
+		if (n >= stack.setsize) { // start a new set
 			n=0;
 			s++;
 			sets[s] = [];
 		}
 	}
 	stack.sets = sets;
-	stack.setndx = 0;
 	return stack;
 }
 
 /* respond to chat commands, state machine, command processor */
 voyc.Sam.prototype.respond = function(o) {
-	if (this.state ==  'drill')
-		return this.lee.respond(o);
-
 	var input = o.msg;
-	var w = o.msg.split(/\s+/);
 	var r = this.parseRequest(input);
+	var w = o.msg.split(/\s+/);
+	
+	if (this.state ==  'drill' && r.verb != 'kill') {
+		return this.lee.respond(o);
+	}
+
 	switch (w[0]) {
 		case 'go':
 		case 'yes':
@@ -656,6 +675,12 @@ voyc.Sam.prototype.showStory = function(o,r) {
 				}
 			}
 			break
+		case 'components':
+			for (var i=0; i<o.components.length; i++) {
+				var cp = o.components[i];
+				s += cp.dict.t + '<br/>';
+			}
+			break; 
 		case 'newvocab':
 			o.words.forEach(function(item,index) {
 				if (item.id && !item.vocab) {

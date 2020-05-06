@@ -437,6 +437,7 @@ voyc.Noam.prototype.parseStory = function(story) {
 
 	// consolidate words from newly parsed lines/words
 	story.words = story.consolidateWords();
+	//story.components = story.consolidateComponents();
 
 	// set title
 	story.title = story.lines[0].text;

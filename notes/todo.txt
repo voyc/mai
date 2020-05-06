@@ -5,7 +5,10 @@ john@voyc.com
 ninghillside/ning/hillside/bvyznrw@sharklasers.com
 samantha/samantha/ptwjqoda@sharklasers.com
 
-account register, validate name and password doesnt match between client and server
+subcomponents
+	account: register, validate name and password doesnt match between client and server
+	minimal: fixopen, learn how to position a popup
+	jslib: chat-post, other new functions
 
 db testing starts with sequence ids here
 	select * from mai.mean where id > 1365;
@@ -28,76 +31,20 @@ noam translate and translit are broken because of new search
 
 implement up/down arrow in chat window, for mobile also
 
-prep, cmdPrep, getdict
-	make prep part of parse?
+implement story page, with search and browse
 
-show lines
-	when the user clicks on an error, give a popup to let him correct the typo, or edit a new word
-	when the user clicks on a multi-meaning, give him a popup to let him choose the meaning
-		add the numdef to the where object
-	add numdef to where-section of words array
-	allow lookup on each word
-	show eng along with thai
+implement dictionary page, with search and browse
 
-click on multimean, newvocab, error
-click on selected string
-click on speaker
-request, audio, translate, translit, wordorder, tones
-thoughts
-	wordorder and translit can be delivered in a table
-	tones must replace original
-per line, or whole story
-at the end of each line, add icon with line to popup
-	popup has choices: audio, wordorder, translit, tones, translate 
+dictionary content
+	how many ordinals to put in dictionary as separate words
 
-let author add translate to story
-
-how many ordinals to put in dictionary as separate words
-
-implement getdict as callback
-
-learn how to position a popup
-
-phrases, using grammar, drive car, drive bus, ride horse, ride motorcycle, ascend airplane, sit car
-drill phrases
+grammar content
+	phrases: drive car, drive bus, ride horse, ride motorcycle, ascend airplane, sit car
 
 dictionary data
 	? เทอม dicionary.js line 405 s += '<br/>vowel pattern ' + vp.print + ' ' + this.drawClass(vp.m);
 
-in show lines
-	<word multimean chosen
-	in choose()
-	add attribute to original word
 
-dict popup (replace expander)
-	options
-		show all meanings
-		show one meaning
-		show all meanings with choose menu
-	show translit
-	show pronunciation detail (for syllable)
-	click on component?
-		nested popup
-		cancel back to this one
-
-mouse select
-	add big word
-	add phrase
-	add expression
-
-Calculate appropriateness of a story for a user
-	number of known words
-	number of new words
-	new/total
-	easy, sweet, hard
-
-read all the stories
-	make a table counting words/meanings
-	find highest use count, and lowest use count
-	interpolate an index from 0 to 100 for each use count
-	store count and level for all words in dict
-	
-Show stories List, title, num words, num new, average level
 
 keyboard
 	uppercase
@@ -105,11 +52,8 @@ keyboard
 	alphabet consonants
 	alphabet vowel patterns
 
-show components
-show expressions
-drill components
-drill expressions
-drill lines
+show components, expressions
+drill components, expressions, lines, phrases
 
 in story parse, replace pronouns with grammar codes
 	in story draw, replace grammar codes with pronouns, depending on speaker age and gender
@@ -121,6 +65,21 @@ add english translation to stories
 	parse t and e out of raw
 	side-by-side view (float left,right) vs replacement view
 
+learn syllable tone, add tone buttons to reply (also add speech)
+
+drill continue
+
+draw pos with multi pos values, or eliminate multi pos
+	in drill answer, multiple pos, จอง jaawngM undefined reserve, pos=nv, noun,verb
+	search, show, cannot display multiple pos 
+
+split out components and syllables, on the server, allow drill on those
+
+in drill, handle end of set, empty set
+
+in drill answer, show hint depending on step
+
+====================================
 organization
 	reference
 		alphabet
@@ -137,6 +96,7 @@ organization
 			grammar
 			pronunciation
 			numbers
+			calendar/clock
 	stories
 		encyclopedia
 		conversations
@@ -145,20 +105,27 @@ organization
 		essays
 		poems
 
-learn consonant class
+====================================
+server-side analysis
 
-learn syllable tone, add tone buttons to reply (also add speech)
+Calculate appropriateness of a story for a user
+	number of known words
+	number of new words
+	new/total
+	easy, sweet, hard
 
-drill continue
-
-draw pos with multi pos values, or eliminate multi pos
-	in drill answer, multiple pos, จอง jaawngM undefined reserve, pos=nv, noun,verb
-	search, show, cannot display multiple pos 
+read all the stories
+	make a table counting words/meanings
+	find highest use count, and lowest use count
+	interpolate an index from 0 to 100 for each use count
+	store count and level for all words in dict
+	
+Show stories List, title, num words, num new, average level
 
 ===================================
-automated test suite, compare chat window to baseline
+chat command help
 
-chat commands, part of sam.js documentation
+part of sam.js documentation
 
 developer
 kill
@@ -214,6 +181,10 @@ voyc.dictionary
 voyc.alphabet, used by noam, uses observer and comm
 voyc.vocab
 ==================
+automated test suite
+
+compare chat window to baseline
+
 noam.html - bring all these tests into sam chat, then remove noam.html
 test1 - ไมตรี
 	noam.parse -> noam.parseStory -> noam.parseString 

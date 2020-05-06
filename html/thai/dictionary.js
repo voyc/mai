@@ -433,10 +433,10 @@ voyc.ru = [
 	// endings
 	{code:'fsc', name:'final sonorant consonant: live'},
 	{code:'fnsc', name:'final non-sonorant consonant: dead'},
-
-	// tones
 	{code:'ovs', name:'Open vowel short: dead'},
 	{code:'ovl', name:'Open vowel long: live'},
+
+	// tones
 	{code:'mcl', name:'Mid-class live: M'},
 	{code:'mcd', name:'Mid-class dead: L'},
 	{code:'mc1', name:'Mid-class mai eak: L'},
@@ -452,6 +452,7 @@ voyc.ru = [
 	{code:'lcdl', name:'Low-class dead long: F'},
 	{code:'lc1', name:'Low-class mai eak: F'},
 	{code:'lc2', name:'Low-class mai toh: H'},
+	{code:'exp', name:'Exception to the rules.'},
 
 	// silent tone mark on ending consonant
 

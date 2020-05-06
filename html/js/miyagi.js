@@ -276,21 +276,64 @@ voyc.Lee.prototype.countState = function(state) {
 }
 
 voyc.Lee.prototype.displayQuestion = function(flat) {
-	var s = this.composeQuestion( flat);
-	this.chat.post(this.chatid, s, ['hint']);
-	console.log('question displayed: ' + s);
+	if (this.stack.class) {
+		var s = flat.dict.t;
+		this.chat.post(this.chatid, s, ['low','middle','high']);
+	}
+	else {
+		var q = this.composeQuestion( flat);
+		this.chat.post(this.chatid, q.s, q.o);
+	}
+	console.log('question displayed: ' + q.s);
 }
 
 voyc.Lee.prototype.composeQuestion = function(flat) {
+	var step = this.stack.steps[this.stack.stepndx];
 	var s = flat.dict.t;
-	if (this.stack.reversed) {
-		s = flat.mean.e;
+	var o = ['hint'];
+	switch (step) {
+		case 'class':
+			o = ['low', 'middle', 'high'];
+			break;
+		case 'tone':
+			o = ['L','M','H','R','F'];
+			break;
+		case 'translate':
+			break;
+		case 'reverse':
+			s = flat.mean.e;
+			break;
 	}
-	return s;
+	return { s:s, o:o };
 }
 
 voyc.Lee.prototype.checkAnswer = function(o) {
-	return (o.msg == this.scores[this.ndxCard].flat.t);
+	var step = this.stack.steps[this.stack.stepndx];
+	var b = false;
+	switch (step) {
+		case 'class':
+			var lc = this.scores[this.ndxCard].flat.dict.cp[0];
+			lc = lc.substr(0,1);
+			var cls = voyc.alphabet.search(lc).m;
+			if (lc == 'ห' || (lc == 'อ' && lc.length > 1)) {
+				cls = 'h';
+			}
+			b = (o.msg.substr(0,1) == cls);
+			break;
+		case 'tone':
+			var tn = this.scores[this.ndxCard].flat.dict.cp.split(',')[4];
+			b = (o.msg == tn);
+			break;
+		case 'translate':
+			var en = this.scores[this.ndxCard].flat.mean.e;
+			b = (o.msg == en);
+			break;
+		case 'reverse':
+			var th = this.scores[this.ndxCard].flat.dict.t;
+			b = (o.msg == th);
+			break;
+	}
+	return b;
 }
 
 voyc.Lee.prototype.checkToneAnswer = function(o) {

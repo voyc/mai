@@ -8,33 +8,13 @@ function getstories() {
 		'status' => 'system-error'
 	);
 
-	// raw inputs
-	$taint_si = isset($_POST['si']) ? $_POST['si'] : 0;
-
-	// validate inputs
-	$si = validateToken($taint_si);
-
-	// validate parameter set
-	if (!$si){
-		Log::write(LOG_WARNING, 'attempt with invalid parameter set');
-		return $a;
-	}
-
 	// get database connection
 	$conn = getConnection();
 	if (!$conn) {
 		return $a;
 	}
 
-	// get logged-in user
-	$result = getUserByToken($conn, $si);
-	if (!$result) {
-		return $a;
-	}
-	$row = pg_fetch_array($result, 0, PGSQL_ASSOC);
-	$userid = $row['id'];
-
-	// read story for logged-in user
+	// read story
 	$name = 'query-story';
 	$sql = "select id,authorid,title,language from mai.story";
 	$params = array();
@@ -55,7 +35,6 @@ function getstories() {
 		$story['lang'] = $row['language'];
                 $stories[] = $story;
         }
-
 
 	// success
 	$a['status'] = 'ok';
