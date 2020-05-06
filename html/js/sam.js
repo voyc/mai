@@ -270,7 +270,7 @@ voyc.Sam.prototype.cmdDrill = function(story, r) {
 voyc.Sam.prototype.prepStack = function(story,r) {
 	var stack = {
 		algorithm: 'progressive',
-		setsize:3,
+		setsize:5,
 		stepndx:0,
 		steps:['translate','reverse'],
 		setndx:0,
@@ -310,8 +310,9 @@ voyc.Sam.prototype.prepStack = function(story,r) {
 	flats.sort(function(a,b) {
 		return a.t.length - b.t.length;
 	});
-		
+
 	// group words into sets
+	var sizes = this.calcSetSizes(stack.setsize, flats.length);
 	var sets = [];
 	var s = 0;
 	sets[s] = [];
@@ -320,7 +321,7 @@ voyc.Sam.prototype.prepStack = function(story,r) {
 		var flat = flats[i];
 		sets[s].push(flat);		
 		n++;
-		if (n >= stack.setsize) { // start a new set
+		if (n >= sizes[s] && (s+1) < sizes.length) { // start a new set
 			n=0;
 			s++;
 			sets[s] = [];
@@ -329,6 +330,48 @@ voyc.Sam.prototype.prepStack = function(story,r) {
 	stack.sets = sets;
 	return stack;
 }
+
+/* calc set sizes given optimal setsize and total */
+voyc.Sam.prototype.calcSetSizes = function(optsetsize, total) {
+	var setsize = optsetsize;
+	var q = Math.floor(total/setsize);
+	var r = total % setsize;
+	var h = setsize/2;
+	var adj = 0;
+	var n = 0;
+	var numsets = 0;
+	var sizes = [];
+	if (q == 0) {
+		numsets = 1;
+		sizes.push(total);
+	}
+	else {
+		if (r > h) {
+			numsets = q+1;
+			adj = -1;
+			n = setsize - r;
+		}
+		else {
+			numsets = q;
+			adj = 1;
+			n = r;
+		}
+		if (n > numsets) {
+			setsize = Math.floor(total/numsets);
+			n = total - (setsize * numsets);	
+			adj = 1;
+		}
+		for (var j=0; j<numsets; j++) {
+			var x = setsize;
+			if (j < n) {
+				x += adj;
+			}
+			sizes.push(x);
+		}
+	}
+	return sizes;
+}
+
 
 /* respond to chat commands, state machine, command processor */
 voyc.Sam.prototype.respond = function(o) {

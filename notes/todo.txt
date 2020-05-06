@@ -35,17 +35,6 @@ implement story page, with search and browse
 
 implement dictionary page, with search and browse
 
-dictionary content
-	how many ordinals to put in dictionary as separate words
-
-grammar content
-	phrases: drive car, drive bus, ride horse, ride motorcycle, ascend airplane, sit car
-
-dictionary data
-	? เทอม dicionary.js line 405 s += '<br/>vowel pattern ' + vp.print + ' ' + this.drawClass(vp.m);
-
-
-
 keyboard
 	uppercase
 	learning: Homekeys,etc, known/new
@@ -65,19 +54,42 @@ add english translation to stories
 	parse t and e out of raw
 	side-by-side view (float left,right) vs replacement view
 
-learn syllable tone, add tone buttons to reply (also add speech)
+story/line view buttons
+	Side by side
+	Thai
+	Eng
+	ww
+	Hints
+	Tones
+	Translit
+	Speaker
 
-drill continue
+learn syllable tone, add tone buttons to reply (also add speech)
 
 draw pos with multi pos values, or eliminate multi pos
 	in drill answer, multiple pos, จอง jaawngM undefined reserve, pos=nv, noun,verb
 	search, show, cannot display multiple pos 
 
-split out components and syllables, on the server, allow drill on those
+drill
+	handle end of set, empty set, says "Let's do another set." when there's no more sets
+	in answer, show hint depending on step
+	continue
 
-in drill, handle end of set, empty set
+====================================
 
-in drill answer, show hint depending on step
+dictionary content
+	how many ordinals to put in dictionary as separate words
+
+grammar content
+	phrases: drive car, drive bus, ride horse, ride motorcycle, ascend airplane, sit car
+	she say that you come from america.
+	{pronoun} {say,hear,think} ว่า {person} มา จาก {country}
+	where you come from?
+	maybe he come from china. do you think so?
+
+
+dictionary data
+	? เทอม dicionary.js line 405 s += '<br/>vowel pattern ' + vp.print + ' ' + this.drawClass(vp.m);
 
 ====================================
 organization
@@ -121,6 +133,8 @@ read all the stories
 	store count and level for all words in dict
 	
 Show stories List, title, num words, num new, average level
+
+split out components and syllables, on the server, allow drill on those
 
 ===================================
 chat command help
@@ -180,6 +194,15 @@ globals - instantiated by mai, read database during setup
 voyc.dictionary
 voyc.alphabet, used by noam, uses observer and comm
 voyc.vocab
+
+
+data structures:
+flat
+dict
+mean
+loc
+word
+
 ==================
 automated test suite
 

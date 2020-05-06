@@ -1,0 +1,101 @@
+<html>
+<head>
+
+
+<script>
+
+/* calc set sizes given optimal setsize and total */
+calcSetAdjustment = function(optsetsize, total) {
+	var setsize = optsetsize;
+	var q = Math.floor(total/setsize);
+	var r = total % setsize;
+	var h = setsize/2;
+	var adj = 0;
+	var n = 0;
+	var numsets = 0;
+	var sizes = [];
+	if (q == 0) {
+		numsets = 1;
+		sizes.push(total);
+	}
+	else {
+		if (r > h) {
+			numsets = q+1;
+			adj = -1;
+			n = setsize - r;
+		}
+		else {
+			numsets = q;
+			adj = 1;
+			n = r;
+		}
+		if (n > numsets) {
+			setsize = Math.floor(total/numsets);
+			n = total - (setsize * numsets);	
+			adj = 1;
+		}
+		for (var j=0; j<numsets; j++) {
+			var x = setsize;
+			if (j < n) {
+				x += adj;
+			}
+			sizes.push(x);
+		}
+	}
+	return sizes;
+}
+
+var setSize = 99;
+var max = 99;
+
+var sumarray = function(a) {
+	var sum = 0;
+	for (var i=0; i<a.length; i++) {
+		sum += a[i];
+	}
+	return sum;
+}
+
+var sumspread = function(a) {
+	var high = 0;
+	var low = max;
+	for (var i=0; i<a.length; i++) {
+		if (a[i] > high) high = a[i];
+		if (a[i] < low) low = a[i];
+	}
+	return (high - low);
+}
+
+var print = function(i,j,sizes,msg) {
+	var s = [i,j].join(',') + ':' + sizes.join(',') + msg + '<br/>';
+	document.getElementById('results').innerHTML += s;
+}
+
+window.addEventListener('load', function(e) {
+	document.getElementById('gobtn').addEventListener('click', function(e) {
+		for (var i=1; i<=max; i++) {
+			var m = Math.min(i,setSize);
+			for (var j=1; j<=m; j++) {
+				var s = '';
+				var sizes = calcSetAdjustment(j, i);
+				if (sumarray(sizes) != i) {
+					print(i,j,sizes,' error total doesnt match');
+				}
+				if (sumspread(sizes) > 1) {
+					print(i,j,sizes,' error unbalanced');
+				}
+				//print(i,j,sizes,' ok');
+			}
+		}
+		document.getElementById('results').innerHTML += 'finished<br/>';
+	}, false);
+}, false);
+
+</script>
+</head>
+<body>
+<button id=gobtn>go</button>
+<div id=results></div>
+</body>
+</html>
+
