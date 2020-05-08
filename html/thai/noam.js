@@ -423,14 +423,20 @@ voyc.Noam.prototype.parseStory = function(story) {
 		story.lines[i].words = this.parseString(line, i+1);
 	}
 
-	// set chosen meaning of multimeans, from old story.words from db
+	// reconcile new story.lines.words with old story.words
 	if (story.words) {
+		// if the number of lines has changed, bugger all
+		
+		
+		
 		for (var i=0; i<story.words.length; i++) {
 			var w = story.words[i];
 			for (var j=0; j<w.loc.length; j++) {
-				var ww = w.loc[j];
-				var word = story.lines[ww.line-1].words[ww.wndx];
-				word.loc[0].n = ww.n;
+				var wloc = w.loc[j];
+				var word = findLoc(wloc);
+				if (word) {
+					word.loc[0].n = wloc.n;
+				}
 			}
 		}
 	}
@@ -442,6 +448,18 @@ voyc.Noam.prototype.parseStory = function(story) {
 	// set title
 	story.title = story.lines[0].text;
 	return;
+
+	function findLoc(wloc) {
+		var found = false;
+		var line = story.lines[wloc.line-1];
+		for (var i=0; i<line.words.length; i++) {
+			var word = line.words[i];
+			if (word.loc[0].tndx == wloc.tndx) {
+				found = word;
+			}
+		}
+		return found;
+	}
 
 	function assignSpeaker(orig) {
 		var key = 'x';
@@ -522,7 +540,7 @@ voyc.Noam.prototype.parseString = function(input, linenum) {
 					if (t == sa) {
 						// sto and return only if no other components found
 						fullStringMatch = {
-							text:t,
+							t:t,
 							line:linenum,
 							ndx:startndx,
 							id:m.id,
@@ -565,7 +583,7 @@ voyc.Noam.prototype.parseString = function(input, linenum) {
 		var o = {
 			t:t,
 			id:id,
-			//tl:tl,
+			tl:tl,
 			loc:[{line:line,wndx:words.length,tndx:ndx,n:0}],
 			vocab:vocab
 		};

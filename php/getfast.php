@@ -15,7 +15,7 @@ function getfast() {
 	}
 
 	// compose sql
-	$sql = 'select id, t from mai.dict d order by t asc';
+	$sql = 'select id, t, tl from mai.dict d order by t asc';
 
 	$name = 'list-fast';
 	$params = array();
@@ -29,6 +29,7 @@ function getfast() {
                 $row = pg_fetch_array($result, $i, PGSQL_ASSOC);
                 $dict = array();
 		$dict['t'] = $row['t'];
+		$dict['tl'] = $row['tl'];
 		$dict['id'] = $row['id'];
                 $dicts[] = $dict;
         }

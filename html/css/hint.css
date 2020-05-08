@@ -74,6 +74,7 @@ button[a] {
 }
 button[line] {
 	border-radius:10px;
+	float:right;
 }
 story line[hint] word t, story line[hint] word e, story line[hint] word tl  {
 	display:none;

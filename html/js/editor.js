@@ -219,7 +219,7 @@ voyc.Editor.prototype.parse = function(s) {
 		var cpa = [];
 		var tla = [];
 		for (var i=0; i<ps.length; i++) {
-			cpa.push(ps[i].text);
+			cpa.push(ps[i].t);
 			tla.push(ps[i].tl);
 		}
 		document.getElementById('ptranslit').value = tla.join(' ');

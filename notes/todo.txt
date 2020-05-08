@@ -75,6 +75,56 @@ drill
 	in answer, show hint depending on step
 	continue
 
+groups
+	glyphs, vowel patterns, lc, fc, tone marks
+	syllables
+	components
+	words
+	phrases/expressions
+	lines
+
+start with one line
+	count syllables+words+phrases+lines
+	add another line
+	stop when number of drill items meets threshold
+
+show -hint lines, mouse clicks slow
+	separate display useless, need hints together with raw
+		consider popup
+	button on float right doesn't work
+
+x editor, parse type-m, doesn't work
+	blank display, no js error
+
+imlement add-translation button
+
+when re-parse finds โชคดี instead of โชค and ดี
+	the locs for that line are now incorrect
+	word index and text index are both wrong
+	dictionary has changed, story has not
+	story.lines.words does not match story.words
+	reconcile parsed words, story.words vs story.lines.words
+		current problem: two words combined into one
+			tndx is the same, wndx is different
+			solution: change wndx
+	if lines change or words are inserted or removed, tndx is not the same
+	if word is the same, we might assume it should retain the same meaning
+	important thing is to get word.locs matched up
+	if word meaning should be different, author must click on it and change it
+	signal a need for review
+	color-code for "needs review" shown in author mode
+		this requires another field in the loc
+		also a field in the story record
+
+	change original to raw
+	add source or meta
+	add comma and other symbols	
+	add ~ to separate th and en
+	Lowercase command processor
+
+	Na
+	Ka
+	Krab
 ====================================
 
 dictionary content

@@ -555,7 +555,9 @@ voyc.Sam.prototype.respond = function(o) {
 			var r = this.parseRequest(input);
 			this.cmdReadStory(r);
 			break;
-
+		case 'reload':
+			voyc.dictionary.getFast();
+			break;
 		case 'kill':
 			this.state = 'ready';
 			this.dochat('ready');
