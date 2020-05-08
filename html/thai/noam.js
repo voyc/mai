@@ -372,8 +372,7 @@ voyc.Noam.prototype.parse = function(input,options) {
 
 /** 
 	method parseStory
-	input string
-	output object containing parsed components
+	input/output story object
 **/
 voyc.Noam.prototype.parseStory = function(story) {
 	var s = story.original;
@@ -406,20 +405,36 @@ voyc.Noam.prototype.parseStory = function(story) {
 		}
 	}
 
+	// identify meta comment lines
+	for (var i=0; i<a.length; i++) {
+		if (a[i].substr(0,6) == 'meta::') {
+			if (story.meta.length) {
+				story.meta += '<br/>';
+			}
+			story.meta += a[i].substr(6);
+			a.splice(i,1);
+			i--;
+		}
+	}
+	
 	// create one object for each line of dialog
 	for (var i=0; i<a.length; i++) {
 		var o = {};
 		o.original = a[i];
 		o.speaker = assignSpeaker(o.original);
-		o.text = assignText(o.original);
-		o.speech = prepSpeech(o.text);
+		var aorig = o.original.split(/\s~\s/);
+		o.th = assignText(aorig[0]); // previously o.text
+		if (aorig.length > 0) {
+			o.en = assignText(aorig[1]);
+		}
+		o.speech = prepSpeech(o.th);
 		o.display = prepDisplay(o);
 		story.lines.push(o);
 	}
 
 	// parse each line for words
 	for (var i=0; i<story.lines.length; i++) {
-		var line = story.lines[i].text;
+		var line = story.lines[i].th;
 		story.lines[i].words = this.parseString(line, i+1);
 	}
 
@@ -446,7 +461,7 @@ voyc.Noam.prototype.parseStory = function(story) {
 	//story.components = story.consolidateComponents();
 
 	// set title
-	story.title = story.lines[0].text;
+	story.title = story.lines[0].th;
 	return;
 
 	function findLoc(wloc) {
@@ -471,18 +486,18 @@ voyc.Noam.prototype.parseStory = function(story) {
 	}
 
 	function assignText(orig) {
-		var text = orig;
+		var th = orig;
 		var c = orig.split(': ');
 		if (c.length > 1) {
-			text = c[1];
+			th = c[1];
 		}
-		//gen.text = orig.replace(/me/g, gender.me);
-		//gen.text = orig.replace(/polite/g, gender.polite);
-		return text;
+		//gen.th = orig.replace(/me/g, gender.me);
+		//gen.th = orig.replace(/polite/g, gender.polite);
+		return th;
 	}
 
-	function prepSpeech(text) {
-		var sp = text;
+	function prepSpeech(th) {
+		var sp = th;
 		sp = sp.replace(/ /g, '. ');
 		return sp;
 	}
@@ -490,7 +505,7 @@ voyc.Noam.prototype.parseStory = function(story) {
 	function prepDisplay(o) {
 		var disp = '';
 		if (o.speaker != 'x') {
-			disp = o.speaker + ': ' + o.text;
+			disp = o.speaker + ': ' + o.th;
 		}
 		return disp;
 	}

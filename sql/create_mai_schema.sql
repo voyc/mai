@@ -113,6 +113,9 @@ create table mai.story (
 	title varchar(100),
 	language char(2),	/* constant "th" */
 	original text,
+	meta text,              /* comments about the story */
 	words text
 );
 create unique index story_title_index on mai.story(title);
+
+

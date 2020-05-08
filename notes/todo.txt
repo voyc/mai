@@ -116,15 +116,24 @@ when re-parse finds โชคดี instead of โชค and ดี
 		this requires another field in the loc
 		also a field in the story record
 
-	change original to raw
-	add source or meta
-	add comma and other symbols	
-	add ~ to separate th and en
+	x (cannot) change original to raw
+	x add meta to db
+	support comma as spacer
+	x support ~ to separate th and en
+	show lines: hint button: display english version 
 	Lowercase command processor
+	click pencil in story line view
+	combine author and hint (you sure?)
 
-	Na
-	Ka
-	Krab
+click hints button sometimes acts as two-state button, stays down, no change mouse is rolled off the button
+
+x dictionary content
+	x Na
+	x Ka
+	x Krab
+
+pronunciation rules vs grammar rules
+
 ====================================
 
 dictionary content
@@ -136,10 +145,6 @@ grammar content
 	{pronoun} {say,hear,think} ว่า {person} มา จาก {country}
 	where you come from?
 	maybe he come from china. do you think so?
-
-
-dictionary data
-	? เทอม dicionary.js line 405 s += '<br/>vowel pattern ' + vp.print + ' ' + this.drawClass(vp.m);
 
 ====================================
 organization

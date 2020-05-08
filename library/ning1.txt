@@ -70,15 +70,10 @@
 ข: ใช่ครับ มีปลาโลมาขึ้นมา่ว่าย รวมทั้งสิ่งมีชีวิตในท้องทะเลอย่างอื่นด้วย อย่างเช่นเต่าืะเล ก็ขึ้นมาว่ายนำ้ สภาวะมลพิษในอากาศก็ลดสง
 ก: การที่คนต้องอยู่บ้านก็มีส่วนดีด้วย มันทำให้คนใช้ชีวิตที่เรียบง่ายและใช้เวลากับคนในครอบครัวด้วย
 
-
-
-
-
-Thich Nhat Hanh: Fear: Essential Wisdom for Getting Through the Storm
-thai source: http://www.thaiplumvillage.org/index.php?option=com_content&view=article&id=257:-fearlessness&catid=8:2011-01-18-05-20-02&Itemid=13
-english source: http://www.oprah.com/spirit/thich-nhat-hanh-fearlessness#ixzz6LoEoeLR9
-
-ความกลัว ~ Fear
+กลัว ~ Fear
+meta::Thich Nhat Hanh: Fear: Essential Wisdom for Getting Through the Storm
+meta::thai source: http://www.thaiplumvillage.org/index.php?option=com_content&view=article&id=257:-fearlessness&catid=8:2011-01-18-05-20-02&Itemid=13
+meta::english source: http://www.oprah.com/spirit/thich-nhat-hanh-fearlessness#ixzz6LoEoeLR9
 บทนำ ~ Introduction
 พวกเราส่วนใหญ่ มีประสบการณ์ชีวิตที่เต็มเปี่ยมไปด้วยช่วงเวลาอันยอดเยี่ยมน่าอัศจรรย์และช่วงเวลาที่ยากลำบาก ~ Most of us experience a life full of wonderful moments and difficult moments. 
 แต่สำหรับพวกเราหลายๆคน  ~ But for many of us, 

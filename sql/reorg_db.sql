@@ -3,8 +3,8 @@
 create table mai.dict (id,g,t,tl,tlm,cp,cpm,ru)
 as
 select id, type, thai, translit, 'a', components, 'a', rules 
-from mai.thaidict where numdef=1 and (type = 'o' or type = 'm');"
-SELECT 1232
+from mai.thaidict where numdef=1 and (type = 'o' or type = 'm');
+-- SELECT 1232
 
 alter table mai.dict 
 	alter tlm type char(1),
@@ -22,18 +22,18 @@ from mai.thaidict m, mai.thaidict d
 where (m.type = 'o' or m.type = 'm')
 and d.numdef = 1
 and m.thai = d.thai;
-SELECT 1367
+-- SELECT 1367
 
 alter table mai.mean
         alter p type varchar(9),
         ADD PRIMARY KEY (id);
 
 update mai.dict set tl = tl || split_part(cp,',',5) where g='o';
-UPDATE 815
+-- UPDATE 815
 
 /* 14 April 2020 remove spaces from cp in dict (tone mark) */
 update mai.dict set cp = replace(cp,' ','') where position(' ' in cp) > 0;
-UPDATE 557
+-- UPDATE 557
 
 /* 15 April 2020 create sequences for dict and main */
 create sequence mai.dict_id_seq;
@@ -51,6 +51,11 @@ where type = 'g';
 alter table mai.story add column mm text;
 alter table mai.story drop column mm;
 alter table mai.story add column words text;
+
+/* 8 may 2020 */
+alter table mai.story add column meta text;
+
+
 
 
 -- example sql

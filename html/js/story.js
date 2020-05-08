@@ -11,6 +11,7 @@ voyc.Story = function() {
 	this.speakers = { x: {name: "narrator", age: 40, gender: "male"} };
 	this.lines = [];
 	this.words = [];
+	this.meta = '';
 
 	var url = '/svc/';
 	if (window.location.origin == 'file://') {

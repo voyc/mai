@@ -73,10 +73,10 @@ button[a] {
 	margin-right:.3rem;
 }
 button[line] {
-	border-radius:10px;
-	float:right;
+	xborder-radius:10px;
+	margin-right:.3rem;
 }
-story line[hint] word t, story line[hint] word e, story line[hint] word tl  {
+story line[hint] word t, story line[hint] word e, story line[hint] word tl, story line[hint] eng  {
 	display:none;
 }
 story line[hint="0"] word t {
@@ -88,6 +88,12 @@ story line[hint="1"] word e {
 story line[hint="2"] word tl {
 	display:inline;
 }
+story line[hint="3"] eng {
+	display:inline;
+}
+story line[hint="3"] thai {
+	display:none;
+}
 div#details i {
 	font-size:10pt;
 }
@@ -96,4 +102,7 @@ div#details icon[name=pencil] {
 }
 button[mm].chosen {
 	font-weight:bold:
+}
+button span {
+	xpointer-events: none;
 }

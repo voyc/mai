@@ -375,6 +375,7 @@ voyc.Sam.prototype.calcSetSizes = function(optsetsize, total) {
 
 /* respond to chat commands, state machine, command processor */
 voyc.Sam.prototype.respond = function(o) {
+	o.msg = o.msg.toLowerCase();
 	var input = o.msg;
 	var r = this.parseRequest(input);
 	var w = o.msg.split(/\s+/);
@@ -500,9 +501,9 @@ voyc.Sam.prototype.respond = function(o) {
 							var elline = e.querySelector('line[num="'+linenum+'"]');
 							var hint = elline.getAttribute('hint');
 							hint++;
-							if (hint>=3) hint = 0;
+							if (hint>=4) hint = 0;
 							elline.setAttribute('hint',hint);
-						}, false);
+						}, true);
 					}
 					var list = e.querySelectorAll('story line word');
 					for (var i=0; i<list.length; i++) {
@@ -746,7 +747,7 @@ voyc.Sam.prototype.showStory = function(o,r) {
 				s += 'author';
 			}
 			if (r.adj.hint) {
-				s += 'hint';
+				s += ' hint';
 			}
 			s += '>';
 			for (var i=0; i<o.lines.length; i++) {
@@ -771,10 +772,14 @@ voyc.Sam.prototype.showStory = function(o,r) {
 
 voyc.Sam.prototype.drawLine = function(r,item) {
 	var s = '';
-	var x = item.text;
+	var x = item.th;
 	var linenum = item.words[0].loc[0].line;
 	s += '<line num='+linenum+' hint=0>';
-	if (item.speaker != 'x') {
+	if (r.adj['hint']) {
+		s += '<button type=button line="'+linenum+'"><span>H</span></button>';
+	}
+	s += '<thai>';
+	if (item.speaker != 'th') {
 		s += '<speaker>'+item.speaker + ':</speaker>';
 	}
 	for (var n=0; n<item.words.length; n++) {
@@ -807,9 +812,10 @@ voyc.Sam.prototype.drawLine = function(r,item) {
 		s += '<tl>'+tl+'</tl>';
 	} 
 	s += '</word>';
-	if (r.adj['hint']) {
-		s += '<button line="'+linenum+'">H</button>';
-	}
+	s += '</thai>';
+	s += '<eng>';
+	s += item.en;
+	s += '</eng>';
 	s += '</line>';
 	return s;
 }
