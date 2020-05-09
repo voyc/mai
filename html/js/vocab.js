@@ -198,7 +198,6 @@ voyc.Vocab.prototype.storeSto = function() {
 
 voyc.Vocab.prototype.removeSto = function() {
 	localStorage.removeItem('vocab');
-	localStorage.removeItem('level');
 }
 
 voyc.Vocab.prototype.retrieveSto = function() {
@@ -275,11 +274,11 @@ voyc.Vocab.prototype.set = function(word, type, state) {
 	@input {string} state
 	@return {array}
 **/	
-voyc.Vocab.prototype.getlist = function(state) {
+voyc.Vocab.prototype.getlist = function(state, type) {
 	var r = [];
 	for (var i=0; i<this.vocab.list.length; i++) {
 		var e = this.vocab.list[i];
-		if (e.s == state || !state) {
+		if ((e.s == state || !state) && (e.t == type || !type)) {
 			r.push(e);
 		}
 	}

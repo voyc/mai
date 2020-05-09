@@ -55,6 +55,12 @@ alter table mai.story add column words text;
 /* 8 may 2020 */
 alter table mai.story add column meta text;
 
+/* 9 may 2020 */
+delete from mai.vocab where type = 'l';
+-- DELETE 57
+
+
+
 
 
 

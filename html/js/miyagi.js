@@ -180,7 +180,7 @@ voyc.Lee.prototype.nextCard = function() {
 	this.ndxCard = this.chooseNextCard();
 	if (this.ndxCard === false) {
 		this.chat.post(this.chatid, "Finished.", []);
-		this.reportCallback(false);
+		this.reportCallback([]);
 		return;
 	}
 	var s = this.displayQuestion( this.scores[this.ndxCard].flat);
@@ -321,7 +321,7 @@ voyc.Lee.prototype.checkAnswer = function(o) {
 			b = (o.msg.substr(0,1) == cls);
 			break;
 		case 'tone':
-			var tn = this.scores[this.ndxCard].flat.dict.cp.split(',')[4];
+			var tn = this.scores[this.ndxCard].flat.dict.cp.split(',')[4].toLowerCase();
 			b = (o.msg == tn);
 			break;
 		case 'translate':

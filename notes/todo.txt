@@ -99,29 +99,9 @@ x editor, parse type-m, doesn't work
 imlement add-translation button
 
 when re-parse finds โชคดี instead of โชค and ดี
-	the locs for that line are now incorrect
-	word index and text index are both wrong
-	dictionary has changed, story has not
-	story.lines.words does not match story.words
-	reconcile parsed words, story.words vs story.lines.words
-		current problem: two words combined into one
-			tndx is the same, wndx is different
-			solution: change wndx
-	if lines change or words are inserted or removed, tndx is not the same
-	if word is the same, we might assume it should retain the same meaning
-	important thing is to get word.locs matched up
-	if word meaning should be different, author must click on it and change it
-	signal a need for review
-	color-code for "needs review" shown in author mode
-		this requires another field in the loc
-		also a field in the story record
-
-	x (cannot) change original to raw
-	x add meta to db
+	color-code a need for review
 	support comma as spacer
-	x support ~ to separate th and en
 	show lines: hint button: display english version 
-	Lowercase command processor
 	click pencil in story line view
 	combine author and hint (you sure?)
 
@@ -133,6 +113,21 @@ x dictionary content
 	x Krab
 
 pronunciation rules vs grammar rules
+
+kill from drill leaves sam's chat posts on the right in the guest position
+
+vocab
+	- remove cmdRemoveVocab, replace with set state=u
+	- remove type from vocab db
+		are you sure? 
+			what if we want to store expressions that are not in the dict?
+		in cmdGetVocab, use join with dict to get type
+		remove type from cmdSetVocab
+	- replace word with id in vocab db
+		are you sure? 
+			what if we want to store expressions that are not in the dict?
+		join with dict to get thai and type
+
 
 ====================================
 
@@ -196,6 +191,10 @@ chat command help
 
 part of sam.js documentation
 
+command language
+	show is for story
+	get, set, remove is for vocab
+
 developer
 kill
 __reload dictionary, fastdict, minidict, auto after relevant update
@@ -229,6 +228,13 @@ edit -new <word>
 student
 drill -new words
 quit
+
+get (vocab)
+set (vocab)
+
+translate - rewrite
+collect - rewrite
+sengen - rewrite
 
 ==============================
 

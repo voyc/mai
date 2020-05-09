@@ -424,7 +424,7 @@ voyc.Noam.prototype.parseStory = function(story) {
 		o.speaker = assignSpeaker(o.original);
 		var aorig = o.original.split(/\s~\s/);
 		o.th = assignText(aorig[0]); // previously o.text
-		if (aorig.length > 0) {
+		if (aorig.length > 1) {
 			o.en = assignText(aorig[1]);
 		}
 		o.speech = prepSpeech(o.th);

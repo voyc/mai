@@ -203,11 +203,13 @@ voyc.Sam.prototype.startDrill = function() {
 	});
 }
 
-voyc.Sam.prototype.endDrill = function() {
+voyc.Sam.prototype.endDrill = function(quit) {
 	this.chat.changeHost(this.chatid);
 	this.state = 'ready';
 	this.dochat('Good job.');
-	this.continueDrill();
+	if (!quit) {
+		this.continueDrill();
+	}
 }
 
 voyc.Sam.prototype.continueDrill = function() {
@@ -247,12 +249,16 @@ voyc.Sam.prototype.continueDrill = function() {
 voyc.Sam.prototype.reportScores = function(scores) {
 	console.log("report scores");
 	if (scores === false) {
-		this.endDrill();
-		return;
+		this.endDrill(true); // interrupt, stop the drill
 	}
-	for (var i=0; i<scores.length; i++) {
-		var score = scores[i];
-		this.vocab.set(score.flat.dict.t, score.flat.dict.g, score.state);
+	else if (!scores.length) {
+		this.endDrill(); // this step ended, proceed to next step
+	}
+	else {
+		for (var i=0; i<scores.length; i++) {
+			var score = scores[i];
+			this.vocab.set(score.flat.dict.t, score.flat.dict.g, score.state);
+		}	 
 	}
 }
 
@@ -374,17 +380,15 @@ voyc.Sam.prototype.calcSetSizes = function(optsetsize, total) {
 
 
 /* respond to chat commands, state machine, command processor */
-voyc.Sam.prototype.respond = function(o) {
-	o.msg = o.msg.toLowerCase();
-	var input = o.msg;
-	var r = this.parseRequest(input);
-	var w = o.msg.split(/\s+/);
+voyc.Sam.prototype.respond = function(o) { // input o object comes from chat engine
+	var req = this.parseRequest(o.msg);
+	var w = o.msg.split(/\s+/); // todo: replace all references to w and o.msg to req
 	
-	if (this.state ==  'drill' && r.verb != 'kill') {
+	if (this.state ==  'drill' && req.verb != 'kill') {
 		return this.lee.respond(o);
 	}
 
-	switch (w[0]) {
+	switch (req.verb) {
 		case 'go':
 		case 'yes':
 			switch (this.state) {
@@ -401,16 +405,16 @@ voyc.Sam.prototype.respond = function(o) {
 			this.chat.post(this.chatid, 'OK');
 			break;
 		case 'set':
-			this.cmdSetVocab(o.msg);
+			this.cmdSetVocab(req);
 			this.chat.post(this.chatid, 'done');
 			break;
 		case 'get':
-			var r = this.cmdGetVocab(o.msg);
+			var r = this.cmdGetVocab(req);
 			var s = voyc.printArray(r,voyc.breakSentence);
 			this.chat.post(this.chatid, s);
 			break;
 		case 'remove':
-			this.cmdRemoveVocab(o.msg);
+			this.cmdRemoveVocab(req);
 			this.chat.post(this.chatid, 'done');
 		case 'sample':
 			this.req.target = voyc.cloneArray(w);
@@ -462,36 +466,32 @@ voyc.Sam.prototype.respond = function(o) {
 		// new commands following
 
 		case 'list':
-			var r = this.parseRequest(input);
-			this.cmdListStories(r);
+			this.cmdListStories(req);
 			break;
 		case 'parse':
-			var r = this.parseRequest(input);
-			if (r.adj['syllable']) {
-				var po = this.noam.parse(r.object,r.adj);	
+			if (req.adj['syllable']) {
+				var po = this.noam.parse(req.object,req.adj);	
 				var s = this.showStory(po,{object:'syllable'});
 				this.dochat(s);
 				break;
 			}
 			this.story = new voyc.Story();
-			this.story.original = r.object;
+			this.story.original = req.object;
 			this.noam.parseStory(this.story);	
 			this.prepStory(this.story);
 			break;
 		case 'replace':
-			var r = this.parseRequest(input);
-			this.story.replace(r.object);
+			this.story.replace(req.object);
 			this.noam.parseStory(this.story);
 			this.prepStory(this.story);
 			break;
 		case 'show':
-			var r = this.parseRequest(input);
-			if (r.object == 'alphabet') {
+			if (req.object == 'alphabet') {
 				var s = voyc.alphabet.listAll();
 				this.dochat(s);
 			}
 			if (this.story) {
-				var s = this.showStory(this.story, r)
+				var s = this.showStory(this.story, req)
 				this.dochat(s,true,function(e) {
 					var list = e.querySelectorAll('button[line]');
 					for (var i=0; i<list.length; i++) {
@@ -516,7 +516,7 @@ voyc.Sam.prototype.respond = function(o) {
 							var line=  parseInt(w[1]);
 							var wndx = parseInt(w[2]);
 							var word = voyc.mai.sam.story.lines[line-1].words[wndx];
-							var s = voyc.mai.sam.composeWord(word,r,wid);
+							var s = voyc.mai.sam.composeWord(word,req,wid);
 							var sel = document.querySelector('form#worddetails div#details');
 							sel.innerHTML = s;
 							voyc.cheat = wrd;
@@ -539,22 +539,18 @@ voyc.Sam.prototype.respond = function(o) {
 				});
 			}
 			break;
-		case 'drill': this.cmdDrill(this.story, r); break;
+		case 'drill': this.cmdDrill(this.story, req); break;
 		case 'search':
-			var r = this.parseRequest(input);
-			this.cmdSearch(r);
+			this.cmdSearch(req);
 			break;
 		case 'edit':
-			var r = this.parseRequest(input);
-			this.cmdEdit(r);
+			this.cmdEdit(req);
 			break;
 		case 'save':
-			var r = this.parseRequest(input);
-			this.cmdSaveStory(r);
+			this.cmdSaveStory(req);
 			break;
 		case 'read':
-			var r = this.parseRequest(input);
-			this.cmdReadStory(r);
+			this.cmdReadStory(req);
 			break;
 		case 'reload':
 			voyc.dictionary.getFast();
@@ -573,20 +569,23 @@ voyc.Sam.prototype.respond = function(o) {
 voyc.Sam.prototype.parseRequest = function(s) {
 	var w = s.split(' ');
 	var verb = '';
-	var adj = [];
+	var adj = {};
+	var adv = {};
 	var object = '';
 	w.forEach(function(item,index) {
 		if (index == 0) {
-			verb = item;
+			verb = item.toLowerCase();
 		}
 		else if (item.substr(0,1) == '-') {
 			var x = item.substr(1).split(':');
-			var opt = x[0];
-			var parm = true;
-			if (x.length > 1) {
-				parm = x[1];
+			var opt = x[0].toLowerCase();
+			var parm = (x.length>1) ? x[1] : true;
+			if (object.length) {
+				adv[opt] = parm;
 			}
-			adj[opt] = parm;
+			else {
+				adj[opt] = parm;
+			}
 		}
 		else {
 			object += item + ' ';
@@ -596,7 +595,8 @@ voyc.Sam.prototype.parseRequest = function(s) {
 	return {
 		verb:verb,
 		adj:adj,
-		object:object
+		object:object,
+		adv:adv
 	}
 }
 	
@@ -932,60 +932,60 @@ voyc.Sam.prototype.onSetDictReceived = function(note) {
 	(new voyc.BrowserHistory).nav('home');
 }
 
-voyc.Sam.prototype.cmdSetVocab = function(msg) {
+voyc.Sam.prototype.cmdSetVocab = function(req) {
 	// set word type state
 	function validateType(type) {
-		return ('gowx'.indexOf(type) > -1);
+		return ('gomx'.indexOf(type) > -1);
 	}
 	function validateState(state) {
 		return ('uwrm012345'.indexOf(state) > -1);
 	}
-	var c = msg.split(/\n/);
-	for (var i=0; i<c.length; i++) {
-		var w = c[i].split(/\s/);
-		// w[0] == 'set'
-		var word = w[1];
-		var type = w[2];
-		var state = w[3];
-		if (!validateType(type)) continue;
-		if (!validateState(state)) continue;
-		this.vocab.set(word,type,state);
-	}
+	var word = req.object;
+	var type = req.adj['type'];
+	var state = req.adj['state'];
+	if (type && !validateType(type)) return false;
+	if (!validateState(state)) return false;
+	this.vocab.set(word,type,state);
 }
 
-voyc.Sam.prototype.cmdGetVocab = function(msg) {
+voyc.Sam.prototype.cmdGetVocab = function(req) {
 	/** usage
-		get word
+		get ว่า -from=vocab
+		get all -from=vocab
+		get -state=m all -from=vocab
+		get -type= all -from=vocab
 		get all status
 		get all all
 	**/
+//	if (!(req.adv['from'] == 'vocab')) {
+//		return false;
+//	}
 	var r = [];
-	var w = msg.split(/\s/);
-	var word = w[1];
-	var status = w[2];
+	var word = req.object;
+	var state = req.adj['state'];
+	var type = req.adj['type'];
 	if (word == 'all') {
-		status = (status == 'all') ? '' : status;
-		var list = this.vocab.getlist(status);
+		state = (state == 'all') ? '' : state;
+		type = (type == 'all') ? '' : type;
+		var list = this.vocab.getlist(state, type);
 		for (var i=0; i<list.length; i++) {
 			e = list[i];
-			var s = e.w + '\t' + e.s;
+			var s = e.w + '\t' + e.t + '\t' + e.s;
 			r.push(s);
 		}
 	}
 	else {
 		var e = this.vocab.get(word);
 		if (e) {
-			var s = word + '\t' + e.s;
+			var s = word + '\t' + e.t + '\t' + e.s;
 			r.push(s);
 		}
 	}
 	return r;
 }
 
-voyc.Sam.prototype.cmdRemoveVocab = function(msg) {
-	var w = msg.split(/\s/);
-	// w[0] == 'set'
-	var word = w[1];
+voyc.Sam.prototype.cmdRemoveVocab = function(req) {
+	var word = req.object;
 	this.vocab.remove(word);
 }
 
