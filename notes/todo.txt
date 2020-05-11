@@ -107,11 +107,6 @@ when re-parse finds โชคดี instead of โชค and ดี
 
 click hints button sometimes acts as two-state button, stays down, no change mouse is rolled off the button
 
-x dictionary content
-	x Na
-	x Ka
-	x Krab
-
 pronunciation rules vs grammar rules
 
 kill from drill leaves sam's chat posts on the right in the guest position
@@ -128,9 +123,41 @@ vocab
 			what if we want to store expressions that are not in the dict?
 		join with dict to get thai and type
 
+hyphen optional in answers, english
+Case insensitive answers: tones, english
 
+Separate page for story
+Side-by-side view 
+Single command to parse and show with hints
+Single command to drill all steps all sets 
+
+test parse: อกไม้ดอกนี้จะมอบให้คุณนะคะ
+
+Sound on every question
+Lowercase resolved
+
+Minimal
+	check for Dragger before instantiating 
+	check for utils before calling
 ====================================
-
+settings
+	setsize
+	drill steps o
+		- class of consonant
+		- length of vowel
+		- ending
+		- tone
+		- translate
+		- reverse
+	drill steps m
+		- translate
+		- reverse
+	story
+		- color-coding
+		- box mode
+			- english
+			- translit
+============================================
 dictionary content
 	how many ordinals to put in dictionary as separate words
 

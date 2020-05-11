@@ -13,7 +13,10 @@
 		<link href='icon/icon.css' rel='stylesheet' type='text/css'></link>
 		<link href='jslib/chat.css' rel='stylesheet' type='text/css'></link>
 		<link href='css/mai.css' rel='stylesheet' type='text/css'></link>
+		<!--
 		<link href='css/hint.css' rel='stylesheet' type='text/css'></link>
+		-->
+		<link href='css/story.css' rel='stylesheet' type='text/css'></link>
 		<link href='css/editor.css' rel='stylesheet' type='text/css'></link>
 		<link href='thai/keyboard.css' rel='stylesheet' type='text/css'></link>
 		<script src="js/namespace.js"></script>
@@ -26,6 +29,7 @@
 		<script src="js/vocab.js"></script>
 		<script src="js/speech.js"></script>
 		<script src="js/story.js"></script>
+		<script src="js/storyview.js"></script>
 
 		<script src="js/miyagi.js"></script>
 		<!-- <script src="js/lee.js"></script>
@@ -139,6 +143,10 @@
 				<h1>Editor</h1>
 				<section id='editor'></section>
 			</section>
+			<section hidden class='narrative' id='content-storyview'>
+				<h1>Story</h1>
+				<section id='storyview'></section>
+			</section>
 			<section hidden class='narrative' id='content-course'>
 				<h1>Course</h1>
 				<section id='course'></section>
@@ -155,6 +163,7 @@
 			<p><button close class='anchor' nav='profile'  >User Profile</button></p>
 			<p><button close class='anchor' nav='keyboard' >Keyboard</button></p>
 			<p><button close class='anchor' nav='curriculum'>Curriculum</button></p>
+			<p><button close class='anchor' nav='storyview'>Story</button></p>
 			<p><button close class='anchor' nav='editor'   >Editor</button></p>
 		</nav>
 		<aside initially hidden class='panel popup dropdown blu' id='settings-dialog'>

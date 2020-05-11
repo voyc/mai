@@ -2,7 +2,9 @@
 	class Story
 	Represent one story.
 **/
-voyc.Story = function() {
+voyc.Story = function(noam) {
+	this.noam = noam;
+
 	this.id = 0;
 	this.authorid = 0;
 	this.original = '';
@@ -20,6 +22,8 @@ voyc.Story = function() {
 	this.comm = new voyc.Comm(url, 'acomm', 2, true);
 	this.observer = new voyc.Observer();
 	var self = this;
+	this.observer.subscribe('getstory-received' ,'story' ,function(note) { self.onGetStoryReceived (note);});
+	this.observer.subscribe('getdict-received' ,'story' ,function(note) { self.onGetDictReceived (note);});
 }
 
 voyc.Story.prototype.replace = function(newtext) {
@@ -144,28 +148,119 @@ voyc.Story.prototype.read = function(id) {
 		if (!ok) { response = { 'status':'system-error'}; }
 		console.log(svcname + ' status ' + response['status']);
 		if (response.status == 'ok') {
-			var story = response.story;
-			self.id       = parseInt(story.id);
-			self.authorid = parseInt(story.authorid);
-			self.language = story.language;
-			self.title    = story.title;
-			self.original = story.original;
-			self.words = (story.words) ? JSON.parse(story.words) : [];
 		}
 		self.observer.publish(svcname+'-received', 'story', response);
 	});
 	this.observer.publish(svcname+'-posted', 'story', {});
 }
 
-voyc.Story.prototype.list = function() {
-	this.id = parseInt(id);
-	var svcname = 'getstories';
-	var data = {};
-	var self = this;
-	this.comm.request(svcname, data, function(ok, response, xhr) {
-		if (!ok) { response = { 'status':'system-error'}; }
-		console.log(svcname + ' status ' + response['status']);
-		self.observer.publish(svcname+'-received', 'story', response);
-	});
-	this.observer.publish(svcname+'-posted', 'story', {});
+voyc.Story.prototype.onGetStoryReceived = function(note) {
+	if (note.payload.status != 'ok') {
+		return;
+	}
+	var story = note.payload.story;
+	this.id       = parseInt(story.id);
+	this.authorid = parseInt(story.authorid);
+	this.language = story.language;
+	this.title    = story.title;
+	this.original = story.original;
+	this.words = (story.words) ? JSON.parse(story.words) : [];
+	this.speakers = { x: {name: "narrator", age: 40, gender: "male"} };
+	this.lines = [];
+	this.meta = [];
+
+	this.noam.parseStory(this);
+
+	// get a miniDict for all the words in the story
+	var ids = [];
+	for (var i=0; i<this.words.length; i++) {
+		var id = this.words[i].id;
+		if (id) {
+			ids.push(id);
+		}
+	}
+	voyc.dictionary.getDict(ids);
 }
+
+voyc.Story.prototype.onGetDictReceived = function(note) {
+	// add dict info to lines and words
+	for (var i=0; i<this.words.length; i++) {
+		var item = this.words[i];
+		item.dict = voyc.dictionary.miniDict(item.id);
+	}
+	for (var i=0; i<this.lines.length; i++) {
+		var line = this.lines[i];
+		for (var j=0; j<line.words.length; j++) {
+			var word = line.words[j];
+			word.dict = voyc.dictionary.miniDict(word.id);
+		}
+	}
+	this.observer.publish('story-ready', 'story', {id:this.id,title:this.title});
+}
+
+voyc.Story.prototype.draw = function() {
+	var sline = '';
+	for (var i=0; i<this.lines.length; i++) {
+		var line = this.lines[i];
+		var linenum = i;
+		var srow = '';
+		var sbox = '';
+		for (var j=0; j<line.words.length; j++) {
+			var word = line.words[j];
+			var wid = '0.0.0';
+			var mm = word.loc[0].n;
+			var e = (word.dict) ? word.dict.mean[mm].e : '';
+			var tl = (word.dict) ? word.dict.tl : '';
+			srow += voyc.printf(voyc.Story.template.wordrow, [wid,mm,word.t]);
+			sbox += voyc.printf(voyc.Story.template.wordbox, [wid,mm,word.t,word.e,word.tl]);
+		}
+		sline += voyc.printf(voyc.Story.template.line, [linenum, line.th, srow, sbox, line.en]);
+	}
+	var s = voyc.printf(voyc.Story.template.story, [this.title,sline]);
+	return s;
+}
+
+voyc.Story.template = {};
+
+voyc.Story.template.story = `
+<p>$1</p>
+<table id=buttonrow><tr><td>
+<button>Drill</button>
+<button>Analyze</button>
+<button>Parse</button>
+<button>Edit</button>
+<button>Save</button>
+<button>Cancel</button>
+</td><td>
+<button id=thbtn  toggle=view>th</button>
+<button id=sbsbtn toggle=view class=down>t|e</button>
+<button id=enbtn  toggle=view>en</button>
+</td></tr></table>
+<story>
+<thaibtns>
+<button id=nbtn toggle=tview>.</button>
+<button id=sbtn toggle=tview>-</button>
+<button id=bbtn toggle=tview>|</button>
+</thaibtns>
+$2
+</story>
+`;
+
+voyc.Story.template.line = `
+<line num="$1">
+<thai>
+<orig>$2</orig>
+<row>$3</row>
+<box>$4</box>
+</thai>
+<eng>$5</eng>
+</line>
+`;
+
+voyc.Story.template.wordrow = `
+<word wid="$1" mm="$2"><t>$3</t></word>
+`;
+
+voyc.Story.template.wordbox = `
+<word wid="$1" mm="$2"><t>$3</t><e>$4</e><tl>$5</tl></word>
+`;

@@ -1,101 +1,193 @@
 <html>
 <head>
+		<meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+		<meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1'>
+		<title>mai.voyc</title>
+		<style>[hidden] {display:none ! important;}</style>
 
+		<link href='minimal/normaleyes.css' rel='stylesheet' type='text/css'></link>
+		<link href='minimal/minimal.css' rel='stylesheet' type='text/css'></link>
+		<link href='minimal/theme/mahagony.css' rel='stylesheet' type='text/css'></link>
 
+		<link href='css/story.css' rel='stylesheet' type='text/css'></link>
+
+		<script src="js/namespace.js"></script>
+		<script src="minimal/minimal.js"></script>
+		<script src='jslib/utils.js'></script>
 <script>
 
-/* calc set sizes given optimal setsize and total */
-calcSetAdjustment = function(optsetsize, total) {
-	var setsize = optsetsize;
-	var q = Math.floor(total/setsize);
-	var r = total % setsize;
-	var h = setsize/2;
-	var adj = 0;
-	var n = 0;
-	var numsets = 0;
-	var sizes = [];
-	if (q == 0) {
-		numsets = 1;
-		sizes.push(total);
-	}
-	else {
-		if (r > h) {
-			numsets = q+1;
-			adj = -1;
-			n = setsize - r;
-		}
-		else {
-			numsets = q;
-			adj = 1;
-			n = r;
-		}
-		if (n > numsets) {
-			setsize = Math.floor(total/numsets);
-			n = total - (setsize * numsets);	
-			adj = 1;
-		}
-		for (var j=0; j<numsets; j++) {
-			var x = setsize;
-			if (j < n) {
-				x += adj;
-			}
-			sizes.push(x);
-		}
-	}
-	return sizes;
-}
-
-var setSize = 99;
-var max = 99;
-
-var sumarray = function(a) {
-	var sum = 0;
-	for (var i=0; i<a.length; i++) {
-		sum += a[i];
-	}
-	return sum;
-}
-
-var sumspread = function(a) {
-	var high = 0;
-	var low = max;
-	for (var i=0; i<a.length; i++) {
-		if (a[i] > high) high = a[i];
-		if (a[i] < low) low = a[i];
-	}
-	return (high - low);
-}
-
-var print = function(i,j,sizes,msg) {
-	var s = [i,j].join(',') + ':' + sizes.join(',') + msg + '<br/>';
-	document.getElementById('results').innerHTML += s;
-}
-
 window.addEventListener('load', function(e) {
-	document.getElementById('gobtn').addEventListener('click', function(e) {
-		for (var i=1; i<=max; i++) {
-			var m = Math.min(i,setSize);
-			for (var j=1; j<=m; j++) {
-				var s = '';
-				var sizes = calcSetAdjustment(j, i);
-				if (sumarray(sizes) != i) {
-					print(i,j,sizes,' error total doesnt match');
-				}
-				if (sumspread(sizes) > 1) {
-					print(i,j,sizes,' error unbalanced');
-				}
-				//print(i,j,sizes,' ok');
-			}
-		}
-		document.getElementById('results').innerHTML += 'finished<br/>';
-	}, false);
+	attachListeners();
+	initializeView();
 }, false);
+
+attachListeners = function() {
+	document.getElementById('thbtn').addEventListener('click',function(e) {viewThai()});
+	document.getElementById('sbsbtn').addEventListener('click',function(e) {viewSideBySide()});
+	document.getElementById('enbtn').addEventListener('click',function(e) {viewEnglish()});
+	document.getElementById('nbtn').addEventListener('click',function(e) {tviewNormal()});
+	document.getElementById('sbtn').addEventListener('click',function(e) {tviewSpaced()});
+	document.getElementById('bbtn').addEventListener('click',function(e) {tviewBoxed()});
+}
+initializeView = function() {
+	document.getElementById('sbsbtn').classList.add('down');
+	document.querySelector('story').setAttribute('view', 'sbs');
+	document.getElementById('nbtn').classList.add('down');
+	document.querySelector('story').setAttribute('tview', 'n');
+
+	var elist = document.querySelectorAll('row');
+	for (var i=0; i<elist.length; i++) {
+		voyc.removeWhiteSpace(elist[i]);
+	}
+	var elist = document.querySelectorAll('box');
+	for (var i=0; i<elist.length; i++) {
+		voyc.removeWhiteSpace(elist[i]);
+	}
+}
+viewThai = function() {
+	console.log('view thai');
+	document.querySelector('story').setAttribute('view', 'th');
+}
+viewSideBySide = function() {
+	console.log('view side-by-side');
+	document.querySelector('story').setAttribute('view', 'sbs');
+}
+viewEnglish = function() {
+	console.log('view english');
+	document.querySelector('story').setAttribute('view', 'en');
+}
+tviewNormal = function() {
+	console.log('tview normal');
+	document.querySelector('story').setAttribute('tview', 'n');
+}
+tviewSpaced = function() {
+	console.log('tview spaced');
+	document.querySelector('story').setAttribute('tview', 's');
+}
+tviewBoxed = function() {
+	console.log('tview boxed');
+	document.querySelector('story').setAttribute('tview', 'b');
+}
 
 </script>
 </head>
 <body>
-<button id=gobtn>go</button>
-<div id=results></div>
-</body>
-</html>
 
+<table id=buttonrow> <tr> <td>
+<button>Drill</button>
+<button>Analyze</button>
+<button>Parse</button>
+<button>Edit</button>
+<button>Save</button>
+<button>Cancel</button>
+</td> <td>
+<button id=thbtn  toggle=view>th</button>
+<button id=sbsbtn toggle=view class=down>t|e</button>
+<button id=enbtn  toggle=view>en</button>
+</td> </tr> </table>
+
+<story>
+<thaibtns>
+<button id=nbtn toggle=tview>.</button>
+<button id=sbtn toggle=tview>-</button>
+<button id=bbtn toggle=tview>|</button>
+</thaibtns>
+<line num="1">
+<thai>
+<!-- <orig>ดอกไม้ดอกนี้จะมอบให้คุณนะคะ</orig> -->
+<row>
+<word wid="437.1.0" mm="0" newvocab=""><t>ดอก</t></word>
+<word wid="905.1.1" mm="0" newvocab=""><t>ไม้</t></word>
+<word wid="437.1.2" mm="0" newvocab=""><t>ดอก</t></word>
+<word wid="649.1.3" mm="0"><t>นี้</t></word>
+<word wid="339.1.4" mm="0"><t>จะ</t></word>
+<word wid="872.1.5" mm="0" newvocab=""><t>มอบ</t></word>
+<word wid="1230.1.6" mm="0"><t>ให้</t></word>
+<word wid="311.1.7" mm="0"><t>คุณ</t></word>
+<word wid="302.1.8" mm="0"><t>นะ</t></word>
+<word wid="300.1.9" mm="0"><t>คะ</t></word>
+</row>
+<box>
+<word wid="437.1.0" mm="0" newvocab=""><t>ดอก</t><e>flower</e><tl>daawk<sup>L</sup></tl></word>
+<word wid="905.1.1" mm="0" newvocab=""><t>ไม้</t><e>wood</e><tl>mai<sup>H</sup></tl></word>
+<word wid="437.1.2" mm="0" newvocab=""><t>ดอก</t><e>flower</e><tl>daawk<sup>L</sup></tl></word>
+<word wid="649.1.3" mm="0"><t>นี้</t><e>this</e><tl>nii<sup>H</sup></tl></word>
+<word wid="339.1.4" mm="0"><t>จะ</t><e>will</e><tl>ja<sup>L</sup></tl></word>
+<word wid="872.1.5" mm="0" newvocab=""><t>มอบ</t><e>assign</e><tl>maawp<sup>F</sup></tl></word>
+<word wid="1230.1.6" mm="0"><t>ให้</t><e>give</e><tl>hai<sup>F</sup></tl></word>
+<word wid="311.1.7" mm="0"><t>คุณ</t><e>you</e><tl>kun<sup>M</sup></tl></word>
+<word wid="302.1.8" mm="0"><t>นะ</t><e>na</e><tl>na<sup>H</sup></tl></word>
+<word wid="300.1.9" mm="0"><t>คะ</t><e>ka</e><tl>ka<sup>H</sup></tl></word>
+</box>
+</thai>
+<eng>This flower will be given to you.</eng>
+</line>
+
+<line num="3">
+<thai>
+<!-- <orig>พวกเราส่วนใหญ่มีประสบการณ์ชีวิตที่เต็มเปี่ยมไปด้วยช่วงเวลาอันยอดเยี่ยมน่าอัศจรรย์และช่วงเวลาที่ยากลำบาก</orig> -->
+<row>
+<word wid="797.3.0" mm="0"><t>พวก</t></word>
+<word wid="981.3.1" mm="0"><t>เรา</t></word>
+<word wid="0.3.2" mm="0" error=""><t>ส่วน</t></word>
+<word wid="98.3.3" mm="0" newvocab=""><t>ใหญ่</t></word>
+<word wid="886.3.4" mm="0"><t>มี</t></word>
+<word wid="1485.3.5" mm="0" newvocab=""><t>ประ</t></word>
+<word wid="0.3.6" mm="0" error=""><t>สบ</t></word>
+<word wid="169.3.7" mm="0"><t>การ</t></word>
+<word wid="0.3.8" mm="0" error=""><t>ณ์</t></word>
+<word wid="410.3.9" mm="0" newvocab=""><t>ชีวิต</t></word>
+<word wid="580.3.10" mm="0"><t>ที่</t></word>
+<word wid="511.3.11" mm="0" newvocab=""><t>เต็ม</t></word>
+<word wid="0.3.12" mm="0" error=""><t>เปี่ยม</t></word>
+<word wid="745.3.13" mm="0"><t>ไป</t></word>
+<word wid="435.3.14" mm="0" multimean=""><t>ด้วย</t></word>
+<word wid="1491.3.15" mm="0"><t>ช่วง</t></word>
+<word wid="1076.3.16" mm="0" newvocab=""><t>เวลา</t></word>
+<word wid="1251.3.17" mm="0" newvocab=""><t>อัน</t></word>
+<word wid="909.3.18" mm="0" newvocab=""><t>ยอด</t></word>
+<word wid="0.3.19" mm="0" error=""><t>เยี่ยม</t></word>
+<word wid="633.3.20" mm="0" multimean=""><t>น่า</t></word>
+<word wid="0.3.21" mm="0" error=""><t>อัศจรรย์</t></word>
+<word wid="1052.3.22" mm="0"><t>และ</t></word>
+<word wid="1491.3.23" mm="0"><t>ช่วง</t></word>
+<word wid="1076.3.24" mm="0" newvocab=""><t>เวลา</t></word>
+<word wid="580.3.25" mm="0"><t>ที่</t></word>
+<word wid="916.3.26" mm="0" chosen=""><t>ยาก</t></word>
+<word wid="1025.3.27" mm="0" newvocab=""><t>ลำบาก</t></word>
+</row>
+<box>
+<word wid="797.3.0" mm="0"><t>พวก</t><e>group</e><tl>puak<sup>F</sup></tl></word>
+<word wid="981.3.1" mm="0"><t>เรา</t><e>we</e><tl>rao<sup>M</sup></tl></word>
+<word wid="0.3.2" mm="0" error=""><t>ส่วน</t><e>.</e><tl>.</tl></word>
+<word wid="98.3.3" mm="0" newvocab=""><t>ใหญ่</t><e>big</e><tl>yai<sup>L</sup></tl></word>
+<word wid="886.3.4" mm="0"><t>มี</t><e>have</e><tl>mii<sup>M</sup></tl></word>
+<word wid="1485.3.5" mm="0" newvocab=""><t>ประ</t><e>x-</e><tl>bpra<sup>L</sup></tl></word>
+<word wid="0.3.6" mm="0" error=""><t>สบ</t><e>.</e><tl>.</tl></word>
+<word wid="169.3.7" mm="0"><t>การ</t><e>state-of</e><tl>gaan<sup>M</sup></tl></word>
+<word wid="0.3.8" mm="0" error=""><t>ณ์</t><e>.</e><tl>.</tl></word>
+<word wid="410.3.9" mm="0" newvocab=""><t>ชีวิต</t><e>.</e><tl>.</tl></word>
+<word wid="580.3.10" mm="0"><t>ที่</t><e>at</e><tl>tii<sup>F</sup></tl></word>
+<word wid="511.3.11" mm="0" newvocab=""><t>เต็ม</t><e>complete</e><tl>dtem<sup>M</sup></tl></word>
+<word wid="0.3.12" mm="0" error=""><t>เปี่ยม</t><e>.</e><tl>.</tl></word>
+<word wid="745.3.13" mm="0"><t>ไป</t><e>go-to</e><tl>bpai<sup>M</sup></tl></word>
+<word wid="435.3.14" mm="0" multimean=""><t>ด้วย</t><e>also</e><tl>duay<sup>F</sup></tl></word>
+<word wid="1491.3.15" mm="0"><t>ช่วง</t><e>time-period</e><tl>chuang<sup>F</sup></tl></word>
+<word wid="1076.3.16" mm="0" newvocab=""><t>เวลา</t><e>time</e><tl>waeM laaM</tl></word>
+<word wid="1251.3.17" mm="0" newvocab=""><t>อัน</t><e>item</e><tl> an<sup>M</sup></tl></word>
+<word wid="909.3.18" mm="0" newvocab=""><t>ยอด</t><e>top</e><tl>yaawt<sup>F</sup></tl></word>
+<word wid="0.3.19" mm="0" error=""><t>เยี่ยม</t><e>.</e><tl>.</tl></word>
+<word wid="633.3.20" mm="0" multimean=""><t>น่า</t><e>probably-</e><tl>naa<sup>F</sup></tl></word>
+<word wid="0.3.21" mm="0" error=""><t>อัศจรรย์</t><e>.</e><tl>.</tl></word>
+<word wid="1052.3.22" mm="0"><t>และ</t><e>and</e><tl>lae<sup>H</sup></tl></word>
+<word wid="1491.3.23" mm="0"><t>ช่วง</t><e>time-period</e><tl>chuang<sup>F</sup></tl></word>
+<word wid="1076.3.24" mm="0" newvocab=""><t>เวลา</t><e>time</e><tl>waeM laaM</tl></word>
+<word wid="580.3.25" mm="0"><t>ที่</t><e>at</e><tl>tii<sup>F</sup></tl></word>
+<word wid="916.3.26" mm="0" chosen=""><t>ยาก</t><e>difficult</e><tl>yaak<sup>F</sup></tl></word>
+<word wid="1025.3.27" mm="0" newvocab=""><t>ลำบาก</t><e>.</e><tl>.</tl></word>
+</box>
+</thai>
+<eng>Most of us experience a life full of wonderful moments and difficult moments.</eng>
+</line>
+</story>
+</html>

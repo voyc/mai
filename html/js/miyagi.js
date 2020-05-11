@@ -318,15 +318,15 @@ voyc.Lee.prototype.checkAnswer = function(o) {
 			if (lc == 'ห' || (lc == 'อ' && lc.length > 1)) {
 				cls = 'h';
 			}
-			b = (o.msg.substr(0,1) == cls);
+			b = (o.msg.substr(0,1).toLowerCase() == cls);
 			break;
 		case 'tone':
-			var tn = this.scores[this.ndxCard].flat.dict.cp.split(',')[4].toLowerCase();
-			b = (o.msg == tn);
+			var tn = this.scores[this.ndxCard].flat.dict.cp.split(',')[4];
+			b = (o.msg.toLowerCase() == tn.toLowerCase());
 			break;
 		case 'translate':
 			var en = this.scores[this.ndxCard].flat.mean.e;
-			b = (o.msg == en);
+			b = (o.msg.toLowerCase().replace('-', ' ') == en.toLowerCase().replace('-', ' '));
 			break;
 		case 'reverse':
 			var th = this.scores[this.ndxCard].flat.dict.t;

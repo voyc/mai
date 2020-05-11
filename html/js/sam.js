@@ -88,12 +88,11 @@ voyc.Sam.prototype.setup = function() {
 	this.observer.subscribe('restart-anonymous','sam' ,function(note) { self.onAnonymous       (note);});
 	this.observer.subscribe('logout-received'  ,'sam' ,function(note) { self.onLogoutReceived  (note);});
 	this.observer.subscribe('getvocab-received','sam' ,function(note) { self.onGetVocabReceived(note);});
-	this.observer.subscribe('getdict-received' ,'sam' ,function(note) { self.onGetDictReceived (note);});
+	//this.observer.subscribe('getdict-received' ,'sam' ,function(note) { self.onGetDictReceived (note);});
 	this.observer.subscribe('search-received' ,'sam' ,function(note)  { self.onSearchReceived (note);});
 	this.observer.subscribe('edit-cancelled'   ,'sam' ,function(note) { self.onEditCancelled   (note);});
 	this.observer.subscribe('setdict-received' ,'sam' ,function(note) { self.onSetDictReceived (note);});
-	this.observer.subscribe('getstory-received' ,'sam' ,function(note) { self.onGetStoryReceived (note);});
-	this.observer.subscribe('getstories-received' ,'sam' ,function(note) { self.onGetStoriesReceived (note);});
+	//this.observer.subscribe('getstory-received' ,'sam' ,function(note) { self.onGetStoryReceived (note);});
 	
 	this.lee = new voyc.Lee(this.chat, this.observer);
 	this.speech = new voyc.Speech();
@@ -111,7 +110,11 @@ voyc.Sam.prototype.onGetVocabReceived = function() {
 	// setup continued
 	this.noam = new voyc.Noam(voyc.dictionary, this.vocab);
 	var interval = Date.now() - this.vocab.vocab.recency;
+
+	// these two should be instantiated in mai, sam should be reserved to home window
+	// noam also
 	voyc.editor = new voyc.Editor(voyc.$('editor'), this.observer, this.noam);
+	voyc.storyview = new voyc.StoryView(voyc.$('storyview'), this.noam);
 }
 
 voyc.Sam.prototype.dochat = function(s,bpost,cb) {
@@ -269,6 +272,10 @@ voyc.Sam.prototype.cmdDrill = function(story, r) {
 	}
 	if (!r.adj['continue']) {
 		this.stack = this.prepStack(story, r);
+		if (!this.stack) {
+			this.dochat('Drill what?');
+			return;
+		}
 	}
 	this.startDrill();
 }
@@ -276,13 +283,13 @@ voyc.Sam.prototype.cmdDrill = function(story, r) {
 voyc.Sam.prototype.prepStack = function(story,r) {
 	var stack = {
 		algorithm: 'progressive',
-		setsize:5,
+		setsize:8,
 		stepndx:0,
 		steps:['translate','reverse'],
 		setndx:0,
 	}
 	var flats = [];
-	switch(r.object) {
+	switch(r.object.toLowerCase()) {
 		case 'syllables':
 			stack.steps = ['class','tone','translate','reverse'];
 		case 'words':
@@ -310,6 +317,9 @@ voyc.Sam.prototype.prepStack = function(story,r) {
 				flats.push(flat);
 			}
 			break;	
+		default:
+			return false;
+			break;
 	}
 
 	// sort by length of thai word
@@ -605,30 +615,6 @@ voyc.Sam.prototype.cmdListStories = function(r) {
 		this.story = new voyc.Story();
 	}
 	var s = this.story.list();
-}
-
-voyc.Sam.prototype.onGetStoriesReceived = function(note) {
-	if (note.payload.status != 'ok') {
-		this.dochat('not found');
-		return;
-	}
-	var s = '';
-	var list = note.payload.list;
-	for (var i=0; i<list.length; i++) {
-		s += '<button type="button" class="anchor" sid="'+list[i].id+'">';
-		s += list[i].title;
-		s += '</button><br/>';
-	}
-	var self = this;
-	this.dochat(s,false,function(e){
-		var elist = e.querySelectorAll('button[sid]');
-		for (var i=0; i<elist.length; i++) {
-			elist[i].addEventListener('click', function(e) {
-				var sid = e.currentTarget.getAttribute('sid');
-				self.cmdReadStory({object:sid});
-			}, false);
-		}
-	});
 }
 
 voyc.Sam.prototype.cmdSaveStory = function(r) {

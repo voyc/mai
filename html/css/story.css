@@ -1,0 +1,206 @@
+/* button row */
+table#buttonrow {
+	width:100%;
+}
+table#buttonrow td { /* :nth-of-type(2) { */
+	text-align:right;
+}
+
+/* story view */
+story {
+	display:table;
+	width:100%;
+	xborder:1px solid green;
+	border-collapse:collapse;
+}
+line {
+	display:table-row;
+	width:100%;
+	border:1px solid gray;
+}
+thai, eng {
+	display:table-cell;
+	xborder:1px solid yellow;
+	vertical-align:top;
+}
+eng {
+	xtext-align:right;
+}
+story[view=th] eng {
+	display:none;
+}
+story[view=en] thai{
+	display:none;
+}
+story[view=sbs] {
+}
+story thaibtns {
+	display:block;
+}
+story[view=en] thaibtns {
+	display:none;
+}
+
+/* story tview */
+row word {
+	display:inline;
+	cursor:pointer;
+}
+box word {
+	border:1px solid lightgray;
+	text-align:center;
+	vertical-align:top;
+	display:inline-block;
+	cursor:pointer;
+}
+e, tl {
+	font-size:.7rem;
+}
+eng {
+	font-size:.8rem;
+}
+row, box { /* one and only one is visible */
+	display:none; /* inline-block */
+}
+box t, box e, box tl {
+	display:block;
+}
+
+story[tview=n] line thai row, story[tview=s] line thai row {
+	display:inline-block;
+}
+story[tview=s] line thai row word {
+	margin-right:.3rem;
+}
+story[tview=b] line thai box {
+	display:inline-block;
+}
+
+/* word coloring */
+story[tview=s] word[error] t, story[tview=b] word[error] t {
+	color:red;
+}
+story[tview=s] word[newvocab] t, story[tview=b] word[newvocab] t {
+	color:green;
+}
+story[tview=s] word[multimean] t, story[tview=b] word[multimean] t {
+	color:cyan;
+}
+story[tview=s] word[chosen] t, story[tview=b] word[chosen] t {
+	color:purple;
+}
+
+
+
+
+
+/*
+.thai {
+	font-size:1.5rem;
+}
+.english {
+	font-size:1rem;
+}
+sentence {
+	display:block;
+	border-bottom: 1px solid gray;
+}
+line {
+	display:block;
+}
+story[author] line, story[hint] line {
+	border:1px solid gray;
+}
+word {
+}
+speaker {
+	margin-right: .5rem;
+}
+story[author] word, story[hint] word {
+	margin-right: .5rem;
+	cursor:pointer;
+}
+story[author] word[error] {
+	color:red;
+	cursor:pointer;
+}
+story[author] word[newvocab] {
+	color:green;
+}
+story[author] word[multimean] {
+	color:cyan;
+	cursor:pointer;
+}
+story[author] word[chosen] {
+	color:purple;
+}
+sylcont {
+	position:relative;
+	margin-right: .5rem;
+}
+sylspc {
+	opacity:0.0;
+}
+syllable {
+	position:absolute;
+}
+syllable[tone=M] {
+	color:blue;
+}
+syllable[tone=H] {
+	transform: translate(0,-.5rem);
+	color:blue;
+}
+syllable[tone=M] {
+	color:green;
+}
+syllable[tone=L] {
+	transform: translate(0,.5rem);
+	color:brown;
+}
+syllable[tone=R] {
+	transform: rotate(-30deg);
+	color:red;
+}
+syllable[tone=F] {
+	transform: rotate(30deg);
+	color:orange;
+}
+button[a] {
+	margin-right:.3rem;
+}
+button[line] {
+	xborder-radius:10px;
+	margin-right:.3rem;
+}
+story line[hint] word t, story line[hint] word e, story line[hint] word tl, story line[hint] eng  {
+	display:none;
+}
+story line[hint="0"] word t {
+	display:inline;
+}
+story line[hint="1"] word e {
+	display:inline;
+}
+story line[hint="2"] word tl {
+	display:inline;
+}
+story line[hint="3"] eng {
+	display:inline;
+}
+story line[hint="3"] thai {
+	display:none;
+}
+div#details i {
+	font-size:10pt;
+}
+div#details icon[name=pencil] {
+	float:right;
+}
+button[mm].chosen {
+	font-weight:bold:
+}
+button span {
+	xpointer-events: none;
+}
+*/
