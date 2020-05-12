@@ -552,7 +552,7 @@ voyc.Noam.prototype.parseString = function(input, linenum) {
 				//var m = this.dictionary.search(t,'t','om');  // find t in Dictionary
 				var m = this.dictionary.fastMatch(t);  // find t in Dictionary
 				if (m) {
-					if (t == sa) {
+					if (t == s) {
 						// sto and return only if no other components found
 						fullStringMatch = {
 							t:t,
@@ -583,13 +583,21 @@ voyc.Noam.prototype.parseString = function(input, linenum) {
 				}
 			}
 		}
-		// unmatched piece at end
+
+		// unmatched piece at end, or full string match
 		if (ui >= 0 && i-1>ui) {
 			us = s.substring(ui,i);
-			sto(us, linenum, startndx+ui, 0, '', false);  // save unrecognized part
-		}
-		if (!words.length) {
-			words.push(fullStringMatch);
+			if (us == s && fullStringMatch.t) {
+				if (us != fullStringMatch.t)
+					debugger;
+				if (words.length > 0) 
+					debugger;
+				var fsm = fullStringMatch;
+				sto(fsm.t, fsm.linenum, fsm.ndx, fsm.id, fsm.tl, fsm.vocab);  // save full string match
+			}
+			else {
+				sto(us, linenum, startndx+ui, 0, '', false);  // save unrecognized part
+			}
 		}
 	}
 	return words;

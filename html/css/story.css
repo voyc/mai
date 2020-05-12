@@ -1,17 +1,33 @@
 /* button row */
 table#buttonrow {
 	width:100%;
+	margin:0 1rem;
 }
-table#buttonrow td { /* :nth-of-type(2) { */
+table#buttonrow :nth-of-type(1) { */
+	text-align:left;
+}
+table#buttonrow :nth-of-type(2) { */
+	text-align:center;
+}
+table#buttonrow :nth-of-type(3) { */
 	text-align:right;
+}
+
+story icon {
+	margin-left:.3rem;
+	xfont-size:1rem;
+}
+icon[type=char][name=pencil ]:before {
+	top:0;
 }
 
 /* story view */
 story {
 	display:table;
-	width:100%;
+	xwidth:100%;
 	xborder:1px solid green;
 	border-collapse:collapse;
+	margin:0 1rem;
 }
 line {
 	display:table-row;
@@ -59,7 +75,7 @@ e, tl {
 eng {
 	font-size:.8rem;
 }
-row, box { /* one and only one is visible */
+row, box, orig { /* one and only one is visible */
 	display:none; /* inline-block */
 }
 box t, box e, box tl {

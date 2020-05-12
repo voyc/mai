@@ -207,12 +207,17 @@ voyc.Story.prototype.draw = function() {
 		var sbox = '';
 		for (var j=0; j<line.words.length; j++) {
 			var word = line.words[j];
-			var wid = '0.0.0';
+			var wid = [word.id,word.loc[0].line,word.loc[0].wndx].join('.');
 			var mm = word.loc[0].n;
-			var e = (word.dict) ? word.dict.mean[mm].e : '';
-			var tl = (word.dict) ? word.dict.tl : '';
-			srow += voyc.printf(voyc.Story.template.wordrow, [wid,mm,word.t]);
-			sbox += voyc.printf(voyc.Story.template.wordbox, [wid,mm,word.t,word.e,word.tl]);
+			var e = (word.dict) ? word.dict.mean[mm].e : '.';
+			var tl = (word.dict) ? word.dict.tl : '.';
+			var attr = '';
+			if (!word.dict) attr = 'error';
+			else if (mm > 0) attr = 'chosen';
+			else if (word.dict && word.dict.mean.length>1) attr = 'multimean';
+			else if (!word.vocab || !(word.vocab.s == 'm')) attr = 'newvocab';
+			srow += voyc.printf(voyc.Story.template.wordrow, [wid,mm,word.t,attr]);
+			sbox += voyc.printf(voyc.Story.template.wordbox, [wid,mm,word.t,e,tl,attr]);
 		}
 		sline += voyc.printf(voyc.Story.template.line, [linenum, line.th, srow, sbox, line.en]);
 	}
@@ -223,8 +228,15 @@ voyc.Story.prototype.draw = function() {
 voyc.Story.template = {};
 
 voyc.Story.template.story = `
-<p>$1</p>
+<h2>$1</h2>
 <table id=buttonrow><tr><td>
+<thaibtns>
+<button id=nbtn toggle=tview>&#x2501;</button>
+<button id=sbtn toggle=tview>&#x2505;</button>
+<button id=bbtn toggle=tview>&#x25a1;</button>
+</thaibtns>
+</td>
+<td>
 <button>Drill</button>
 <button>Analyze</button>
 <button>Parse</button>
@@ -236,12 +248,8 @@ voyc.Story.template.story = `
 <button id=sbsbtn toggle=view class=down>t|e</button>
 <button id=enbtn  toggle=view>en</button>
 </td></tr></table>
+
 <story>
-<thaibtns>
-<button id=nbtn toggle=tview>.</button>
-<button id=sbtn toggle=tview>-</button>
-<button id=bbtn toggle=tview>|</button>
-</thaibtns>
 $2
 </story>
 `;
@@ -250,17 +258,22 @@ voyc.Story.template.line = `
 <line num="$1">
 <thai>
 <orig>$2</orig>
-<row>$3</row>
+<row>$3
+<icon type='draw' name='speaker' line=$1></icon>
+<icon type='char' name='pencil' line=$1 lang='th'></icon>
+</row>
 <box>$4</box>
 </thai>
-<eng>$5</eng>
+<eng>$5
+<icon type='char' name='pencil' line=$1 lang='en'></icon>
+</eng>
 </line>
 `;
 
 voyc.Story.template.wordrow = `
-<word wid="$1" mm="$2"><t>$3</t></word>
+<word wid="$1" mm="$2" $4><t>$3</t></word>
 `;
 
 voyc.Story.template.wordbox = `
-<word wid="$1" mm="$2"><t>$3</t><e>$4</e><tl>$5</tl></word>
+<word wid="$1" mm="$2" $6><t>$3</t><e>$4</e><tl>$5</tl></word>
 `;
