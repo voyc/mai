@@ -64,6 +64,7 @@ voyc.Sam = function(chat) {
 	this.state = 'ready';
 	this.story = false;
 	this.stack = false;
+	this.drill = false;
 	this.lang = 'thai';
 	this.editdict = {};
 }
@@ -93,6 +94,7 @@ voyc.Sam.prototype.setup = function() {
 	this.observer.subscribe('edit-cancelled'   ,'sam' ,function(note) { self.onEditCancelled   (note);});
 	this.observer.subscribe('setdict-received' ,'sam' ,function(note) { self.onSetDictReceived (note);});
 	//this.observer.subscribe('getstory-received' ,'sam' ,function(note) { self.onGetStoryReceived (note);});
+	this.observer.subscribe('drill-requested' ,'sam' ,function(note) { self.onDrillRequested   (note);});
 	
 	this.lee = new voyc.Lee(this.chat, this.observer);
 	this.speech = new voyc.Speech();
@@ -218,33 +220,44 @@ voyc.Sam.prototype.endDrill = function(quit) {
 voyc.Sam.prototype.continueDrill = function() {
 	// increment through the steps
 	this.stack.stepndx++;
-	var s = '';
 	if (this.stack.stepndx < this.stack.steps.length) {
+		var s = '';
 		switch (this.stack.steps[this.stack.stepndx]) {
 			case 'class': s = 'What is the class of the leading consonant?'; break;
 			case 'tone': s = 'What is the tone of the syllable?'; break;
 			case 'translate': s = 'Translate to English.'; break;
 			case 'reverse': s = 'Reverse translate back to Thai.'; break;
 		}
-		s += 'Click go when ready.';
+		s += ' Click go when ready.';
 		this.state = 'nextstack';
 		this.chat.post(this.chatid, s, ['go']);
 	}
 	// increment through the sets
 	else {
 		this.stack.stepndx = 0;
-		this.stack.set++;
-		if (this.stack.set >= this.stack.sets.length) {
-			this.state = 'ready';
-			this.dochat('Congratulations.  You finished the drill.');
-		}
-		else {		
-			this.stack.setndx++;
+		this.stack.setndx++;
+		if (this.stack.setndx < this.stack.sets.length) {
 			this.stack.flats = this.stack.sets[this.stack.setndx];
 			var s = 'Let\'s do another set.<br/>';
-			s += 'Click go when ready.';
+			s += ' Click go when ready.';
 			this.state = 'nextstack';
 			this.chat.post(this.chatid, s, ['go']);
+		}
+		// increment through the stacks
+		else {
+			this.stack.setndx = 0;
+			this.drill.stackndx++;
+			if (this.drill.stackndx < this.drill.stacks.length) {
+				this.stack = this.drill.stacks[this.drill.stackndx];
+				var s = 'Contratulations.  You finished the stack.  Let\'s do another.';
+				s += ' Click go when ready.';
+				this.state = 'nextstack';
+				this.chat.post(this.chatid, s, ['go']);
+			}
+			else {
+				this.state = 'ready';
+				this.dochat('Congratulations.  You finished the drill.');
+			}
 		}
 	}
 }
@@ -265,25 +278,52 @@ voyc.Sam.prototype.reportScores = function(scores) {
 	}
 }
 
+voyc.Sam.prototype.onDrillRequested = function(note) {
+	var story = note.payload.story;
+	this.story = story;
+	(new voyc.BrowserHistory).nav('home');
+	this.cmdDrill(story, {verb:'drill',object:'',adj:{}});
+}
+
+/* obj:words,syllables; adj:new,continue */
 voyc.Sam.prototype.cmdDrill = function(story, r) {
 	if (!this.story) {
 		this.dochat('Parse a story first.');
 		return;
 	}
-	if (!r.adj['continue']) {
-		this.stack = this.prepStack(story, r);
-		if (!this.stack) {
-			this.dochat('Drill what?');
-			return;
-		}
+	//if (!r.adj['continue']) {
+	//	this.stack = this.prepStack(story, r);
+	//	if (!this.stack) {
+	//		this.dochat('Drill what?');
+	//		return;
+	//	}
+	//}
+
+	if (r.adj['continue']) {
+		this.continueDrill();
 	}
+
+	this.drill = {
+		stackndx:0,
+		stacks:[],
+	}	
+	var stack = this.prepStack(story,{verb:'drill', object:'syllables', adj:{new:true}});
+	if (stack) {
+		this.drill.stacks.push(stack);
+	}
+	stack = this.prepStack(story,{verb:'drill', object:'words', adj:{new:true}});
+	if (stack) {
+		this.drill.stacks.push(stack);
+	}
+
+	this.stack = this.drill.stacks[this.drill.stackndx]
 	this.startDrill();
 }
 
 voyc.Sam.prototype.prepStack = function(story,r) {
 	var stack = {
 		algorithm: 'progressive',
-		setsize:8,
+		setsize:3,
 		stepndx:0,
 		steps:['translate','reverse'],
 		setndx:0,
@@ -302,6 +342,9 @@ voyc.Sam.prototype.prepStack = function(story,r) {
 					continue;
 				}
 				if (r.object == 'syllables' && w.dict.g != 'o') {
+					continue;
+				}
+				if (r.object == 'words' && w.dict.g != 'm') {
 					continue;
 				}
 				var n = parseInt(w.loc[0].n)
@@ -549,7 +592,10 @@ voyc.Sam.prototype.respond = function(o) { // input o object comes from chat eng
 				});
 			}
 			break;
-		case 'drill': this.cmdDrill(this.story, req); break;
+		case 'drill': 
+			this.story = voyc.storyview.story;
+			this.cmdDrill(this.story, req); 
+			break;
 		case 'search':
 			this.cmdSearch(req);
 			break;

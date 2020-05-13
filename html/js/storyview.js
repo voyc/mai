@@ -32,15 +32,42 @@ voyc.StoryView.prototype.setup = function() {
 
 voyc.StoryView.prototype.onStoryViewRequested = function(note) {
 	this.container.innerHTML = '<p>Loading...</p>';
-	// if story requested by id, draw it
 	var a = note.payload.page.split('-');
 	if (a.length > 1) {
-		this.story.read(a[1]);
+		// open insert form
+		if (a[1] == 'new') {
+			this.openForm();
+		}
+		// if story requested by id, draw it
+		else {
+			this.story.read(a[1]);
+		}
 	}
 	// otherwise, show the list
 	else {
 		this.list();
 	}
+}
+
+voyc.StoryView.prototype.openForm = function(raw) {
+	var s = '<p>';
+	s += '<textarea id=storyraw>';
+	if (raw) {
+		s += raw;
+	}
+	s += '</textarea>';
+	s += '<button id=storyparsebtn>Parse</button>';
+	s += '<button>Cancel</button>';
+	s += '<button>Save</button>';	
+	s += '</p>';
+	this.container.innerHTML = s;
+
+	// attach handlers
+	var self = this;
+	document.getElementById('storyparsebtn').addEventListener('click', function(e) {
+		var raw = document.getElementById('storyraw').value;
+		self.story.parse(raw);
+	}, false);
 }
 
 voyc.StoryView.prototype.list = function() {
@@ -61,6 +88,7 @@ voyc.StoryView.prototype.onGetStoriesReceived = function(note) {
 		return;
 	}
 	var s = '';
+	s += '<p><button sid=new>New Story</button></p>';
 	var list = note.payload.list;
 	for (var i=0; i<list.length; i++) {
 		s += '<p><button type="button" class="anchor" sid="'+list[i].id+'">';
@@ -102,6 +130,14 @@ voyc.StoryView.prototype.onStoryReady = function(note) {
 	document.getElementById('nbtn').addEventListener('click',function(e)  {self.setview('tview','n')});
 	document.getElementById('sbtn').addEventListener('click',function(e)  {self.setview('tview','s')});
 	document.getElementById('bbtn').addEventListener('click',function(e)  {self.setview('tview','b')});
+
+	document.getElementById('drillbtn').addEventListener('click',function(e)  {
+		self.observer.publish('drill-requested', 'storyview', {story:self.story});
+	}, false);
+	document.getElementById('replacebtn').addEventListener('click',function(e)  {
+		var raw = self.story.original;
+		self.openForm(raw);
+	}, false);
 
 	// initialize view
 	(new voyc.Minimal).attachAll(this.container);

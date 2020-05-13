@@ -590,10 +590,8 @@ voyc.Noam.prototype.parseString = function(input, linenum) {
 			if (us == s && fullStringMatch.t) {
 				if (us != fullStringMatch.t)
 					debugger;
-				if (words.length > 0) 
-					debugger;
 				var fsm = fullStringMatch;
-				sto(fsm.t, fsm.linenum, fsm.ndx, fsm.id, fsm.tl, fsm.vocab);  // save full string match
+				sto(fsm.t, fsm.line, fsm.ndx, fsm.id, fsm.tl, fsm.vocab);  // save full string match
 			}
 			else {
 				sto(us, linenum, startndx+ui, 0, '', false);  // save unrecognized part

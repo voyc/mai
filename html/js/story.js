@@ -137,6 +137,35 @@ voyc.Story.prototype.save = function() {
 	this.observer.publish('setstory-posted', 'story', {});
 }
 
+// initialize one new story
+voyc.Story.prototype.parse = function(raw) {
+	this.id       = 0;
+	this.authorid = 0;
+	this.language = 'th';
+	this.title    = '';
+	this.original = raw;
+	this.words = [];
+	this.speakers = { x: {name: "narrator", age: 40, gender: "male"} };
+	this.lines = [];
+	this.meta = [];
+
+	this.noam.parseStory(this);
+	var ids = this.gatherIds();
+	voyc.dictionary.getDict(ids);
+}
+
+voyc.Story.prototype.gatherIds = function() {
+	var ids = [];
+	for (var i=0; i<this.words.length; i++) {
+		var id = this.words[i].id;
+		if (id) {
+			ids.push(id);
+		}
+	}
+	return ids;
+}
+
+// read a story from the db
 voyc.Story.prototype.read = function(id) {
 	this.id = parseInt(id);
 	var svcname = 'getstory';
@@ -153,7 +182,6 @@ voyc.Story.prototype.read = function(id) {
 	});
 	this.observer.publish(svcname+'-posted', 'story', {});
 }
-
 voyc.Story.prototype.onGetStoryReceived = function(note) {
 	if (note.payload.status != 'ok') {
 		return;
@@ -170,15 +198,7 @@ voyc.Story.prototype.onGetStoryReceived = function(note) {
 	this.meta = [];
 
 	this.noam.parseStory(this);
-
-	// get a miniDict for all the words in the story
-	var ids = [];
-	for (var i=0; i<this.words.length; i++) {
-		var id = this.words[i].id;
-		if (id) {
-			ids.push(id);
-		}
-	}
+	var ids = this.gatherIds();
 	voyc.dictionary.getDict(ids);
 }
 
@@ -229,7 +249,7 @@ voyc.Story.template = {};
 
 voyc.Story.template.story = `
 <h2>$1</h2>
-<table id=buttonrow><tr><td>
+<div class=horz><table id=buttonrow><tr><td>
 <thaibtns>
 <button id=nbtn toggle=tview>&#x2501;</button>
 <button id=sbtn toggle=tview>&#x2505;</button>
@@ -237,21 +257,20 @@ voyc.Story.template.story = `
 </thaibtns>
 </td>
 <td>
-<button>Drill</button>
-<button>Analyze</button>
-<button>Parse</button>
-<button>Edit</button>
-<button>Save</button>
-<button>Cancel</button>
+<button id=drillbtn  >Drill</button>
+<button id=editbtn   >Edit</button>
+<button id=replacebtn>Replace</button>
 </td><td>
 <button id=thbtn  toggle=view>th</button>
 <button id=sbsbtn toggle=view class=down>t|e</button>
 <button id=enbtn  toggle=view>en</button>
-</td></tr></table>
+</td></tr></table></div>
 
-<story>
+<p>
+<story class=horz>
 $2
 </story>
+</p>
 `;
 
 voyc.Story.template.line = `

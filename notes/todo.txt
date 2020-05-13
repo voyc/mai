@@ -123,22 +123,61 @@ vocab
 			what if we want to store expressions that are not in the dict?
 		join with dict to get thai and type
 
-hyphen optional in answers, english
-Case insensitive answers: tones, english
+checkAnswer for consonant class
+	error: อยู่ shows "middle class" should be exception, low raised to high
+		leading consonant is ย, is this a consonant cluster?
+		fix in parse and in checkAnswer
+	display rule for exceptions: 
+		low-class sonorant raised to high class by ห
+		low-class sonorant raised to high class อ, four words: อยู่
+		special case exception, like ก็
 
-Separate page for story
-Side-by-side view 
-Single command to parse and show with hints
-Single command to drill all steps all sets 
+how often are tone marks used on open syllables?
+	นี่ niiF, นั้น nanH, this and that, low-class mai eak, low-class mai tok
 
-test parse: อกไม้ดอกนี้จะมอบให้คุณนะคะ
+getvocab, 4, attempt with invalid parameter set - missing $si
+	when?  after clearing cache on phone, on restart before login?
 
 Sound on every question
-Lowercase resolved
 
 Minimal
 	check for Dragger before instantiating 
 	check for utils before calling
+Icon
+	load lib dynamically
+	remove css adjustment for pencil top, replace with comment
+
+story edit
+story replace
+story new
+	attach handlers for parse, cancel, save
+		publish parse-requested, sam subscribe execute cmdSave()
+
+nav storyview-requested :ls
+pageid
+	pageid:storyview-new => storyView.openForm()
+	pageid:storyview-4 => story.read() => read,parse,prep => storyView:onStoryReady()  => story.draw()
+	pageid:storyview => storyView.list() => storyView.onGetStoriesReceived()
+
+
+storyView -> story.read
+
+
+
+
+restructure model, view, object instantiations
+	browserhistory
+
+call continueDrill from startDrill, with step -1, to get starting message
+
+โรงเรียน ~ School
+ชั้นประถมอะไร ~ What class?
+โรงเรียนอะไร ~ What school?
+เริ่มเมื่อ ~ Start when?
+ราคาเท่าไหร่ ~ What price?
+
+test parse: อกไม้ดอกนี้จะมอบให้คุณนะคะ
+
 ====================================
 settings
 	setsize
