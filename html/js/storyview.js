@@ -17,6 +17,7 @@ voyc.StoryView = function(container, noam) {
 	
 	this.numTrans = 1;
 	this.maxTrans = 5;
+	this.tview = 'n';
 	this.setup();
 
 	this.story = new voyc.Story(this.noam);
@@ -50,15 +51,18 @@ voyc.StoryView.prototype.onStoryViewRequested = function(note) {
 }
 
 voyc.StoryView.prototype.openForm = function(raw) {
-	var s = '<p>';
+	var s = '';
+	s += '<h2>New Story</h2>';
+	s += '<div class=horz>';
+	s += '<button id=storyparsebtn>Parse</button>';
+	s += '<button id=storycancelbtn>Cancel</button>';
+	s += '</div>';
+	s += '<p>';
 	s += '<textarea id=storyraw>';
 	if (raw) {
 		s += raw;
 	}
 	s += '</textarea>';
-	s += '<button id=storyparsebtn>Parse</button>';
-	s += '<button>Cancel</button>';
-	s += '<button>Save</button>';	
 	s += '</p>';
 	this.container.innerHTML = s;
 
@@ -67,6 +71,9 @@ voyc.StoryView.prototype.openForm = function(raw) {
 	document.getElementById('storyparsebtn').addEventListener('click', function(e) {
 		var raw = document.getElementById('storyraw').value;
 		self.story.parse(raw);
+	}, false);
+	document.getElementById('storycancelbtn').addEventListener('click', function(e) {
+		self.onStoryReady();
 	}, false);
 }
 
@@ -138,6 +145,23 @@ voyc.StoryView.prototype.onStoryReady = function(note) {
 		var raw = self.story.original;
 		self.openForm(raw);
 	}, false);
+	document.getElementById('editbtn').addEventListener('click',function(e)  {
+		self.setmode('edit');
+		self.setview('tview','e');
+	}, false);
+	document.getElementById('storysavebtn').addEventListener('click',function(e)  {
+		self.story.save();
+	}, false);
+	document.getElementById('storyeditdonebtn').addEventListener('click',function(e)  {
+		self.reconstitute();
+		self.story.parse();
+		self.setview('tview',self.tview);
+		self.setmode('view');
+	}, false);
+	document.getElementById('storyeditcancelbtn').addEventListener('click',function(e)  {
+		self.setview('tview',self.tview);
+		self.setmode('view');
+	}, false);
 
 	// initialize view
 	(new voyc.Minimal).attachAll(this.container);
@@ -188,6 +212,12 @@ voyc.StoryView.prototype.onStoryReady = function(note) {
 }
 voyc.StoryView.prototype.setview = function(attr,value) {
 	document.querySelector('story').setAttribute(attr, value);
+	if (attr == 'tview' && value != 'e') {
+		this.tview = value;
+	}
+}
+voyc.StoryView.prototype.setmode = function(value) {
+	document.querySelector('section#storyview').setAttribute('mode', value);
 }
 
 voyc.StoryView.prototype.composeWord = function(word,r,wid) {
@@ -243,3 +273,27 @@ voyc.StoryView.prototype.chooseMean = function(e,mm,wid) {
 	el.setAttribute('chosen',true);
 }
 
+voyc.StoryView.prototype.reconstitute = function() {
+	var s = this.story.original;
+	var a = this.story.original.split('\n');
+	var raw = '';
+	var nline = 0;
+	for (var i=0; i<a.length; i++) {
+		var sline = a[i];
+		if (sline.trim().length <= 1) { // ignore empty lines
+			raw += sline;
+		}
+		else if (sline.indexOf('::') > -1) { // ignore speaker and comment lines
+			raw += sline;
+		}
+		else {
+			var th = this.container.querySelector('line[num="'+nline+'"] thai orig textarea').value;
+			var en = this.container.querySelector('line[num="'+nline+'"] eng orig textarea').value;
+			raw += th + ' ~ ' + en + '\n';
+			nline++;
+		}
+	}
+
+	console.log('reconstitute ' + ((this.story.original == raw) ? 'same' : 'different'));
+	this.story.original = raw;
+}

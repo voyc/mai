@@ -6,6 +6,16 @@ textarea#storyraw {
 
 
 /* button row */
+div#storyviewbtnrow, div#storyeditbtnrow {
+	display:none;
+}
+section#storyview[mode=edit] div#storyeditbtnrow {
+	display:block;
+}
+section#storyview[mode=view] div#storyviewbtnrow {
+	display:block
+}
+
 table#buttonrow {
 	width:100%;
 	xmargin:0 1rem;
@@ -82,11 +92,20 @@ e, tl {
 eng {
 	font-size:.8rem;
 }
+story[tview=e] eng {
+	font-size:1rem;
+}
+
 row, box, orig { /* one and only one is visible */
 	display:none; /* inline-block */
 }
 box t, box e, box tl {
 	display:block;
+}
+orig textarea {
+	width:100%;
+	height:100%;
+	box-sizing:border-box;
 }
 
 story[tview=n] line thai row, story[tview=s] line thai row {
@@ -97,6 +116,46 @@ story[tview=s] line thai row word {
 }
 story[tview=b] line thai box {
 	display:inline-block;
+}
+story[tview=e] line thai orig, story[tview=e] line eng orig {
+	display:block;
+}
+
+line eng e {
+	display:block;
+}
+story[tview=e] line eng e {
+	display:none;
+
+row, box, orig { /* one and only one is visible */
+	display:none; /* inline-block */
+}
+box t, box e, box tl {
+	display:block;
+}
+orig textarea {
+	width:100%;
+	height:100%;
+}
+
+story[tview=n] line thai row, story[tview=s] line thai row {
+	display:inline-block;
+}
+story[tview=s] line thai row word {
+	margin-right:.3rem;
+}
+story[tview=b] line thai box {
+	display:inline-block;
+}
+story[tview=e] line thai orig, story[tview=e] line eng orig {
+	display:block;
+}
+
+line eng e {
+	display:block;
+}
+story[tview=e] line eng e {
+	display:none;
 }
 
 /* word coloring */

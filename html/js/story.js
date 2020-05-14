@@ -139,11 +139,13 @@ voyc.Story.prototype.save = function() {
 
 // initialize one new story
 voyc.Story.prototype.parse = function(raw) {
-	this.id       = 0;
-	this.authorid = 0;
-	this.language = 'th';
-	this.title    = '';
-	this.original = raw;
+	if (raw) {
+		this.id       = 0;
+		this.authorid = 0;
+		this.language = 'th';
+		this.title    = '';
+		this.original = raw;
+	}
 	this.words = [];
 	this.speakers = { x: {name: "narrator", age: 40, gender: "male"} };
 	this.lines = [];
@@ -230,7 +232,7 @@ voyc.Story.prototype.draw = function() {
 			var wid = [word.id,word.loc[0].line,word.loc[0].wndx].join('.');
 			var mm = word.loc[0].n;
 			var e = (word.dict) ? word.dict.mean[mm].e : '.';
-			var tl = (word.dict) ? word.dict.tl : '.';
+			var tl = (word.dict) ? voyc.dictionary.drawTranslit(word.dict.tl) : '.';
 			var attr = '';
 			if (!word.dict) attr = 'error';
 			else if (mm > 0) attr = 'chosen';
@@ -249,7 +251,7 @@ voyc.Story.template = {};
 
 voyc.Story.template.story = `
 <h2>$1</h2>
-<div class=horz><table id=buttonrow><tr><td>
+<div id=storyviewbtnrow class=horz><table id=buttonrow><tr><td>
 <thaibtns>
 <button id=nbtn toggle=tview>&#x2501;</button>
 <button id=sbtn toggle=tview>&#x2505;</button>
@@ -260,11 +262,19 @@ voyc.Story.template.story = `
 <button id=drillbtn  >Drill</button>
 <button id=editbtn   >Edit</button>
 <button id=replacebtn>Replace</button>
+<button id=storysavebtn>Save</button>
 </td><td>
 <button id=thbtn  toggle=view>th</button>
 <button id=sbsbtn toggle=view class=down>t|e</button>
 <button id=enbtn  toggle=view>en</button>
 </td></tr></table></div>
+
+<div id=storyeditbtnrow class=horz>
+<editbtns>
+<button id=storyeditdonebtn>&#10003;Done</button>
+<button id=storyeditcancelbtn>Cancel</button>
+</editbtns>
+</div>
 
 <p>
 <story class=horz>
@@ -276,15 +286,14 @@ $2
 voyc.Story.template.line = `
 <line num="$1">
 <thai>
-<orig>$2</orig>
+<orig><textarea>$2</textarea></orig>
 <row>$3
-<icon type='draw' name='speaker' line=$1></icon>
-<icon type='char' name='pencil' line=$1 lang='th'></icon>
 </row>
 <box>$4</box>
 </thai>
-<eng>$5
-<icon type='char' name='pencil' line=$1 lang='en'></icon>
+<eng>
+<orig><textarea>$5</textarea></orig>
+<e>$5</e>
 </eng>
 </line>
 `;

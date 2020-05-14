@@ -147,24 +147,6 @@ Icon
 	load lib dynamically
 	remove css adjustment for pencil top, replace with comment
 
-story edit
-story replace
-story new
-	attach handlers for parse, cancel, save
-		publish parse-requested, sam subscribe execute cmdSave()
-
-nav storyview-requested :ls
-pageid
-	pageid:storyview-new => storyView.openForm()
-	pageid:storyview-4 => story.read() => read,parse,prep => storyView:onStoryReady()  => story.draw()
-	pageid:storyview => storyView.list() => storyView.onGetStoriesReceived()
-
-
-storyView -> story.read
-
-
-
-
 restructure model, view, object instantiations
 	browserhistory
 
@@ -177,6 +159,8 @@ call continueDrill from startDrill, with step -1, to get starting message
 ราคาเท่าไหร่ ~ What price?
 
 test parse: อกไม้ดอกนี้จะมอบให้คุณนะคะ
+
+color-coding of story words stopped working 
 
 ====================================
 settings
