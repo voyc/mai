@@ -44,9 +44,8 @@
 		?  vowel length
 		t  typed thai	
 **/
-voyc.Lee = function(chat,observer) {
+voyc.Lee = function(chat) {
 	this.chat = chat;
-	this.observer = observer;
 	this.chatid = 0;
 	this.stack = {};
 	this.ndxCard = 0;  // index into the scores array, and into the glyph/word/phrase array

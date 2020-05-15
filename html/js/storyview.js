@@ -13,7 +13,6 @@ voyc.StoryView = function(container, noam) {
 	this.container = container;
 	this.noam = noam;
 	this.observer = voyc.observer;
-	this.comm = voyc.comm;
 	
 	this.numTrans = 1;
 	this.maxTrans = 5;
@@ -46,7 +45,7 @@ voyc.StoryView.prototype.onStoryViewRequested = function(note) {
 	}
 	// otherwise, show the list
 	else {
-		this.list();
+		this.story.list();
 	}
 }
 
@@ -77,19 +76,6 @@ voyc.StoryView.prototype.openForm = function(raw) {
 	}, false);
 }
 
-voyc.StoryView.prototype.list = function() {
-       this.id = parseInt(id);
-       var svcname = 'getstories';
-       var data = {};
-       var self = this;
-       this.comm.request(svcname, data, function(ok, response, xhr) {
-               if (!ok) { response = { 'status':'system-error'}; }
-               console.log(svcname + ' status ' + response['status']);
-               self.observer.publish(svcname+'-received', 'storyview', response);
-       });
-       this.observer.publish(svcname+'-posted', 'storyview', {});
-}
-
 voyc.StoryView.prototype.onGetStoriesReceived = function(note) {
 	if (note.payload.status != 'ok') {
 		return;
@@ -110,7 +96,7 @@ voyc.StoryView.prototype.onGetStoriesReceived = function(note) {
 	for (var i=0; i<elist.length; i++) {
 		elist[i].addEventListener('click', function(e) {
 			var sid = e.currentTarget.getAttribute('sid');
-			(new voyc.BrowserHistory).nav('storyview-'+sid);
+			voyc.browserhistory.nav('storyview-'+sid);
 		}, false);
 	}
 }

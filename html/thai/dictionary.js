@@ -57,12 +57,6 @@ voyc.Dictionary = function() {
 }
 
 voyc.Dictionary.prototype.setup = function() {
-	var url = '/svc/';
-	if (window.location.origin == 'file://') {
-		url = 'http://mai.voyc.com/svc';  // for local testing
-	}
-	this.comm = new voyc.Comm(url, 'acomm', 2, true);
-	this.observer = new voyc.Observer();
 	this.getFast();
 }
 
@@ -70,17 +64,17 @@ voyc.Dictionary.prototype.getFast = function(o) {
 	var svcname = 'getfast';
 	var data = {};
 	var self = this;
-	this.comm.request(svcname, data, function(ok, response, xhr) {
+	voyc.comm.request(svcname, data, function(ok, response, xhr) {
 		if (!ok) {
 			response = { 'status':'system-error'};
 		}
 		if (response['status'] == 'ok') {
 			self.fast = response.list;
 		}
-		self.observer.publish(svcname+'-received', 'mai', response);
+		voyc.observer.publish(svcname+'-received', 'mai', response);
 		console.log(svcname+((response['status']=='ok') ? ' success' : ' failed'));
 	});
-	this.observer.publish(svcname+'-posted', 'mai', {});
+	voyc.observer.publish(svcname+'-posted', 'mai', {});
 	return;
 }
 
@@ -113,13 +107,12 @@ voyc.Dictionary.prototype.update = function(o) {
 	data['up' ] = JSON.stringify(o);
 
 	// call svc
-	var self = this;
-	this.comm.request(svcname, data, function(ok, response, xhr) {
+	voyc.comm.request(svcname, data, function(ok, response, xhr) {
 		if (!ok) {
 			response = { 'status':'system-error'};
 		}
 
-		self.observer.publish('setdict-received', 'mai', response);
+		voyc.observer.publish('setdict-received', 'mai', response);
 
 		if (response['status'] == 'ok') {
 			console.log('setdict success');
@@ -129,7 +122,7 @@ voyc.Dictionary.prototype.update = function(o) {
 		}
 	});
 
-	this.observer.publish('setdict-posted', 'mai', {});
+	voyc.observer.publish('setdict-posted', 'mai', {});
 	return;
 }
 
@@ -140,7 +133,7 @@ voyc.Dictionary.prototype.getDict = function(ida) {
 	data['si'] = voyc.getSessionId();
 	data['lk' ] = ida;
 	var self = this;
-	this.comm.request(svcname, data, function(ok, response, xhr) {
+	voyc.comm.request(svcname, data, function(ok, response, xhr) {
 		if (!ok) {
 			response = { 'status':'system-error'};
 		}
@@ -156,10 +149,10 @@ voyc.Dictionary.prototype.getDict = function(ida) {
 		else {
 			console.log('getdict failed');
 		}
-		self.observer.publish('getdict-received', 'mai', response);
+		voyc.observer.publish('getdict-received', 'mai', response);
 	});
 
-	this.observer.publish('getdict-posted', 'mai', {});
+	voyc.observer.publish('getdict-posted', 'mai', {});
 	return;
 }
 
@@ -174,11 +167,11 @@ voyc.Dictionary.prototype.search = function(word, lang, typearray) {
 	data['si'] = voyc.getSessionId();
 	data['lk' ] = word;
 	var self = this;
-	this.comm.request(svcname, data, function(ok, response, xhr) {
+	voyc.comm.request(svcname, data, function(ok, response, xhr) {
 		if (!ok) {
 			response = { 'status':'system-error'};
 		}
-		self.observer.publish(svcname+'-received', 'dictionary', response);
+		voyc.observer.publish(svcname+'-received', 'dictionary', response);
 		console.log(svcname+(response['status'] == 'ok') ? ' success' : ' failed');
 		if (response['status'] == 'ok') {
 			// add new items to the dict
@@ -194,7 +187,7 @@ voyc.Dictionary.prototype.search = function(word, lang, typearray) {
 		}
 	});
 
-	this.observer.publish(svcname+'-posted', 'mai', {});
+	voyc.observer.publish(svcname+'-posted', 'mai', {});
 	return;
 }
 

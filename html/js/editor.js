@@ -5,13 +5,12 @@
 	Display the dictionary editor form.
 **/
 
-voyc.Editor = function(container, observer, noam) {
+voyc.Editor = function(container, noam) {
 	// is singleton
 	if (voyc.Editor._instance) return voyc.Editor._instance;
 	else voyc.Editor._instance = this;
 
 	this.container = container;
-	this.observer = observer;
 	this.noam = noam;
 	this.dictionary = voyc.dictionary;
 	
@@ -23,8 +22,8 @@ voyc.Editor = function(container, observer, noam) {
 voyc.Editor.prototype.setup = function() {
 	this.lang = 'thai';
 	var self = this;
-	this.observer.subscribe('edit-requested', 'editor', function(note) {self.onEditRequested(note.payload);});
-	this.observer.subscribe('acceptparse-submitted', 'editor', function(note) {self.onAcceptParse(note.payload);});
+	voyc.observer.subscribe('edit-requested', 'editor', function(note) {self.onEditRequested(note.payload);});
+	voyc.observer.subscribe('acceptparse-submitted', 'editor', function(note) {self.onAcceptParse(note.payload);});
 
 	this.container.innerHTML = voyc.Editor.template.page;
 
@@ -79,7 +78,7 @@ voyc.Editor.prototype.setup = function() {
 
 	voyc.$('cancelbtn').addEventListener('click', function(e) {
 		self.clear();
-		self.observer.publish('edit-cancelled', 'editor', {});
+		voyc.observer.publish('edit-cancelled', 'editor', {});
 	},false);
 	voyc.$('savebtn').addEventListener('click', function(e) {
 		self.save();
@@ -170,7 +169,7 @@ voyc.Editor.prototype.onEditRequested = function(m) {
 	else if (m.act == 'u') {
 		this.populate(m.dict);
 	}
-	(new voyc.BrowserHistory).nav('editor');
+	voyc.browserhistory.nav('editor');
 	this.container.querySelector('#thai').focus();
 }
 
@@ -209,7 +208,7 @@ voyc.Editor.prototype.populate = function(dict) {
 	for (var i=this.numTrans; i<this.maxTrans; i++) {
 		t.querySelector('#trans'+i).classList.add('hidden');
 	}
-	(new voyc.BrowserHistory).nav('editor');
+	voyc.browserhistory.nav('editor');
 	d.focus();
 }
 

@@ -76,27 +76,24 @@ voyc.Sam.prototype.setup = function() {
 
 	this.chatid = this.chat.addUser('Sam', true, false);
 
-	this.observer = new voyc.Observer();
 	var self = this;
-	this.observer.subscribe( "chat-posted", 'sam', function(note) {
+	voyc.observer.subscribe( "chat-posted", 'sam', function(note) {
 		console.log('on post');
 		if (note.payload.userid == self.chatidguest) {
 			self.respond(note.payload);
 		}
 	});
-	this.observer.subscribe('login-received'   ,'sam' ,function(note) { self.onLoginReceived   (note);});
-	this.observer.subscribe('relogin-received' ,'sam' ,function(note) { self.onLoginReceived   (note);});
-	this.observer.subscribe('restart-anonymous','sam' ,function(note) { self.onAnonymous       (note);});
-	this.observer.subscribe('logout-received'  ,'sam' ,function(note) { self.onLogoutReceived  (note);});
-	this.observer.subscribe('getvocab-received','sam' ,function(note) { self.onGetVocabReceived(note);});
-	//this.observer.subscribe('getdict-received' ,'sam' ,function(note) { self.onGetDictReceived (note);});
-	this.observer.subscribe('search-received' ,'sam' ,function(note)  { self.onSearchReceived (note);});
-	this.observer.subscribe('edit-cancelled'   ,'sam' ,function(note) { self.onEditCancelled   (note);});
-	this.observer.subscribe('setdict-received' ,'sam' ,function(note) { self.onSetDictReceived (note);});
-	//this.observer.subscribe('getstory-received' ,'sam' ,function(note) { self.onGetStoryReceived (note);});
-	this.observer.subscribe('drill-requested' ,'sam' ,function(note) { self.onDrillRequested   (note);});
+	voyc.observer.subscribe('login-received'   ,'sam' ,function(note) { self.onLoginReceived   (note);});
+	voyc.observer.subscribe('relogin-received' ,'sam' ,function(note) { self.onLoginReceived   (note);});
+	voyc.observer.subscribe('restart-anonymous','sam' ,function(note) { self.onAnonymous       (note);});
+	voyc.observer.subscribe('logout-received'  ,'sam' ,function(note) { self.onLogoutReceived  (note);});
+	voyc.observer.subscribe('getvocab-received','sam' ,function(note) { self.onGetVocabReceived(note);});
+	voyc.observer.subscribe('search-received' ,'sam' ,function(note)  { self.onSearchReceived (note);});
+	voyc.observer.subscribe('edit-cancelled'   ,'sam' ,function(note) { self.onEditCancelled   (note);});
+	voyc.observer.subscribe('setdict-received' ,'sam' ,function(note) { self.onSetDictReceived (note);});
+	voyc.observer.subscribe('drill-requested' ,'sam' ,function(note) { self.onDrillRequested   (note);});
 	
-	this.lee = new voyc.Lee(this.chat, this.observer);
+	this.lee = new voyc.Lee(this.chat);
 	this.speech = new voyc.Speech();
 
 	// move this to chat?
@@ -115,7 +112,7 @@ voyc.Sam.prototype.onGetVocabReceived = function() {
 
 	// these two should be instantiated in mai, sam should be reserved to home window
 	// noam also
-	voyc.editor = new voyc.Editor(voyc.$('editor'), this.observer, this.noam);
+	voyc.editor = new voyc.Editor(voyc.$('editor'), this.noam);
 	voyc.storyview = new voyc.StoryView(voyc.$('storyview'), this.noam);
 }
 
@@ -187,7 +184,7 @@ voyc.Sam.prototype.onSearchReceived = function(note) {
 	switch (this.state) {
 		case 'edit':
 			if (dicts.length == 1) {
-				this.observer.publish('edit-requested', 'sam', {act:'u',dict:dicts[0]});
+				voyc.observer.publish('edit-requested', 'sam', {act:'u',dict:dicts[0]});
 				break;
 			}
 			//else, multiple results, fall thru to search
@@ -281,7 +278,7 @@ voyc.Sam.prototype.reportScores = function(scores) {
 voyc.Sam.prototype.onDrillRequested = function(note) {
 	var story = note.payload.story;
 	this.story = story;
-	(new voyc.BrowserHistory).nav('home');
+	voyc.browserhistory.nav('home');
 	this.cmdDrill(story, {verb:'drill',object:'',adj:{}});
 }
 
@@ -939,7 +936,7 @@ voyc.Sam.prototype.cmdEdit = function(r) {
 	}
 	else if (r.adj['new']) {
 		this.state = 'insert';
-		this.observer.publish('edit-requested', 'sam', {act:'i',t:r.object});
+		voyc.observer.publish('edit-requested', 'sam', {act:'i',t:r.object});
 	}
 	else {
 		this.state = 'edit';
@@ -950,7 +947,7 @@ voyc.Sam.prototype.cmdEdit = function(r) {
 voyc.Sam.prototype.onEditCancelled = function(note) {
 	this.dochat('edit cancelled');
 	this.state = 'ready';
-	(new voyc.BrowserHistory).nav('home');
+	voyc.browserhistory.nav('home');
 }
 
 voyc.Sam.prototype.onSetDictReceived = function(note) {
@@ -961,7 +958,7 @@ voyc.Sam.prototype.onSetDictReceived = function(note) {
 		this.dochat('edit save failed.');
 	}
 	this.state = 'ready';
-	(new voyc.BrowserHistory).nav('home');
+	voyc.browserhistory.nav('home');
 }
 
 voyc.Sam.prototype.cmdSetVocab = function(req) {

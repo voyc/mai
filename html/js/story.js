@@ -15,15 +15,21 @@ voyc.Story = function(noam) {
 	this.words = [];
 	this.meta = '';
 
-	var url = '/svc/';
-	if (window.location.origin == 'file://') {
-		url = 'http://mai.voyc.com/svc';  // for local testing
-	}
-	this.comm = new voyc.Comm(url, 'acomm', 2, true);
-	this.observer = new voyc.Observer();
 	var self = this;
-	this.observer.subscribe('getstory-received' ,'story' ,function(note) { self.onGetStoryReceived (note);});
-	this.observer.subscribe('getdict-received' ,'story' ,function(note) { self.onGetDictReceived (note);});
+	voyc.observer.subscribe('getstory-received' ,'story' ,function(note) { self.onGetStoryReceived (note);});
+	voyc.observer.subscribe('getdict-received' ,'story' ,function(note) { self.onGetDictReceived (note);});
+}
+
+voyc.Story.prototype.list = function() {
+       this.id = parseInt(id);
+       var svcname = 'getstories';
+       var data = {};
+       voyc.comm.request(svcname, data, function(ok, response, xhr) {
+               if (!ok) { response = { 'status':'system-error'}; }
+               console.log(svcname + ' status ' + response['status']);
+               voyc.observer.publish(svcname+'-received', 'storyview', response);
+       });
+       voyc.observer.publish(svcname+'-posted', 'storyview', {});
 }
 
 voyc.Story.prototype.replace = function(newtext) {
@@ -121,12 +127,11 @@ voyc.Story.prototype.save = function() {
 	data['title' ] = this.title;
 	data['original'] = this.original;
 	data['words'] = JSON.stringify( this.condenseWords(this.consolidateWords(this.words)));
-	var self = this;
-	this.comm.request(svcname, data, function(ok, response, xhr) {
+	voyc.comm.request(svcname, data, function(ok, response, xhr) {
 		if (!ok) {
 			response = { 'status':'system-error'};
 		}
-		self.observer.publish('setstory-received', 'story', response);
+		voyc.observer.publish('setstory-received', 'story', response);
 		if (response['status'] == 'ok') {
 			console.log('setstory success');
 		}
@@ -134,7 +139,7 @@ voyc.Story.prototype.save = function() {
 			console.log('setstory failed');
 		}
 	});
-	this.observer.publish('setstory-posted', 'story', {});
+	voyc.observer.publish('setstory-posted', 'story', {});
 }
 
 // initialize one new story
@@ -174,15 +179,14 @@ voyc.Story.prototype.read = function(id) {
 	var data = {};
 	data['si'] = voyc.getSessionId();
 	data['id'] = this.id;
-	var self = this;
-	this.comm.request(svcname, data, function(ok, response, xhr) {
+	voyc.comm.request(svcname, data, function(ok, response, xhr) {
 		if (!ok) { response = { 'status':'system-error'}; }
 		console.log(svcname + ' status ' + response['status']);
 		if (response.status == 'ok') {
 		}
-		self.observer.publish(svcname+'-received', 'story', response);
+		voyc.observer.publish(svcname+'-received', 'story', response);
 	});
-	this.observer.publish(svcname+'-posted', 'story', {});
+	voyc.observer.publish(svcname+'-posted', 'story', {});
 }
 voyc.Story.prototype.onGetStoryReceived = function(note) {
 	if (note.payload.status != 'ok') {
@@ -217,7 +221,7 @@ voyc.Story.prototype.onGetDictReceived = function(note) {
 			word.dict = voyc.dictionary.miniDict(word.id);
 		}
 	}
-	this.observer.publish('story-ready', 'story', {id:this.id,title:this.title});
+	voyc.observer.publish('story-ready', 'story', {id:this.id,title:this.title});
 }
 
 voyc.Story.prototype.draw = function() {

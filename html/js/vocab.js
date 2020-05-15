@@ -12,17 +12,10 @@
 		}
 **/
 voyc.Vocab = function() {
-	var url = '/svc/';
-	if (window.location.origin == 'file://') {
-		url = 'http://mai.voyc.com/svc';  // for local testing
-	}
-	this.comm = new voyc.Comm(url, 'acomm', 2, true);
-
-	this.observer = new voyc.Observer();
 	var self = this;
-	this.observer.subscribe('login-received'   ,'user' ,function(note) { self.onLoginReceived   (note);});
-	this.observer.subscribe('relogin-received'   ,'user' ,function(note) { self.onReloginReceived   (note);});
-	this.observer.subscribe('getvocab-received'   ,'user' ,function(note) { self.onVocabReceived   (note);});
+	voyc.observer.subscribe('login-received'   ,'user' ,function(note) { self.onLoginReceived   (note);});
+	voyc.observer.subscribe('relogin-received'   ,'user' ,function(note) { self.onReloginReceived   (note);});
+	voyc.observer.subscribe('getvocab-received'   ,'user' ,function(note) { self.onVocabReceived   (note);});
 	
 	this.language = 'th';
 	this.timerid = null;
@@ -144,13 +137,12 @@ voyc.Vocab.prototype.updateServer = function(dirtyBatch) {
 	data['language' ] = this.language;
 
 	// call svc
-	var self = this;
-	this.comm.request(svcname, data, function(ok, response, xhr) {
+	voyc.comm.request(svcname, data, function(ok, response, xhr) {
 		if (!ok) {
 			response = { 'status':'system-error'};
 		}
 
-		self.observer.publish('setvocab-received', 'mai', response);
+		voyc.observer.publish('setvocab-received', 'mai', response);
 
 		if (response['status'] == 'ok') {
 			console.log('setvocab success');
@@ -160,7 +152,7 @@ voyc.Vocab.prototype.updateServer = function(dirtyBatch) {
 		}
 	});
 
-	this.observer.publish('setvocab-posted', 'mai', {});
+	voyc.observer.publish('setvocab-posted', 'mai', {});
 }
 
 voyc.Vocab.prototype.readServer = function() {
@@ -172,13 +164,12 @@ voyc.Vocab.prototype.readServer = function() {
 	data['language' ] = this.language;
 
 	// call svc
-	var self = this;
-	this.comm.request(svcname, data, function(ok, response, xhr) {
+	voyc.comm.request(svcname, data, function(ok, response, xhr) {
 		if (!ok) {
 			response = { 'status':'system-error'};
 		}
 
-		self.observer.publish('getvocab-received', 'mai', response);
+		voyc.observer.publish('getvocab-received', 'mai', response);
 
 		if (response['status'] == 'ok') {
 			console.log('getvocab success');
@@ -188,7 +179,7 @@ voyc.Vocab.prototype.readServer = function() {
 		}
 	});
 
-	this.observer.publish('getvocab-posted', 'mai', {});
+	voyc.observer.publish('getvocab-posted', 'mai', {});
 }
 
 voyc.Vocab.prototype.storeSto = function() {

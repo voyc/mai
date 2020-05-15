@@ -147,9 +147,6 @@ Icon
 	load lib dynamically
 	remove css adjustment for pencil top, replace with comment
 
-restructure model, view, object instantiations
-	browserhistory
-
 call continueDrill from startDrill, with step -1, to get starting message
 
 test parse: อกไม้ดอกนี้จะมอบให้คุณนะคะ
@@ -288,34 +285,6 @@ set (vocab)
 translate - rewrite
 collect - rewrite
 sengen - rewrite
-
-==============================
-
-map object structure
-
-voyc.editor, instantiated by sam, points to observer and noam
-sam, instantiated by ?, points to chat
-sam.vocab, instantiated by sam
-voyc.dictionary, instantiated by sam and noam
-voyc.sengen, instantiated by sam
-noam?
-
-globals - instantiated by mai, used by anyone
-voyc.observer
-voyc.comm
-
-globals - instantiated by mai, read database during setup
-voyc.dictionary
-voyc.alphabet, used by noam, uses observer and comm
-voyc.vocab
-
-
-data structures:
-flat
-dict
-mean
-loc
-word
 
 ==================
 automated test suite

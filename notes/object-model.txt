@@ -1,3 +1,80 @@
+==============================
+object model
+
+every class is a global singleton
+
+Specialists
+	voyc.noam
+	voyc.sengen
+	voyc.sam
+	voyc.lee
+
+Data Model
+	voyc.story
+	voyc.dictionary
+	voyc.alphabet
+	voyc.vocab
+
+View
+	voyc.chat
+	voyc.storyview
+	voyc.editor
+	
+Controller
+	voyc.mai
+	voyc.view
+
+Utilities
+	voyc.browserhistory - nav() called by mai, storyview, sam, editor, view
+	voyc.observer - called by sam, view, story, vocab, dictionary
+	voyc.comm - called by the four "model classes"
+
+==============================
+sam owns chat, passes to lee
+editor calls nav to itself.  could make clients call nav, like storyview does.
+
+==============================
+data structures
+
+flat
+dict
+mean
+loc
+word
+story
+
+==============================
+x ./html/js/mai.js:	new voyc.BrowserHistory('name', function(pageid) {
+x ./html/js/storyview.js:			(new voyc.BrowserHistory).nav('storyview-'+sid);
+x ./html/js/sam.js:	(new voyc.BrowserHistory).nav('home');
+x ./html/js/editor.js:	(new voyc.BrowserHistory).nav('editor');
+x ./html/js/view.js:			(new voyc.BrowserHistory).nav(pageid);
+==============================
+x ./html/js/mai.js:	this.observer = new voyc.Observer();
+x ./html/thai/dictionary.js:	this.observer = new voyc.Observer();
+x ./html/js/vocab.js:	this.observer = new voyc.Observer();
+x ./html/js/story.js:	this.observer = new voyc.Observer();
+x ./html/js/sam.js:	this.observer = new voyc.Observer();
+x ./html/js/view.js:	this.observer = new voyc.Observer();
+
+x ./html/js/editor.js  ?
+
+story.list() - good example of tight use of voyc.comm.request(), but resolve id
+
+Observer notifications
+	1. on data received from voyc.comm
+	2. on UI page switch by browserhistory.nav
+	3. user requests, submits, completes
+
+==============================
+x ./html/thai/dictionary.js:	this.comm = new voyc.Comm(url, 'acomm', 2, true);
+x ./html/js/vocab.js:	this.comm = new voyc.Comm(url, 'acomm', 2, true);
+x ./html/js/mai.js:	this.comm = new voyc.Comm(url, 'acomm', 2, true);
+x ./html/js/story.js:	this.comm = new voyc.Comm(url, 'acomm', 2, true);
+x ./html/js/storyview.js:	this.comm = voyc.comm;
+
+==============================
+
 ./html/thai/dictionary.js:	this.comm = new voyc.Comm(url, 'acomm', 2, true);
 ./html/thai/dictionary.js:	this.observer = new voyc.Observer();
 

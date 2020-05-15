@@ -10,23 +10,21 @@ voyc.View = function () {
 }
 
 voyc.View.prototype.setup = function () {
-	this.observer = new voyc.Observer();
-
 	// attach handlers to HTML elements in the base html
 	this.attachHandlers();
 
-	// attach app events
+	// attach nav menu events
 	var self = this;
-	this.observer.subscribe('home-requested'         ,'view' ,function(note) { self.drawPage('home');    });
-	this.observer.subscribe('about-requested'        ,'view' ,function(note) { self.drawPage('about');   });
-	this.observer.subscribe('howto-requested'        ,'view' ,function(note) { self.drawPage('howto');   });
-	this.observer.subscribe('account-requested'      ,'view' ,function(note) { self.drawPage('account'); });
-	this.observer.subscribe('profile-requested'      ,'view' ,function(note) { self.drawPage('profile'); self.clearProfileForm(); });
-	this.observer.subscribe('keyboard-requested'     ,'view' ,function(note) { self.drawPage('keyboard'); });
-	this.observer.subscribe('curriculum-requested'   ,'view' ,function(note) { self.drawPage('curriculum'); });
-	this.observer.subscribe('storyview-requested'    ,'view' ,function(note) { self.drawPage('storyview'); });
-	this.observer.subscribe('course-requested'       ,'view' ,function(note) { self.drawPage('course'); });
-	this.observer.subscribe('editor-requested'       ,'view' ,function(note) { self.drawPage('editor'); });
+	voyc.observer.subscribe('home-requested'         ,'view' ,function(note) { self.drawPage('home');    });
+	voyc.observer.subscribe('about-requested'        ,'view' ,function(note) { self.drawPage('about');   });
+	voyc.observer.subscribe('howto-requested'        ,'view' ,function(note) { self.drawPage('howto');   });
+	voyc.observer.subscribe('account-requested'      ,'view' ,function(note) { self.drawPage('account'); });
+	voyc.observer.subscribe('profile-requested'      ,'view' ,function(note) { self.drawPage('profile'); self.clearProfileForm(); });
+	voyc.observer.subscribe('keyboard-requested'     ,'view' ,function(note) { self.drawPage('keyboard'); });
+	voyc.observer.subscribe('curriculum-requested'   ,'view' ,function(note) { self.drawPage('curriculum'); });
+	voyc.observer.subscribe('storyview-requested'    ,'view' ,function(note) { self.drawPage('storyview'); });
+	voyc.observer.subscribe('course-requested'       ,'view' ,function(note) { self.drawPage('course'); });
+	voyc.observer.subscribe('editor-requested'       ,'view' ,function(note) { self.drawPage('editor'); });
 }
 
 /**
@@ -35,13 +33,12 @@ voyc.View.prototype.attachHandlers = function(element) {
 	var elem = element || document;
 
 	// click on a nav item
-	var self = this;
 	var navs = elem.querySelectorAll('[nav]');
 	for (var i=0; i<navs.length; i++) {
 		navs[i].addEventListener('click', function(e) {
 			var pageid = e.currentTarget.getAttribute('nav');
-			//self.observer.publish('nav-requested', 'view', {page:pageid});
-			(new voyc.BrowserHistory).nav(pageid);
+			//voyc.observer.publish('nav-requested', 'view', {page:pageid});
+			voyc.browserhistory.nav(pageid);
 		}, false);
 	}
 
@@ -65,7 +62,7 @@ voyc.View.prototype.onSubmitClick = function(evt) {
 	var svc = form.id;
 	var inputs = form.elements;
 	var note = svc + '-submitted';
-	this.observer.publish(note, 'view', {svc:svc, inputs:inputs});
+	voyc.observer.publish(note, 'view', {svc:svc, inputs:inputs});
 	voyc.$('dialog-msg').innerHTML = '';
 }
 
