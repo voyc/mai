@@ -7,7 +7,7 @@ Specialists
 	voyc.noam
 	voyc.sengen
 	voyc.sam
-	voyc.lee
+	voyc.lee - controlled by sam
 
 Data Model
 	voyc.story
@@ -16,13 +16,13 @@ Data Model
 	voyc.vocab
 
 View
-	voyc.chat
-	voyc.storyview
-	voyc.editor
+	voyc.storyview - drives storyview, list, insert, view
+	voyc.editor - drives editor page
+	voyc.view - drives home page, left-nav, settings-dropdown
+	voyc.chat - is, in fact, the home page, used by sam and lee
 	
 Controller
-	voyc.mai
-	voyc.view
+	voyc.mai - starting point.  instantiated on windows.load event
 
 Utilities
 	voyc.browserhistory - nav() called by mai, storyview, sam, editor, view
@@ -30,9 +30,20 @@ Utilities
 	voyc.comm - called by the four "model classes"
 
 ==============================
+thoughts
+
 sam owns chat, passes to lee
 editor calls nav to itself.  could make clients call nav, like storyview does.
 
+story.list() - good example of tight use of voyc.comm.request(), but resolve id
+
+Observer notifications
+	1. on data received from voyc.comm
+	2. on UI page switch by browserhistory.nav
+	3. user requests, submits, completes
+
+sam calls new Story() multiple times.
+storyview calls new Story() once
 ==============================
 data structures
 
@@ -44,108 +55,38 @@ word
 story
 
 ==============================
-x ./html/js/mai.js:	new voyc.BrowserHistory('name', function(pageid) {
-x ./html/js/storyview.js:			(new voyc.BrowserHistory).nav('storyview-'+sid);
-x ./html/js/sam.js:	(new voyc.BrowserHistory).nav('home');
-x ./html/js/editor.js:	(new voyc.BrowserHistory).nav('editor');
-x ./html/js/view.js:			(new voyc.BrowserHistory).nav(pageid);
-==============================
-x ./html/js/mai.js:	this.observer = new voyc.Observer();
-x ./html/thai/dictionary.js:	this.observer = new voyc.Observer();
-x ./html/js/vocab.js:	this.observer = new voyc.Observer();
-x ./html/js/story.js:	this.observer = new voyc.Observer();
-x ./html/js/sam.js:	this.observer = new voyc.Observer();
-x ./html/js/view.js:	this.observer = new voyc.Observer();
-
-x ./html/js/editor.js  ?
-
-story.list() - good example of tight use of voyc.comm.request(), but resolve id
-
-Observer notifications
-	1. on data received from voyc.comm
-	2. on UI page switch by browserhistory.nav
-	3. user requests, submits, completes
-
-==============================
-x ./html/thai/dictionary.js:	this.comm = new voyc.Comm(url, 'acomm', 2, true);
-x ./html/js/vocab.js:	this.comm = new voyc.Comm(url, 'acomm', 2, true);
-x ./html/js/mai.js:	this.comm = new voyc.Comm(url, 'acomm', 2, true);
-x ./html/js/story.js:	this.comm = new voyc.Comm(url, 'acomm', 2, true);
-x ./html/js/storyview.js:	this.comm = voyc.comm;
-
+todo
+1. fix instantiation of a single global story object
+2. a single global object for dictionary, alphabet, vocab
+3. do specialists: sam, lee, noam, sengen
+4. do UI view objects: speech, editor, storyview
+5. do keyboard and fold into stories and drill
+6. let mai own view
+7. sam should own only chat and lee 
+8. storyview, editor, keyboard, etc, should be accessed only by nav()
+9. view object drives the home page and nav menu
 ==============================
 
-./html/thai/dictionary.js:	this.comm = new voyc.Comm(url, 'acomm', 2, true);
-./html/thai/dictionary.js:	this.observer = new voyc.Observer();
-
-./html/thai/noam.js:	this.alphabet = new voyc.Alphabet(dictionary);
-
-./html/thai/keyboard2.js://	this.post = new voyc.Post('flash','http://flash.voyc.com','../flash/index.html');
-./html/thai/keyboard2.js:		(new voyc.Minimal).attachAll(container);
-./html/thai/keyboard2.js:	voyc.keyboard = new voyc.Keyboard();
-./html/thai/keyboard2.js:	(new voyc.Keyboard).alphabet = alphabet;
-
-./html/js/vocab.js:	this.comm = new voyc.Comm(url, 'acomm', 2, true);
-./html/js/vocab.js:	this.observer = new voyc.Observer();
-
-./html/js/mai.js:	this.observer = new voyc.Observer();
-./html/js/mai.js:	new voyc.View();
-./html/js/mai.js:	new voyc.User();
-./html/js/mai.js:	new voyc.Account();
-./html/js/mai.js:	new voyc.AccountView();
 ./html/js/mai.js:	this.chat = new voyc.Chat();
 ./html/js/mai.js:	this.sam = new voyc.Sam(this.chat);
-./html/js/mai.js:	new voyc.BrowserHistory('name', function(pageid) {
-./html/js/mai.js:	this.comm = new voyc.Comm(url, 'acomm', 2, true);
 ./html/js/mai.js:	voyc.alphabet = new voyc.Alphabet();
-./html/js/mai.js:	(new voyc.BrowserHistory).nav('home');
-./html/js/mai.js:	voyc.mai = new voyc.Mai();
-
-./html/js/storyview.js:	this.story = new voyc.Story(this.noam);
-./html/js/storyview.js:			(new voyc.BrowserHistory).nav('storyview-'+sid);
-./html/js/storyview.js:	(new voyc.Minimal).attachAll(this.container);
-./html/js/storyview.js:	(new voyc.Icon).attachAll(this.container);
-./html/js/storyview.js:	(new voyc.Icon).drawAll(this.container);
-./html/js/storyview.js:			(new voyc.Minimal()).openPopup('worddetails');
-./html/js/storyview.js:			(new voyc.Minimal()).attachAll(sel);
-./html/js/storyview.js:			(new voyc.Icon()).attachAll(sel);
-./html/js/storyview.js:			(new voyc.Icon()).drawAll(sel);
-./html/js/storyview.js:					(new voyc.Minimal).closePopup();
-
-./html/js/story.js:	this.comm = new voyc.Comm(url, 'acomm', 2, true);
-./html/js/story.js:	this.observer = new voyc.Observer();
 
 ./html/js/sam.js:	this.vocab = new voyc.Vocab();
 ./html/js/sam.js:	voyc.dictionary = new voyc.Dictionary();
 ./html/js/sam.js:	voyc.sengen = new voyc.SenGen(this.vocab);
-./html/js/sam.js:	this.observer = new voyc.Observer();
 ./html/js/sam.js:	this.lee = new voyc.Lee(this.chat, this.observer);
 ./html/js/sam.js:	this.speech = new voyc.Speech();
-./html/js/sam.js:		(new voyc.Minimal()).attachAll(e);
-./html/js/sam.js:		(new voyc.Icon()).attachAll(e);
-./html/js/sam.js:		(new voyc.Icon()).drawAll(e);
 ./html/js/sam.js:	this.noam = new voyc.Noam(voyc.dictionary, this.vocab);
 ./html/js/sam.js:	voyc.editor = new voyc.Editor(voyc.$('editor'), this.observer, this.noam);
 ./html/js/sam.js:	voyc.storyview = new voyc.StoryView(voyc.$('storyview'), this.noam);
-./html/js/sam.js:	(new voyc.BrowserHistory).nav('home');
 ./html/js/sam.js:			this.story = new voyc.Story();
-./html/js/sam.js:							(new voyc.Minimal()).openPopup('worddetails');
-./html/js/sam.js:							(new voyc.Minimal()).attachAll(sel);
-./html/js/sam.js:							(new voyc.Icon()).attachAll(sel);
-./html/js/sam.js:							(new voyc.Icon()).drawAll(sel);
-./html/js/sam.js:									(new voyc.Minimal).closePopup();
 ./html/js/sam.js:		this.story = new voyc.Story();
 ./html/js/sam.js:	this.story = new voyc.Story();
-./html/js/sam.js:	(new voyc.BrowserHistory).nav('home');
-./html/js/sam.js:	(new voyc.BrowserHistory).nav('home');
 
-./html/js/editor.js:	(new voyc.Minimal).attachAll(this.container);
-./html/js/editor.js:	(new voyc.BrowserHistory).nav('editor');
-./html/js/editor.js:	(new voyc.BrowserHistory).nav('editor');
-./html/js/editor.js:		(new voyc.Minimal).openPopup('acceptparse');
-./html/js/editor.js:		(new voyc.Minimal).openPopup('acceptparse');
-./html/js/editor.js:	(new voyc.Minimal).closePopup('acceptparse');
+./html/thai/noam.js:	this.alphabet = new voyc.Alphabet(dictionary);
 
-./html/js/view.js:	this.observer = new voyc.Observer();
-./html/js/view.js:			(new voyc.BrowserHistory).nav(pageid);
+./html/thai/keyboard2.js:	voyc.keyboard = new voyc.Keyboard();
+./html/thai/keyboard2.js:	(new voyc.Keyboard).alphabet = alphabet;
+
+./html/js/storyview.js:	this.story = new voyc.Story(this.noam);
 

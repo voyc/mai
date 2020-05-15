@@ -6,9 +6,19 @@ ninghillside/ning/hillside/bvyznrw@sharklasers.com
 samantha/samantha/ptwjqoda@sharklasers.com
 
 subcomponents
-	account: register, validate name and password doesnt match between client and server
-	minimal: fixopen, learn how to position a popup
-	jslib: chat-post, other new functions
+	Account
+		register, validate name and password doesnt match between client and server
+	Minimal
+		check for Dragger before instantiating 
+		check for utils before calling
+		fix height and width on open popup
+		on open popup, learn how to position, other than center
+	Icon
+		load lib dynamically
+		remove css adjustment for pencil top, replace with comment
+	jslib 
+		chat-post
+		other new functions
 
 db testing starts with sequence ids here
 	select * from mai.mean where id > 1365;
@@ -24,6 +34,8 @@ refresh fastdict, in dictionary
 		before the next lookup
 		or after one minute
 
+consider moving minidict to each story
+
 rearrange vowel components
 	reverse fc and tm
 
@@ -31,7 +43,7 @@ noam translate and translit are broken because of new search
 
 implement up/down arrow in chat window, for mobile also
 
-implement story page, with search and browse
+implement search and browse on storyview
 
 implement dictionary page, with search and browse
 
@@ -47,24 +59,6 @@ drill components, expressions, lines, phrases
 in story parse, replace pronouns with grammar codes
 	in story draw, replace grammar codes with pronouns, depending on speaker age and gender
 	allow this draw during drill lines, as well as show lines
-
-add english translation to stories
-	separated by ~
-	change "original" to "raw"
-	parse t and e out of raw
-	side-by-side view (float left,right) vs replacement view
-
-story/line view buttons
-	Side by side
-	Thai
-	Eng
-	ww
-	Hints
-	Tones
-	Translit
-	Speaker
-
-learn syllable tone, add tone buttons to reply (also add speech)
 
 draw pos with multi pos values, or eliminate multi pos
 	in drill answer, multiple pos, จอง jaawngM undefined reserve, pos=nv, noun,verb
@@ -83,29 +77,24 @@ groups
 	phrases/expressions
 	lines
 
-start with one line
-	count syllables+words+phrases+lines
-	add another line
-	stop when number of drill items meets threshold
+compose drill from partial story, especially for long stories, or sectioned stories
+	start with one line
+		count syllables+words+phrases+lines
+		add another line
+		stop when number of drill items meets threshold
 
-show -hint lines, mouse clicks slow
-	separate display useless, need hints together with raw
-		consider popup
-	button on float right doesn't work
-
-x editor, parse type-m, doesn't work
-	blank display, no js error
-
-imlement add-translation button
+dictionary editor
+	imlement add-translation button 
 
 when re-parse finds โชคดี instead of โชค and ดี
 	color-code a need for review
-	support comma as spacer
-	show lines: hint button: display english version 
-	click pencil in story line view
-	combine author and hint (you sure?)
+	x? support comma as spacer
+	x show lines: hint button: display english version 
+	x click pencil in story line view
+	x combine author and hint (you sure?)
 
-click hints button sometimes acts as two-state button, stays down, no change mouse is rolled off the button
+buttons sometimes acts as two-state button, stays down, no change, mouse is rolled off the button
+	sluggish behavior
 
 pronunciation rules vs grammar rules
 
@@ -138,14 +127,8 @@ how often are tone marks used on open syllables?
 getvocab, 4, attempt with invalid parameter set - missing $si
 	when?  after clearing cache on phone, on restart before login?
 
-Sound on every question
-
-Minimal
-	check for Dragger before instantiating 
-	check for utils before calling
-Icon
-	load lib dynamically
-	remove css adjustment for pencil top, replace with comment
+voyc.Speech
+	speak on every question. which stacks?
 
 call continueDrill from startDrill, with step -1, to get starting message
 
@@ -192,7 +175,7 @@ grammar content
 	maybe he come from china. do you think so?
 
 ====================================
-organization
+story organization
 	reference
 		alphabet
 			consonants
