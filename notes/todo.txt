@@ -144,13 +144,15 @@ show summary stats on list page, requires server-side analytics
 
 import new stories, create schedule to import all known material
 	drill more, one hour per day, from phone
+	all previous course content now in library
 
-finish object model
-	cleanup curriculum, level, courselist, lesson, dict2 
+add backup.sh to cron weekly
 
-backup dict, mean, story
+add a single db backup to git
 
 cleanup noam, tests, make commands
+
+finish object model per notes/object-model.txt
 
 ====================================
 settings

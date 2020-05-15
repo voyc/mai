@@ -1,0 +1,85 @@
+voyccom@az1-ss8 [~/webprod/mai/mai]# ls -alR html/thai/course
+html/thai/course:
+total 32
+drwxrwxr-x 8 voyccom voyccom 4096 Dec 28 23:28 ./
+drwxrwxr-x 4 voyccom voyccom 4096 May 15 02:14 ../
+drwxrwxr-x 2 voyccom voyccom 4096 May 15 02:17 au/
+drwxrwxr-x 2 voyccom voyccom 4096 Apr  5 06:48 co/
+drwxrwxr-x 2 voyccom voyccom 4096 Dec  6 00:56 en/
+drwxrwxr-x 2 voyccom voyccom 4096 Apr  3 21:55 gr/
+drwxrwxr-x 2 voyccom voyccom 4096 Dec 27 21:28 ma/
+drwxrwxr-x 2 voyccom voyccom 4096 Dec 27 21:28 so/
+
+html/thai/course/au:
+total 244
+drwxrwxr-x 2 voyccom voyccom  4096 May 15 02:17 ./
+drwxrwxr-x 8 voyccom voyccom  4096 Dec 28 23:28 ../
+-rw-rw-r-- 1 voyccom voyccom  5997 Feb 12 19:35 adj.js
+-rw-rw-r-- 1 voyccom voyccom  7535 Jan 10 20:14 adj.txt
+-rw-rw-r-- 1 voyccom voyccom   602 Feb 12 19:19 adverb.js
+-rw-rw-r-- 1 voyccom voyccom  4865 Feb 12 19:21 classifier.js
+-rw-rw-r-- 1 voyccom voyccom  8338 Feb 12 19:35 compound.js
+-rw-rw-r-- 1 voyccom voyccom  4053 Jan  9 05:03 da01.js
+-rw-rw-r-- 1 voyccom voyccom  5301 Feb 12 19:29 food.js
+-rw-rw-r-- 1 voyccom voyccom   951 Feb 12 19:19 how.js
+-rw-rw-r-- 1 voyccom voyccom   516 Feb  9 19:23 howmuch.js
+-rw-rw-r-- 1 voyccom voyccom 53454 Jan 27 23:04 lessons.js
+-rw-rw-r-- 1 voyccom voyccom 50689 Jan 10 00:50 lessons.txt
+-rw-rw-r-- 1 voyccom voyccom   964 Feb 14 02:59 link.js
+-rw-rw-r-- 1 voyccom voyccom   221 Feb 12 19:31 polite.js
+-rw-rw-r-- 1 voyccom voyccom  4629 Feb 12 19:33 question.js
+-rw-rw-r-- 1 voyccom voyccom   834 Feb 12 19:36 reorg.js
+-rw-rw-r-- 1 voyccom voyccom   393 Feb 10 04:03 restaurant.js
+-rw-rw-r-- 1 voyccom voyccom   551 Feb 12 19:34 soundalike.js
+-rw-rw-r-- 1 voyccom voyccom  2179 Feb 12 19:22 travel.js
+-rw-rw-r-- 1 voyccom voyccom  8833 Feb 12 19:36 verb.js
+-rw-rw-r-- 1 voyccom voyccom  1810 Feb 12 17:15 what.js
+-rw-rw-r-- 1 voyccom voyccom  7837 Feb 19 08:13 when.js
+-rw-rw-r-- 1 voyccom voyccom  4398 Feb 12 19:30 where.js
+-rw-rw-r-- 1 voyccom voyccom  1395 Feb 12 19:33 who.js
+
+html/thai/course/co:
+total 24
+drwxrwxr-x 2 voyccom voyccom 4096 Apr  5 06:48 ./
+drwxrwxr-x 8 voyccom voyccom 4096 Dec 28 23:28 ../
+-rw-rw-r-- 1 voyccom voyccom 1886 Dec 27 21:28 helo.js
+-rw-rw-r-- 1 voyccom voyccom   81 Dec  6 00:56 roma.js
+-rw-rw-r-- 1 voyccom voyccom 4923 Apr  2 20:06 trav.js
+
+html/thai/course/en:
+total 28
+drwxrwxr-x 2 voyccom voyccom 4096 Dec  6 00:56 ./
+drwxrwxr-x 8 voyccom voyccom 4096 Dec 28 23:28 ../
+-rw-rw-r-- 1 voyccom voyccom  101 Dec  6 00:56 bank.js
+-rw-rw-r-- 1 voyccom voyccom  745 Dec  6 00:56 buda.js
+-rw-rw-r-- 1 voyccom voyccom 1121 Dec  6 00:56 flow.js
+-rw-rw-r-- 1 voyccom voyccom  133 Dec  6 00:56 sexy.js
+-rw-rw-r-- 1 voyccom voyccom   65 Dec  6 00:56 sign.js
+
+html/thai/course/gr:
+total 56
+drwxrwxr-x 2 voyccom voyccom  4096 Apr  3 21:55 ./
+drwxrwxr-x 8 voyccom voyccom  4096 Dec 28 23:28 ../
+-rw-rw-r-- 1 voyccom voyccom 12643 Dec  6 00:56 awang.js
+-rw-rw-r-- 1 voyccom voyccom  3544 Dec 12 05:37 consonantcluster.js
+-rw-rw-r-- 1 voyccom voyccom   183 Dec  6 00:56 endingconsonantsounds.js
+-rw-rw-r-- 1 voyccom voyccom   711 Dec  6 00:56 inherentvowelshorta.js
+-rw-rw-r-- 1 voyccom voyccom  3414 Dec 22 04:33 kybd.js
+-rw-rw-r-- 1 voyccom voyccom  4075 Mar 22 00:35 open.js
+-rw-rw-r-- 1 voyccom voyccom  1764 Dec  6 00:56 r.js
+-rw-rw-r-- 1 voyccom voyccom   349 Dec  6 00:56 symbols.js
+-rw-rw-r-- 1 voyccom voyccom  4075 Mar 10 23:22 tone.js
+
+html/thai/course/ma:
+total 12
+drwxrwxr-x 2 voyccom voyccom 4096 Dec 27 21:28 ./
+drwxrwxr-x 8 voyccom voyccom 4096 Dec 28 23:28 ../
+-rw-rw-r-- 1 voyccom voyccom 3699 Dec 27 21:28 bk01.js
+
+html/thai/course/so:
+total 12
+drwxrwxr-x 2 voyccom voyccom 4096 Dec 27 21:28 ./
+drwxrwxr-x 8 voyccom voyccom 4096 Dec 28 23:28 ../
+-rw-rw-r-- 1 voyccom voyccom 2796 Dec 27 21:28 bdss.js
+voyccom@az1-ss8 [~/webprod/mai/mai]# 
+
