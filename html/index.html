@@ -13,9 +13,6 @@
 		<link href='icon/icon.css' rel='stylesheet' type='text/css'></link>
 		<link href='jslib/chat.css' rel='stylesheet' type='text/css'></link>
 		<link href='css/mai.css' rel='stylesheet' type='text/css'></link>
-		<!--
-		<link href='css/hint.css' rel='stylesheet' type='text/css'></link>
-		-->
 		<link href='css/story.css' rel='stylesheet' type='text/css'></link>
 		<link href='css/editor.css' rel='stylesheet' type='text/css'></link>
 		<link href='thai/keyboard.css' rel='stylesheet' type='text/css'></link>
@@ -30,9 +27,8 @@
 		<script src="js/speech.js"></script>
 		<script src="js/story.js"></script>
 		<script src="js/storyview.js"></script>
-
-		<script src="js/miyagi.js"></script>
-		<!-- <script src="js/lee.js"></script>
+		<script src="js/lee.js"></script>
+<!--
 		<script src="js/level.js"></script>
 		<script src="js/curriculum.js"></script>
 		<script src="thai/courselist.js"></script>
@@ -154,7 +150,7 @@
 			</section>
 		</section>
 		
-		<!---- modeless dialogs ----------------------------------------->
+		<!---- modeless dialogs   ----------------->
 		<nav initially hidden class='panel popup leftnav blu' id='leftnav-dialog'>
 			<div close class='closex'>&times;</div>
 			<h3>Go To...</h3>
@@ -185,7 +181,7 @@
 			<p><button close class='anchor' nav='profile'  >User Profile</button></p>
 		</aside>
 
-		<!---- modal dialog container ----------------------------->
+		<!---- modal dialog container ------------->
 		<div hidden id='modalcontainer' class='full smoke'>
 			<div class='centered modal'>
 				<div close class='closex'>&times;</div>
@@ -199,7 +195,7 @@
 			</div>
 		</div>
 
-		<!---- forms which will be moved to modal dialog container on open ---->
+		<!---- modal dialog forms ----------------->
 		<div hidden id='offscreen'>
 			<form modal id='login' svc='ua' class='dialog' title='Login to Your Account'>
 				<p><input name='both' type='text' placeholder='Username or Email' autofocus required pattern='[a-zA-Z0-9_@.+]{6,100}' title='Letters and numbers or @ or period or underscore. Length between 6 and 100.'></p>
@@ -301,6 +297,7 @@
 			</form>
 		</div>
 
+		<!---- footer ----------------------------->
 		<footer>
 			<div class='group'>
 				<a href='http://voyc.com/about' class='ftr voyc'>

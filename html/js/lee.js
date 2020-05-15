@@ -3,23 +3,34 @@
 	singleton
 
 	Lee conducts the drills.
-	A drill is run on a stack of flash cards.
+	A "drill" is run on a "stack" of flash "cards".
 	The drill continues until the student masters all the cards in the stack.
 
 	Lee is named after R Lee Avery, 
 	the actor who played Drill Sargeant Hartman 
 	in the 1987 Stanley Kubrick Movie "Full Metal Jacket".
 
-	structure:
-		drill - start stack: priming nextCard
-		choose - choose next card per algorithm
-		countState - utility
-		nextCard - calls choose, readDictionary
-		reply - calls checkAnswer, scoreAnswer, nextCard
-		checkAnswer - right or wrong?
-		scoreAnswer - inc counts, call promote
-		promote - change state w to m 
-		readDictionary - one line call to dictionary.lookup
+	Miyagi is named after the character
+	played by Pat Morita in the 1984 film "Karate Kid".
+
+	one public method:
+		drill(stack, callback)
+
+	private methods (structure):
+		respond() - state machine, conversation engine
+			nextCard()
+				chooseNextCard() - choose next card per algorithm
+					countState() - utility used in "progressive" algorithm
+				displayQuestion()
+					composeQuestion()
+			checkAnswer() - right or wrong?
+			scoreAnswer()
+				promote() - change w to m
+				report() - calls the callback
+
+	algorithms:
+		selfscore: true or false
+		chooseNextCard: progressive, sequential
 
 	compose question and answer:
 		t  thai
@@ -65,6 +76,7 @@ voyc.Lee = function(chat,observer) {
 	this.chatid = this.chat.addUser('Lee', false, false);
 }
 
+/* one public method */
 voyc.Lee.prototype.drill = function(stack,callback) {
 	this.stack = stack;
 	this.reportCallback = callback;
@@ -73,19 +85,9 @@ voyc.Lee.prototype.drill = function(stack,callback) {
 
 	// create the scores array
 	this.scores = [];
-
-	for (var i=0; i<this.stack.data.length; i++) {
-		var t = this.stack.data[i];
-
-		if (this.stack.dictType == 'word' || this.stack.dictType == 'glyph') {
-			var dict = this.readDictionary(t);
-		}
-		else if (this.stack.dictType == 'phrase') {
-			var e = voyc.dictionary.translate(t);
-			var tl = voyc.dictionary.translit(t);
-			var dict = {t:t, g:'x', e:e, tl:tl};
-		}
-		this.scores.push({ndx:i, dict:dict, acnt:0, ccnt:0, pct:0, recency:0, state:'u', consecutive:0});
+	for (var i=0; i<this.stack.flats.length; i++) {
+		var flat = this.stack.flats[i];
+		this.scores.push({ndx:i, flat:flat, acnt:0, ccnt:0, pct:0, recency:0, state:'u', consecutive:0});
 	}
 
 	// choose the first card
@@ -93,7 +95,99 @@ voyc.Lee.prototype.drill = function(stack,callback) {
 	this.state = 'typing';
 }
 
-voyc.Lee.prototype.choose = function() {
+/* state machine, conversation engine */
+voyc.Lee.prototype.respond = function(o) {
+	switch (this.state) {
+		case 'typing':
+			if (o.msg == 'quit' || o.msg == 'cancel') {
+				this.chat.post(this.chatid, "Stopped.", []);
+				this.reportCallback(false);
+				break;
+			}		
+			if (o.msg == 'hint') {
+				var flat = this.scores[this.ndxCard].flat;
+				var s = voyc.dictionary.drawFlat(flat);
+				this.chat.post(this.chatid, s, []);
+				this.displayQuestion(flat);
+				break;
+			}
+			var b = this.checkAnswer(o);
+			this.scoreAnswer(b);
+			if (!b) {
+				var s = "Nope. Try again.";
+				this.chat.post(this.chatid, s, []);
+				var flat = this.scores[this.ndxCard].flat;
+				this.displayQuestion(flat);
+			}
+			else {
+				if (this.setting.askTone && this.scores[this.ndxCard].dict.g == 'o') {
+					this.chat.post(this.chatid,"What tone?", ['H','M','L','R','F']);
+					this.state = 'tone';
+				}
+				else {
+					this.state = 'showanswer';
+					this.respond();  // danger, recursion
+				}
+			}
+			break;
+		case 'tone':
+			var b = this.checkToneAnswer(o);
+			if (!b) {
+			}
+			this.state = 'showanswer';
+			this.respond();  // danger, recursion
+			break;
+		case 'selfscore':
+			switch (o.msg) {
+				case 'right':
+					break;
+				case 'wrong':
+					break;
+				case 'details':
+					break;
+				case 'mastered':
+					break;
+				default:
+					console.log('bogus message in lee respond');
+					break;
+			}
+			this.nextCard();
+			this.state = 'typing';
+			break;
+		case 'showanswer':
+			var s = 'Correct.</br/>';
+			var flat = this.scores[this.ndxCard].flat;
+			s += voyc.dictionary.drawFlat(flat);
+			if (this.setting.selfScore) {
+				this.chat.post(this.chatid, s, ['right', 'wrong','details','mastered']);
+				this.state = 'selfscore';
+			}
+			else {
+				var e = this.chat.post(this.chatid, s, []);
+				this.chat.postPost(e);
+				this.nextCard();
+				this.state = 'typing';
+			}
+			break;
+		default:
+			console.log('bogus state in lee respond');
+			break;
+	}
+}
+
+/* choose the next card and display the next question */
+voyc.Lee.prototype.nextCard = function() {
+	this.ndxCard = this.chooseNextCard();
+	if (this.ndxCard === false) {
+		this.chat.post(this.chatid, "Finished.", []);
+		this.reportCallback([]);
+		return;
+	}
+	var s = this.displayQuestion( this.scores[this.ndxCard].flat);
+	console.log('next card: ' + s);
+}
+
+voyc.Lee.prototype.chooseNextCard = function() {
 	var chosen = false;
 	function incr(n,m) {
 		var r = n+1;
@@ -181,122 +275,69 @@ voyc.Lee.prototype.countState = function(state) {
 	return cnt;
 }
 
-voyc.Lee.prototype.nextCard = function() {
-	this.ndxCard = this.choose();
-	if (this.ndxCard === false) {
-		this.chat.post(this.chatid, "Finished.", []);
-		this.reportCallback(false);
-		return;
+voyc.Lee.prototype.displayQuestion = function(flat) {
+	if (this.stack.class) {
+		var s = flat.dict.t;
+		this.chat.post(this.chatid, s, ['low','middle','high']);
 	}
-
-	// display question
-	var s = this.scores[this.ndxCard].dict.t;
-	if (this.stack.direction == 'reverse') {
-		s = this.scores[this.ndxCard].dict.e;
+	else {
+		var q = this.composeQuestion( flat);
+		this.chat.post(this.chatid, q.s, q.o);
 	}
-	this.chat.post(this.chatid, s, []);
-	console.log('next card: ' + s);
+	console.log('question displayed: ' + q.s);
 }
 
-voyc.Lee.prototype.respond = function(o) {
-	switch (this.state) {
-		case 'typing':
-			if (o.msg == 'dev quit drill') {
-				this.chat.post(this.chatid, "Finished.", []);
-				this.reportCallback(false);
-				break;
-			}		
-			var b = this.checkAnswer(o);
-			this.scoreAnswer(b);
-			if (!b) {
-				var s = "Nope. Try again.";
-				this.chat.post(this.chatid, s, []);
-
-				// display question
-				var s = this.scores[this.ndxCard].dict.t;
-				if (this.stack.direction == 'reverse') {
-					s = this.scores[this.ndxCard].dict.e;
-				}
-				this.chat.post(this.chatid, s, []);
-			}
-			else {
-				if (this.setting.askTone && this.scores[this.ndxCard].dict.g == 'o') {
-					this.chat.post(this.chatid,"What tone?", ['H','M','L','R','F']);
-					this.state = 'tone';
-				}
-				else {
-					this.state = 'showanswer';
-					this.respond();  // danger, recursion
-				}
-			}
+voyc.Lee.prototype.composeQuestion = function(flat) {
+	var step = this.stack.steps[this.stack.stepndx];
+	var s = flat.dict.t;
+	var o = ['hint'];
+	switch (step) {
+		case 'class':
+			o = ['low', 'middle', 'high'];
 			break;
 		case 'tone':
-			var b = this.checkToneAnswer(o);
-			if (!b) {
-			}
-			this.state = 'showanswer';
-			this.respond();  // danger, recursion
+			o = ['L','M','H','R','F'];
 			break;
-		case 'selfscore':
-			switch (o.msg) {
-				case 'right':
-					break;
-				case 'wrong':
-					break;
-				case 'details':
-					break;
-				case 'mastered':
-					break;
-				default:
-					console.log('bogus message in lee respond');
-					break;
-			}
-			this.nextCard();
-			this.state = 'typing';
+		case 'translate':
 			break;
-		case 'showanswer':
-			var s = '';
-			var dict = this.scores[this.ndxCard].dict;
-			if (dict.g == 'g' && dict.p == 't') {
-				s = dict.t + "  tone mark";
-			}
-			else if (dict.g == 'g' ) {
-				s = dict.t + "  " + voyc.strp[dict.p] + ", " + voyc.strm[dict.m] + ", sound: " + dict.e;
-			}
-			else if (dict.g == 'o') {
-				s = dict.t + "  " + dict.tl + "<sup>" + dict.tn + "</sup>  <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
-			}
-			else if (dict.g == 'm') {
-				s = dict.t + "  " + dict.tl + " <i>" + voyc.pos[dict.p] + "</i> " + dict.e;
-			}
-			else if (dict.g == 's') {
-				s = dict.t + "  symbol";
-			}
-			else if (dict.g == 'x') {
-				s = dict.t + "  " + dict.tl + " " + dict.e;
-			}
-			if (this.setting.selfScore) {
-				this.chat.post(this.chatid, s, ['right', 'wrong','details','mastered']);
-				this.state = 'selfscore';
-			}
-			else {
-				this.chat.post(this.chatid, s, []);
-				this.nextCard();
-				this.state = 'typing';
-			}
-			break;
-		default:
-			console.log('bogus state in lee respond');
+		case 'reverse':
+			s = flat.mean.e;
 			break;
 	}
+	return { s:s, o:o };
 }
 
 voyc.Lee.prototype.checkAnswer = function(o) {
-	return (o.msg == this.scores[this.ndxCard].dict.t);
+	var step = this.stack.steps[this.stack.stepndx];
+	var b = false;
+	switch (step) {
+		case 'class':
+			var lc = this.scores[this.ndxCard].flat.dict.cp[0];
+			lc = lc.substr(0,1);
+			var cls = voyc.alphabet.search(lc).m;
+			if (lc == 'ห' || (lc == 'อ' && lc.length > 1)) {
+				cls = 'h';
+			}
+			b = (o.msg.substr(0,1).toLowerCase() == cls);
+			break;
+		case 'tone':
+			var tn = this.scores[this.ndxCard].flat.dict.cp.split(',')[4];
+			b = (o.msg.toLowerCase() == tn.toLowerCase());
+			break;
+		case 'translate':
+			var en = this.scores[this.ndxCard].flat.mean.e;
+			b = (o.msg.toLowerCase().replace('-', ' ') == en.toLowerCase().replace('-', ' '));
+			break;
+		case 'reverse':
+			var th = this.scores[this.ndxCard].flat.dict.t;
+			b = (o.msg == th);
+			break;
+	}
+	return b;
 }
 
 voyc.Lee.prototype.checkToneAnswer = function(o) {
-	return (o.msg == this.scores[this.ndxCard].dict.tn);
+	return (o.msg == this.scores[this.ndxCard].dict.tn); // fix
 }
 
 voyc.Lee.prototype.scoreAnswer = function(bool) {
@@ -313,18 +354,6 @@ voyc.Lee.prototype.scoreAnswer = function(bool) {
 	score.recency = Date.now();
 	this.promote(score);
 	this.report();
-}
-
-voyc.Lee.prototype.report = function() {
-	var report = [];
-	for (var i=0; i<this.scores.length; i++) {
-		var score = this.scores[i];
-		if (score.recency > this.lastReportRecency) {
-			report.push(score);
-		}
-	}
-	this.lastReportRecency = Date.now();
-	this.reportCallback(report);
 }
 
 voyc.Lee.prototype.promote = function (score) {
@@ -353,7 +382,15 @@ voyc.Lee.prototype.promote = function (score) {
 	return promoted;
 }
 
-voyc.Lee.prototype.readDictionary = function(key) {
-	return voyc.dictionary.lookup(key)[0];
+voyc.Lee.prototype.report = function() {
+	var report = [];
+	for (var i=0; i<this.scores.length; i++) {
+		var score = this.scores[i];
+		if (score.recency > this.lastReportRecency) {
+			report.push(score);
+		}
+	}
+	this.lastReportRecency = Date.now();
+	this.reportCallback(report);
 }
 
