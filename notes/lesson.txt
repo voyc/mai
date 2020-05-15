@@ -1,9 +1,0 @@
-html/thai/dict2.js:{s:2 ,l:400, n:1, g:'o' ,p:' ', t:'บท'		,e:''	,d:'chapter of a book; lesson of a schoolbook; article in a magazine; verse; stanza'},
-html/thai/dict2.js:== lessons
-html/thai/course/au/adj.txt:https://www.thaipod101.com/lesson/absolute-beginner-thai-for-every-day-4-top-25-thai-adjectives/
-html/thai/course/au/adj.js:https://www.thaipod101.com/lesson/absolute-beginner-thai-for-every-day-4-top-25-thai-adjectives/
-html/thai/course/au/lessons.txt:AUA Lessons
-html/thai/index2.html:			<a href='lesson/filelist.html'>Lessons</a><br/>
-html/thai/index2.html:			<a href='lesson/'>Lessons</a><br/>
-html/thai/index2.html:			<p><button class='anchor' close='leftnav' nav='filelist'        >Lessons</button></p>
-html/thai/dict.js:{id:661,g:'o',t:'บท',s:2,l:400,n:1,p:'n',e:'chapter',d:'chapter of a book; lesson of a schoolbook; article in a magazine; verse; stanza',u:'',r:'',m:'',a:'',ns:1,lc:'บ',fc:'ท',vp:'o',tm:'',tn:'L',tl:'bot',ru:'ccivo,fnsc,mcd',sn:'',cp:'',ps:''},

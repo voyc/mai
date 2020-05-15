@@ -136,12 +136,21 @@ test parse: อกไม้ดอกนี้จะมอบให้คุณ�
 
 add stacks to drill for expressions and lines
 
-Show summary on story page
-
 link to editor from dictionary, story, drill
 
-Show English titles on list page
+Show summary on story page
+Show English titles on list page, and story page, store in db?
 show summary stats on list page, requires server-side analytics
+
+import new stories, create schedule to import all known material
+	drill more, one hour per day, from phone
+
+finish object model
+	cleanup curriculum, level, courselist, lesson, dict2 
+
+backup dict, mean, story
+
+cleanup noam, tests, make commands
 
 ====================================
 settings
