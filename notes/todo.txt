@@ -53,8 +53,7 @@ keyboard
 	alphabet consonants
 	alphabet vowel patterns
 
-show components, expressions
-drill components, expressions, lines, phrases
+show components, expressions in story summary
 
 in story parse, replace pronouns with grammar codes
 	in story draw, replace grammar codes with pronouns, depending on speaker age and gender
@@ -65,23 +64,24 @@ draw pos with multi pos values, or eliminate multi pos
 	search, show, cannot display multiple pos 
 
 drill
+	kill from drill leaves sam's chat posts on the right in the guest position
+	call continueDrill from startDrill, with step -1, to get starting message
 	handle end of set, empty set, says "Let's do another set." when there's no more sets
 	in answer, show hint depending on step
 	continue
-
-groups
-	glyphs, vowel patterns, lc, fc, tone marks
-	syllables
-	components
-	words
-	phrases/expressions
-	lines
-
-compose drill from partial story, especially for long stories, or sectioned stories
-	start with one line
-		count syllables+words+phrases+lines
-		add another line
-		stop when number of drill items meets threshold
+	allow a blank line to separate paragraphs
+	assemble drill by paragraph, especially for long stories, or sectioned stories
+		start with one paragraph
+			count syllables+words+phrases+lines
+			add another line/paragraph
+			stop when number of drill items meets threshold
+	stacks
+		glyphs, vowel patterns, lc, fc, tone marks
+		syllables
+		components
+		words
+		phrases/expressions
+		lines
 
 dictionary editor
 	imlement add-translation button 
@@ -97,8 +97,6 @@ buttons sometimes acts as two-state button, stays down, no change, mouse is roll
 	sluggish behavior
 
 pronunciation rules vs grammar rules
-
-kill from drill leaves sam's chat posts on the right in the guest position
 
 vocab
 	- remove cmdRemoveVocab, replace with set state=u
@@ -130,12 +128,6 @@ getvocab, 4, attempt with invalid parameter set - missing $si
 voyc.Speech
 	speak on every question. which stacks?
 
-call continueDrill from startDrill, with step -1, to get starting message
-
-test parse: อกไม้ดอกนี้จะมอบให้คุณนะคะ
-
-add stacks to drill for expressions and lines
-
 link to editor from dictionary, story, drill
 
 Show summary on story page
@@ -151,6 +143,7 @@ add backup.sh to cron weekly
 add a single db backup to git
 
 cleanup noam, tests, make commands
+	test parse: อกไม้ดอกนี้จะมอบให้คุณนะคะ
 
 finish object model per notes/object-model.txt
 
