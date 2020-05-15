@@ -1,10 +1,3 @@
-
-textarea#storyraw {
-	width:100%;
-	height:10rem;
-}
-
-
 /* button row */
 div#storyviewbtnrow, div#storyeditbtnrow {
 	display:none;
@@ -38,7 +31,7 @@ icon[type=char][name=pencil ]:before {
 	top:0;
 }
 
-/* story view */
+/* view */
 story {
 	display:table;
 	width:100%;
@@ -74,7 +67,7 @@ story[view=en] thaibtns {
 	display:none;
 }
 
-/* story tview */
+/* tview */
 row word {
 	display:inline;
 	cursor:pointer;
@@ -96,8 +89,8 @@ story[tview=e] eng {
 	font-size:1rem;
 }
 
-row, box, orig { /* one and only one is visible */
-	display:none; /* inline-block */
+row, box, orig {
+	display:none;
 }
 box t, box e, box tl {
 	display:block;
@@ -117,6 +110,8 @@ story[tview=s] line thai row word {
 story[tview=b] line thai box {
 	display:inline-block;
 }
+
+/* edit mode */
 story[tview=e] line thai orig, story[tview=e] line eng orig {
 	display:block;
 }
@@ -126,96 +121,28 @@ line eng e {
 }
 story[tview=e] line eng e {
 	display:none;
+}
 
-row, box, orig { /* one and only one is visible */
-	display:none; /* inline-block */
-}
-box t, box e, box tl {
-	display:block;
-}
-orig textarea {
+textarea#storyraw {
 	width:100%;
-	height:100%;
-}
-
-story[tview=n] line thai row, story[tview=s] line thai row {
-	display:inline-block;
-}
-story[tview=s] line thai row word {
-	margin-right:.3rem;
-}
-story[tview=b] line thai box {
-	display:inline-block;
-}
-story[tview=e] line thai orig, story[tview=e] line eng orig {
-	display:block;
-}
-
-line eng e {
-	display:block;
-}
-story[tview=e] line eng e {
-	display:none;
+	height:10rem;
 }
 
 /* word coloring */
-story[tview=s] word[error] t, story[tview=b] word[error] t {
+story[tview=b] word[error] t {
 	color:red;
 }
-story[tview=s] word[newvocab] t, story[tview=b] word[newvocab] t {
+story[tview=b] word[newvocab] t {
 	color:green;
 }
-story[tview=s] word[multimean] t, story[tview=b] word[multimean] t {
+story[tview=b] word[multimean] t {
 	color:cyan;
 }
-story[tview=s] word[chosen] t, story[tview=b] word[chosen] t {
+story[tview=b] word[chosen] t {
 	color:purple;
 }
 
-
-
-
-
-/*
-.thai {
-	font-size:1.5rem;
-}
-.english {
-	font-size:1rem;
-}
-sentence {
-	display:block;
-	border-bottom: 1px solid gray;
-}
-line {
-	display:block;
-}
-story[author] line, story[hint] line {
-	border:1px solid gray;
-}
-word {
-}
-speaker {
-	margin-right: .5rem;
-}
-story[author] word, story[hint] word {
-	margin-right: .5rem;
-	cursor:pointer;
-}
-story[author] word[error] {
-	color:red;
-	cursor:pointer;
-}
-story[author] word[newvocab] {
-	color:green;
-}
-story[author] word[multimean] {
-	color:cyan;
-	cursor:pointer;
-}
-story[author] word[chosen] {
-	color:purple;
-}
+/* syllable tones, not implemented */
 sylcont {
 	position:relative;
 	margin-right: .5rem;
@@ -248,41 +175,4 @@ syllable[tone=F] {
 	transform: rotate(30deg);
 	color:orange;
 }
-button[a] {
-	margin-right:.3rem;
-}
-button[line] {
-	xborder-radius:10px;
-	margin-right:.3rem;
-}
-story line[hint] word t, story line[hint] word e, story line[hint] word tl, story line[hint] eng  {
-	display:none;
-}
-story line[hint="0"] word t {
-	display:inline;
-}
-story line[hint="1"] word e {
-	display:inline;
-}
-story line[hint="2"] word tl {
-	display:inline;
-}
-story line[hint="3"] eng {
-	display:inline;
-}
-story line[hint="3"] thai {
-	display:none;
-}
-div#details i {
-	font-size:10pt;
-}
-div#details icon[name=pencil] {
-	float:right;
-}
-button[mm].chosen {
-	font-weight:bold:
-}
-button span {
-	xpointer-events: none;
-}
-*/
+

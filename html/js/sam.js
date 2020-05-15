@@ -323,7 +323,7 @@ voyc.Sam.prototype.cmdDrill = function(story, r) {
 voyc.Sam.prototype.prepStack = function(story,r) {
 	var stack = {
 		algorithm: 'progressive',
-		setsize:3,
+		setsize:8,
 		stepndx:0,
 		steps:['translate','reverse'],
 		setndx:0,

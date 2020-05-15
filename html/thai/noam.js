@@ -541,6 +541,9 @@ voyc.Noam.prototype.parseString = function(input, linenum) {
 					// do not separate words between diacritics
 					var char = s.substr(j,1); 
 					var alpha = this.alphabet.search(char); 
+					if (!alpha) {
+						debugger;
+					}
 					if (alpha.a.length && 'abr'.includes(alpha.a))  { 
 						continue;
 					}

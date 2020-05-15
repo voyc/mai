@@ -152,19 +152,22 @@ restructure model, view, object instantiations
 
 call continueDrill from startDrill, with step -1, to get starting message
 
-โรงเรียน ~ School
-ชั้นประถมอะไร ~ What class?
-โรงเรียนอะไร ~ What school?
-เริ่มเมื่อ ~ Start when?
-ราคาเท่าไหร่ ~ What price?
-
 test parse: อกไม้ดอกนี้จะมอบให้คุณนะคะ
 
-color-coding of story words stopped working 
+add stacks to drill for expressions and lines
+
+Show summary on story page
+
+link to editor from dictionary, story, drill
+
+Show English titles on list page
+show summary stats on list page, requires server-side analytics
 
 ====================================
 settings
 	setsize
+		  <label for="quantity">Quantity (between 1 and 5):</label>
+		  <input type="number" id="quantity" name="quantity" min="1" max="5">
 	drill steps o
 		- class of consonant
 		- length of vowel
