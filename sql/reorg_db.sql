@@ -59,6 +59,20 @@ alter table mai.story add column meta text;
 delete from mai.vocab where type = 'l';
 -- DELETE 57
 
+/* 15 may 2020 */
+alter table mai.story
+	add column titleeng varchar(100),
+	add column avglvl int,
+	add column maxlvl int,
+	add column components text,
+	add column numwords int,
+	add column numwordsnew int,
+	add column numcomponents int,
+	add column numcomponentsnew int;
+-- ALTER TABLE
+
+alter table mai.dict add column lvl int default 100;
+-- ALTER TABLE
 
 
 

@@ -608,6 +608,9 @@ voyc.Sam.prototype.respond = function(o) { // input o object comes from chat eng
 		case 'reload':
 			voyc.dictionary.getFast();
 			break;
+		case 'dostorycomponents':
+			voyc.story.doComponents();
+			break;
 		case 'kill':
 			this.state = 'ready';
 			this.dochat('ready');

@@ -24,7 +24,10 @@ $supported_svcs = array(
 	'getalpha',
 	'setstory',
 	'getstory',
-	'getstories'
+	'getstories',
+	'dostorycomponents',
+	'dodictlevel',
+	'dostorylevel'
 );
 
 function validateSvc($taint) {

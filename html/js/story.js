@@ -27,9 +27,21 @@ voyc.Story.prototype.list = function() {
        voyc.comm.request(svcname, data, function(ok, response, xhr) {
                if (!ok) { response = { 'status':'system-error'}; }
                console.log(svcname + ' status ' + response['status']);
-               voyc.observer.publish(svcname+'-received', 'storyview', response);
+               voyc.observer.publish(svcname+'-received', 'story', response);
        });
-       voyc.observer.publish(svcname+'-posted', 'storyview', {});
+       voyc.observer.publish(svcname+'-posted', 'story', {});
+}
+
+voyc.Story.prototype.doComponents = function() {
+       this.id = parseInt(id);
+       var svcname = 'dostorycomponents';
+       var data = {};
+       voyc.comm.request(svcname, data, function(ok, response, xhr) {
+               if (!ok) { response = { 'status':'system-error'}; }
+               console.log(svcname + ' status ' + response['status']);
+               voyc.observer.publish(svcname+'-received', 'story', response);
+       });
+       voyc.observer.publish(svcname+'-posted', 'story', {});
 }
 
 voyc.Story.prototype.replace = function(newtext) {

@@ -61,10 +61,11 @@ create table mai.dict (
 	g char(1),          /* type o:one-syllable, m:multi-syllable */
 	t varchar(100),     /* thai */
         tl varchar(100),    /* translit */
-	tlm char(1)         /* translit a:auto, m:manual */
+	tlm char(1)         /* translit method a:auto, m:manual */
         cp varchar(100),    /* components, csv */
-	cpm char(1)         /* components, a:auto, m:manual */
+	cpm char(1)         /* components method, a:auto, m:manual */
         ru varchar(100),    /* rules, csv */
+	lvl int default 100,/* level 1 to 100  */
 );
 create table mai.mean (
 	id serial primary key,
@@ -114,7 +115,15 @@ create table mai.story (
 	language char(2),	/* constant "th" */
 	original text,
 	meta text,              /* comments about the story */
-	words text
+	words text,
+	titleeng varchar(100),
+	avglvl int,
+	maxlvl int,
+	components text,
+	numwords int,
+	numwordsnew int,
+	numcomponents int,
+	numcomponentsnew int
 );
 create unique index story_title_index on mai.story(title);
 

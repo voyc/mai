@@ -131,6 +131,10 @@ voyc.Speech
 link to editor from dictionary, story, drill
 
 Show summary on story page
+	Start with show summary in sam. Fix.
+	Add version for story view. 
+	Draw in story.
+
 Show English titles on list page, and story page, store in db?
 show summary stats on list page, requires server-side analytics
 
