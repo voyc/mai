@@ -62,7 +62,6 @@ voyc.Sam = function(chat) {
 	this.req = {};
 	this.setup();
 	this.state = 'ready';
-	this.story = false;
 	this.stack = false;
 	this.drill = false;
 	this.lang = 'thai';
@@ -91,7 +90,7 @@ voyc.Sam.prototype.setup = function() {
 	voyc.observer.subscribe('search-received' ,'sam' ,function(note)  { self.onSearchReceived (note);});
 	voyc.observer.subscribe('edit-cancelled'   ,'sam' ,function(note) { self.onEditCancelled   (note);});
 	voyc.observer.subscribe('setdict-received' ,'sam' ,function(note) { self.onSetDictReceived (note);});
-	voyc.observer.subscribe('drill-requested' ,'sam' ,function(note) { self.onDrillRequested   (note);});
+	voyc.observer.subscribe('drill-requested'  ,'sam' ,function(note) { self.onDrillRequested  (note);});
 	
 	this.lee = new voyc.Lee(this.chat);
 	this.speech = new voyc.Speech();
@@ -99,9 +98,9 @@ voyc.Sam.prototype.setup = function() {
 	// move this to chat?
 	// extend Chat object to do post processing of a chat post
 	voyc.Chat.prototype.postPost = function(e) {
-		(new voyc.Minimal()).attachAll(e);
-		(new voyc.Icon()).attachAll(e);
-		(new voyc.Icon()).drawAll(e);
+	        (new voyc.Minimal()).attachAll(e);
+	        (new voyc.Icon()).attachAll(e);
+	        (new voyc.Icon()).drawAll(e);
 	}
 }
 
@@ -113,7 +112,8 @@ voyc.Sam.prototype.onGetVocabReceived = function() {
 	// these two should be instantiated in mai, sam should be reserved to home window
 	// noam also
 	voyc.editor = new voyc.Editor(voyc.$('editor'), this.noam);
-	voyc.storyview = new voyc.StoryView(voyc.$('storyview'), this.noam);
+	voyc.storyview = new voyc.StoryView(voyc.$('storyview'));
+	voyc.story = new voyc.Story(this.noam);
 }
 
 voyc.Sam.prototype.dochat = function(s,bpost,cb) {
@@ -277,14 +277,14 @@ voyc.Sam.prototype.reportScores = function(scores) {
 
 voyc.Sam.prototype.onDrillRequested = function(note) {
 	var story = note.payload.story;
-	this.story = story;
+	voyc.story = story;
 	voyc.browserhistory.nav('home');
 	this.cmdDrill(story, {verb:'drill',object:'',adj:{}});
 }
 
 /* obj:words,syllables; adj:new,continue */
 voyc.Sam.prototype.cmdDrill = function(story, r) {
-	if (!this.story) {
+	if (!voyc.story) {
 		this.dochat('Parse a story first.');
 		return;
 	}
@@ -525,23 +525,22 @@ voyc.Sam.prototype.respond = function(o) { // input o object comes from chat eng
 				this.dochat(s);
 				break;
 			}
-			this.story = new voyc.Story();
-			this.story.original = req.object;
-			this.noam.parseStory(this.story);	
-			this.prepStory(this.story);
+			voyc.story.original = req.object;
+			this.noam.parseStory(voyc.story);	
+			this.prepStory(voyc.story);
 			break;
 		case 'replace':
-			this.story.replace(req.object);
-			this.noam.parseStory(this.story);
-			this.prepStory(this.story);
+			voyc.story.replace(req.object);
+			this.noam.parseStory(voyc.story);
+			this.prepStory(voyc.story);
 			break;
 		case 'show':
 			if (req.object == 'alphabet') {
 				var s = voyc.alphabet.listAll();
 				this.dochat(s);
 			}
-			if (this.story) {
-				var s = this.showStory(this.story, req)
+			if (voyc.story) {
+				var s = this.showStory(voyc.story, req)
 				this.dochat(s,true,function(e) {
 					var list = e.querySelectorAll('button[line]');
 					for (var i=0; i<list.length; i++) {
@@ -590,8 +589,8 @@ voyc.Sam.prototype.respond = function(o) { // input o object comes from chat eng
 			}
 			break;
 		case 'drill': 
-			this.story = voyc.storyview.story;
-			this.cmdDrill(this.story, req); 
+			voyc.story = voyc.storyview.story;
+			this.cmdDrill(voyc.story, req); 
 			break;
 		case 'search':
 			this.cmdSearch(req);
@@ -607,6 +606,9 @@ voyc.Sam.prototype.respond = function(o) { // input o object comes from chat eng
 			break;
 		case 'reload':
 			voyc.dictionary.getFast();
+			break;
+		case 'getcomponents':
+			voyc.story.getComponents();
 			break;
 		case 'dostorycomponents':
 			voyc.story.doComponents();
@@ -657,27 +659,23 @@ voyc.Sam.prototype.parseRequest = function(s) {
 }
 	
 voyc.Sam.prototype.cmdListStories = function(r) {
-	if (!this.story) {
-		this.story = new voyc.Story();
-	}
-	var s = this.story.list();
+	var s = voyc.story.list();
 }
 
 voyc.Sam.prototype.cmdSaveStory = function(r) {
-	if (this.story) {
-		this.story.save();
+	if (voyc.story) {
+		voyc.story.save();
 	}
 }
 
 voyc.Sam.prototype.cmdReadStory = function(r) {
-	this.story = new voyc.Story();
-	this.story.read(r.object);
+	voyc.story.read(r.object);
 }
 
 voyc.Sam.prototype.onGetStoryReceived = function(note) {
 	if (note.payload.status == 'ok') {
-		this.noam.parseStory(this.story);	
-		this.prepStory(this.story);
+		this.noam.parseStory(voyc.story);	
+		this.prepStory(voyc.story);
 	}
 	else {
 		this.dochat('not found');
@@ -697,18 +695,18 @@ voyc.Sam.prototype.prepStory = function(story) {
 }
 voyc.Sam.prototype.onGetDictReceived = function(note) {
 	// add dict info to lines and words
-	for (var i=0; i<this.story.words.length; i++) {
-		var item = this.story.words[i];
+	for (var i=0; i<voyc.story.words.length; i++) {
+		var item = voyc.story.words[i];
 		item.dict = voyc.dictionary.miniDict(item.id);
 	}
-	for (var i=0; i<this.story.lines.length; i++) {
-		var line = this.story.lines[i];
+	for (var i=0; i<voyc.story.lines.length; i++) {
+		var line = voyc.story.lines[i];
 		for (var j=0; j<line.words.length; j++) {
 			var word = line.words[j];
 			word.dict = voyc.dictionary.miniDict(word.id);
 		}
 	}
-	var s = this.showStory(this.story,{object:'summary'});
+	var s = this.showStory(voyc.story,{object:'summary'});
 	this.dochat(s);
 }
 
@@ -893,7 +891,7 @@ voyc.Sam.prototype.chooseMean = function(e,mm,wid) {
 	var wndx = parseInt(a[2]);
 
 	// insert the chosen mean into the lines/words array
-	var word = this.story.lines[line-1].words[wndx];
+	var word = voyc.story.lines[line-1].words[wndx];
 	word.loc[0].n = n;
 
 	// insert the chosen mean into the story/words array

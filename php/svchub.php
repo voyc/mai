@@ -25,6 +25,7 @@ $supported_svcs = array(
 	'setstory',
 	'getstory',
 	'getstories',
+	'getcomponents',
 	'dostorycomponents',
 	'dodictlevel',
 	'dostorylevel'

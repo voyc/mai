@@ -21,27 +21,40 @@ voyc.Story = function(noam) {
 }
 
 voyc.Story.prototype.list = function() {
-       this.id = parseInt(id);
-       var svcname = 'getstories';
-       var data = {};
-       voyc.comm.request(svcname, data, function(ok, response, xhr) {
-               if (!ok) { response = { 'status':'system-error'}; }
-               console.log(svcname + ' status ' + response['status']);
-               voyc.observer.publish(svcname+'-received', 'story', response);
-       });
-       voyc.observer.publish(svcname+'-posted', 'story', {});
+	this.id = parseInt(id);
+	var svcname = 'getstories';
+	var data = {};
+	voyc.comm.request(svcname, data, function(ok, response, xhr) {
+		if (!ok) { response = { 'status':'system-error'}; }
+		console.log(svcname + ' status ' + response['status']);
+		voyc.observer.publish(svcname+'-received', 'story', response);
+	});
+	voyc.observer.publish(svcname+'-posted', 'story', {});
+}
+
+voyc.Story.prototype.getComponents = function() {
+	var svcname = 'getcomponents';
+	var data = {};
+	data['si'] = voyc.getSessionId();
+	data['id'] = this.id;
+	voyc.comm.request(svcname, data, function(ok, response, xhr) {
+		if (!ok) { response = { 'status':'system-error'}; }
+		console.log(svcname + ' status ' + response['status']);
+		voyc.observer.publish(svcname+'-received', 'story', response);
+	});
+	voyc.observer.publish(svcname+'-posted', 'story', {});
 }
 
 voyc.Story.prototype.doComponents = function() {
-       this.id = parseInt(id);
-       var svcname = 'dostorycomponents';
-       var data = {};
-       voyc.comm.request(svcname, data, function(ok, response, xhr) {
-               if (!ok) { response = { 'status':'system-error'}; }
-               console.log(svcname + ' status ' + response['status']);
-               voyc.observer.publish(svcname+'-received', 'story', response);
-       });
-       voyc.observer.publish(svcname+'-posted', 'story', {});
+	this.id = parseInt(id);
+	var svcname = 'dostorycomponents';
+	var data = {};
+	voyc.comm.request(svcname, data, function(ok, response, xhr) {
+		if (!ok) { response = { 'status':'system-error'}; }
+		console.log(svcname + ' status ' + response['status']);
+		voyc.observer.publish(svcname+'-received', 'story', response);
+	});
+	voyc.observer.publish(svcname+'-posted', 'story', {});
 }
 
 voyc.Story.prototype.replace = function(newtext) {

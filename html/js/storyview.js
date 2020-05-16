@@ -5,21 +5,18 @@
 	Display the story page.
 **/
 
-voyc.StoryView = function(container, noam) {
+voyc.StoryView = function(container) {
 	// is singleton
 	if (voyc.StoryView._instance) return voyc.StoryView._instance;
 	else voyc.StoryView._instance = this;
 
 	this.container = container;
-	this.noam = noam;
 	this.observer = voyc.observer;
 	
 	this.numTrans = 1;
 	this.maxTrans = 5;
 	this.tview = 'n';
 	this.setup();
-
-	this.story = new voyc.Story(this.noam);
 }
 
 voyc.StoryView.prototype.setup = function() {
@@ -40,12 +37,12 @@ voyc.StoryView.prototype.onStoryViewRequested = function(note) {
 		}
 		// if story requested by id, draw it
 		else {
-			this.story.read(a[1]);
+			voyc.story.read(a[1]);
 		}
 	}
 	// otherwise, show the list
 	else {
-		this.story.list();
+		voyc.story.list();
 	}
 }
 
@@ -69,7 +66,7 @@ voyc.StoryView.prototype.openForm = function(raw) {
 	var self = this;
 	document.getElementById('storyparsebtn').addEventListener('click', function(e) {
 		var raw = document.getElementById('storyraw').value;
-		self.story.parse(raw);
+		voyc.story.parse(raw);
 	}, false);
 	document.getElementById('storycancelbtn').addEventListener('click', function(e) {
 		self.onStoryReady();
@@ -103,7 +100,7 @@ voyc.StoryView.prototype.onGetStoriesReceived = function(note) {
 
 voyc.StoryView.prototype.onStoryReady = function(note) {
 	// draw the story
-	this.container.innerHTML = this.story.draw();
+	this.container.innerHTML = voyc.story.draw();
 
 	// remove whitespace from the html
 	var elist = this.container.querySelectorAll('row');
@@ -125,10 +122,10 @@ voyc.StoryView.prototype.onStoryReady = function(note) {
 	document.getElementById('bbtn').addEventListener('click',function(e)  {self.setview('tview','b')});
 
 	document.getElementById('drillbtn').addEventListener('click',function(e)  {
-		self.observer.publish('drill-requested', 'storyview', {story:self.story});
+		self.observer.publish('drill-requested', 'storyview', {story:voyc.story});
 	}, false);
 	document.getElementById('replacebtn').addEventListener('click',function(e)  {
-		var raw = self.story.original;
+		var raw = voyc.story.original;
 		self.openForm(raw);
 	}, false);
 	document.getElementById('editbtn').addEventListener('click',function(e)  {
@@ -136,11 +133,11 @@ voyc.StoryView.prototype.onStoryReady = function(note) {
 		self.setview('tview','e');
 	}, false);
 	document.getElementById('storysavebtn').addEventListener('click',function(e)  {
-		self.story.save();
+		voyc.story.save();
 	}, false);
 	document.getElementById('storyeditdonebtn').addEventListener('click',function(e)  {
 		self.reconstitute();
-		self.story.parse();
+		voyc.story.parse();
 		self.setview('tview',self.tview);
 		self.setmode('view');
 	}, false);
@@ -170,7 +167,7 @@ voyc.StoryView.prototype.onStoryReady = function(note) {
 			var did =  parseInt(w[0]);
 			var line=  parseInt(w[1]);
 			var wndx = parseInt(w[2]);
-			var word = self.story.lines[line-1].words[wndx];
+			var word = voyc.story.lines[line-1].words[wndx];
 			var s = self.composeWord(word,{adj:['author']},wid);
 			var sel = document.querySelector('form#worddetails div#details');
 			sel.innerHTML = s;
@@ -247,7 +244,7 @@ voyc.StoryView.prototype.chooseMean = function(e,mm,wid) {
 	var wndx = parseInt(a[2]);
 
 	// insert the chosen mean into the lines/words array
-	var word = this.story.lines[line-1].words[wndx];
+	var word = voyc.story.lines[line-1].words[wndx];
 	word.loc[0].n = n;
 
 	// insert the chosen mean into the story/words array
@@ -260,8 +257,8 @@ voyc.StoryView.prototype.chooseMean = function(e,mm,wid) {
 }
 
 voyc.StoryView.prototype.reconstitute = function() {
-	var s = this.story.original;
-	var a = this.story.original.split('\n');
+	var s = voyc.story.original;
+	var a = voyc.story.original.split('\n');
 	var raw = '';
 	var nline = 0;
 	for (var i=0; i<a.length; i++) {
@@ -280,6 +277,6 @@ voyc.StoryView.prototype.reconstitute = function() {
 		}
 	}
 
-	console.log('reconstitute ' + ((this.story.original == raw) ? 'same' : 'different'));
-	this.story.original = raw;
+	console.log('reconstitute ' + ((voyc.story.original == raw) ? 'same' : 'different'));
+	voyc.story.original = raw;
 }

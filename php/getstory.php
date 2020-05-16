@@ -16,10 +16,9 @@ function getstory() {
 	// validate inputs
 	$si = validateToken($taint_si);
 	$id = validateId($taint_id);
-	//$title = validateThaiText($taint_title);
 
 	// validate parameter set
-	if (!$si){
+	if (!$si || !$id){
 		Log::write(LOG_WARNING, 'attempt with invalid parameter set');
 		return $a;
 	}

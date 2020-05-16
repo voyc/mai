@@ -10,7 +10,7 @@ Specialists
 	voyc.lee - controlled by sam
 
 Data Model
-	voyc.story
+	voyc.story - instantiated by sam, used by sam and storyview, calls noam
 	voyc.dictionary
 	voyc.alphabet
 	voyc.vocab
@@ -78,15 +78,23 @@ todo
 ./html/js/sam.js:	this.speech = new voyc.Speech();
 ./html/js/sam.js:	this.noam = new voyc.Noam(voyc.dictionary, this.vocab);
 ./html/js/sam.js:	voyc.editor = new voyc.Editor(voyc.$('editor'), this.observer, this.noam);
-./html/js/sam.js:	voyc.storyview = new voyc.StoryView(voyc.$('storyview'), this.noam);
-./html/js/sam.js:			this.story = new voyc.Story();
-./html/js/sam.js:		this.story = new voyc.Story();
-./html/js/sam.js:	this.story = new voyc.Story();
 
 ./html/thai/noam.js:	this.alphabet = new voyc.Alphabet(dictionary);
 
 ./html/thai/keyboard2.js:	voyc.keyboard = new voyc.Keyboard();
 ./html/thai/keyboard2.js:	(new voyc.Keyboard).alphabet = alphabet;
 
+.ahtml/js/storyview.js:	this.story = new voyc.Story(this.noam);
+
 ./html/js/storyview.js:	this.story = new voyc.Story(this.noam);
+./html/js/sam.js:	voyc.storyview = new voyc.StoryView(voyc.$('storyview'), this.noam);
+./html/js/sam.js:			this.story = new voyc.Story();
+./html/js/sam.js:		this.story = new voyc.Story();
+./html/js/sam.js:	this.story = new voyc.Story();
+
+./html/js/sam.js:	voyc.storyview = new voyc.StoryView(voyc.$('storyview'), this.noam);
+./html/js/sam.js:			this.story = new voyc.Story();
+./html/js/sam.js:		this.story = new voyc.Story();
+./html/js/sam.js:	this.story = new voyc.Story();
+
 
