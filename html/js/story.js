@@ -21,7 +21,6 @@ voyc.Story = function(noam) {
 }
 
 voyc.Story.prototype.list = function() {
-	this.id = parseInt(id);
 	var svcname = 'getstories';
 	var data = {};
 	voyc.comm.request(svcname, data, function(ok, response, xhr) {
@@ -168,12 +167,14 @@ voyc.Story.prototype.save = function() {
 }
 
 // initialize one new story
-voyc.Story.prototype.parse = function(raw) {
-	if (raw) {
+voyc.Story.prototype.parse = function(sid, raw) {
+	if (!sid) {
 		this.id       = 0;
 		this.authorid = 0;
 		this.language = 'th';
 		this.title    = '';
+	}
+	if (raw) {
 		this.original = raw;
 	}
 	this.words = [];

@@ -151,6 +151,16 @@ cleanup noam, tests, make commands
 
 finish object model per notes/object-model.txt
 
+at the base of a story
+summary
+words
+components
+comments
+expanders or tabs?
+
+storyView:openForm(raw) - new or edit
+story:parse(raw) - new or edit
+does reconstitute handle comments correctly?
 ====================================
 settings
 	setsize

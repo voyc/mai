@@ -30,7 +30,18 @@ function getcomponents() {
 		return $a;
 	}
 
-	$comps = getCompsForOneStory($conn, $id);
+	// read story
+	$name = 'query-story';
+	$sql = "select words from mai.story where id = $1";
+	$params = array($id);
+	$result = execSql($conn, $name, $sql, $params, false);
+	if (!$result || !pg_num_rows($result)) {
+                echo "select story failed\n";
+		return;
+	}
+	$row = pg_fetch_array($result, 0, PGSQL_ASSOC);
+	$words = $row['words'];
+	$comps = getCompsForOneStory($conn, $words);
 
 	// success
 	$a['status'] = 'ok';

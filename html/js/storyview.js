@@ -33,7 +33,7 @@ voyc.StoryView.prototype.onStoryViewRequested = function(note) {
 	if (a.length > 1) {
 		// open insert form
 		if (a[1] == 'new') {
-			this.openForm();
+			this.openForm(0,'');
 		}
 		// if story requested by id, draw it
 		else {
@@ -46,11 +46,12 @@ voyc.StoryView.prototype.onStoryViewRequested = function(note) {
 	}
 }
 
-voyc.StoryView.prototype.openForm = function(raw) {
+voyc.StoryView.prototype.openForm = function(id, raw) {
 	var s = '';
-	s += '<h2>New Story</h2>';
+	var title = (id) ? voyc.story.title : 'New Story';	
+	s += '<h2>'+title+'</h2>';
 	s += '<div class=horz>';
-	s += '<button id=storyparsebtn>Parse</button>';
+	s += '<button id=storyparsebtn sid='+id+'>Parse</button>';
 	s += '<button id=storycancelbtn>Cancel</button>';
 	s += '</div>';
 	s += '<p>';
@@ -66,7 +67,8 @@ voyc.StoryView.prototype.openForm = function(raw) {
 	var self = this;
 	document.getElementById('storyparsebtn').addEventListener('click', function(e) {
 		var raw = document.getElementById('storyraw').value;
-		voyc.story.parse(raw);
+		var sid = document.getElementById('storyparsebtn').getAttribute('sid');
+		voyc.story.parse(sid, raw);
 	}, false);
 	document.getElementById('storycancelbtn').addEventListener('click', function(e) {
 		self.onStoryReady();
@@ -125,8 +127,7 @@ voyc.StoryView.prototype.onStoryReady = function(note) {
 		self.observer.publish('drill-requested', 'storyview', {story:voyc.story});
 	}, false);
 	document.getElementById('replacebtn').addEventListener('click',function(e)  {
-		var raw = voyc.story.original;
-		self.openForm(raw);
+		self.openForm(voyc.story.id, voyc.story.original);
 	}, false);
 	document.getElementById('editbtn').addEventListener('click',function(e)  {
 		self.setmode('edit');
@@ -136,8 +137,8 @@ voyc.StoryView.prototype.onStoryReady = function(note) {
 		voyc.story.save();
 	}, false);
 	document.getElementById('storyeditdonebtn').addEventListener('click',function(e)  {
-		self.reconstitute();
-		voyc.story.parse();
+		raw = self.reconstitute();
+		voyc.story.parse(voyc.story.id, raw);
 		self.setview('tview',self.tview);
 		self.setmode('view');
 	}, false);
@@ -278,5 +279,5 @@ voyc.StoryView.prototype.reconstitute = function() {
 	}
 
 	console.log('reconstitute ' + ((voyc.story.original == raw) ? 'same' : 'different'));
-	voyc.story.original = raw;
+	return raw;
 }

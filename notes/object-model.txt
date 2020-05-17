@@ -41,9 +41,6 @@ Observer notifications
 	1. on data received from voyc.comm
 	2. on UI page switch by browserhistory.nav
 	3. user requests, submits, completes
-
-sam calls new Story() multiple times.
-storyview calls new Story() once
 ==============================
 data structures
 
@@ -83,18 +80,3 @@ todo
 
 ./html/thai/keyboard2.js:	voyc.keyboard = new voyc.Keyboard();
 ./html/thai/keyboard2.js:	(new voyc.Keyboard).alphabet = alphabet;
-
-.ahtml/js/storyview.js:	this.story = new voyc.Story(this.noam);
-
-./html/js/storyview.js:	this.story = new voyc.Story(this.noam);
-./html/js/sam.js:	voyc.storyview = new voyc.StoryView(voyc.$('storyview'), this.noam);
-./html/js/sam.js:			this.story = new voyc.Story();
-./html/js/sam.js:		this.story = new voyc.Story();
-./html/js/sam.js:	this.story = new voyc.Story();
-
-./html/js/sam.js:	voyc.storyview = new voyc.StoryView(voyc.$('storyview'), this.noam);
-./html/js/sam.js:			this.story = new voyc.Story();
-./html/js/sam.js:		this.story = new voyc.Story();
-./html/js/sam.js:	this.story = new voyc.Story();
-
-

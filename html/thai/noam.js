@@ -435,7 +435,7 @@ voyc.Noam.prototype.parseStory = function(story) {
 	// parse each line for words
 	for (var i=0; i<story.lines.length; i++) {
 		var line = story.lines[i].th;
-		story.lines[i].words = this.parseString(line, i+1);
+		story.lines[i].words = this.parseString(line, i+1, true);
 	}
 
 	// reconcile new story.lines.words with old story.words
@@ -519,7 +519,8 @@ voyc.Noam.prototype.parseStory = function(story) {
 	@input string input
 	@return array of objects
 **/
-voyc.Noam.prototype.parseString = function(input, linenum) {
+voyc.Noam.prototype.parseString = function(input, linenum, greedy) {
+	var greedy = greedy || false;
 	var words = [];
 
 	// split the input into multiple substrings separated by whitespace 
@@ -555,7 +556,7 @@ voyc.Noam.prototype.parseString = function(input, linenum) {
 				//var m = this.dictionary.search(t,'t','om');  // find t in Dictionary
 				var m = this.dictionary.fastMatch(t);  // find t in Dictionary
 				if (m) {
-					if (t == s) {
+					if (t == s && !greedy) {
 						// sto and return only if no other components found
 						fullStringMatch = {
 							t:t,
