@@ -1,11 +1,11 @@
 <?php
 /*
-	svc getcomponents
+	svc getcomps
 	Assemble and return components for one story.
 */
 require_once('subcompsone.php');
 
-function getcomponents() {
+function getcomps() {
 	$a = array(
 		'status' => 'system-error'
 	);

@@ -31,8 +31,8 @@ voyc.Story.prototype.list = function() {
 	voyc.observer.publish(svcname+'-posted', 'story', {});
 }
 
-voyc.Story.prototype.getComponents = function() {
-	var svcname = 'getcomponents';
+voyc.Story.prototype.getComps = function() {
+	var svcname = 'getcomps';
 	var data = {};
 	data['si'] = voyc.getSessionId();
 	data['id'] = this.id;
@@ -44,9 +44,9 @@ voyc.Story.prototype.getComponents = function() {
 	voyc.observer.publish(svcname+'-posted', 'story', {});
 }
 
-voyc.Story.prototype.doComponents = function() {
+voyc.Story.prototype.doComps = function() {
 	this.id = parseInt(id);
-	var svcname = 'dostorycomponents';
+	var svcname = 'dostorycomps';
 	var data = {};
 	voyc.comm.request(svcname, data, function(ok, response, xhr) {
 		if (!ok) { response = { 'status':'system-error'}; }
@@ -89,46 +89,6 @@ voyc.Story.prototype.combineArrays = function(combined, a) {
 		}
 	}
 	return c;
-}
-
-// build array of one-syllable components from words
-voyc.Story.prototype.consolidateComponents = function() {
-	var cpa = voyc.cloneArray(this.words);
-	var bfinished = this.explodeComponents(cpa);	
-	var runaway = 10;
-	while ((runaway > 0) && !bfinished) {
-		runaway--;
-		bfinished = this.explodeComponents(cpa);	
-	}
-	
-	// now cpa includes a combination of word objects and fastmatch objects
-
-	// make list of ids
-	// call server getDict
-	// onGetDictReceived, add dict to this.components
-
-	return cpa; // to this.components
-}
-
-voyc.Story.prototype.explodeComponents = function(cpa) {
-	var bfinished = true;
-	var c = [];
-	for (var i=0; i<cpa.length; i++) {
-		var word = cpa[i];
-		if (word.g == 'm') {
-			bfinished = false;
-			for (var j=0; j<word.cp.length; j++) {
-				var cp = word.cp[j];
-				m = voyc.dictionary.fastMatch(cp);
-				if (m && !cpa.includes(m)) {
-					cpa.push(m);
-				}
-			}
-			delete cpa[i];
-			i--;
-		}
-	}
-	return bfinished;
 }
 
 voyc.Story.prototype.condenseWords = function(words) {

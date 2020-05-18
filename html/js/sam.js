@@ -607,11 +607,11 @@ voyc.Sam.prototype.respond = function(o) { // input o object comes from chat eng
 		case 'reload':
 			voyc.dictionary.getFast();
 			break;
-		case 'getcomponents':
-			voyc.story.getComponents();
+		case 'getcomps':
+			voyc.story.getComps();
 			break;
-		case 'dostorycomponents':
-			voyc.story.doComponents();
+		case 'dostorycomps':
+			voyc.story.doComps();
 			break;
 		case 'kill':
 			this.state = 'ready';
@@ -744,19 +744,14 @@ voyc.Sam.prototype.showStory = function(o,r) {
 				if (r.adj.old && !w.vocab) {
 					continue;
 				}
+				if (r.adj.comp && !w.comp) {
+					continue;
+				}
 				if (w.id) {
 					s += w.dict.t + '<br/>';
-					//var dict = voyc.dictionary.search(w.text)[0];
-					//s += voyc.dictionary.compose(w.dict);
 				}
 			}
 			break
-		case 'components':
-			for (var i=0; i<o.components.length; i++) {
-				var cp = o.components[i];
-				s += cp.dict.t + '<br/>';
-			}
-			break; 
 		case 'newvocab':
 			o.words.forEach(function(item,index) {
 				if (item.id && !item.vocab) {
