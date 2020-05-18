@@ -18,8 +18,8 @@ function getCompsForOneStory($conn, $words) {
 	$sql = "select cp from mai.dict where (g='m' or g='x') and t = any ($1);";
 	$stmt = @pg_prepare($conn, $name, $sql);
 	if (!$stmt) {
-                echo "prepare stmt failed\n";
-		return;
+		Log::write(LOG_ERROR, $name.' prepare failed');
+		return false;
 	}
 
 	// combine multiple levels of components into the components-array
@@ -30,8 +30,10 @@ function getCompsForOneStory($conn, $words) {
 		$components = mergeArrays($components, $dest);
 		$source = $dest;
 		$dest = readComponents($conn, $name, $source);
+		if ($dest === false) {
+			return false;
+		}
 	}
-	echo "runaway $runaway\n";
 	return $components;
 }
 
@@ -43,17 +45,15 @@ function readComponents($conn, $name, $source) {
 	}
 	$sat = join(',',$at);
 	$arrayliteral = "{" . $sat . "}";
-	echo "arrayliteral $arrayliteral\n";
 
 	// execute the prepared statement
 	$params = array($arrayliteral);
 	$result = @pg_execute($conn, $name, $params);
 	if (!$result) {
-                echo "select cp failed\n";
-		return;
+		Log::write(LOG_ERROR, $name.' execute failed');
+		return false;
 	}
 	$numrows = pg_num_rows($result);
-	echo "numrows $numrows\n";
 
         // build array of cp
 	$a = array();
@@ -80,16 +80,17 @@ function csvToArray($csv) {
 
 function mergeArrays($c,$a) {
 	$ra = $c;
-	$runaway = 10;
+	$runaway = 1000;
 	foreach ($a as $w => $n) {
 		if ($runaway-- <= 0) {
 			break;
 		}
-		if (in_array($w, $ra)) {
-			echo "found\n";
-			//$ra[$w];
-		}	
-		$ra[$w] = $n;
+		if (array_key_exists($w, $ra)) {
+			$ra[$w]++;
+		}
+		else {
+			$ra[$w] = $n;
+		}
 	}
 	return $ra;
 }

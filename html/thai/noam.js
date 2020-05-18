@@ -461,7 +461,7 @@ voyc.Noam.prototype.parseStory = function(story) {
 	//story.components = story.consolidateComponents();
 
 	// set title
-	story.title = story.lines[0].th;
+	story.title = story.lines[0].th+' ~ '+story.lines[0].en;
 	return;
 
 	function findLoc(wloc) {
@@ -609,6 +609,7 @@ voyc.Noam.prototype.parseString = function(input, linenum, greedy) {
 			t:t,
 			id:id,
 			tl:tl,
+			comp:0,
 			loc:[{line:line,wndx:words.length,tndx:ndx,n:0}],
 			vocab:vocab
 		};

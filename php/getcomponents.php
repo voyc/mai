@@ -36,12 +36,15 @@ function getcomponents() {
 	$params = array($id);
 	$result = execSql($conn, $name, $sql, $params, false);
 	if (!$result || !pg_num_rows($result)) {
-                echo "select story failed\n";
-		return;
+		Log::write(LOG_ERROR, $name.' failed');
+		return $a;
 	}
 	$row = pg_fetch_array($result, 0, PGSQL_ASSOC);
 	$words = $row['words'];
 	$comps = getCompsForOneStory($conn, $words);
+	if (!$comps) {
+		return $a;
+	}
 
 	// success
 	$a['status'] = 'ok';

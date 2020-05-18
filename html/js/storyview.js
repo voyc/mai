@@ -264,20 +264,23 @@ voyc.StoryView.prototype.reconstitute = function() {
 	var nline = 0;
 	for (var i=0; i<a.length; i++) {
 		var sline = a[i];
-		if (sline.trim().length <= 1) { // ignore empty lines
-			raw += sline;
+		if (sline.trim().length <= 1) { // empty lines
+			raw += fixeol(sline);
 		}
-		else if (sline.indexOf('::') > -1) { // ignore speaker and comment lines
-			raw += sline;
+		else if (sline.indexOf('::') > -1) { // speaker and comment lines
+			raw += fixeol(sline);
 		}
 		else {
 			var th = this.container.querySelector('line[num="'+nline+'"] thai orig textarea').value;
 			var en = this.container.querySelector('line[num="'+nline+'"] eng orig textarea').value;
-			raw += th + ' ~ ' + en + '\n';
+			raw += fixeol(th + ' ~ ' + en);
 			nline++;
 		}
 	}
 
 	console.log('reconstitute ' + ((voyc.story.original == raw) ? 'same' : 'different'));
 	return raw;
+	function fixeol(s) {
+		return s.trim() + '\n';
+	}
 }

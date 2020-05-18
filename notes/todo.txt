@@ -34,16 +34,12 @@ refresh fastdict, in dictionary
 		before the next lookup
 		or after one minute
 
-consider moving minidict to each story
-
 rearrange vowel components
 	reverse fc and tm
 
 noam translate and translit are broken because of new search
 
 implement up/down arrow in chat window, for mobile also
-
-implement search and browse on storyview
 
 implement dictionary page, with search and browse
 
@@ -52,12 +48,6 @@ keyboard
 	learning: Homekeys,etc, known/new
 	alphabet consonants
 	alphabet vowel patterns
-
-show components, expressions in story summary
-
-in story parse, replace pronouns with grammar codes
-	in story draw, replace grammar codes with pronouns, depending on speaker age and gender
-	allow this draw during drill lines, as well as show lines
 
 draw pos with multi pos values, or eliminate multi pos
 	in drill answer, multiple pos, จอง jaawngM undefined reserve, pos=nv, noun,verb
@@ -130,14 +120,6 @@ voyc.Speech
 
 link to editor from dictionary, story, drill
 
-Show summary on story page
-	Start with show summary in sam. Fix.
-	Add version for story view. 
-	Draw in story.
-
-Show English titles on list page, and story page, store in db?
-show summary stats on list page, requires server-side analytics
-
 import new stories, create schedule to import all known material
 	drill more, one hour per day, from phone
 	all previous course content now in library
@@ -151,16 +133,76 @@ cleanup noam, tests, make commands
 
 finish object model per notes/object-model.txt
 
-at the base of a story
-summary
-words
-components
-comments
-expanders or tabs?
+story list
+	Show English titles
+	show summary stats on list page
+	implement search and browse
+		(consider global search, search dict and story)
 
-storyView:openForm(raw) - new or edit
-story:parse(raw) - new or edit
-does reconstitute handle comments correctly?
+story detail
+	Show English title
+	scroll below the buttons
+	button to add line
+	show, using expanders or tabs:
+		summary
+		words
+		components
+		phrases, expressions
+		comments
+		errors
+	in story parse, replace pronouns with grammar codes
+		in story draw, replace grammar codes with pronouns, depending on speaker age and gender
+		allow this draw during drill lines, as well as show lines
+	button handlers
+		add line
+		choose meaning from dict popup
+		link to editor from dict popup (also from drill)
+		link to "edit -new" from click on error
+
+drill
+	combine components and words
+		svc getcomponents
+		add to story object
+		getdict, for both words and components
+	stacks
+		syllables
+		words (incl phrases and expressions)
+		lines (add)
+
+word object { - created by noam.parseString()
+	t
+	id
+	tl
+	comp = n, if zero, not a comp
+	loc,   loc.length comparable to n
+	vocab
+	dict - added by onGetDictReceived()
+
+story.parse(sid,raw)
+	noam.parse()
+	this.consolidateWords();
+	this.getComps(words)
+	this.onGetCompsReceived()
+		words returned with comps merged in already
+	gatherIds()
+	getDict()
+	onGetDictReceived
+		merge dict into words
+
+story.save
+	consolidateWords(); - no need to call it here
+
+consolidateWords()
+	getComponents()
+onGetComponents()
+	finish consolidateWords
+
+dict/mean
+	phrase and expression are NOT pos
+		m.p, remove expression
+		d.g, as is: s/m/o
+		d.phrase, yes or no, can be grammar with replaceable parts
+		d.expression, yes or no, is stock sentence or interjection
 ====================================
 settings
 	setsize
