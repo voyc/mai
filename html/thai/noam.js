@@ -457,7 +457,7 @@ voyc.Noam.prototype.parseStory = function(story) {
 	}
 
 	// consolidate words from newly parsed lines/words
-	story.words = story.consolidateWords();
+	//story.words = story.consolidateWords(); // moved to story
 
 	// set title
 	story.title = story.lines[0].th+' ~ '+story.lines[0].en;
@@ -556,7 +556,7 @@ voyc.Noam.prototype.parseString = function(input, linenum, greedy) {
 				var m = this.dictionary.fastMatch(t);  // find t in Dictionary
 				if (m) {
 					if (t == s && !greedy) {
-						// sto and return only if no other components found
+						// save for optional later use
 						fullStringMatch = {
 							t:t,
 							line:linenum,

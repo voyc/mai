@@ -159,43 +159,18 @@ story detail
 		link to editor from dict popup (also from drill)
 		link to "edit -new" from click on error
 
+x combine components into story.words
+match vocab into story.words
+
 drill
-	combine components and words
-		svc getcomponents
-		add to story object
-		getdict, for both words and components
+	x combine components and words
+		x svc getcomponents
+		x add to story object
+		x getdict, for both words and components
 	stacks
 		syllables
 		words (incl phrases and expressions)
 		lines (add)
-
-word object { - created by noam.parseString()
-	t
-	id
-	tl
-	comp = n, if zero, not a comp
-	loc,   loc.length comparable to n
-	vocab
-	dict - added by onGetDictReceived()
-
-story.parse(sid,raw)
-	noam.parse()
-	this.consolidateWords();
-	this.getComps(words)
-	this.onGetCompsReceived()
-		words returned with comps merged in already
-	gatherIds()
-	getDict()
-	onGetDictReceived
-		merge dict into words
-
-story.save
-	consolidateWords(); - no need to call it here
-
-consolidateWords()
-	getComponents()
-onGetComponents()
-	finish consolidateWords
 
 dict/mean
 	phrase and expression are NOT pos

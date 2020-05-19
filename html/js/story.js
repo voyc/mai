@@ -17,7 +17,8 @@ voyc.Story = function(noam) {
 
 	var self = this;
 	voyc.observer.subscribe('getstory-received' ,'story' ,function(note) { self.onGetStoryReceived (note);});
-	voyc.observer.subscribe('getdict-received' ,'story' ,function(note) { self.onGetDictReceived (note);});
+	voyc.observer.subscribe('getdict-received'  ,'story' ,function(note) { self.onGetDictReceived (note);});
+	voyc.observer.subscribe('getcomps-received' ,'story' ,function(note) { self.onGetCompsReceived (note);});
 }
 
 voyc.Story.prototype.list = function() {
@@ -36,6 +37,7 @@ voyc.Story.prototype.getComps = function() {
 	var data = {};
 	data['si'] = voyc.getSessionId();
 	data['id'] = this.id;
+	data['words'] = JSON.stringify( this.condenseWords(this.words));
 	voyc.comm.request(svcname, data, function(ok, response, xhr) {
 		if (!ok) { response = { 'status':'system-error'}; }
 		console.log(svcname + ' status ' + response['status']);
@@ -143,6 +145,11 @@ voyc.Story.prototype.parse = function(sid, raw) {
 	this.meta = [];
 
 	this.noam.parseStory(this);
+	this.words = this.consolidateWords();
+	this.getComps(this.words);
+}
+voyc.Story.prototype.onGetCompsReceived = function(note) {
+	this.words = note.payload.words;
 	var ids = this.gatherIds();
 	voyc.dictionary.getDict(ids);
 }
@@ -189,9 +196,7 @@ voyc.Story.prototype.onGetStoryReceived = function(note) {
 	this.lines = [];
 	this.meta = [];
 
-	this.noam.parseStory(this);
-	var ids = this.gatherIds();
-	voyc.dictionary.getDict(ids);
+	this.parse(this.id);
 }
 
 voyc.Story.prototype.onGetDictReceived = function(note) {

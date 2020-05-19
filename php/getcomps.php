@@ -13,10 +13,12 @@ function getcomps() {
 	// raw inputs
 	$taint_si = isset($_POST['si']) ? $_POST['si'] : 0;
 	$taint_id = isset($_POST['id']) ? $_POST['id'] : '';
+        $taint_words = isset($_POST['words']) ? $_POST['words'] : '';
 
 	// validate inputs
 	$si = validateToken($taint_si);
 	$id = validateId($taint_id);
+        $words = validateArray($taint_words);
 
 	// validate parameter set
 	if (!$si || !$id) {
@@ -29,7 +31,7 @@ function getcomps() {
 	if (!$conn) {
 		return $a;
 	}
-
+/*
 	// read story
 	$name = 'query-story';
 	$sql = "select words from mai.story where id = $1";
@@ -41,6 +43,7 @@ function getcomps() {
 	}
 	$row = pg_fetch_array($result, 0, PGSQL_ASSOC);
 	$words = $row['words'];
+*/
 	$comps = getCompsForOneStory($conn, $words);
 	if (!$comps) {
 		return $a;
@@ -48,12 +51,17 @@ function getcomps() {
 
 	// success
 	$a['status'] = 'ok';
-	$a['components'] = $comps;
+	$a['words'] = $comps;
 	return $a;
 }
 
 function validateId($taint) {
 	$clean = intval($taint);
+	return $clean;
+}
+function validateArray($taint) {
+	$clean = false;
+	$clean = $taint;
 	return $clean;
 }
 ?>

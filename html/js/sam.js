@@ -526,12 +526,11 @@ voyc.Sam.prototype.respond = function(o) { // input o object comes from chat eng
 				break;
 			}
 			voyc.story.original = req.object;
-			this.noam.parseStory(voyc.story);	
-			this.prepStory(voyc.story);
+			voyc.story.parse(voyc.story.id);
 			break;
 		case 'replace':
 			voyc.story.replace(req.object);
-			this.noam.parseStory(voyc.story);
+			voyc.story.parse(voyc.story.id);
 			this.prepStory(voyc.story);
 			break;
 		case 'show':
@@ -674,8 +673,7 @@ voyc.Sam.prototype.cmdReadStory = function(r) {
 
 voyc.Sam.prototype.onGetStoryReceived = function(note) {
 	if (note.payload.status == 'ok') {
-		this.noam.parseStory(voyc.story);	
-		this.prepStory(voyc.story);
+		voyc.story.parse(voyc.story.id);	
 	}
 	else {
 		this.dochat('not found');
@@ -723,14 +721,19 @@ voyc.Sam.prototype.showStory = function(o,r) {
 				s += o.lines.length + ' lines<br/>';
 			}
 			var cntword = 0;
-			var cntnew = 0;
+			var cntcomp = 0;
+			var cntwordnew = 0;
+			var cntcompnew = 0;
 			var cnterr = 0;
 			o.words.forEach(function(item,index) {
-				if (item.id && !item.vocab) cntnew++;
+				if (item.comp) cntcomp++;
+				if (item.comp && !item.vocab) cntcompnew++;
+				if (item.id && !item.vocab) cntwordnew++;
 				if (item.id) cntword++;
 				else cnterr++;
 			});
-			s += cntword + ' words (' + cntnew + ' new)<br/>';
+			s += cntword + ' words (' + cntwordnew + ' new)<br/>';
+			s += cntcomp + ' comps (' + cntcompnew + ' new)<br/>';
 			if (cnterr > 0) {
 				s += cnterr + ' errors<br/>';
 			}

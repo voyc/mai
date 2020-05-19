@@ -4,12 +4,13 @@
 	Assemble components of one story.
 */
 function getCompsForOneStory($conn, $words) {
-	// convert input string to array
-	$source = array();
-	$a = json_decode($words);
-        foreach ($a as $key => $w) {
-		$t = $w->t;
-		$n = count($w->loc);
+	// start with words array
+	$comps = json_decode($words, true);
+
+	// initialize the source array
+        foreach ($comps as $key => $w) {
+		$t = $w['t'];
+		$n = count($w['loc']);
 		$source[$t] = $n;
 	}
 
@@ -34,7 +35,46 @@ function getCompsForOneStory($conn, $words) {
 			return false;
 		}
 	}
-	return $components;
+
+	// read dict for all comps
+	$str = composeArrayLiteral($components);
+	$name = 'querydictbyt';
+	$sql = "select id,t,tl,lvl from mai.dict where t = any ($1);";
+	$params = array($str);
+	$result = execSql($conn, $name, $sql, $params, false);
+	if (!$result) {
+		Log::write(LOG_ERROR, $name.' failed');
+		return $a;
+	}
+	$numrows = pg_num_rows($result);
+
+	// build a word object for each component
+	for ($i=0; $i<$numrows; $i++) {
+		$row = pg_fetch_array($result, $i, PGSQL_ASSOC);
+		$id = $row['id'];
+		$t  = $row['t'];
+		$tl = $row['tl'];
+		$lvl= $row['lvl'];
+		$comp = $components[$t];
+		$comps[] = array(
+			'id'=>$id,
+			't'=>$t,
+			'tl'=>$tl,
+			'comp'=>$comp,
+		);
+	}
+	return $comps;
+}
+
+function composeArrayLiteral($a) {
+	// compose sql array literal from input array
+	$at = array();
+	foreach ($a as $t => $n) {
+		$at[] = '"'.$t.'"';
+	}
+	$sat = join(',',$at);
+	$arrayliteral = "{" . $sat . "}";
+	return $arrayliteral;
 }
 
 function readComponents($conn, $name, $source) {
@@ -94,4 +134,25 @@ function mergeArrays($c,$a) {
 	}
 	return $ra;
 }
+
+function usecount($word) {
+	// how many times is a word used in the story
+	$usedasword = count($word['loc']);
+	$usedascomp = word['comp'];
+	$simple = $word['comp'] + count($word['loc']);
+	$complex = 1 + (((count($word['loc']) - 1) * .5) + ($word['comp'] * .5));
+	return $simple;
+}
+
+/*
+	if words is null, read it from the story
+	option to rewrite the story
+	comps must be recalculated everytime the dict changes
+	locs and comps must be recalculated everytime the story changes
+	
+	calibrate level of each word in dict
+	usecount of each word in each story
+	total usecount of each word in all stories
+	interpolate to 1-100 scale
+*/
 ?>
