@@ -160,7 +160,7 @@ story detail
 		link to "edit -new" from click on error
 
 x combine components into story.words
-match vocab into story.words
+x match vocab into story.words
 
 drill
 	x combine components and words

@@ -204,12 +204,14 @@ voyc.Story.prototype.onGetDictReceived = function(note) {
 	for (var i=0; i<this.words.length; i++) {
 		var item = this.words[i];
 		item.dict = voyc.dictionary.miniDict(item.id);
+		item.vocab = voyc.vocab.get(item.t);
 	}
 	for (var i=0; i<this.lines.length; i++) {
 		var line = this.lines[i];
 		for (var j=0; j<line.words.length; j++) {
 			var word = line.words[j];
 			word.dict = voyc.dictionary.miniDict(word.id);
+			item.vocab = voyc.vocab.get(item.t);
 		}
 	}
 	voyc.observer.publish('story-ready', 'story', {id:this.id,title:this.title});

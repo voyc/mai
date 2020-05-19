@@ -69,9 +69,9 @@ voyc.Sam = function(chat) {
 }
 
 voyc.Sam.prototype.setup = function() {
-	this.vocab = new voyc.Vocab();
+	voyc.vocab = new voyc.Vocab();
 	voyc.dictionary = new voyc.Dictionary();
-	voyc.sengen = new voyc.SenGen(this.vocab);
+	voyc.sengen = new voyc.SenGen(voyc.vocab);
 
 	this.chatid = this.chat.addUser('Sam', true, false);
 
@@ -106,8 +106,8 @@ voyc.Sam.prototype.setup = function() {
 
 voyc.Sam.prototype.onGetVocabReceived = function() {
 	// setup continued
-	this.noam = new voyc.Noam(voyc.dictionary, this.vocab);
-	var interval = Date.now() - this.vocab.vocab.recency;
+	this.noam = new voyc.Noam(voyc.dictionary, voyc.vocab);
+	var interval = Date.now() - voyc.vocab.vocab.recency;
 
 	// these two should be instantiated in mai, sam should be reserved to home window
 	// noam also
@@ -270,7 +270,7 @@ voyc.Sam.prototype.reportScores = function(scores) {
 	else {
 		for (var i=0; i<scores.length; i++) {
 			var score = scores[i];
-			this.vocab.set(score.flat.dict.t, score.flat.dict.g, score.state);
+			voyc.vocab.set(score.flat.dict.t, score.flat.dict.g, score.state);
 		}	 
 	}
 }
@@ -973,7 +973,7 @@ voyc.Sam.prototype.cmdSetVocab = function(req) {
 	var state = req.adj['state'];
 	if (type && !validateType(type)) return false;
 	if (!validateState(state)) return false;
-	this.vocab.set(word,type,state);
+	voyc.vocab.set(word,type,state);
 }
 
 voyc.Sam.prototype.cmdGetVocab = function(req) {
@@ -995,7 +995,7 @@ voyc.Sam.prototype.cmdGetVocab = function(req) {
 	if (word == 'all') {
 		state = (state == 'all') ? '' : state;
 		type = (type == 'all') ? '' : type;
-		var list = this.vocab.getlist(state, type);
+		var list = voyc.vocab.getlist(state, type);
 		for (var i=0; i<list.length; i++) {
 			e = list[i];
 			var s = e.w + '\t' + e.t + '\t' + e.s;
@@ -1003,7 +1003,7 @@ voyc.Sam.prototype.cmdGetVocab = function(req) {
 		}
 	}
 	else {
-		var e = this.vocab.get(word);
+		var e = voyc.vocab.get(word);
 		if (e) {
 			var s = word + '\t' + e.t + '\t' + e.s;
 			r.push(s);
@@ -1014,7 +1014,7 @@ voyc.Sam.prototype.cmdGetVocab = function(req) {
 
 voyc.Sam.prototype.cmdRemoveVocab = function(req) {
 	var word = req.object;
-	this.vocab.remove(word);
+	voyc.vocab.remove(word);
 }
 
 //------------------

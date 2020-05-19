@@ -13,7 +13,7 @@ Data Model
 	voyc.story - instantiated by sam, used by sam and storyview, calls noam
 	voyc.dictionary
 	voyc.alphabet
-	voyc.vocab
+	voyc.vocab 
 
 View
 	voyc.storyview - drives storyview, list, insert, view
@@ -53,7 +53,7 @@ story
 
 ==============================
 todo
-1. fix instantiation of a single global story object
+x 1. fix instantiation of a single global story object
 2. a single global object for dictionary, alphabet, vocab
 3. do specialists: sam, lee, noam, sengen
 4. do UI view objects: speech, editor, storyview
@@ -68,12 +68,9 @@ todo
 ./html/js/mai.js:	this.sam = new voyc.Sam(this.chat);
 ./html/js/mai.js:	voyc.alphabet = new voyc.Alphabet();
 
-./html/js/sam.js:	this.vocab = new voyc.Vocab();
 ./html/js/sam.js:	voyc.dictionary = new voyc.Dictionary();
-./html/js/sam.js:	voyc.sengen = new voyc.SenGen(this.vocab);
 ./html/js/sam.js:	this.lee = new voyc.Lee(this.chat, this.observer);
 ./html/js/sam.js:	this.speech = new voyc.Speech();
-./html/js/sam.js:	this.noam = new voyc.Noam(voyc.dictionary, this.vocab);
 ./html/js/sam.js:	voyc.editor = new voyc.Editor(voyc.$('editor'), this.observer, this.noam);
 
 ./html/thai/noam.js:	this.alphabet = new voyc.Alphabet(dictionary);
