@@ -312,6 +312,10 @@ voyc.Sam.prototype.cmdDrill = function(story, r) {
 	if (stack) {
 		this.drill.stacks.push(stack);
 	}
+	stack = this.prepStack(story,{verb:'drill', object:'lines', adj:{}});
+	if (stack) {
+		this.drill.stacks.push(stack);
+	}
 
 	this.stack = this.drill.stacks[this.drill.stackndx]
 	this.startDrill();
@@ -319,6 +323,7 @@ voyc.Sam.prototype.cmdDrill = function(story, r) {
 
 voyc.Sam.prototype.prepStack = function(story,r) {
 	var stack = {
+		name:'words',
 		algorithm: 'progressive',
 		setsize:8,
 		stepndx:0,
@@ -328,6 +333,7 @@ voyc.Sam.prototype.prepStack = function(story,r) {
 	var flats = [];
 	switch(r.object.toLowerCase()) {
 		case 'syllables':
+			stack.name = 'syllables';
 			stack.steps = ['class','tone','translate','reverse'];
 		case 'words':
 			for (var i=0; i<story.words.length; i++) {
@@ -335,7 +341,7 @@ voyc.Sam.prototype.prepStack = function(story,r) {
 				if (!w.id) {
 					continue;
 				}
-				if (r.adj.new && w.vocab) {
+				if (r.adj.new && w.vocab && w.vocab.s == 'm') {
 					continue;
 				}
 				if (r.object == 'syllables' && w.dict.g != 'o') {
@@ -344,11 +350,15 @@ voyc.Sam.prototype.prepStack = function(story,r) {
 				if (r.object == 'words' && w.dict.g != 'm') {
 					continue;
 				}
-				var n = parseInt(w.loc[0].n)
-				n = (n > 0) ? n-1 : 0;
+				var n = 0;
+				if (w.loc) {
+					n = parseInt(w.loc[0].n)
+					n = (n > 0) ? n-1 : 0;
+				}
 				flat = {
 					id:w.id,
 					t:w.t,
+					e:w.dict.mean[n].e,
 					n:n,
 					dict:w.dict,
 					mean:w.dict.mean[n],
@@ -357,6 +367,22 @@ voyc.Sam.prototype.prepStack = function(story,r) {
 				flats.push(flat);
 			}
 			break;	
+		case 'lines':
+			stack.name = 'lines';
+			for (var i=0; i<story.lines.length; i++) {
+				var line = story.lines[i];
+				flat = {
+					id:i,
+					t:line.th,
+					e:line.en,
+					n:0,
+					dict:false,
+					mean:false,
+					vocab:false,
+				}
+				flats.push(flat);
+			}
+			break;
 		default:
 			return false;
 			break;
@@ -384,6 +410,10 @@ voyc.Sam.prototype.prepStack = function(story,r) {
 		}
 	}
 	stack.sets = sets;
+
+	if (sets.length == 1 && !sets[0].length) {
+		stack = false;
+	}
 	return stack;
 }
 

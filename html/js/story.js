@@ -130,7 +130,7 @@ voyc.Story.prototype.save = function() {
 
 // initialize one new story
 voyc.Story.prototype.parse = function(sid, raw) {
-	if (!sid) {
+	if (!parseInt(sid)) {
 		this.id       = 0;
 		this.authorid = 0;
 		this.language = 'th';
@@ -214,7 +214,23 @@ voyc.Story.prototype.onGetDictReceived = function(note) {
 			item.vocab = voyc.vocab.get(item.t);
 		}
 	}
+	this.setDefaultEnglishLines();
 	voyc.observer.publish('story-ready', 'story', {id:this.id,title:this.title});
+}
+
+voyc.Story.prototype.setDefaultEnglishLines = function() {
+	for (var i=0; i<this.lines.length; i++) {
+		var line = this.lines[i];
+		if (!line.en) {
+			var s = '';	
+			for (var j=0; j<line.words.length; j++) {
+				var word = line.words[j];
+				s += (s.length) ? ' ' : '';
+				s += word.dict.mean[word.loc[0].n].e;
+			}
+			line.en = s;
+		}
+	}
 }
 
 voyc.Story.prototype.draw = function() {

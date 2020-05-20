@@ -105,7 +105,8 @@ voyc.Lee.prototype.respond = function(o) {
 			}		
 			if (o.msg == 'hint') {
 				var flat = this.scores[this.ndxCard].flat;
-				var s = voyc.dictionary.drawFlat(flat);
+				//var s = voyc.dictionary.drawFlat(flat);
+				var s = (flat.dict) ? voyc.dictionary.drawFlat(flat) : flat.t + ' ~ ' + flat.e;
 				this.chat.post(this.chatid, s, []);
 				this.displayQuestion(flat);
 				break;
@@ -288,7 +289,7 @@ voyc.Lee.prototype.displayQuestion = function(flat) {
 
 voyc.Lee.prototype.composeQuestion = function(flat) {
 	var step = this.stack.steps[this.stack.stepndx];
-	var s = flat.dict.t;
+	var s = flat.t; //flat.dict.t;
 	var o = ['hint'];
 	switch (step) {
 		case 'class':
@@ -300,7 +301,7 @@ voyc.Lee.prototype.composeQuestion = function(flat) {
 		case 'translate':
 			break;
 		case 'reverse':
-			s = flat.mean.e;
+			s = flat.e;
 			break;
 	}
 	return { s:s, o:o };
@@ -324,11 +325,13 @@ voyc.Lee.prototype.checkAnswer = function(o) {
 			b = (o.msg.toLowerCase() == tn.toLowerCase());
 			break;
 		case 'translate':
-			var en = this.scores[this.ndxCard].flat.mean.e;
+			//var en = this.scores[this.ndxCard].flat.mean.e;
+			var en = this.scores[this.ndxCard].flat.e;
 			b = (o.msg.toLowerCase().replace('-', ' ') == en.toLowerCase().replace('-', ' '));
 			break;
 		case 'reverse':
-			var th = this.scores[this.ndxCard].flat.dict.t;
+			//var th = this.scores[this.ndxCard].flat.dict.t;
+			var th = this.scores[this.ndxCard].flat.t;
 			b = (o.msg == th);
 			break;
 	}

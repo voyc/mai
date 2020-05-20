@@ -20,8 +20,9 @@ function getcomps() {
 	$id = validateId($taint_id);
         $words = validateArray($taint_words);
 
-	// validate parameter set
-	if (!$si || !$id) {
+	// validate parameter set; must include story id or words
+	//if (!$si || !($id || $words)) {
+	if (!$si || !$words) {
 		Log::write(LOG_WARNING, 'attempt with invalid parameter set');
 		return $a;
 	}
@@ -32,17 +33,19 @@ function getcomps() {
 		return $a;
 	}
 /*
-	// read story
-	$name = 'query-story';
-	$sql = "select words from mai.story where id = $1";
-	$params = array($id);
-	$result = execSql($conn, $name, $sql, $params, false);
-	if (!$result || !pg_num_rows($result)) {
-		Log::write(LOG_ERROR, $name.' failed');
-		return $a;
+	// read words from story if not input
+	if (!$words) {
+		$name = 'query-story';
+		$sql = "select words from mai.story where id = $1";
+		$params = array($id);
+		$result = execSql($conn, $name, $sql, $params, false);
+		if (!$result || !pg_num_rows($result)) {
+			Log::write(LOG_ERROR, $name.' failed');
+			return $a;
+		}
+		$row = pg_fetch_array($result, 0, PGSQL_ASSOC);
+		$words = $row['words'];
 	}
-	$row = pg_fetch_array($result, 0, PGSQL_ASSOC);
-	$words = $row['words'];
 */
 	$comps = getCompsForOneStory($conn, $words);
 	if (!$comps) {

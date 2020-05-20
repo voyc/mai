@@ -142,7 +142,7 @@ story list
 story detail
 	Show English title
 	scroll below the buttons
-	button to add line
+	button to add line, above, below, title
 	show, using expanders or tabs:
 		summary
 		words
@@ -159,21 +159,19 @@ story detail
 		link to editor from dict popup (also from drill)
 		link to "edit -new" from click on error
 
-x combine components into story.words
-x match vocab into story.words
+parse
+	handle quotes
+	x default english translation of line
+	default english translation of line - know when to regen
 
 drill
-	x combine components and words
-		x svc getcomponents
-		x add to story object
-		x getdict, for both words and components
-	stacks
-		syllables
-		words (incl phrases and expressions)
-		lines (add)
+	add glyphs stack
 
 dict/mean
-	phrase and expression are NOT pos
+	phrase and expression are NOT pos ?
+		phrase can be noun, adverb, adj, etc
+		expression can be interjection, phrase, clause or sentence
+	todo
 		m.p, remove expression
 		d.g, as is: s/m/o
 		d.phrase, yes or no, can be grammar with replaceable parts
