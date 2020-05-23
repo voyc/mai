@@ -225,8 +225,10 @@ voyc.Story.prototype.setDefaultEnglishLines = function() {
 			var s = '';	
 			for (var j=0; j<line.words.length; j++) {
 				var word = line.words[j];
-				s += (s.length) ? ' ' : '';
-				s += word.dict.mean[word.loc[0].n].e;
+				if (word.dict) {
+					s += (s.length) ? ' ' : '';
+					s += word.dict.mean[word.loc[0].n].e;
+				}
 			}
 			line.en = s;
 		}

@@ -327,7 +327,7 @@ voyc.Lee.prototype.checkAnswer = function(o) {
 		case 'translate':
 			//var en = this.scores[this.ndxCard].flat.mean.e;
 			var en = this.scores[this.ndxCard].flat.e;
-			b = (o.msg.toLowerCase().replace('-', ' ') == en.toLowerCase().replace('-', ' '));
+			b = (o.msg.toLowerCase().replaceAll('-', ' ') == en.toLowerCase().replaceAll('-', ' '));
 			break;
 		case 'reverse':
 			//var th = this.scores[this.ndxCard].flat.dict.t;
@@ -361,25 +361,29 @@ voyc.Lee.prototype.scoreAnswer = function(bool) {
 voyc.Lee.prototype.promote = function (score) {
 	if (!this.setting['isAutoPromote'])
 		return false;
+	//if (this.stack.stepndx < this.stack.steps.length-1)
+	//	return false;
 
 	var promoted = false;
 	switch (score.state) {
 		case 'w':
 			if ((score.pct >= this.setting.promotePctWork 
-				&& score.acnt > this.setting.promoteCntWork)
-				|| score.consecutive >= this.setting.promoteCntWork) {
-				score.state = 'm';
+			&& score.acnt > this.setting.promoteCntWork)
+			|| score.consecutive >= this.setting.promoteCntWork) {
+				if (this.stack.stepndx < this.stack.steps.length-1)
+					score.state = 'r';
+				else
+					score.state = 'm';
 				promoted = true;
 			}
 			break;
-		case'r':
-			if (score.pct >= this.setting.promotePctReview 
-				|| score.consecutive >= this.setting.promoteCntReview) {
-				score.state = 'm';
-				promoted = true;
-			}
-			break;
-
+	//	case'r':
+	//		if (score.pct >= this.setting.promotePctReview 
+	//			|| score.consecutive >= this.setting.promoteCntReview) {
+	//			score.state = 'm';
+	//			promoted = true;
+	//		}
+	//		break;
 	}
 	return promoted;
 }

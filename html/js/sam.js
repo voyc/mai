@@ -246,7 +246,8 @@ voyc.Sam.prototype.continueDrill = function() {
 			this.drill.stackndx++;
 			if (this.drill.stackndx < this.drill.stacks.length) {
 				this.stack = this.drill.stacks[this.drill.stackndx];
-				var s = 'Contratulations.  You finished the stack.  Let\'s do another.';
+				var s = 'Contratulations.  You finished the stack.<br/>';
+				s += "The next stack is " + this.stack.name + ".<br/>";
 				s += ' Click go when ready.';
 				this.state = 'nextstack';
 				this.chat.post(this.chatid, s, ['go']);
@@ -318,7 +319,22 @@ voyc.Sam.prototype.cmdDrill = function(story, r) {
 	}
 
 	this.stack = this.drill.stacks[this.drill.stackndx]
-	this.startDrill();
+
+	//this.startDrill();
+	var s = this.drawDrillPlan();
+	this.dochat(s);
+	this.dochat("The first stack is " + this.stack.name + ".")
+	this.stack.stepndx = -1;
+	this.continueDrill();
+}
+
+voyc.Sam.prototype.drawDrillPlan = function() {
+	var s = '';
+	for (var i=0; i<this.drill.stacks.length; i++) {
+		var stack = this.drill.stacks[i];
+		s += stack.name + ' ' + stack.sets.length + ' sets<br/>';
+	}
+	return s;
 }
 
 voyc.Sam.prototype.prepStack = function(story,r) {
@@ -750,17 +766,24 @@ voyc.Sam.prototype.showStory = function(o,r) {
 			if (o.lines.length > 1) {
 				s += o.lines.length + ' lines<br/>';
 			}
+
+			// classify and count
+			// note: a word that is both word and comp is double-counted
 			var cntword = 0;
 			var cntcomp = 0;
 			var cntwordnew = 0;
 			var cntcompnew = 0;
 			var cnterr = 0;
 			o.words.forEach(function(item,index) {
-				if (item.comp) cntcomp++;
-				if (item.comp && !item.vocab) cntcompnew++;
-				if (item.id && !item.vocab) cntwordnew++;
-				if (item.id) cntword++;
-				else cnterr++;
+				if (item.comp) {
+					cntcomp++;
+					if (!(item.vocab && (item.vocab.s == 'm'))) cntcompnew++;
+				}
+				if (item.id && item.loc && item.loc.length) {
+					cntword++;
+					if (!(item.vocab && (item.vocab.s == 'm'))) cntwordnew++;
+				}
+				if (!item.id) cnterr++;
 			});
 			s += cntword + ' words (' + cntwordnew + ' new)<br/>';
 			s += cntcomp + ' comps (' + cntcompnew + ' new)<br/>';

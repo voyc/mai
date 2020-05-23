@@ -523,7 +523,8 @@ voyc.Noam.prototype.parseString = function(input, linenum, greedy) {
 	var words = [];
 
 	// split the input into multiple substrings separated by whitespace 
-	var sa = input.split(/\s+/); 
+	//var sa = input.split(/\s+/); 
+	var sa = input.replace(/[\(\)\"\!]/g, function ($1) { return ' ' + $1 + ' ';}).replace(/[ ]+/g,' ').trim().split(' ');
 	for (var n=0; n<sa.length; n++) {
 		var fullStringMatch = {};
 		var s = sa[n];

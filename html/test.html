@@ -19,6 +19,12 @@
 window.addEventListener('load', function(e) {
 	attachListeners();
 	initializeView();
+
+	var str = 'ผม พูด "ไม่ละ" ที่ เขา (พวน)!';
+	var a = str.replace(/[\(\)\"\!]/g, function ($1) { return ' ' + $1 + ' ';}).replace(/[ ]+/g,' ').trim().split(' ');
+	
+	console.log(a.length);
+	console.log(a.join("~"));
 }, false);
 
 attachListeners = function() {
