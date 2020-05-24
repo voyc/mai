@@ -48,10 +48,11 @@ voyc.Alphabet.prototype.loadList = function() {
 **/
 voyc.Alphabet.prototype.search = function(char) {
 	var g = this.list[this.key[char]];
-	if (g) {
-		return g;
-	}
-	return this.reverseSearch(char);
+	return g;
+	//if (g) {
+	//	return g;
+	//}
+	//return this.reverseSearch(char);
 }
 
 /**

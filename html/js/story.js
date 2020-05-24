@@ -229,6 +229,10 @@ voyc.Story.prototype.setDefaultEnglishLines = function() {
 					s += (s.length) ? ' ' : '';
 					s += word.dict.mean[word.loc[0].n].e;
 				}
+				else {
+					s += (s.length) ? ' ' : '';
+					s += word.t;
+				}
 			}
 			line.en = s;
 		}

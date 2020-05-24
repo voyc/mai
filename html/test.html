@@ -20,9 +20,18 @@ window.addEventListener('load', function(e) {
 	attachListeners();
 	initializeView();
 
+	//pass-thru spaces and non-thai chars
 	var str = 'ผม พูด "ไม่ละ" ที่ เขา (พวน)!';
-	var a = str.replace(/[\(\)\"\!]/g, function ($1) { return ' ' + $1 + ' ';}).replace(/[ ]+/g,' ').trim().split(' ');
-	
+	//var a = str.replace(/[\(\)\"\!]/g, function ($1) { return ' ' + $1 + ' ';}).replace(/[ ]+/g,' ').trim().split(' ');
+
+	// split string on spaces and non-thai chars
+	var fstr = str.replace(/[\ \(\)\"\!i\-\.\,\'\%\&\*\$\#\@\:\;A-Za-z0-9]+/g, function ($1) { return '~' + $1 + '~';});
+	if (fstr.substr(fstr.length-1,1) == '~')
+		fstr = fstr.substr(0,fstr.length-1);
+	var a = fstr.split('~');
+
+	console.log(str);
+	console.log(fstr);
 	console.log(a.length);
 	console.log(a.join("~"));
 }, false);

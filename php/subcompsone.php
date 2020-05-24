@@ -19,7 +19,7 @@ function getCompsForOneStory($conn, $words) {
 	$sql = "select cp from mai.dict where (g='m' or g='x') and t = any ($1);";
 	$stmt = @pg_prepare($conn, $name, $sql);
 	if (!$stmt) {
-		Log::write(LOG_ERROR, $name.' prepare failed');
+		Log::write(LOG_ERR, $name.' prepare failed');
 		return false;
 	}
 
@@ -27,7 +27,7 @@ function getCompsForOneStory($conn, $words) {
 	$components = array();
 	$dest = readComponents($conn, $name, $source);	
 	$runaway = 10;
-	while (count($dest) && --$runaway > 0) {
+	while ($dest && count($dest) && --$runaway > 0) {
 		$components = mergeArrays($components, $dest);
 		$source = $dest;
 		$dest = readComponents($conn, $name, $source);
@@ -43,7 +43,7 @@ function getCompsForOneStory($conn, $words) {
 	$params = array($str);
 	$result = execSql($conn, $name, $sql, $params, false);
 	if (!$result) {
-		Log::write(LOG_ERROR, $name.' failed');
+		Log::write(LOG_ERR, $name.' failed');
 		return $a;
 	}
 	$numrows = pg_num_rows($result);
@@ -70,7 +70,8 @@ function composeArrayLiteral($a) {
 	// compose sql array literal from input array
 	$at = array();
 	foreach ($a as $t => $n) {
-		$at[] = '"'.$t.'"';
+		$k = str_replace('"','\"',$t); // escape double-quote
+		$at[] = '"'.$k.'"';
 	}
 	$sat = join(',',$at);
 	$arrayliteral = "{" . $sat . "}";
@@ -79,18 +80,13 @@ function composeArrayLiteral($a) {
 
 function readComponents($conn, $name, $source) {
 	// compose sql array literal from input array
-	$at = array();
-	foreach ($source as $t => $n) {
-		$at[] = '"'.$t.'"';
-	}
-	$sat = join(',',$at);
-	$arrayliteral = "{" . $sat . "}";
+	$arrayliteral = composeArrayLiteral($source);
 
 	// execute the prepared statement
 	$params = array($arrayliteral);
 	$result = @pg_execute($conn, $name, $params);
 	if (!$result) {
-		Log::write(LOG_ERROR, $name.' execute failed');
+		Log::write(LOG_ERR, $name.' execute failed '.$arrayliteral);
 		return false;
 	}
 	$numrows = pg_num_rows($result);

@@ -160,12 +160,20 @@ story detail
 		link to "edit -new" from click on error
 
 story parse
-	handle quotes
+	x handle quotes
 	x default english translation of line
 	default english translation of line - know when to regen
-	Pass through punctuation, blank lines, non-thai chars.
+	x Pass through punctuation, blank lines, non-thai chars.
 		make separate word, thai is same as eng, not drilled, not in dict, like symbol
 		ผม พูด "ไม่ละ" ที่ เขา (พวน)!
+	abbreviations
+		months พ.ค.
+		US สหรัฐฯ or สหรัฐ
+		put period in dictionary
+		do not split words on period
+		put all known abbreviations in dictionary
+	blank lines
+		pass thru as blank line
 
 drill
 	add glyphs stack

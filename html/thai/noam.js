@@ -524,7 +524,14 @@ voyc.Noam.prototype.parseString = function(input, linenum, greedy) {
 
 	// split the input into multiple substrings separated by whitespace 
 	//var sa = input.split(/\s+/); 
-	var sa = input.replace(/[\(\)\"\!]/g, function ($1) { return ' ' + $1 + ' ';}).replace(/[ ]+/g,' ').trim().split(' ');
+	//var sa = input.replace(/[\(\)\"\!]/g, function ($1) { return ' ' + $1 + ' ';}).replace(/[ ]+/g,' ').trim().split(' ');
+
+	// split string on spaces and non-thai chars
+	var fstr = input.replace(/[\ \(\)\"\!i\-\.\,\'\%\&\*\$\#\@\:\;A-Za-z0-9]+/g, function ($1) { return '~' + $1 + '~';});
+	if (fstr.substr(fstr.length-1,1) == '~')
+		fstr = fstr.substr(0,fstr.length-1);
+	var sa = fstr.split('~');
+
 	for (var n=0; n<sa.length; n++) {
 		var fullStringMatch = {};
 		var s = sa[n];
@@ -532,6 +539,14 @@ voyc.Noam.prototype.parseString = function(input, linenum, greedy) {
 		var us = '';	// unmatched string
 		var ui = -1;	// starting index of unmatched substring
 		var startndx = input.indexOf(s);
+
+		// if pass-through, sto it and continue
+		var test = s.substr(0,1);
+		if (!this.alphabet.search(s.substr(0,1))) {
+			sto(s,n,startndx,0,'',false);
+			continue;
+		}
+
 		// scan input char by char. i is starting index pos.  step forward.
 		for (var i=0; i<slen; i++) {
 
@@ -543,6 +558,7 @@ voyc.Noam.prototype.parseString = function(input, linenum, greedy) {
 					var char = s.substr(j,1); 
 					var alpha = this.alphabet.search(char); 
 					if (!alpha) {
+						console.log('character '+char+' not in dictionary');
 						debugger;
 					}
 					if (alpha.a.length && 'abr'.includes(alpha.a))  { 
@@ -589,7 +605,7 @@ voyc.Noam.prototype.parseString = function(input, linenum, greedy) {
 		}
 
 		// unmatched piece at end, or full string match
-		if (ui >= 0 && i-1>ui) {
+		if (ui >= 0 && i-1>=ui) {
 			us = s.substring(ui,i);
 			if (us == s && fullStringMatch.t) {
 				if (us != fullStringMatch.t)
