@@ -127,16 +127,15 @@ voyc.Dictionary.prototype.update = function(o) {
 }
 
 /* get a set of words from the db, store in this.mini */
-voyc.Dictionary.prototype.getDict = function(ida) {
+voyc.Dictionary.prototype.getDict = function(ida,cb) {
 	var svcname = 'getdict';
 	var data = {};
 	data['si'] = voyc.getSessionId();
 	data['lk' ] = ida;
 	var self = this;
+	var callback = cb;
 	voyc.comm.request(svcname, data, function(ok, response, xhr) {
-		if (!ok) {
-			response = { 'status':'system-error'};
-		}
+		if (!ok) response = { 'status':'system-error'}; 
 		if (response['status'] == 'ok') {
 			self.mini.list = response.list;
 			self.mini.key = {};
@@ -144,15 +143,15 @@ voyc.Dictionary.prototype.getDict = function(ida) {
 				var item = self.mini.list[i];
 				self.mini.key[item.id] = i;
 			}
-			console.log('getdict success');
+			if (callback) {
+				callback(response.list);
+			}
 		}
-		else {
-			console.log('getdict failed');
-		}
-		voyc.observer.publish('getdict-received', 'mai', response);
+		console.log(svcname + ((response['status'] == 'ok') ? ' success' : ' failed'));
+		voyc.observer.publish(svcname+'-received', 'dictionary', response);
 	});
 
-	voyc.observer.publish('getdict-posted', 'mai', {});
+	voyc.observer.publish(svcname+'-posted', 'mai', {});
 	return;
 }
 
@@ -278,6 +277,56 @@ voyc.Dictionary.prototype.listAll = function() {
 	return s;
 }
 
+// moved from voyc.StoryView.prototype.composeWord = function(word,r,wid) {
+voyc.Dictionary.prototype.drawDetail = function(dict,mode,wid,chosen) {
+	var s = '';
+	s += '<p>'+dict.t;
+	s += " <icon type='draw' name='speaker' text='"+dict.t+"'></icon> &nbsp;";
+	s += voyc.dictionary.drawTranslit(dict.tl);
+	s += "<icon class='fright' type='char' name='pencil' did='"+dict.id+"'></icon>";
+	s += '</p>';
+	var numdefs = dict.mean.length;
+	var mean = dict.mean[0];
+	if (numdefs == 1) {
+		s += '<p><b>'+mean.e+'</b> <i>'+voyc.pos[mean.p]+'</i> '+mean.d+'</p>';
+	}
+	else {
+		for (var i=0; i<dict.mean.length; i++) {
+			mean = dict.mean[i];
+			var num = mean.n + '. ';
+			var mm = mean.n;
+			var eng = '';
+			if (mode == 'author') {
+				if (chosen && chosen == (i+1)) {
+					eng = '<b>'+mean.e+'</b>';
+				}
+				else {
+					eng = voyc.printf('<button type=button wid="$1" mm=$2 class=anchor>$3</button>',[wid,mm,mean.e]);
+				}
+			}
+			else {
+				eng = mean.e;
+			}
+			// todo (voyc.pos)  write function to support multiple pos
+			s += '<p>'+num+eng+' <i>'+voyc.pos[mean.p]+'</i> '+mean.d+'</p>';
+		}
+	}
+	if (dict.g == 'o') {
+		s += "<div class='horz'>Pronunciation <span expand='popdicrules' class='expander'></span>";
+		s += "<div id='popdicrules'>";
+		s += this.drawComponentsOne(dict.cp, dict.ru);
+		s += '</div></div>';
+	}
+	else if (dict.g == 'm') {
+		s += "<div class='horz'>Components <span expand='popdiccomps' class='expander'></span>";
+		s += "<div id='popdiccomps'>";
+		s += this.drawComponentsMulti(dict.cp, dict.ru);
+		s += '</div></div>';
+	}
+	s += '<br/>';
+	return s;
+}
+
 voyc.Dictionary.prototype.drawFlatList = function(flats) {
 	var s = '';
 	for (var i=0; i<flats.length; i++) {
@@ -298,6 +347,7 @@ voyc.Dictionary.prototype.drawFlat = function(flat) {
 			s += " <i>" + voyc.pos[mean.p] + "</i> " + mean.e;
 			s += "<span expand='more"+this.unique+"' class='expander'></span>";
 			s += "<icon type='char' name='pencil' did='"+dict.id+"'></icon>";
+			s += "<icon name=zoom did='"+dict.id+"'>&#x1F50D;</icon>";
 			s += "<div id='more"+this.unique+"'>";
 			s += mean.d;
 			s += '</div>';
@@ -312,6 +362,7 @@ voyc.Dictionary.prototype.drawFlat = function(flat) {
 			s += " <i>" + voyc.pos[mean.p] + "</i> " + mean.e;
 			s += "<span expand='more"+this.unique+"' class='expander'></span>";
 			s += "<icon type='char' name='pencil' did='"+dict.id+"'></icon>";
+			s += "<icon name=zoom did='"+dict.id+"'>&#x1F50D;</icon>";
 			s += "<div id='more"+this.unique+"'>";
 			s += mean.d;
 			s += '</div>';
@@ -367,6 +418,9 @@ voyc.Dictionary.prototype.splitComponents = function(cp) {
 }
 
 voyc.Dictionary.prototype.drawComponents = function(cp,ru) {
+	return this.drawComponentsOne(cp,ru);
+}
+voyc.Dictionary.prototype.drawComponentsOne = function(cp,ru) {
 	var s = '';
 	if (cp && cp.length) {
 		var cpo = this.splitComponents(cp);
@@ -388,6 +442,16 @@ voyc.Dictionary.prototype.drawComponents = function(cp,ru) {
 		var ru = ru.split(',');
 		for (var i=0; i<ru.length; i++) {
 			s += '<br/> '+this.drawRule(ru[i]);
+		}
+	}
+	return s;
+}
+voyc.Dictionary.prototype.drawComponentsMulti = function(cp,ru) {
+	var s = '';
+	if (cp && cp.length) {
+		var cpa = cp.split(',');
+		for (var i=0; i<cpa.length; i++) {
+			s += cpa[i] + '<br/>';
 		}
 	}
 	return s;

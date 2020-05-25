@@ -190,7 +190,17 @@ voyc.Sam.prototype.onSearchReceived = function(note) {
 			//else, multiple results, fall thru to search
 		case 'search':
 			var s = voyc.dictionary.drawFlatList(flats);
-			this.dochat(s,true);
+			var self = this;
+			this.dochat(s,true,function(el) {
+				//attach handler to zoom icons
+				var elist = el.querySelectorAll('icon[name="zoom"]');
+				for (var i=0; i<elist.length; i++) {
+					elist[i].addEventListener('click', function(e) {
+						var id = e.currentTarget.getAttribute('did');
+						self.cmdZoom({object:id,adj:[]});
+					}, false);
+				}
+			});
 			this.state = 'ready';
 			break;
 	}
@@ -976,6 +986,11 @@ voyc.Sam.prototype.cmdSearch = function(r) {
 			this.dochat('searching...');
 		}
 	}
+}
+
+voyc.Sam.prototype.cmdZoom = function(r) {
+	var id = parseInt(r.object);
+	voyc.editor.popupDict(id);
 }
 
 /* call the editor with state 'edit' or 'insert' */

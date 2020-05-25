@@ -395,3 +395,59 @@ voyc.fixOpen = function(eid) {
 	}
 }
 
+voyc.Editor.prototype.popupDict = function(id) {
+	// input is dict id, assumed to be in minidict
+	// moved from storyview::onStoryReady
+	console.log("popupdict " + id);
+	var dict = voyc.dictionary.miniDict(id);
+	var s = voyc.dictionary.drawDetail(dict,false,false,0);
+
+	var el = document.querySelector('form#worddetails div#details');
+	el.innerHTML = s;
+	//voyc.cheat = wrd;
+	(new voyc.Minimal()).openPopup('worddetails');
+	(new voyc.Minimal()).attachAll(el);
+	(new voyc.Icon()).attachAll(el);
+	(new voyc.Icon()).drawAll(el);
+
+	// attach handlers
+	// moved from sam::postPost
+	// x speaker
+	// x pencil
+	// choose
+	// expander pronunciation
+	// expander components
+
+	//attach handler to speaker icons
+	var elist = el.querySelectorAll('icon[name="speaker"]');
+	for (var i=0; i<elist.length; i++) {
+		elist[i].addEventListener('click', function(e) {
+			var s = e.currentTarget.getAttribute('text');
+			var l = voyc.dictionary.lang(s);
+			voyc.mai.sam.speech.speak( s,l);
+		}, false);
+	}
+
+	//attach handler to pencil icons
+	var elist = el.querySelectorAll('icon[name="pencil"]');
+	for (var i=0; i<elist.length; i++) {
+		elist[i].addEventListener('click', function(e) {
+			var id = e.currentTarget.getAttribute('did');
+			voyc.observer.publish('edit-requested', 'editor', {act:'u',dict:dict});
+			(new voyc.Minimal()).closePopup();
+		}, false);
+	}
+
+	// attach handlers on choose meaning
+	// applies only when called from story mode in author mode
+	var opts = el.querySelectorAll('button[mm]');
+	for (var i=0; i<opts.length; i++) {
+		opts[i].addEventListener('click',function(e) {
+			var wid= e.currentTarget.getAttribute('wid');
+			var mm = e.currentTarget.getAttribute('mm');
+			voyc.mai.sam.chooseMean(e,mm,wid);  // probably move this to story
+			(new voyc.Minimal).closePopup();
+		}, false);
+	}
+	
+}

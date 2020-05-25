@@ -103,7 +103,8 @@ voyc.StoryView.prototype.onGetStoriesReceived = function(note) {
 voyc.StoryView.prototype.onStoryReady = function(note) {
 	// draw the story
 	this.container.innerHTML = voyc.story.draw();
-
+	voyc.removeWhiteSpace(this.container);
+/*
 	// remove whitespace from the html
 	var elist = this.container.querySelectorAll('row');
 	for (var i=0; i<elist.length; i++) {
@@ -113,7 +114,7 @@ voyc.StoryView.prototype.onStoryReady = function(note) {
 	for (var i=0; i<elist.length; i++) {
 		voyc.removeWhiteSpace(elist[i]);
 	}
-
+*/
 	// attach button handlers
 	var self = this;
 	document.getElementById('thbtn').addEventListener('click',function(e) {self.setview('view','th')});
@@ -162,14 +163,23 @@ voyc.StoryView.prototype.onStoryReady = function(note) {
 	for (var i=0; i<list.length; i++) {
 		list[i].addEventListener('click', function(clk) {
 			console.log('word clicked');
+
+			// find the word object
 			var wrd = clk.currentTarget;
 			var wid = wrd.getAttribute('wid');
+			
+			// var wid = this.widFromWord(word); (one line in Story)
+			// var word = this.wordFromWid(wid);
 			var w = wid.split('.');
 			var did =  parseInt(w[0]);
 			var line=  parseInt(w[1]);
 			var wndx = parseInt(w[2]);
 			var word = voyc.story.lines[line-1].words[wndx];
+
+			// draw the html for the word object
 			var s = self.composeWord(word,{adj:['author']},wid);
+
+			// open the popup	
 			var sel = document.querySelector('form#worddetails div#details');
 			sel.innerHTML = s;
 			voyc.cheat = wrd;
@@ -177,7 +187,13 @@ voyc.StoryView.prototype.onStoryReady = function(note) {
 			(new voyc.Minimal()).attachAll(sel);
 			(new voyc.Icon()).attachAll(sel);
 			(new voyc.Icon()).drawAll(sel);
-			// attach handlers 	
+
+			// attach handlers on the popup:
+			// 	chooseMean when in author mode
+			// 	goto editor on pencil click
+			// 	play audio on speaker click
+			// 	show/hide proununciation rules
+			// 	show/hide components
 			var opts = sel.querySelectorAll('button[mm]');
 			for (var i=0; i<opts.length; i++) {
 				opts[i].addEventListener('click',function(e) {
@@ -204,6 +220,7 @@ voyc.StoryView.prototype.setmode = function(value) {
 	document.querySelector('section#storyview').setAttribute('mode', value);
 }
 
+// move to dictionary as drawOne
 voyc.StoryView.prototype.composeWord = function(word,r,wid) {
 	var s = '';
 	s += '<p>'+word.dict.t;

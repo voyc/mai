@@ -13,6 +13,10 @@ subcomponents
 		check for utils before calling
 		fix height and width on open popup
 		on open popup, learn how to position, other than center
+		combine the following into one call, IF icon is present
+			(new voyc.Minimal).attachAll(this.container);
+			(new voyc.Icon).attachAll(this.container);
+			(new voyc.Icon).drawAll(this.container);
 	Icon
 		load lib dynamically
 		remove css adjustment for pencil top, replace with comment
@@ -40,8 +44,6 @@ rearrange vowel components
 noam translate and translit are broken because of new search
 
 implement up/down arrow in chat window, for mobile also
-
-implement dictionary page, with search and browse
 
 keyboard
 	uppercase
@@ -72,9 +74,6 @@ drill
 		words
 		phrases/expressions
 		lines
-
-dictionary editor
-	imlement add-translation button 
 
 when re-parse finds โชคดี instead of โชค and ดี
 	color-code a need for review
@@ -118,8 +117,6 @@ getvocab, 4, attempt with invalid parameter set - missing $si
 voyc.Speech
 	speak on every question. which stacks?
 
-link to editor from dictionary, story, drill
-
 import new stories, create schedule to import all known material
 	drill more, one hour per day, from phone
 	all previous course content now in library
@@ -140,8 +137,10 @@ story list
 		(consider global search, search dict and story)
 
 story detail
-	Show English title
-	scroll below the buttons
+	x Show English title
+	draw view with buttons one-time
+		leave a hole for the story
+		scroll below the buttons
 	button to add line, above, below, title
 	show, using expanders or tabs:
 		summary
@@ -156,8 +155,33 @@ story detail
 	button handlers
 		add line
 		choose meaning from dict popup
-		link to editor from dict popup (also from drill)
-		link to "edit -new" from click on error
+		-- link to editor from dict popup (also from drill)
+		-- link to "edit -new" from click on error
+			call popup
+	
+DictView
+	UI object, companion to Dictionary model object
+	renamed from Editor
+	swap between Editor and Search	
+	1. Search/Browse - implement dictionary page, from main menu, with search and browse
+		reverse search (English)
+		browse?
+		find similar words: tone, tonemarks, vowelpatterns, leading consonant, final consonant, rules, num syllables, each syllable
+		select from list for custom drill
+	2. Editor, called from popupDict, and from Search results
+		implement add-translation button 
+		after editor, how to return to drill? or storyview? Back button?
+	3. popupDict
+		x added to Editor.js
+		x call from sam:search
+		call from storyview
+		call from drill
+		x show components (m), pronunciation (o)
+		x nav to Editor on pencil click
+		choose meaning in author mode
+		on entry, if word not found, nav to Editor
+		x make a command to open the popup
+			x search command should link to popup
 
 story parse
 	x handle quotes
@@ -169,7 +193,7 @@ story parse
 	abbreviations
 		months พ.ค.
 		US สหรัฐฯ or สหรัฐ
-		put period in dictionary
+		put period in dictionary (you mean alphabet?)
 		do not split words on period
 		put all known abbreviations in dictionary
 	blank lines
@@ -193,6 +217,10 @@ dict/mean
 		d.g, as is: s/m/o
 		d.phrase, yes or no, can be grammar with replaceable parts
 		d.expression, yes or no, is stock sentence or interjection
+
+grammar/sengen/conversation
+	learn how to carry on a conversation
+		not a drill, but using user's mastered vocab
 ====================================
 support video conferencing chatbot screen-sharing
 	zoom
