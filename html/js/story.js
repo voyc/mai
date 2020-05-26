@@ -112,7 +112,7 @@ voyc.Story.prototype.save = function() {
 	data['language' ] = this.language;
 	data['title' ] = this.title;
 	data['original'] = this.original;
-	data['words'] = JSON.stringify( this.condenseWords(this.consolidateWords(this.words)));
+	data['words'] = JSON.stringify( this.condenseWords(this.consolidateWords()));
 	voyc.comm.request(svcname, data, function(ok, response, xhr) {
 		if (!ok) {
 			response = { 'status':'system-error'};
@@ -138,8 +138,8 @@ voyc.Story.prototype.parse = function(sid, raw) {
 	}
 	if (raw) {
 		this.original = raw;
+		this.words = [];
 	}
-	this.words = [];
 	this.speakers = { x: {name: "narrator", age: 40, gender: "male"} };
 	this.lines = [];
 	this.meta = [];

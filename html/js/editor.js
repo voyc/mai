@@ -79,9 +79,11 @@ voyc.Editor.prototype.setup = function() {
 	voyc.$('cancelbtn').addEventListener('click', function(e) {
 		self.clear();
 		voyc.observer.publish('edit-cancelled', 'editor', {});
+		window.history.back();
 	},false);
 	voyc.$('savebtn').addEventListener('click', function(e) {
 		self.save();
+		window.history.back();
 	},false);
 }
 
@@ -395,12 +397,12 @@ voyc.fixOpen = function(eid) {
 	}
 }
 
-voyc.Editor.prototype.popupDict = function(id) {
+voyc.Editor.prototype.popupDict = function(id,mode,wid,chosen) {
 	// input is dict id, assumed to be in minidict
 	// moved from storyview::onStoryReady
 	console.log("popupdict " + id);
 	var dict = voyc.dictionary.miniDict(id);
-	var s = voyc.dictionary.drawDetail(dict,false,false,0);
+	var s = voyc.dictionary.drawDetail(dict,mode,wid,chosen);
 
 	var el = document.querySelector('form#worddetails div#details');
 	el.innerHTML = s;
@@ -415,8 +417,8 @@ voyc.Editor.prototype.popupDict = function(id) {
 	// x speaker
 	// x pencil
 	// choose
-	// expander pronunciation
-	// expander components
+	// x expander pronunciation
+	// x expander components
 
 	//attach handler to speaker icons
 	var elist = el.querySelectorAll('icon[name="speaker"]');
@@ -440,14 +442,35 @@ voyc.Editor.prototype.popupDict = function(id) {
 
 	// attach handlers on choose meaning
 	// applies only when called from story mode in author mode
+	var self = this;
 	var opts = el.querySelectorAll('button[mm]');
 	for (var i=0; i<opts.length; i++) {
 		opts[i].addEventListener('click',function(e) {
 			var wid= e.currentTarget.getAttribute('wid');
 			var mm = e.currentTarget.getAttribute('mm');
-			voyc.mai.sam.chooseMean(e,mm,wid);  // probably move this to story
+			self.chooseMean(e,mm,wid);  // probably move this to story
 			(new voyc.Minimal).closePopup();
 		}, false);
 	}
-	
+}
+
+voyc.Editor.prototype.chooseMean = function(e,mm,wid) {
+	var n = parseInt(mm);
+	var a = wid.split('.');
+	var did = parseInt(a[0]);
+	var line= parseInt(a[1]);
+	var wndx = parseInt(a[2]);
+
+	// insert the chosen mean into the lines/words array
+	var word = voyc.story.lines[line-1].words[wndx];
+	word.loc[0].n = n;
+
+	// re-consolidate the words array to pickup the change in loc.n
+	voyc.story.words = voyc.story.consolidateWords();
+
+	// set the UI
+	var elist = document.querySelectorAll('story word[wid="'+wid+'"]');
+	for (var i=0; i<elist.length; i++) {
+		elist[i].setAttribute('chosen',true);
+	}
 }

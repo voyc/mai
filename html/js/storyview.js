@@ -175,6 +175,15 @@ voyc.StoryView.prototype.onStoryReady = function(note) {
 			var line=  parseInt(w[1]);
 			var wndx = parseInt(w[2]);
 			var word = voyc.story.lines[line-1].words[wndx];
+			var chosen = word.loc[0].n;
+
+			if (did) {
+				voyc.editor.popupDict(did,'author',wid,chosen);
+			}
+			else {
+				voyc.observer.publish('edit-requested', 'editor', {act:'i',t:word.t});
+			}
+			return;
 
 			// draw the html for the word object
 			var s = self.composeWord(word,{adj:['author']},wid);

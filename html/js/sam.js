@@ -1002,7 +1002,7 @@ voyc.Sam.prototype.cmdEdit = function(r) {
 		this.dochat('edit what?');
 	}
 	else if (r.adj['new']) {
-		this.state = 'insert';
+		this.state = 'edit'; //'insert';
 		voyc.observer.publish('edit-requested', 'sam', {act:'i',t:r.object});
 	}
 	else {
@@ -1012,20 +1012,20 @@ voyc.Sam.prototype.cmdEdit = function(r) {
 }
 
 voyc.Sam.prototype.onEditCancelled = function(note) {
-	this.dochat('edit cancelled');
-	this.state = 'ready';
-	voyc.browserhistory.nav('home');
+	if (this.state == 'edit') {
+		this.dochat('edit cancelled');
+		this.state = 'ready';
+		window.history.back();
+	}
 }
 
 voyc.Sam.prototype.onSetDictReceived = function(note) {
-	if (note.payload.status == 'ok') {
-		this.dochat('edit saved');
+	voyc.dictionary.getFast();
+	if (this.state == 'edit') {
+		this.dochat((note.payload.status == 'ok') ? 'edit saved' : 'edit save failed.');
+		this.state = 'ready';
 	}
-	else {
-		this.dochat('edit save failed.');
-	}
-	this.state = 'ready';
-	voyc.browserhistory.nav('home');
+	window.history.back();
 }
 
 voyc.Sam.prototype.cmdSetVocab = function(req) {

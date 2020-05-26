@@ -98,31 +98,16 @@ voyc.Dictionary.prototype.lang = function(s) {
 }
 
 voyc.Dictionary.prototype.update = function(o) {
-
 	var svcname = 'setdict';
-
-	// build data array of name/value pairs from user input
 	var data = {};
 	data['si'] = voyc.getSessionId();
 	data['up' ] = JSON.stringify(o);
-
-	// call svc
 	voyc.comm.request(svcname, data, function(ok, response, xhr) {
-		if (!ok) {
-			response = { 'status':'system-error'};
-		}
-
-		voyc.observer.publish('setdict-received', 'mai', response);
-
-		if (response['status'] == 'ok') {
-			console.log('setdict success');
-		}
-		else {
-			console.log('setdict failed');
-		}
+		if (!ok) response = { 'status':'system-error'};
+		voyc.observer.publish(svcname + '-received', 'mai', response);
+		console.log(svcname+((response['status'] == 'ok') ? ' success' : ' failed'));
 	});
-
-	voyc.observer.publish('setdict-posted', 'mai', {});
+	voyc.observer.publish(svcname+'-posted', 'mai', {});
 	return;
 }
 
