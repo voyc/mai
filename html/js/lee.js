@@ -327,7 +327,7 @@ voyc.Lee.prototype.checkAnswer = function(o) {
 		case 'translate':
 			//var en = this.scores[this.ndxCard].flat.mean.e;
 			var en = this.scores[this.ndxCard].flat.e;
-			b = (o.msg.toLowerCase().replaceAll('-', ' ') == en.toLowerCase().replaceAll('-', ' '));
+			b = (o.msg.toLowerCase().replace(/-/g, ' ') == en.toLowerCase().replace(/-/g, ' '));
 			break;
 		case 'reverse':
 			//var th = this.scores[this.ndxCard].flat.dict.t;

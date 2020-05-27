@@ -42,14 +42,15 @@ function setdict() {
 	$row = pg_fetch_array($result, 0, PGSQL_ASSOC);
 	$userid = $row['id'];
 
-	// get input data
-	$oup = json_decode($up);
+	//// get input data
+	//$oup = json_decode($up);
 
-	// convert objects to array
-	$aup = (array) $oup;
-	for ($i = 0; $i < count($aup['mean']); $i++) {
-		$aup['mean'][$i] = (array)$aup['mean'][$i];
-	}
+	//// convert objects to array
+	//$aup = (array) $oup;
+	//for ($i = 0; $i < count($aup['mean']); $i++) {
+	//	$aup['mean'][$i] = (array)$aup['mean'][$i];
+	//}
+	$aup = json_decode($up,TRUE);
 
 	// insert or update the dict record
 	if ($aup['trx'] == 'i') { // insert
@@ -117,7 +118,7 @@ function setdict() {
 			if ($mid < 0) {
 				return $a;
 			}
-			$params = array($mid,$did,$m['n'],$m['p'],$m['e'],$m['d']);
+			$params = array($mid,$aup['id'],$m['n'],$m['p'],$m['e'],$m['d']);
 			$result = execSql($conn, $insname, $inssql, $params, true);
 		}
 		else if ($m['trx'] == 'u') { // update

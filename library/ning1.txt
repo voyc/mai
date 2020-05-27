@@ -136,7 +136,8 @@ meta::english source: http://www.oprah.com/spirit/thich-nhat-hanh-fearlessness#i
 แทนที่จะพยายามหนีจากความกลัว 
 เราสามารถที่จะเชื้อเชิญความกลัวให้ขึ้นมาสู่การตระหนักรู้แล้วมองมันอย่างชัดเจนและลึกซึ้ง
 
-คำศัพท์
+คำศัพท์ - vocabulary words
+
 หนทาง          way
 เดียว             only
 ที่จะช่วยให้ความกลัว     which will help 

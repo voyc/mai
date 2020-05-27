@@ -122,12 +122,13 @@ voyc.Dictionary.prototype.getDict = function(ida,cb) {
 	voyc.comm.request(svcname, data, function(ok, response, xhr) {
 		if (!ok) response = { 'status':'system-error'}; 
 		if (response['status'] == 'ok') {
-			self.mini.list = response.list;
-			self.mini.key = {};
-			for (var i = 0; i<self.mini.list.length; i++) {
-				var item = self.mini.list[i];
-				self.mini.key[item.id] = i;
-			}
+			//self.mini.list = response.list;
+			//self.mini.key = {};
+			//for (var i = 0; i<self.mini.list.length; i++) {
+			//	var item = self.mini.list[i];
+			//	self.mini.key[item.id] = i;
+			//}
+			self.loadMini(response.list);
 			if (callback) {
 				callback(response.list);
 			}
@@ -145,6 +146,15 @@ voyc.Dictionary.prototype.miniDict = function(id) {
 	return this.mini.list[this.mini.key[id]];
 }
 
+voyc.Dictionary.prototype.loadMini = function(list) {
+	this.mini.list = list;
+	this.mini.key = {};
+	for (var i = 0; i<this.mini.list.length; i++) {
+		var item = this.mini.list[i];
+		this.mini.key[item.id] = i;
+	}
+}
+
 voyc.Dictionary.prototype.search = function(word, lang, typearray) {
 	var svcname = 'search';
 	var data = {};
@@ -152,22 +162,21 @@ voyc.Dictionary.prototype.search = function(word, lang, typearray) {
 	data['lk' ] = word;
 	var self = this;
 	voyc.comm.request(svcname, data, function(ok, response, xhr) {
-		if (!ok) {
-			response = { 'status':'system-error'};
-		}
+		if (!ok) { response = { 'status':'system-error'}; }
 		voyc.observer.publish(svcname+'-received', 'dictionary', response);
 		console.log(svcname+(response['status'] == 'ok') ? ' success' : ' failed');
 		if (response['status'] == 'ok') {
 			// add new items to the dict
-			var dictlist = response.dict;
-			var ndx = self.mini.list.length;
-			for (var i = 0; i<dictlist.length; i++) {
-				var dict = dictlist[i];
-				if (!self.miniDict(dict.id)) {
-					self.mini.list.push(dict);
-					self.mini.key[dict.id] = ndx++;
-				}
-			}
+			//var dictlist = response.dict;
+			//var ndx = self.mini.list.length;
+			//for (var i = 0; i<dictlist.length; i++) {
+			//	var dict = dictlist[i];
+			//	if (!self.miniDict(dict.id)) {
+			//		self.mini.list.push(dict);
+			//		self.mini.key[dict.id] = ndx++;
+			//	}
+			//}
+			self.loadMini(response.dict);
 		}
 	});
 
@@ -273,7 +282,7 @@ voyc.Dictionary.prototype.drawDetail = function(dict,mode,wid,chosen) {
 	var numdefs = dict.mean.length;
 	var mean = dict.mean[0];
 	if (numdefs == 1) {
-		s += '<p><b>'+mean.e+'</b> <i>'+voyc.pos[mean.p]+'</i> '+mean.d+'</p>';
+		s += '<p><b>'+mean.e+'</b> <i>'+this.drawPos(mean.p)+'</i> '+mean.d+'</p>';
 	}
 	else {
 		for (var i=0; i<dict.mean.length; i++) {
@@ -292,8 +301,7 @@ voyc.Dictionary.prototype.drawDetail = function(dict,mode,wid,chosen) {
 			else {
 				eng = mean.e;
 			}
-			// todo (voyc.pos)  write function to support multiple pos
-			s += '<p>'+num+eng+' <i>'+voyc.pos[mean.p]+'</i> '+mean.d+'</p>';
+			s += '<p>'+num+eng+' <i>'+this.drawPos(mean.p)+'</i> '+mean.d+'</p>';
 		}
 	}
 	if (dict.g == 'o') {
@@ -329,7 +337,7 @@ voyc.Dictionary.prototype.drawFlat = function(flat) {
 			s += dict.t;
 			s += " <icon type='draw' name='speaker' text='"+dict.t+"'></icon> &nbsp;";
 			s += "<span expand='rules"+this.unique+"'>" + this.drawTranslit(dict.tl) + "</span>";
-			s += " <i>" + voyc.pos[mean.p] + "</i> " + mean.e;
+			s += " <i>" + this.drawPos(mean.p) + "</i> " + mean.e;
 			s += "<span expand='more"+this.unique+"' class='expander'></span>";
 			s += "<icon type='char' name='pencil' did='"+dict.id+"'></icon>";
 			s += "<icon name=zoom did='"+dict.id+"'>&#x1F50D;</icon>";
@@ -344,7 +352,7 @@ voyc.Dictionary.prototype.drawFlat = function(flat) {
 			s += dict.t;
 			s += " <icon type='draw' name='speaker' text='"+dict.t+"'></icon> &nbsp;";
 			s += this.drawTranslit(dict.tl);
-			s += " <i>" + voyc.pos[mean.p] + "</i> " + mean.e;
+			s += " <i>" + this.drawPos(mean.p) + "</i> " + mean.e;
 			s += "<span expand='more"+this.unique+"' class='expander'></span>";
 			s += "<icon type='char' name='pencil' did='"+dict.id+"'></icon>";
 			s += "<icon name=zoom did='"+dict.id+"'>&#x1F50D;</icon>";
@@ -438,6 +446,15 @@ voyc.Dictionary.prototype.drawComponentsMulti = function(cp,ru) {
 		for (var i=0; i<cpa.length; i++) {
 			s += cpa[i] + '<br/>';
 		}
+	}
+	return s;
+}
+
+voyc.Dictionary.prototype.drawPos = function(pos) {
+	var s = '';
+	for (var i=0; i<pos.length; i++) {
+		if (s.length) s += ',';
+		s += voyc.pos[pos[i]];
 	}
 	return s;
 }

@@ -85,6 +85,16 @@ voyc.Editor.prototype.setup = function() {
 		self.save();
 		window.history.back();
 	},false);
+	voyc.$('addtransbtn').addEventListener('click', function(e) {
+		var t = self.container.querySelector('#translate');
+		var tel = t.querySelector('#trans'+self.numTrans);
+		tel.classList.remove('hidden');
+		var pos = t.querySelector('#pos'+self.numTrans);
+		self.numTrans++;
+		pos.setAttribute('trx','i');
+		pos.setAttribute('mid',0);
+		pos.setAttribute('numdef',self.numTrans);
+	},false);
 }
 
 voyc.Editor.prototype.save = function() {
@@ -338,7 +348,7 @@ voyc.Editor.template.page = `
 </table>
 <div id='translate'></div>
 <div>
-	<button>+ Add Translation</button>
+	<button id='addtransbtn'>+ Add Translation</button>
 </div>
 <div id='dbuttons'>
 	<button id='savebtn'>Save</button>
@@ -411,14 +421,6 @@ voyc.Editor.prototype.popupDict = function(id,mode,wid,chosen) {
 	(new voyc.Minimal()).attachAll(el);
 	(new voyc.Icon()).attachAll(el);
 	(new voyc.Icon()).drawAll(el);
-
-	// attach handlers
-	// moved from sam::postPost
-	// x speaker
-	// x pencil
-	// choose
-	// x expander pronunciation
-	// x expander components
 
 	//attach handler to speaker icons
 	var elist = el.querySelectorAll('icon[name="speaker"]');

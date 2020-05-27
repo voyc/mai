@@ -51,10 +51,6 @@ keyboard
 	alphabet consonants
 	alphabet vowel patterns
 
-draw pos with multi pos values, or eliminate multi pos
-	in drill answer, multiple pos, จอง jaawngM undefined reserve, pos=nv, noun,verb
-	search, show, cannot display multiple pos 
-
 drill
 	kill from drill leaves sam's chat posts on the right in the guest position
 	call continueDrill from startDrill, with step -1, to get starting message
@@ -137,7 +133,6 @@ story list
 		(consider global search, search dict and story)
 
 story detail
-	x Show English title
 	draw view with buttons one-time
 		leave a hole for the story
 		scroll below the buttons
@@ -149,15 +144,8 @@ story detail
 		phrases, expressions
 		comments
 		errors
-	in story parse, replace pronouns with grammar codes
-		in story draw, replace grammar codes with pronouns, depending on speaker age and gender
-		allow this draw during drill lines, as well as show lines
 	button handlers
 		add line
-		choose meaning from dict popup
-		-- link to editor from dict popup (also from drill)
-		-- link to "edit -new" from click on error
-			call popup
 	
 DictView
 	UI object, companion to Dictionary model object
@@ -172,24 +160,10 @@ DictView
 		implement add-translation button 
 		after editor, how to return to drill? or storyview? Back button?
 	3. popupDict
-		x added to Editor.js
-		x call from sam:search
-		call from storyview
 		call from drill
-		x show components (m), pronunciation (o)
-		x nav to Editor on pencil click
-		choose meaning in author mode
-		on entry, if word not found, nav to Editor
-		x make a command to open the popup
-			x search command should link to popup
 
 story parse
-	x handle quotes
-	x default english translation of line
 	default english translation of line - know when to regen
-	x Pass through punctuation, blank lines, non-thai chars.
-		make separate word, thai is same as eng, not drilled, not in dict, like symbol
-		ผม พูด "ไม่ละ" ที่ เขา (พวน)!
 	abbreviations
 		months พ.ค.
 		US สหรัฐฯ or สหรัฐ
@@ -198,15 +172,12 @@ story parse
 		put all known abbreviations in dictionary
 	blank lines
 		pass thru as blank line
+	in story parse, replace pronouns with grammar codes
+		in story draw, replace grammar codes with pronouns, depending on speaker age and gender
+		allow this draw during drill lines, as well as show lines
 
 drill
 	add glyphs stack
-	vocab goes to mastered at the end of each step
-
-editor
-	edit a word, search fails, hang
-	edit -new word, save, already exists, failed message
-	edit multiple meanings: add, change, delete
 
 dict/mean
 	phrase and expression are NOT pos ?
@@ -221,7 +192,39 @@ dict/mean
 grammar/sengen/conversation
 	learn how to carry on a conversation
 		not a drill, but using user's mastered vocab
-====================================
+
+api/svc/command/ui
+	free public access to data and functions
+	dictionary, stories, grammar, drills, sengen
+
+navigation via browser history
+
+DictView::editor
+	pronunciation rules, manual, menu, สงบ
+
+x story editor - see fear 3 substitute
+	x after choosing a meaning, display that chosen meaning (currently showing the wrong meaning)
+
+dictionary editor
+	x add translation (meaning)
+	delete translation
+	after adding or deleting a translation, the minidict still contains the original
+		run a new search, the search results are correct, but popupDict is not yet changed
+		change the minidict, or redo the search 
+		in Dictionary::search(), new items are added to the minidict, but old ones are not deleted or updated
+			I believe this means, the minidict should be replaced
+
+x dictionary::drawDetail
+	x draw pos with multi pos values
+		x write Dictionary::drawPos()
+		x in drill answer, multiple pos, จอง jaawngM undefined reserve, pos=nv, noun,verb
+	x search, show, cannot display multiple pos 
+
+Editor::popupDict
+	allow zoom into multi components
+	better display of syllable components
+
+======================
 support video conferencing chatbot screen-sharing
 	zoom
 	jitsi (open-source, apache, java, webRTC)
