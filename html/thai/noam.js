@@ -21,10 +21,7 @@
 		parseWord() - obsolete
 **/
 voyc.Noam = function(dictionary,vocab) {
-	this.dictionary = dictionary;
-	this.vocab = vocab;
 	voyc.vowelPatternsInit();
-	this.alphabet = new voyc.Alphabet(dictionary);
 }
 
 /**
@@ -37,7 +34,7 @@ voyc.Noam = function(dictionary,vocab) {
 //	for (var i=0; i<phrases.length; i++) {
 //		var words = this.parsePhrase(phrases[i]);
 //		for (var j=0; j<words.length; j++) {
-//			var v = this.vocab.get(words[j])
+//			var v = voyc.vocab.get(words[j])
 //			if (!v) {
 //				word.push(words[j]);
 //			}
@@ -48,7 +45,7 @@ voyc.Noam = function(dictionary,vocab) {
 //	for (var i=0; i<word.length; i++) {
 //		var glyphs = this.parseWord(word[i]);
 //		for (var j=0; j<glyphs.length; j++) {
-//			var v = this.vocab.get(glyphs[j]);
+//			var v = voyc.vocab.get(glyphs[j]);
 //			if (!v) {
 //				glyph.push(glyphs[j]);
 //			}
@@ -90,7 +87,7 @@ voyc.Noam.prototype.parseWordToGlyphs = function(words,options) {
 		glyphs.forEach(function(g) {
 			var bVocab = false;
 			if (settings.newGlyphsOnly) {
-				bVocab = this.vocab.get(g);
+				bVocab = voyc.vocab.get(g);
 			}
 			if (!bVocab) {
 				glyph.push(g);
@@ -123,7 +120,7 @@ voyc.Noam.prototype.parseStoryBySpace = function(story,options) {
 		words.forEach(function(w) {
 			var bVocab = false;
 			if (settings.newWordsOnly) {
-				var d = this.vocab.get(w);
+				var d = voyc.vocab.get(w);
 				bVocab = (d && (d.s == 'm'));
 			}
 			if (!bVocab) {
@@ -154,7 +151,7 @@ voyc.Noam.prototype.parseStoryBySpace = function(story,options) {
 voyc.Noam.prototype.analyzeWord = function(word) {
 	var wordEng = [];
 	word.forEach(function(w) {
-		wordEng.push(this.dictionary.translate(w));
+		wordEng.push(voyc.dictionary.translate(w));
 	}, this);
 
 	dictOld = [];
@@ -166,7 +163,7 @@ voyc.Noam.prototype.analyzeWord = function(word) {
 			wordErr.push(w);
 		}
 		else {
-			var v = this.vocab.get(w);
+			var v = voyc.vocab.get(w);
 			var bVocab = (v && (v.s == 'm'));
 			if (bVocab) {
 				dictOld.push(d);
@@ -185,11 +182,11 @@ voyc.Noam.prototype.analyzeStory = function(story) {
 	var wordEng = [];
 	var phraseEng = [];
 	story.forEach(function(phrase) {
-		phraseEng.push(this.dictionary.translate(phrase));
+		phraseEng.push(voyc.dictionary.translate(phrase));
 		var words = phrase.split(' ');
 		words.forEach(function(w) {
 			word.push(w);
-			wordEng.push(this.dictionary.translate(w));
+			wordEng.push(voyc.dictionary.translate(w));
 		}, this);
 
 	}, this);
@@ -205,7 +202,7 @@ voyc.Noam.prototype.analyzeStory = function(story) {
 			wordErr.push(w);
 		}
 		else {
-			var v = this.vocab.get(w);
+			var v = voyc.vocab.get(w);
 			var bVocab = (v && (v.s == 'm'));
 			if (bVocab) {
 				dictOld.push(d);
@@ -250,11 +247,11 @@ voyc.Noam.prototype.collectWords = function(target, options) {
 	// scan the dictionary
 	var matched  = [];
 	var self = this;
-	this.dictionary.iterate(function(dict,n) {
+	voyc.dictionary.iterate(function(dict,n) {
 		if (dict.g != 'o') {  // collecting one-syllable words
 			return false;
 		}
-		if (settings.newWordsOnly && inVocab(dict.t,self.vocab)) { // not yet mastered
+		if (settings.newWordsOnly && inVocab(dict.t,voyc.vocab)) { // not yet mastered
 			return false;
 		}
 		var t = dict.t;
@@ -263,7 +260,7 @@ voyc.Noam.prototype.collectWords = function(target, options) {
 		var cntTargeted = 0;
 		for (var i=0; i<tlen; i++) {  // look at each letter in the word
 			var c = t[i];
-			var m = inVocab(c, self.vocab);
+			var m = inVocab(c, voyc.vocab);
 			if (m) {
 				cntMastered++;
 			}
@@ -542,7 +539,7 @@ voyc.Noam.prototype.parseString = function(input, linenum, greedy) {
 
 		// if pass-through, sto it and continue
 		var test = s.substr(0,1);
-		if (!this.alphabet.search(s.substr(0,1))) {
+		if (!voyc.alphabet.search(s.substr(0,1))) {
 			sto(s,n,startndx,0,'',false);
 			continue;
 		}
@@ -556,7 +553,7 @@ voyc.Noam.prototype.parseString = function(input, linenum, greedy) {
 				if (j < slen) {	//if (t == s) 
 					// do not separate words between diacritics
 					var char = s.substr(j,1); 
-					var alpha = this.alphabet.search(char); 
+					var alpha = voyc.alphabet.search(char); 
 					if (!alpha) {
 						console.log('character '+char+' not in dictionary');
 						debugger;
@@ -564,13 +561,13 @@ voyc.Noam.prototype.parseString = function(input, linenum, greedy) {
 					if (alpha.a.length && 'abr'.includes(alpha.a))  { 
 						continue;
 					}
-					var nextalpha = this.alphabet.search(s.substr(j-1,1));
+					var nextalpha = voyc.alphabet.search(s.substr(j-1,1));
 					if (nextalpha.a == 'l') {
 						continue;
 					}
 				}
-				//var m = this.dictionary.search(t,'t','om');  // find t in Dictionary
-				var m = this.dictionary.fastMatch(t);  // find t in Dictionary
+				//var m = voyc.dictionary.search(t,'t','om');  // find t in Dictionary
+				var m = voyc.dictionary.fastMatch(t);  // find t in Dictionary
 				if (m) {
 					if (t == s && !greedy) {
 						// save for optional later use
@@ -580,7 +577,7 @@ voyc.Noam.prototype.parseString = function(input, linenum, greedy) {
 							ndx:startndx,
 							id:m.id,
 							tl:m.tl,
-							vocab:this.vocab.get(t)
+							vocab:voyc.vocab.get(t)
 						};
 						continue;
 					}
@@ -590,7 +587,7 @@ voyc.Noam.prototype.parseString = function(input, linenum, greedy) {
 					}
 					ui = j;
 					us = m.t;
-					var v = this.vocab.get(us);
+					var v = voyc.vocab.get(us);
 					sto(us, linenum, startndx+i, m.id, m.tl, v);  // save matched part
 					i += us.length-1;  // bump up to next start position
 					break;
@@ -721,7 +718,7 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	}
 
 	// find the dictionary entry for this syllable
-	//var dic = this.dictionary.search(syllable)[0]; // used only to include id in output
+	//var dic = voyc.dictionary.search(syllable)[0]; // used only to include id in output
 
 	// find matching vowel pattern
 	for (var k in voyc.vowelPatterns) {
@@ -761,7 +758,7 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	if (syl.lc.length > 1) {
 		firstConsonant = syl.lc[0];
 	}
-	var leadingConsonantMeta = this.alphabet.search(firstConsonant);
+	var leadingConsonantMeta = voyc.alphabet.search(firstConsonant);
 
 	// inherent vowel short o
 	if (syl.vp == 'o' && syl.lc.length > 1) {
@@ -787,7 +784,7 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	syl.ending = '';
 	var vowelMeta = voyc.vowelPatterns[syl.k];
 	if (syl.fc) {
-		var finalConsonantMeta = this.alphabet.search(syl.fc);
+		var finalConsonantMeta = voyc.alphabet.search(syl.fc);
 		if (finalConsonantMeta.a == 's')  // sonorant
 			syl.ending = 'live', syl.ru.push('fsc');
 		else
@@ -862,7 +859,7 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	// transliteration standard
 	var lce = '';
 	for (var i=0; i<lc.length; i++) {
-		lce += this.alphabet.search(lc[i]).e;
+		lce += voyc.alphabet.search(lc[i]).e;
 	}
 	var v = vowelMeta.e;
 	syl.tl = lce + v + fs + syl.tn;	
@@ -870,7 +867,7 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	// transliteration custom
 	var lce = '';
 	for (var i=0; i<lc.length; i++) {
-		lce += voyc.translit[this.alphabet.search(lc[i]).e];
+		lce += voyc.translit[voyc.alphabet.search(lc[i]).e];
 	}
 	var v = voyc.translit[vowelMeta.e];
 	syl.tlc = lce + v + voyc.translit['-'+fs] + syl.tn;

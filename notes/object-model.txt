@@ -73,7 +73,11 @@ x 1. fix instantiation of a single global story object
 ./html/js/sam.js:	this.speech = new voyc.Speech();
 ./html/js/sam.js:	voyc.editor = new voyc.Editor(voyc.$('editor'), this.observer, this.noam);
 
-./html/thai/noam.js:	this.alphabet = new voyc.Alphabet(dictionary);
+x ./html/thai/noam.js:	this.alphabet = new voyc.Alphabet(dictionary);
+dicionary and vocab passed into noam
 
 ./html/thai/keyboard2.js:	voyc.keyboard = new voyc.Keyboard();
 ./html/thai/keyboard2.js:	(new voyc.Keyboard).alphabet = alphabet;
+
+editor:   voyc.mai.sam.speech.speak( s,l);
+

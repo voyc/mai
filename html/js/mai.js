@@ -16,24 +16,40 @@ voyc.Mai.prototype.setup = function () {
 		url = 'http://mai.voyc.com/svc';  // for local testing
 	}
 
-	// instantiate object model
-	voyc.comm = new voyc.Comm(url, 'mcomm', 2, true);
-	voyc.observer = new voyc.Observer();
-	voyc.view = new voyc.View();
+	// instantiate user management
 	new voyc.User();
 	new voyc.Account();
 	new voyc.AccountView();
-	this.chat = new voyc.Chat();
-	this.chat.setup(document.getElementById('chatcontainer'));
-	this.sam = new voyc.Sam(this.chat);
 
-	// set drawPage method as the callback in BrowserHistory object
+	// instantiate utilities
+	voyc.comm = new voyc.Comm(url, 'mcomm', 2, true);
+	voyc.observer = new voyc.Observer();
+	voyc.speech = new voyc.Speech();
+
+	// instantiate data model
+	voyc.alphabet = new voyc.Alphabet();
+	voyc.vocab = new voyc.Vocab();
+	voyc.dictionary = new voyc.Dictionary();
+	voyc.story = new voyc.Story();
+
+	// instantiate viewers
+	voyc.editor = new voyc.Editor(voyc.$('editor'));
+	voyc.storyview = new voyc.StoryView(voyc.$('storyview'));
+	voyc.chat = new voyc.Chat();
+	voyc.chat.setup(document.getElementById('chatcontainer'));
+
+	// instantiate specialists
+	voyc.sam = new voyc.Sam();
+	voyc.lee = new voyc.Lee();
+	voyc.noam = new voyc.Noam();
+	voyc.sengen = new voyc.SenGen(voyc.vocab);
+
+	// instantiate controller, navigation via browser history
+	voyc.view = new voyc.View();
 	voyc.browserhistory = new voyc.BrowserHistory('name', function(pageid) {
 		var event = pageid.split('-')[0];
 		voyc.observer.publish(event+'-requested', 'mai', {page:pageid});
 	});
-
-	voyc.alphabet = new voyc.Alphabet();
 
 	// attach app events
 	var self = this;
@@ -57,7 +73,7 @@ voyc.Mai.prototype.resize = function() {
 	var bot = document.querySelector('footer').offsetTop;
 	var ht = bot - top;
 	document.querySelector('#chatcontainer').style.height = ht + 'px';
-	this.chat.resize(ht);
+	voyc.chat.resize(ht);
 }
 
 voyc.Mai.prototype.onProfileRequested = function(note) {

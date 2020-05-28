@@ -5,15 +5,12 @@
 	Display the dictionary editor form.
 **/
 
-voyc.Editor = function(container, noam) {
+voyc.Editor = function(container) {
 	// is singleton
 	if (voyc.Editor._instance) return voyc.Editor._instance;
 	else voyc.Editor._instance = this;
 
 	this.container = container;
-	this.noam = noam;
-	this.dictionary = voyc.dictionary;
-	
 	this.numTrans = 1;
 	this.maxTrans = 5;
 	this.setup();
@@ -124,7 +121,7 @@ voyc.Editor.prototype.save = function() {
 		m.d = this.container.querySelector('#details'+i).value;
 		r.mean.push(m);
 	}
-	this.dictionary.update(r);
+	voyc.dictionary.update(r);
 }
 
 voyc.Editor.prototype.joinComponents = function(o) {
@@ -225,7 +222,7 @@ voyc.Editor.prototype.populate = function(dict) {
 }
 
 voyc.Editor.prototype.parse = function(s) {
-	var ps = this.noam.parseString(s,1);  // returns array of objects
+	var ps = voyc.noam.parseString(s,1);  // returns array of objects
 	if (ps && ps.length > 1) {
 		var cpa = [];
 		var tla = [];
@@ -241,7 +238,7 @@ voyc.Editor.prototype.parse = function(s) {
 		voyc.fixOpen('acceptparse'); // really only need to do this once, but must wait til it's open
 	}
 	else {
-		var pw = this.noam.parseSyllable(s); // returns object
+		var pw = voyc.noam.parseSyllable(s); // returns object
 		document.getElementById('ptranslit').value = pw.tl;
 		document.getElementById('pcomponents').value = this.joinComponents(pw);
 		document.getElementById('pg').value = 'o';
@@ -428,7 +425,7 @@ voyc.Editor.prototype.popupDict = function(id,mode,wid,chosen) {
 		elist[i].addEventListener('click', function(e) {
 			var s = e.currentTarget.getAttribute('text');
 			var l = voyc.dictionary.lang(s);
-			voyc.mai.sam.speech.speak( s,l);
+			voyc.speech.speak( s,l);
 		}, false);
 	}
 

@@ -2,9 +2,7 @@
 	class Story
 	Represent one story.
 **/
-voyc.Story = function(noam) {
-	this.noam = noam;
-
+voyc.Story = function() {
 	this.id = 0;
 	this.authorid = 0;
 	this.original = '';
@@ -144,7 +142,7 @@ voyc.Story.prototype.parse = function(sid, raw) {
 	this.lines = [];
 	this.meta = [];
 
-	this.noam.parseStory(this);
+	voyc.noam.parseStory(this);
 	this.words = this.consolidateWords();
 	this.getComps(this.words);
 }

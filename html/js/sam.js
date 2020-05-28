@@ -55,8 +55,7 @@
 		voyc.printf
 		voyc.intervalToString
 **/
-voyc.Sam = function(chat) {
-	this.chat = chat;
+voyc.Sam = function() {
 	this.chatid = 0;
 	this.chatidguest = 0;
 	this.req = {};
@@ -69,11 +68,7 @@ voyc.Sam = function(chat) {
 }
 
 voyc.Sam.prototype.setup = function() {
-	voyc.vocab = new voyc.Vocab();
-	voyc.dictionary = new voyc.Dictionary();
-	voyc.sengen = new voyc.SenGen(voyc.vocab);
-
-	this.chatid = this.chat.addUser('Sam', true, false);
+	this.chatid = voyc.chat.addUser('Sam', true, false);
 
 	var self = this;
 	voyc.observer.subscribe( "chat-posted", 'sam', function(note) {
@@ -92,9 +87,6 @@ voyc.Sam.prototype.setup = function() {
 	voyc.observer.subscribe('setdict-received' ,'sam' ,function(note) { self.onSetDictReceived (note);});
 	voyc.observer.subscribe('drill-requested'  ,'sam' ,function(note) { self.onDrillRequested  (note);});
 	
-	this.lee = new voyc.Lee(this.chat);
-	this.speech = new voyc.Speech();
-
 	// move this to chat?
 	// extend Chat object to do post processing of a chat post
 	voyc.Chat.prototype.postPost = function(e) {
@@ -106,20 +98,13 @@ voyc.Sam.prototype.setup = function() {
 
 voyc.Sam.prototype.onGetVocabReceived = function() {
 	// setup continued
-	this.noam = new voyc.Noam(voyc.dictionary, voyc.vocab);
 	var interval = Date.now() - voyc.vocab.vocab.recency;
-
-	// these two should be instantiated in mai, sam should be reserved to home window
-	// noam also
-	voyc.editor = new voyc.Editor(voyc.$('editor'), this.noam);
-	voyc.storyview = new voyc.StoryView(voyc.$('storyview'));
-	voyc.story = new voyc.Story(this.noam);
 }
 
 voyc.Sam.prototype.dochat = function(s,bpost,cb) {
-	var e = this.chat.post(this.chatid, s);
+	var e = voyc.chat.post(this.chatid, s);
 	if (bpost) {
-		this.chat.postPost(e);
+		voyc.chat.postPost(e);
 		this.postPost(e);
 	}
 	if (cb) {
@@ -134,7 +119,7 @@ voyc.Sam.prototype.postPost = function(e) {
 		elist[i].addEventListener('click', function(e) {
 			var s = e.currentTarget.getAttribute('text');
 			var l = voyc.dictionary.lang(s);
-			voyc.mai.sam.speech.speak( s,l);
+			voyc.speech.speak( s,l);
 		}, false);
 	}
 
@@ -159,18 +144,18 @@ voyc.Sam.prototype.postPost = function(e) {
 }
 
 voyc.Sam.prototype.onLoginReceived = function(note) {
-	this.chatidguest = this.chat.addUser(note.payload.uname, false, true);
-	this.chat.post(this.chatid, "Welcome back, " + note.payload.uname);
+	this.chatidguest = voyc.chat.addUser(note.payload.uname, false, true);
+	voyc.chat.post(this.chatid, "Welcome back, " + note.payload.uname);
 }
 
 voyc.Sam.prototype.onLogoutReceived = function(note) {
-	this.chat.post(this.chatid, "Goodbye.");
+	voyc.chat.post(this.chatid, "Goodbye.");
 }
 
 voyc.Sam.prototype.onAnonymous = function(note) {
-	this.chatidguest = this.chat.addUser('Guest', false, true);
-	this.chat.post(this.chatid, "Welcome to mai.voyc, the Online Language School.", []);
-	this.chat.post(this.chatid, "Please login or register to begin.", []);
+	this.chatidguest = voyc.chat.addUser('Guest', false, true);
+	voyc.chat.post(this.chatid, "Welcome to mai.voyc, the Online Language School.", []);
+	voyc.chat.post(this.chatid, "Please login or register to begin.", []);
 }
 
 voyc.Sam.prototype.onSearchReceived = function(note) {
@@ -210,13 +195,13 @@ voyc.Sam.prototype.startDrill = function() {
 	this.state = 'drill';
 	var self = this;
 	this.stack.flats = this.stack.sets[this.stack.setndx];
-	this.lee.drill(this.stack, function(scores) {
+	voyc.lee.drill(this.stack, function(scores) {
 		self.reportScores(scores);
 	});
 }
 
 voyc.Sam.prototype.endDrill = function(quit) {
-	this.chat.changeHost(this.chatid);
+	voyc.chat.changeHost(this.chatid);
 	this.state = 'ready';
 	this.dochat('Good job.');
 	if (!quit) {
@@ -237,7 +222,7 @@ voyc.Sam.prototype.continueDrill = function() {
 		}
 		s += ' Click go when ready.';
 		this.state = 'nextstack';
-		this.chat.post(this.chatid, s, ['go']);
+		voyc.chat.post(this.chatid, s, ['go']);
 	}
 	// increment through the sets
 	else {
@@ -248,7 +233,7 @@ voyc.Sam.prototype.continueDrill = function() {
 			var s = 'Let\'s do another set.<br/>';
 			s += ' Click go when ready.';
 			this.state = 'nextstack';
-			this.chat.post(this.chatid, s, ['go']);
+			voyc.chat.post(this.chatid, s, ['go']);
 		}
 		// increment through the stacks
 		else {
@@ -260,7 +245,7 @@ voyc.Sam.prototype.continueDrill = function() {
 				s += "The next stack is " + this.stack.name + ".<br/>";
 				s += ' Click go when ready.';
 				this.state = 'nextstack';
-				this.chat.post(this.chatid, s, ['go']);
+				voyc.chat.post(this.chatid, s, ['go']);
 			}
 			else {
 				this.state = 'ready';
@@ -491,7 +476,7 @@ voyc.Sam.prototype.respond = function(o) { // input o object comes from chat eng
 	var w = o.msg.split(/\s+/); // todo: replace all references to w and o.msg to req
 	
 	if (this.state ==  'drill' && req.verb != 'kill') {
-		return this.lee.respond(o);
+		return voyc.lee.respond(o);
 	}
 
 	switch (req.verb) {
@@ -508,20 +493,20 @@ voyc.Sam.prototype.respond = function(o) { // input o object comes from chat eng
 			debugger;
 			break;
 		case 'no':
-			this.chat.post(this.chatid, 'OK');
+			voyc.chat.post(this.chatid, 'OK');
 			break;
 		case 'set':
 			this.cmdSetVocab(req);
-			this.chat.post(this.chatid, 'done');
+			voyc.chat.post(this.chatid, 'done');
 			break;
 		case 'get':
 			var r = this.cmdGetVocab(req);
 			var s = voyc.printArray(r,voyc.breakSentence);
-			this.chat.post(this.chatid, s);
+			voyc.chat.post(this.chatid, s);
 			break;
 		case 'remove':
 			this.cmdRemoveVocab(req);
-			this.chat.post(this.chatid, 'done');
+			voyc.chat.post(this.chatid, 'done');
 		case 'sample':
 			this.req.target = voyc.cloneArray(w);
 			this.req.target.splice(0,1);
@@ -529,16 +514,16 @@ voyc.Sam.prototype.respond = function(o) { // input o object comes from chat eng
 		case 'again':
 			var r = voyc.sengen.genSentence(this.req);
 			if (r.length > 0) {
-				this.chat.post(this.chatid, r[0], ['again']);
+				voyc.chat.post(this.chatid, r[0], ['again']);
 			}
 			break;
 		case 'translate':
 			var s = o.msg.substr(10);
 			var r = voyc.dictionary.translate(s);
-			this.chat.post(this.chatid, r);
+			voyc.chat.post(this.chatid, r);
 			break;
 		case 'สวัสดี':
-			this.chat.post(this.chatid, voyc.sengen.genSentence({pattern:'@howAreYou'}), ['สบาย ดี']);
+			voyc.chat.post(this.chatid, voyc.sengen.genSentence({pattern:'@howAreYou'}), ['สบาย ดี']);
 			break;
 		case 'sengen':
 			var options = {
@@ -552,7 +537,7 @@ voyc.Sam.prototype.respond = function(o) { // input o object comes from chat eng
 				var w = collection[i];
 				s += w + "<br/>";
 			}
-			this.chat.post(this.chatid, s);
+			voyc.chat.post(this.chatid, s);
 			break;
 		case 'collect':
 			// collect ด่กาหสฟว false true
@@ -561,12 +546,12 @@ voyc.Sam.prototype.respond = function(o) { // input o object comes from chat eng
 			var target = w[1];
 			var newWordsOnly = (w[2] === 'true');
 			var targetGlyphsOnly = (w[3] === 'true');
-			var a =this.noam.collectWords(target, {newWordsOnly:newWordsOnly, targetGlyphsOnly:targetGlyphsOnly});
+			var a =voyc.noam.collectWords(target, {newWordsOnly:newWordsOnly, targetGlyphsOnly:targetGlyphsOnly});
 			var s = '';
 			for (var k in a) {
 				s += (parseInt(k)+1)+'\t'+a[k].t+'\t'+a[k].e+'\t'+a[k].l+'<br/>';
 			}		
-			this.chat.post(this.chatid, s);
+			voyc.chat.post(this.chatid, s);
 			break;
 
 		// new commands following
@@ -576,7 +561,7 @@ voyc.Sam.prototype.respond = function(o) { // input o object comes from chat eng
 			break;
 		case 'parse':
 			if (req.adj['syllable']) {
-				var po = this.noam.parse(req.object,req.adj);	
+				var po = voyc.noam.parse(req.object,req.adj);	
 				var s = this.showStory(po,{object:'syllable'});
 				this.dochat(s);
 				break;
@@ -674,7 +659,7 @@ voyc.Sam.prototype.respond = function(o) { // input o object comes from chat eng
 			break;
 			
 		default:
-			this.chat.post(this.chatid, 'Would you like an example sentence?', ['yes', 'no']);
+			voyc.chat.post(this.chatid, 'Would you like an example sentence?', ['yes', 'no']);
 			break;
 	}
 }

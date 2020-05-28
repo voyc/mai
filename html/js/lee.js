@@ -44,8 +44,7 @@
 		?  vowel length
 		t  typed thai	
 **/
-voyc.Lee = function(chat) {
-	this.chat = chat;
+voyc.Lee = function() {
 	this.chatid = 0;
 	this.stack = {};
 	this.ndxCard = 0;  // index into the scores array, and into the glyph/word/phrase array
@@ -72,7 +71,7 @@ voyc.Lee = function(chat) {
 		askTone:false, //true,
 		selfScore:false, //true,
 	}
-	this.chatid = this.chat.addUser('Lee', false, false);
+	this.chatid = voyc.chat.addUser('Lee', false, false);
 }
 
 /* one public method */
@@ -80,7 +79,7 @@ voyc.Lee.prototype.drill = function(stack,callback) {
 	this.stack = stack;
 	this.reportCallback = callback;
 	this.ndxCard = -1;
-	this.chat.changeHost(this.chatid);
+	voyc.chat.changeHost(this.chatid);
 
 	// create the scores array
 	this.scores = [];
@@ -99,7 +98,7 @@ voyc.Lee.prototype.respond = function(o) {
 	switch (this.state) {
 		case 'typing':
 			if (o.msg == 'quit' || o.msg == 'cancel') {
-				this.chat.post(this.chatid, "Stopped.", []);
+				voyc.chat.post(this.chatid, "Stopped.", []);
 				this.reportCallback(false);
 				break;
 			}		
@@ -107,7 +106,7 @@ voyc.Lee.prototype.respond = function(o) {
 				var flat = this.scores[this.ndxCard].flat;
 				//var s = voyc.dictionary.drawFlat(flat);
 				var s = (flat.dict) ? voyc.dictionary.drawFlat(flat) : flat.t + ' ~ ' + flat.e;
-				this.chat.post(this.chatid, s, []);
+				voyc.chat.post(this.chatid, s, []);
 				this.displayQuestion(flat);
 				break;
 			}
@@ -115,13 +114,13 @@ voyc.Lee.prototype.respond = function(o) {
 			this.scoreAnswer(b);
 			if (!b) {
 				var s = "Nope. Try again.";
-				this.chat.post(this.chatid, s, []);
+				voyc.chat.post(this.chatid, s, []);
 				var flat = this.scores[this.ndxCard].flat;
 				this.displayQuestion(flat);
 			}
 			else {
 				if (this.setting.askTone && this.scores[this.ndxCard].dict.g == 'o') {
-					this.chat.post(this.chatid,"What tone?", ['H','M','L','R','F']);
+					voyc.chat.post(this.chatid,"What tone?", ['H','M','L','R','F']);
 					this.state = 'tone';
 				}
 				else {
@@ -159,12 +158,12 @@ voyc.Lee.prototype.respond = function(o) {
 			var flat = this.scores[this.ndxCard].flat;
 			s += voyc.dictionary.drawFlat(flat);
 			if (this.setting.selfScore) {
-				this.chat.post(this.chatid, s, ['right', 'wrong','details','mastered']);
+				voyc.chat.post(this.chatid, s, ['right', 'wrong','details','mastered']);
 				this.state = 'selfscore';
 			}
 			else {
-				var e = this.chat.post(this.chatid, s, []);
-				this.chat.postPost(e);
+				var e = voyc.chat.post(this.chatid, s, []);
+				voyc.chat.postPost(e);
 				this.nextCard();
 				this.state = 'typing';
 			}
@@ -179,7 +178,7 @@ voyc.Lee.prototype.respond = function(o) {
 voyc.Lee.prototype.nextCard = function() {
 	this.ndxCard = this.chooseNextCard();
 	if (this.ndxCard === false) {
-		this.chat.post(this.chatid, "Finished.", []);
+		voyc.chat.post(this.chatid, "Finished.", []);
 		this.reportCallback([]);
 		return;
 	}
@@ -278,11 +277,11 @@ voyc.Lee.prototype.countState = function(state) {
 voyc.Lee.prototype.displayQuestion = function(flat) {
 	if (this.stack.class) {
 		var s = flat.dict.t;
-		this.chat.post(this.chatid, s, ['low','middle','high']);
+		voyc.chat.post(this.chatid, s, ['low','middle','high']);
 	}
 	else {
 		var q = this.composeQuestion( flat);
-		this.chat.post(this.chatid, q.s, q.o);
+		voyc.chat.post(this.chatid, q.s, q.o);
 	}
 	console.log('question displayed: ' + q.s);
 }
