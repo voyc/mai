@@ -5,6 +5,11 @@ john@voyc.com
 ninghillside/ning/hillside/bvyznrw@sharklasers.com
 samantha/samantha/ptwjqoda@sharklasers.com
 
+db testing starts with sequence ids here
+	select * from mai.mean where id > 1365;
+	select * from mai.dict where id > 1465;
+
+=======================
 subcomponents
 	Account
 		register, validate name and password doesnt match between client and server
@@ -24,40 +29,13 @@ subcomponents
 		chat-post
 		other new functions
 
-db testing starts with sequence ids here
-	select * from mai.mean where id > 1365;
-	select * from mai.dict where id > 1465;
-
-specify language requirement on each field
-	allow only thai in thai field, and components
-	allow only eng in other fields
-
-refresh fastdict, in dictionary
-	after db update, set a dirty flag
-	download a new copy of the fastdict
-		before the next lookup
-		or after one minute
-
-rearrange vowel components
-	reverse fc and tm
-
-noam translate and translit are broken because of new search
-
-implement up/down arrow in chat window, for mobile also
-
-keyboard
-	uppercase
-	learning: Homekeys,etc, known/new
-	alphabet consonants
-	alphabet vowel patterns
+=======================
+pre-launch
 
 drill
 	kill from drill leaves sam's chat posts on the right in the guest position
-	call continueDrill from startDrill, with step -1, to get starting message
-	handle end of set, empty set, says "Let's do another set." when there's no more sets
-	in answer, show hint depending on step
-	continue
-	allow a blank line to separate paragraphs
+	- call continueDrill from startDrill, with step -1, to get starting message
+		this works now on the first set, but not with subsequent sets
 	assemble drill by paragraph, especially for long stories, or sectioned stories
 		start with one paragraph
 			count syllables+words+phrases+lines
@@ -70,61 +48,23 @@ drill
 		words
 		phrases/expressions
 		lines
-
-when re-parse finds โชคดี instead of โชค and ดี
-	color-code a need for review
-	x? support comma as spacer
-	x show lines: hint button: display english version 
-	x click pencil in story line view
-	x combine author and hint (you sure?)
-
-buttons sometimes acts as two-state button, stays down, no change, mouse is rolled off the button
-	sluggish behavior
-
-pronunciation rules vs grammar rules
-
-vocab
-	- remove cmdRemoveVocab, replace with set state=u
-	- remove type from vocab db
-		are you sure? 
-			what if we want to store expressions that are not in the dict?
-		in cmdGetVocab, use join with dict to get type
-		remove type from cmdSetVocab
-	- replace word with id in vocab db
-		are you sure? 
-			what if we want to store expressions that are not in the dict?
-		join with dict to get thai and type
-
-checkAnswer for consonant class
-	error: อยู่ shows "middle class" should be exception, low raised to high
-		leading consonant is ย, is this a consonant cluster?
-		fix in parse and in checkAnswer
-	display rule for exceptions: 
-		low-class sonorant raised to high class by ห
-		low-class sonorant raised to high class อ, four words: อยู่
-		special case exception, like ก็
-
-how often are tone marks used on open syllables?
-	นี่ niiF, นั้น nanH, this and that, low-class mai eak, low-class mai tok
-
-getvocab, 4, attempt with invalid parameter set - missing $si
-	when?  after clearing cache on phone, on restart before login?
-
-voyc.Speech
+	displayAnswer
+		use drawFlat
+		remove speaker and pencil
+		add zoom to popupDict
+	draw Hint better
+		show hint depending on step
+		like answer
+		use drawFlat
 	speak on every question. which stacks?
-
-import new stories, create schedule to import all known material
-	drill more, one hour per day, from phone
-	all previous course content now in library
-
-add backup.sh to cron weekly
-
-add a single db backup to git
-
-cleanup noam, tests, make commands
-	test parse: อกไม้ดอกนี้จะมอบให้คุณนะคะ
-
-finish object model per notes/object-model.txt
+	checkAnswer for consonant class
+		error: อยู่ shows "middle class" should be exception, low raised to high
+			leading consonant is ย, is this a consonant cluster?
+			fix in parse and in checkAnswer
+		display rule for exceptions: 
+			low-class sonorant raised to high class by ห
+			low-class sonorant raised to high class อ, four words: อยู่
+			special case exception, like ก็
 
 story list
 	Show English titles
@@ -146,23 +86,9 @@ story detail
 		errors
 	button handlers
 		add line
-	
-DictView
-	UI object, companion to Dictionary model object
-	renamed from Editor
-	swap between Editor and Search	
-	1. Search/Browse - implement dictionary page, from main menu, with search and browse
-		reverse search (English)
-		browse?
-		find similar words: tone, tonemarks, vowelpatterns, leading consonant, final consonant, rules, num syllables, each syllable
-		select from list for custom drill
-	2. Editor, called from popupDict, and from Search results
-		implement add-translation button 
-		after editor, how to return to drill? or storyview? Back button?
-	3. popupDict
-		call from drill
+	sluggish buttons, sometimes acts as two-state button, stays down, no change, mouse is rolled off the button
 
-story parse
+story parse (noam and storyview)
 	default english translation of line - know when to regen
 	abbreviations
 		months พ.ค.
@@ -175,9 +101,26 @@ story parse
 	in story parse, replace pronouns with grammar codes
 		in story draw, replace grammar codes with pronouns, depending on speaker age and gender
 		allow this draw during drill lines, as well as show lines
-
-drill
-	add glyphs stack
+	
+dictview
+	UI object, companion to Dictionary model object
+	renamed from Editor
+	swap between Editor and Search - via browserhistory.nav	
+	1. Search/Browse - implement dictionary page, from main menu, with search and browse
+		reverse search (English)
+		browse?
+		find similar words: tone, tonemarks, vowelpatterns, leading consonant, final consonant, rules, num syllables, each syllable
+		select from list for custom drill
+	2. Editor, called from popupDict, and from Search results
+		delete translation
+		pronunciation rules, manual, menu, สงบ
+		อย่าง - now says middle class, because of อ
+			make exception for 4 words, change to high class
+		tl for จริง
+	3. popupDict
+		call from drill
+		allow zoom into multi components
+		better display of syllable components
 
 dict/mean
 	phrase and expression are NOT pos ?
@@ -188,41 +131,63 @@ dict/mean
 		d.g, as is: s/m/o
 		d.phrase, yes or no, can be grammar with replaceable parts
 		d.expression, yes or no, is stock sentence or interjection
+	phrase-book
+
+little infrastructure projects
+	calc level per dict, per story, daily cron
+		allows us to build useful drills, and stories
+
+big infrastructure projects
+	finish instantiation of object model, per notes/object-model.txt
+	dictionary search page
+	navigation via browser history
+		api/svc/command/ui
+		free public access to data and functions
+		dictionary, stories, grammar, drills, sengen, keyboard
+	noam: cleanup, tests, sam commands, test parse: อกไม้ดอกนี้จะมอบให้คุณนะคะ
+		noam translate and translit are broken because of new search
+
+load stories, one per day
+drill, one per day
+
+======================
+post-launch
+
+periodic cleanup of account.token table. now has 2500 records.
+
+delete thaidict table
 
 grammar/sengen/conversation
 	learn how to carry on a conversation
 		not a drill, but using user's mastered vocab
 
-api/svc/command/ui
-	free public access to data and functions
-	dictionary, stories, grammar, drills, sengen
+specify language requirement on each field
+	allow only thai in thai field, and components
+	allow only eng in other fields
 
-navigation via browser history
+rearrange vowel components
+	reverse fc and tm
 
-DictView::editor
-	pronunciation rules, manual, menu, สงบ
+chat
+	implement up/down arrow in chat window, for mobile also
 
-x story editor - see fear 3 substitute
-	x after choosing a meaning, display that chosen meaning (currently showing the wrong meaning)
+keyboard
+	uppercase
+	learning: Homekeys,etc, known/new
+	alphabet consonants
+	alphabet vowel patterns
 
-dictionary editor
-	x add translation (meaning)
-	delete translation
-	after adding or deleting a translation, the minidict still contains the original
-		run a new search, the search results are correct, but popupDict is not yet changed
-		change the minidict, or redo the search 
-		in Dictionary::search(), new items are added to the minidict, but old ones are not deleted or updated
-			I believe this means, the minidict should be replaced
-
-x dictionary::drawDetail
-	x draw pos with multi pos values
-		x write Dictionary::drawPos()
-		x in drill answer, multiple pos, จอง jaawngM undefined reserve, pos=nv, noun,verb
-	x search, show, cannot display multiple pos 
-
-Editor::popupDict
-	allow zoom into multi components
-	better display of syllable components
+vocab
+	- remove cmdRemoveVocab, replace with set state=u
+	- remove type from vocab db
+		are you sure? 
+			what if we want to store expressions that are not in the dict?
+		in cmdGetVocab, use join with dict to get type
+		remove type from cmdSetVocab
+	- replace word with id in vocab db
+		are you sure? 
+			what if we want to store expressions that are not in the dict?
+		join with dict to get thai and type
 
 ======================
 support video conferencing chatbot screen-sharing
@@ -293,6 +258,9 @@ story organization
 		songs
 		essays
 		poems
+
+how often are tone marks used on open syllables?
+	นี่ niiF, นั้น nanH, this and that, low-class mai eak, low-class mai tok
 
 ====================================
 server-side analysis
