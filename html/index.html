@@ -51,7 +51,8 @@
 		<script src="jslib/observer.js"></script>
 		<script src="jslib/session.js"></script>
 		<script src="jslib/cookie.js"></script>
-		<script src="jslib/browserhistory.js"></script>
+		<!-- replaces browserhistory.js, move to jslib -->
+		<script src="js/hist.js"></script> 
 		<script src="jslib/chat.js"></script>
 		<script src="js/editor.js"></script>
 <?php } else { ?>
@@ -135,9 +136,9 @@
 				<h1>Editor</h1>
 				<section id='editor'></section>
 			</section>
-			<section hidden class='narrative' id='content-storyview'>
+			<section hidden class='narrative' id='content-story'>
 				<h1>Story</h1>
-				<section id='storyview' mode=view></section>
+				<section id='story' mode=view></section>
 			</section>
 			<section hidden class='narrative' id='content-course'>
 				<h1>Course</h1>
@@ -155,7 +156,7 @@
 			<p><button close class='anchor' nav='profile'  >User Profile</button></p>
 			<p><button close class='anchor' nav='keyboard' >Keyboard</button></p>
 			<p><button close class='anchor' nav='curriculum'>Curriculum</button></p>
-			<p><button close class='anchor' nav='storyview'>Story</button></p>
+			<p><button close class='anchor' nav='story'    >Story</button></p>
 			<p><button close class='anchor' nav='editor'   >Editor</button></p>
 		</nav>
 		<aside initially hidden class='panel popup dropdown blu' id='settings-dialog'>

@@ -1,0 +1,72 @@
+<html>
+<head>
+<title>Hist</title>
+<script>
+/** @const */ var voyc = {};
+voyc.navcallback = function(a) {
+	document.title = 'Hist ' + a.page;
+	var s = '';
+	s += 'page '+a.page;
+	s += ', view '+a.view;
+	s += ', section '+a.section;
+	document.getElementById('content').innerHTML = s;
+};
+
+addEventListener('load', function(event) {
+	voyc.hist = new voyc.Hist(function(a) { voyc.navcallback(a);});
+
+	// attach button handlers
+	var btns = document.querySelectorAll('button');
+	for (var i=0; i<btns.length; i++) {
+		btns[i].addEventListener('click', function(event) {
+			var tgt = event.currentTarget;
+			var newpage = tgt.getAttribute('page');
+			var newview = tgt.getAttribute('view');
+			var newsection = tgt.getAttribute('section');
+			voyc.page = (newpage) ? newpage : voyc.page;
+			voyc.view = (newview) ? newview : voyc.view;
+			voyc.section = (newsection) ? newsection : voyc.section;
+
+			// call nav() method to navigate to new page
+			voyc.hist.nav({
+				page:voyc.page,
+				view:voyc.view,
+				section:voyc.section
+			});
+		}, false);
+	}
+	voyc.hist.nav();
+}, false);
+
+voyc.page = 'winston';
+voyc.view = 'front';
+voyc.section = 'bio';
+
+</script>
+<script src='hist.js'></script>
+</head>
+<body>
+<div>
+	<button page=winston>Winston</button>
+	<button page=genghis>Genghis</button>
+	<button page=houston>Houston</button>
+	<button page=murray>Murray</button>
+	<button page=oberheim>Oberheim</button>
+	<button page=tentanbach>Tentanbach</button>
+</div>
+<div>
+	<button view=front>front view</button>
+	<button view=rear>rear view</button>
+	<button view=side>side view</button>
+	<button view=birdseye>bird's eye view</button>
+</div>
+<div>
+	<button section=bio>Bio</button>
+	<button section=photo>Photo</button>
+	<button section=cv>CV</button>
+</div>
+<br/>
+<div id=content>
+</div>
+</body>
+</html>

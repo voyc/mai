@@ -2,10 +2,10 @@
 div#storyviewbtnrow, div#storyeditbtnrow {
 	display:none;
 }
-section#storyview[mode=edit] div#storyeditbtnrow {
+section#story[mode=edit] div#storyeditbtnrow {
 	display:block;
 }
-section#storyview[mode=view] div#storyviewbtnrow {
+section#story[mode=view] div#storyviewbtnrow {
 	display:block
 }
 

@@ -34,7 +34,7 @@ voyc.Mai.prototype.setup = function () {
 
 	// instantiate viewers
 	voyc.editor = new voyc.Editor(voyc.$('editor'));
-	voyc.storyview = new voyc.StoryView(voyc.$('storyview'));
+	voyc.storyview = new voyc.StoryView(voyc.$('story'));
 	voyc.chat = new voyc.Chat();
 	voyc.chat.setup(document.getElementById('chatcontainer'));
 
@@ -46,9 +46,13 @@ voyc.Mai.prototype.setup = function () {
 
 	// instantiate controller, navigation via browser history
 	voyc.view = new voyc.View();
-	voyc.browserhistory = new voyc.BrowserHistory('name', function(pageid) {
-		var event = pageid.split('-')[0];
-		voyc.observer.publish(event+'-requested', 'mai', {page:pageid});
+	//voyc.browserhistory = new voyc.BrowserHistory('name', function(pageid) {
+	//	var event = pageid.split('-')[0];
+	//	voyc.observer.publish(event+'-requested', 'mai', {page:pageid});
+	//});
+	voyc.hist = new voyc.Hist(function(state) {
+		var event = state.page;
+		voyc.observer.publish(event+'-requested', 'mai', {state});
 	});
 
 	// attach app events
@@ -60,7 +64,7 @@ voyc.Mai.prototype.setup = function () {
 	voyc.observer.subscribe('getprofile-received' ,'mai' ,function(note) { self.onGetProfileReceived  (note); });
 
 	voyc.observer.publish('setup-complete', 'mai', {});
-	voyc.browserhistory.nav('home');
+	voyc.hist.nav({page:'home'});
 	
 	window.addEventListener('resize', function() {
 		self.resize();

@@ -22,22 +22,22 @@ voyc.StoryView = function(container) {
 voyc.StoryView.prototype.setup = function() {
 	this.lang = 'thai';
 	var self = this;
-	this.observer.subscribe('storyview-requested', 'storyview', function(note) {self.onStoryViewRequested(note);});
+	this.observer.subscribe('story-requested', 'storyview', function(note) {self.onStoryViewRequested(note);});
 	this.observer.subscribe('getstories-received', 'storyview', function(note) {self.onGetStoriesReceived(note);});
 	this.observer.subscribe('story-ready', 'storyview', function(note) {self.onStoryReady(note);});
 }
 
 voyc.StoryView.prototype.onStoryViewRequested = function(note) {
 	this.container.innerHTML = '<p>Loading...</p>';
-	var a = note.payload.page.split('-');
-	if (a.length > 1) {
+	var state = note.payload.state;
+	if (state.sid) {
 		// open insert form
-		if (a[1] == 'new') {
+		if (state.sid == 'new') {
 			this.openForm(0,'');
 		}
 		// if story requested by id, draw it
 		else {
-			voyc.story.read(a[1]);
+			voyc.story.read(state.sid);
 		}
 	}
 	// otherwise, show the list
@@ -91,11 +91,11 @@ voyc.StoryView.prototype.onGetStoriesReceived = function(note) {
 
 	// attach handlers
 	var self = this;
-	var elist = document.getElementById('storyview').querySelectorAll('button[sid]');
+	var elist = document.getElementById('story').querySelectorAll('button[sid]');
 	for (var i=0; i<elist.length; i++) {
 		elist[i].addEventListener('click', function(e) {
 			var sid = e.currentTarget.getAttribute('sid');
-			voyc.browserhistory.nav('storyview-'+sid);
+			voyc.hist.nav({page:'story',sid:sid});
 		}, false);
 	}
 }
@@ -226,7 +226,7 @@ voyc.StoryView.prototype.setview = function(attr,value) {
 	}
 }
 voyc.StoryView.prototype.setmode = function(value) {
-	document.querySelector('section#storyview').setAttribute('mode', value);
+	document.querySelector('section#story').setAttribute('mode', value);
 }
 
 // move to dictionary as drawOne

@@ -26,6 +26,7 @@ subcomponents
 		load lib dynamically
 		remove css adjustment for pencil top, replace with comment
 	jslib 
+		chat.js comment says class BrowserHistory instead of Chat
 		chat-post
 		other new functions
 
@@ -73,6 +74,8 @@ story list
 		(consider global search, search dict and story)
 
 story detail
+	Show speakers in dialog
+	story view with pictures
 	draw view with buttons one-time
 		leave a hole for the story
 		scroll below the buttons
@@ -138,17 +141,24 @@ little infrastructure projects
 		allows us to build useful drills, and stories
 
 big infrastructure projects
-	finish instantiation of object model, per notes/object-model.txt
 	dictionary search page
-	navigation via browser history
+	-  navigation via browser history
+		replaced BrowserHistory with Hist, to allow multiple parameters
+		documenting in github wiki
 		api/svc/command/ui
 		free public access to data and functions
 		dictionary, stories, grammar, drills, sengen, keyboard
 	noam: cleanup, tests, sam commands, test parse: อกไม้ดอกนี้จะมอบให้คุณนะคะ
 		noam translate and translit are broken because of new search
+	chat command language.  see below.  document in git wiki.
 
+launch 1, stories and drills
 load stories, one per day
 drill, one per day
+
+launch 2, grammar and sengen and review drills
+
+launch 3, conversation
 
 ======================
 post-launch
@@ -279,7 +289,7 @@ read all the stories
 	
 Show stories List, title, num words, num new, average level
 
-split out components and syllables, on the server, allow drill on those
+x split out components and syllables, on the server, allow drill on those
 
 ===================================
 chat command help

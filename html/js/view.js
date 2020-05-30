@@ -22,7 +22,7 @@ voyc.View.prototype.setup = function () {
 	voyc.observer.subscribe('profile-requested'      ,'view' ,function(note) { self.drawPage('profile'); self.clearProfileForm(); });
 	voyc.observer.subscribe('keyboard-requested'     ,'view' ,function(note) { self.drawPage('keyboard'); });
 	voyc.observer.subscribe('curriculum-requested'   ,'view' ,function(note) { self.drawPage('curriculum'); });
-	voyc.observer.subscribe('storyview-requested'    ,'view' ,function(note) { self.drawPage('storyview'); });
+	voyc.observer.subscribe('story-requested'        ,'view' ,function(note) { self.drawPage('story'); });
 	voyc.observer.subscribe('course-requested'       ,'view' ,function(note) { self.drawPage('course'); });
 	voyc.observer.subscribe('editor-requested'       ,'view' ,function(note) { self.drawPage('editor'); });
 }
@@ -38,7 +38,7 @@ voyc.View.prototype.attachHandlers = function(element) {
 		navs[i].addEventListener('click', function(e) {
 			var pageid = e.currentTarget.getAttribute('nav');
 			//voyc.observer.publish('nav-requested', 'view', {page:pageid});
-			voyc.browserhistory.nav(pageid);
+			voyc.hist.nav({page:pageid});
 		}, false);
 	}
 
@@ -73,7 +73,7 @@ voyc.View.prototype.drawPage = function(pageid) {
 	voyc.hide('content-profile');
 	voyc.hide('content-keyboard');
 	voyc.hide('content-curriculum');
-	voyc.hide('content-storyview');
+	voyc.hide('content-story'  );
 	voyc.hide('content-course');
 	voyc.hide('content-editor');
 	voyc.show('content-'+pageid);
