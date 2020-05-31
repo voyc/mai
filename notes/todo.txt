@@ -28,12 +28,16 @@ subcomponents
 	jslib 
 		chat.js comment says class BrowserHistory instead of Chat
 		chat-post
+		utils, countObject, in noam.js
 		other new functions
 
 =======================
 pre-launch
 
 drill
+	allow options
+		new/all, now cannot repeat a drill after mastered
+		choose steps per stacktype
 	kill from drill leaves sam's chat posts on the right in the guest position
 	- call continueDrill from startDrill, with step -1, to get starting message
 		this works now on the first set, but not with subsequent sets
@@ -139,26 +143,121 @@ dict/mean
 little infrastructure projects
 	calc level per dict, per story, daily cron
 		allows us to build useful drills, and stories
+	chat command language.  see below.  document in git wiki.
 
 big infrastructure projects
 	dictionary search page
 	-  navigation via browser history
-		replaced BrowserHistory with Hist, to allow multiple parameters
-		documenting in github wiki
-		api/svc/command/ui
-		free public access to data and functions
-		dictionary, stories, grammar, drills, sengen, keyboard
+		x replaced BrowserHistory with Hist, to allow multiple parameters
+		x documenting in github wiki
+		controller mechanisms
+			svc - communicate with server
+			chat commands - communicate with humans
+			sam commands - functional units of code
+			observer events - publish/subscribe 
+			html events - load, click, etc.
+			hist navigation - browser click/back/forward
+		navigation to these components
+			x home chat
+			x about
+			x user profile
+			- dictionary, 
+			- stories, 
+				nav-requested
+				cancel calls history.back()
+				save calls history.back(). ???
+				change view and tview does nav with replace
+			- drills, 
+			grammar, 
+			sengen, 
+			keyboard
 	noam: cleanup, tests, sam commands, test parse: อกไม้ดอกนี้จะมอบให้คุณนะคะ
-		noam translate and translit are broken because of new search
-	chat command language.  see below.  document in git wiki.
+		Test suite, separate file loaded dynamically by Noam.
+		x comment out:
+			x eliminateDupes()
+			x parseWordsToGlyphs()	
+			x parseStoryBySpace()
+			x analyzeWord()
+			x analyzeStory()
+		delete parse(), 
+			call parseStory() directly
+			call parseSyllable() directly
+		parseSyllable() is used only when editing the dictionary
+		revive collectWords()
+			not needed until we do keyboard drills, ie glyph drills
+			rewrite dictionary.iterate()
+		note: noam.html uses dict.js and dict2.js, both obsolete
+		noam.html operations 
+			what is voyc.parse()? most like noam.parseString()
+			Test 1 - test voyc.parse() on one word
+			Test 2 - test voyc.parse() on an array of 5 words
+			Parse Dict - 
+			Parse 
+			Collect 
+			Parse Word - test voyc.parseWord() , probably like parseSyllable()
+				on whatever is in input textbox, 
+				return table including button to show details
+			Special
+			Parse Syllable 
+			Parse Syllable Input 
+			Parse Syllable Dict 
+			parseSyllable() => compose(), two output formats
+				output format:SQL update statement 
+				output format:JS object
+tests
+	every rule
+		one example word for each rule
+		rule combinations?
+	every vowel pattern
+		one example word for each vowel pattern
+	whole dictionary for changes in parse algorithms
+		type o
+		type m
+	dictionary where cpm = manual and tlm = manual
+		to test for improvements in parse algorithm
+	how far off is our dict now? do we need sql output?	
+	these tests must be run on the client.  not server. no cron.
+		must be launched by human.
 
-launch 1, stories and drills
+collect or search
+	known glyphs
+	type o
+		vowelPattern
+		lc
+		fc
+		tonemark
+		tone
+		each rule
+	manual components
+	manual translit
+	type m
+		any rules for type m?
+		redup?
+	special dictionary searching
+	output can show count, or list 
+	include only known words, per vocab
+		(drill option is -new)
+		(search option will e -known)
+	implement via sql or dictionary.iterate
+
+parse testing
+	compare current parse output to dict.cp and dict.ru
+	do the whole dict, or some subset of search results
+
+dictionary
+	rewrite translate() 
+	rewrite translit()
+	rewrite iterate()
+
+launch 1, stories, dictionary and drills
 load stories, one per day
 drill, one per day
 
 launch 2, grammar and sengen and review drills
 
 launch 3, conversation
+
+launch 4, chat amoung coach, student, sam, lee
 
 ======================
 post-launch

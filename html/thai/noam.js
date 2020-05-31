@@ -5,63 +5,24 @@
 	Noam, as in Noam Chomsky, famous linguist, 
 	does all the linquistic and grammar analysis.
 
-	Requires the prescence of dictionary and vocab data.
-
 	public methods (can be called from command-line):
-		collect()
+		collectWords()
+
 		parse(string) - return object of components
+			parseStory()
+				parseString()
+			parseSyllable()
 
 	sub methods:
-		parseStory(string) - return object of parsed components
-		parseString(string, linenum) - return array of objects, one for each word
-		parseSyllable(syllable) - return object of components
 		parseWordToGlyphs(word,options {newOnly t/f, format glyph/dict})
 		parseStoryBySpace(story,options {newOnly t/f, format word/dict})
 		parsePhrase() - obsolete
-		parseWord() - obsolete
 **/
 voyc.Noam = function(dictionary,vocab) {
 	voyc.vowelPatternsInit();
 }
 
-/**
-	is input phrases, story, or words?
-	input: list of phrases
-	output: list of glyphs, list of words
-**/
-//voyc.Noam.prototype.prereq = function(phrases) {
-//	var word = [];
-//	for (var i=0; i<phrases.length; i++) {
-//		var words = this.parsePhrase(phrases[i]);
-//		for (var j=0; j<words.length; j++) {
-//			var v = voyc.vocab.get(words[j])
-//			if (!v) {
-//				word.push(words[j]);
-//			}
-//		}
-//	}
-//
-//	var glyph = [];
-//	for (var i=0; i<word.length; i++) {
-//		var glyphs = this.parseWord(word[i]);
-//		for (var j=0; j<glyphs.length; j++) {
-//			var v = voyc.vocab.get(glyphs[j]);
-//			if (!v) {
-//				glyph.push(glyphs[j]);
-//			}
-//		}
-//	}
-//	return [ word, glyph ];
-//}
-//
-//voyc.Noam.prototype.parsePhrase = function(phrase) {
-//	return phrase.split(' ');
-//}
-//
-//voyc.Noam.prototype.parseWord = function(word) {
-//	return word.split('');
-//}
-
+/*
 voyc.Noam.prototype.eliminateDupes = function(a) {
 	//a.sort();
 	var b = [];
@@ -75,7 +36,9 @@ voyc.Noam.prototype.eliminateDupes = function(a) {
 	//b = voyc.shuffleArray(b);
 	return b;
 }
+*/
 
+/*
 voyc.Noam.prototype.parseWordToGlyphs = function(words,options) {
 	var settings = {
 		newGlyphsOnly: true,
@@ -108,7 +71,9 @@ voyc.Noam.prototype.parseWordToGlyphs = function(words,options) {
 	}
 	return glyph;
 }
+*/
 
+/*
 voyc.Noam.prototype.parseStoryBySpace = function(story,options) {
 	var settings = {
 		newWordsOnly: true,
@@ -147,7 +112,9 @@ voyc.Noam.prototype.parseStoryBySpace = function(story,options) {
 	}
 	return word;
 }
+*/
 
+/*
 voyc.Noam.prototype.analyzeWord = function(word) {
 	var wordEng = [];
 	word.forEach(function(w) {
@@ -175,7 +142,9 @@ voyc.Noam.prototype.analyzeWord = function(word) {
 	}, this);
 	return {new:dictNew, old:dictOld, err:wordErr, wordeng:wordEng};
 }
+*/
 
+/*
 // analyze phrases assuming a space between words
 voyc.Noam.prototype.analyzeStory = function(story) {
 	var word = [];
@@ -214,6 +183,7 @@ voyc.Noam.prototype.analyzeStory = function(story) {
 	}, this);
 	return {new:dictNew, old:dictOld, err:wordErr, pheng:phraseEng};
 }
+*/
 
 /**
 	Collect a list of words that contain 
@@ -357,6 +327,7 @@ voyc.Noam.prototype.collectWords = function(target, options) {
 		parse -keeplines ไปวันศุกร์ เสะาร์ และอาทิตย์ดีพไหม
 **/
 voyc.Noam.prototype.parse = function(input,options) {
+	debugger; // call parseSyllable() or parseStory() directly
 	var parsed = '';
 	if (options['syllable']) {
 		parsed = this.parseSyllable(input);
