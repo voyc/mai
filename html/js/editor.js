@@ -124,16 +124,6 @@ voyc.Editor.prototype.save = function() {
 	voyc.dictionary.update(r);
 }
 
-voyc.Editor.prototype.joinComponents = function(o) {
-	var cp = [o.lc,o.vp,o.fc,o.tm,o.tn].join(',');
-	return cp;
-}
-
-voyc.Editor.prototype.splitComponents = function(cp) {
-	var p = cp.split(',');
-	return { lc:p[0], vp:p[1], fc:p[2], tm:p[3], tn:p[4] };
-}
-
 voyc.Editor.prototype.clear = function() {
 	var d = this.container.querySelector('#thai');
 	d.value = '';
@@ -240,7 +230,7 @@ voyc.Editor.prototype.parse = function(s) {
 	else {
 		var pw = voyc.noam.parseSyllable(s); // returns object
 		document.getElementById('ptranslit').value = pw.tl;
-		document.getElementById('pcomponents').value = this.joinComponents(pw);
+		document.getElementById('pcomponents').value = voyc.dictionary.joinComponents(pw);
 		document.getElementById('pg').value = 'o';
 		document.getElementById('prules').value = pw.ru;
 		(new voyc.Minimal).openPopup('acceptparse');

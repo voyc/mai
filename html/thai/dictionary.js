@@ -25,7 +25,6 @@
 		listAll()
 		
 		* draw(dict)
-		* drawOne(dict)
 		drawClass(glyph) - using static table
 		drawDiacritic(glyph) - add dotted-circle char
 		drawRule - using static table
@@ -47,7 +46,7 @@
 	keep dirty flag, reload fast and mini db changes
 **/
 voyc.Dictionary = function() {
-	this.unique = 10001000; // used in drawOne() to make unique attribute names
+	this.unique = 10001000;
 	this.fast = [];  // sfast lookup
 	this.mini = {
 		list: [], // subset of complete dict/mean records
@@ -122,12 +121,6 @@ voyc.Dictionary.prototype.getDict = function(ida,cb) {
 	voyc.comm.request(svcname, data, function(ok, response, xhr) {
 		if (!ok) response = { 'status':'system-error'}; 
 		if (response['status'] == 'ok') {
-			//self.mini.list = response.list;
-			//self.mini.key = {};
-			//for (var i = 0; i<self.mini.list.length; i++) {
-			//	var item = self.mini.list[i];
-			//	self.mini.key[item.id] = i;
-			//}
 			self.loadMini(response.list);
 			if (callback) {
 				callback(response.list);
@@ -401,8 +394,9 @@ voyc.Dictionary.prototype.drawTranslit = function(tl) {
 	return s;
 }
 
-voyc.Dictionary.prototype.joinComponents = function(lc,vp,fc,tm,tn) {
-	var cp = [lc,vp,fc,tm,tn].join(',');
+voyc.Dictionary.prototype.joinComponents = function(o) {
+	var cp = [o.lc,o.vp,o.fc,o.tm,o.tn].join(',');
+	return cp;
 }
 
 voyc.Dictionary.prototype.splitComponents = function(cp) {

@@ -5,18 +5,11 @@
 	Noam, as in Noam Chomsky, famous linguist, 
 	does all the linquistic and grammar analysis.
 
-	public methods (can be called from command-line):
+	public methods:
 		collectWords()
-
-		parse(string) - return object of components
-			parseStory()
-				parseString()
-			parseSyllable()
-
-	sub methods:
-		parseWordToGlyphs(word,options {newOnly t/f, format glyph/dict})
-		parseStoryBySpace(story,options {newOnly t/f, format word/dict})
-		parsePhrase() - obsolete
+		parseStory()
+		parseString()
+		parseSyllable()
 **/
 voyc.Noam = function(dictionary,vocab) {
 	voyc.vowelPatternsInit();
@@ -271,76 +264,8 @@ voyc.Noam.prototype.collectWords = function(target, options) {
 }
 
 /**
-	parse(input, options)
-	
-	input string can be:
-		dialog 
-		story 
-		sentence 
-		phrase 
-		expression 
-		multi-syllable word 
-		single-syllable word 
-		syllable 
-		glyph
-
-	input options:
-		keep lines separate (yes for song, no for newspaper article)
-		match words against vocab
-		match glyphs against vocab
-		check parsed syllable against dictionary parsing
-
-	output object includes:
-		speakers
-		lines
-		words
-		word offsets
-		syllable offsets
-		glyphs (future)
-		syllables (future)
-		phrases (future)
-		expressions (future)
-		sentences (future)
-
-	operations:
-		1. parse into speakers and lines (dialog yes/no)
-		2. substitute patterns (pronouns, numbers, etc)
-		3. parse each string into words
-		4. combine words into phrases and sentences (match against grammar patterns)
-		5. parse each word into syllables
-		6. parse syllable into components
-
-	errors:
-		unidentified substring
-		unidentified glyph
-		invalid sequence of glyphs
-
-	test strings:
-		parse -keeplines เห็นด้วย
-		parse -keeplines ไปวันศุกร์ เสาร์ และอาทิตย์ดีไหม
-		parse -keeplines บทเรียนที่หนึ่ง
-		ก:: เมย์,25,female
-		ข:: แบงค์,25,male
-		ก: อาทิตย์หน้าเราไปเที่ยวปายกันเถอะ
-		ข: เราต้องรีบไปซื้อตั๋วรถตู้ล่วงหน้า
-		ก: ไปซื้อที่ไหน
-		parse -keeplines ไปวันศุกร์ เสะาร์ และอาทิตย์ดีพไหม
-**/
-voyc.Noam.prototype.parse = function(input,options) {
-	debugger; // call parseSyllable() or parseStory() directly
-	var parsed = '';
-	if (options['syllable']) {
-		parsed = this.parseSyllable(input);
-	}
-	else {
-		parsed = this.parseStory(input);
-	}
-	return parsed;
-}
-
-/** 
 	method parseStory
-	input/output story object
+	input/output: story object
 **/
 voyc.Noam.prototype.parseStory = function(story) {
 	var s = story.original;
@@ -357,7 +282,8 @@ voyc.Noam.prototype.parseStory = function(story) {
 		}
 	}
 
-	// identify speakers, remove speaker definition lines (key:: name,age,gender)
+	// identify speakers, remove speaker definition lines
+	// (key:: name,age,gender)
 	for (var i=0; i<a.length; i++) {
 		var s = a[i].split(':: ');
 		if (s.length > 1) {
@@ -602,63 +528,6 @@ voyc.Noam.prototype.parseString = function(input, linenum, greedy) {
 }
 
 /*
-    Test Set for parseSyllable()
-*/
-voyc.parseSyllableTestSet = [
-	{w:'กรอก',m:'กรอ',vp:'oอ',lc:'กร',fc:'ก',tm:'',tn:'L',tl:'graawk',ru:'fnsc,mcd'},
-	{w:'ก๊าก',m:'ก๊า',vp:'oา',lc:'ก',fc:'ก',tm:'๊',tn:'H',tl:'gaak',ru:'fnsc,mc3'},
-	{w:'กิ๊ก',m:'กิ๊',vp:'oิ',lc:'ก',fc:'ก',tm:'๊',tn:'H',tl:'gik',ru:'fnsc,mc3'},
-	{w:'ครก',m:'ครก',vp:'o',lc:'คร',fc:'ก',tm:'',tn:'H',tl:'krok',ru:'ccivo,fnsc,lcds'},
-	{w:'คราก',m:'ครา',vp:'oา',lc:'คร',fc:'ก',tm:'',tn:'F',tl:'kraak',ru:'fnsc,lcdl'},
-	{w:'โครก',m:'โครก',vp:'โo',lc:'คร',fc:'ก',tm:'',tn:'F',tl:'krook',ru:'fnsc,lcdl'},
-	{w:'กรง',m:'กรง',vp:'o',lc:'กร',fc:'ง',tm:'',tn:'M',tl:'grong',ru:'ccivo,fsc,mcl'},
-	{w:'กร่าง',m:'กร่า',vp:'oา',lc:'กร',fc:'ง',tm:'่',tn:'L',tl:'graang',ru:'fsc,mc1'},
-	{w:'โกร่ง',m:'โกร่',vp:'โo',lc:'กร',fc:'ง',tm:'่',tn:'L',tl:'groong',ru:'fsc,mc1'},
-	{w:'แกง',m:'แกง',vp:'แo',lc:'ก',fc:'ง',tm:'',tn:'M',tl:'gaaeng',ru:'fsc,mcl'},
-	{w:'งัด',m:'งั',vp:'oั',lc:'ง',fc:'ด',tm:'',tn:'H',tl:'ngat',ru:'fnsc,lcds'},
-	{w:'งด',m:'งด',vp:'o',lc:'ง',fc:'ด',tm:'',tn:'H',tl:'ngot',ru:'ccivo,fnsc,lcds'},
-	{w:'ผลาญ',m:'ผลา',vp:'oา',lc:'ผล',fc:'ญ',tm:'',tn:'R',tl:'plaan',ru:'fsc,hcl'},
-	{w:'ชาญ',m:'ชา',vp:'oา',lc:'ช',fc:'ญ',tm:'',tn:'M',tl:'chaan',ru:'fsc,lcl'},
-	{w:'ควร',m:'คว',vp:'oว',lc:'ค',fc:'ร',tm:'',tn:'M',tl:'kuan',ru:'fsc,lcl'},
-	{w:'ก้าน',m:'ก้า',vp:'oา',lc:'ก',fc:'น',tm:'้',tn:'F',tl:'gaan',ru:'fsc,mc2'},
-	{w:'รูป',m:'รู',vp:'oู',lc:'ร',fc:'ป',tm:'',tn:'F',tl:'ruup',ru:'fnsc,lcdl'},
-	{w:'ลูบ',m:'ลู',vp:'oู',lc:'ล',fc:'บ',tm:'',tn:'F',tl:'luup',ru:'fnsc,lcdl'},
-	{w:'ลาบ',m:'ลา',vp:'oา',lc:'ล',fc:'บ',tm:'',tn:'F',tl:'laap',ru:'fnsc,lcdl'},
-	{w:'ลาภ',m:'ลา',vp:'oา',lc:'ล',fc:'ภ',tm:'',tn:'F',tl:'laap',ru:'fnsc,lcdl'},
-	{w:'กาม',m:'กา',vp:'oา',lc:'ก',fc:'ม',tm:'',tn:'M',tl:'gaam',ru:'fsc,mcl'},
-	{w:'ขม',m:'ขม',vp:'o',lc:'ข',fc:'ม',tm:'',tn:'R',tl:'kom',ru:'ccivo,fsc,hcl'},
-	{w:'คม',m:'คม',vp:'o',lc:'ค',fc:'ม',tm:'',tn:'M',tl:'kom',ru:'ccivo,fsc,lcl'},
-	{w:'ชม',m:'ชม',vp:'o',lc:'ช',fc:'ม',tm:'',tn:'M',tl:'chom',ru:'ccivo,fsc,lcl'},
-	{w:'ชิม',m:'ชิ',vp:'oิ',lc:'ช',fc:'ม',tm:'',tn:'M',tl:'chim',ru:'fsc,lcl'},
-	{w:'กาย',m:'กา',vp:'oา',lc:'ก',fc:'ย',tm:'',tn:'M',tl:'gaay',ru:'fsc,mcl'},
-	{w:'ก่าย',m:'ก่า',vp:'oา',lc:'ก',fc:'ย',tm:'่',tn:'L',tl:'gaay',ru:'fsc,mc1'},
-	{w:'ขาย',m:'ขา',vp:'oา',lc:'ข',fc:'ย',tm:'',tn:'R',tl:'kaay',ru:'fsc,hcl'},
-	{w:'ข่า',m:'ข่า',vp:'oา',lc:'ข',fc:'',tm:'่',tn:'L',tl:'kaa',ru:'ovl,hc1'},
-	{w:'แก้ว',m:'แก้',vp:'แo',lc:'ก',fc:'ว',tm:'้',tn:'F',tl:'gaaeo',ru:'fsc,mc2'},
-	{w:'หวิว',m:'หวิ',vp:'oิ',lc:'หว',fc:'ว',tm:'',tn:'R',tl:'wio',ru:'cclh,fsc,hcl'},
-	{w:'ไหว',m:'ไหว',vp:'ไo',lc:'หว',fc:'',tm:'',tn:'R',tl:'wai',ru:'cclh,ovl,hcl'},
-	{w:'วรรค',m:'วรร',vp:'oรร',lc:'ว',fc:'ค',tm:'',tn:'H',tl:'wak',ru:'fnsc,lcds'},
-	{w:'ธรรม',m:'ธรร',vp:'oรร',lc:'ธ',fc:'ม',tm:'',tn:'M',tl:'tam',ru:'fsc,lcl'},
-	{w:'สรร',m:'สรร',vp:'oรร',lc:'ส',fc:'',tm:'',tn:'R',tl:'san',ru:'ovs,hcl'},
-	{w:'พร',m:'พร',vp:'o',lc:'พ',fc:'ร',tm:'',tn:'M',tl:'paawn',ru:'ccivo,fsc,lcl'},
-	{w:'ศร',m:'ศร',vp:'o',lc:'ศ',fc:'ร',tm:'',tn:'R',tl:'saawn',ru:'ccivo,fsc,hcl'},
-];
-
-/*
-	reduplication creates multiple syllables
-	examples of reduplication
-			นัยนา  นัย ย นา    ย used twice, Naiyana
-			วิทยาลัย  วิท ท ยาลัย
-	{w:'ฉกาจ',m:'ฉกา',vp:'oา',lc:'ฉก',fc:'',tm:'',tn:'R',tl:'chkgaa',ru:'ovl,hcl'},
-	{w:'พจน์',m:'พจน',vp:'o',lc:'พจน',fc:'',tm:'',tn:'H',tl:'pjno',ru:'ovs,lcds'},
-	{w:'นัยนา', ru:'redup'},
-	{w:'วิทยาลัย', ru:'redup'},
-	{w:'ชำนาญ',m:'นา',vp:'oา',lc:'น',fc:'',tm:'',tn:'M',tl:'naa',ru:'ovl,lcl'},
-	{w:'คำนวณ',m:'นว',vp:'oว',lc:'น',fc:'',tm:'',tn:'M',tl:'nua',ru:'ovl,lcl'},
-*/
-
-
-/*
 method:	parseSyllable(syllable)
 	identify these components:
 		vowelpattern
@@ -843,6 +712,7 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	var v = voyc.translit[vowelMeta.e];
 	syl.tlc = lce + v + voyc.translit['-'+fs] + syl.tn;
 
+	syl.cp = voyc.dictionary.joinComponents(syl);
 	return syl;
 }
 

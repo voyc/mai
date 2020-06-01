@@ -179,47 +179,59 @@ big infrastructure projects
 			x parseStoryBySpace()
 			x analyzeWord()
 			x analyzeStory()
-		delete parse(), 
-			call parseStory() directly
-			call parseSyllable() directly
-		parseSyllable() is used only when editing the dictionary
+		x delete parse(), 
+			x call parseStory() directly
+			x call parseSyllable() directly
+		x parseSyllable() is used only when editing the dictionary
 		revive collectWords()
 			not needed until we do keyboard drills, ie glyph drills
 			rewrite dictionary.iterate()
-		note: noam.html uses dict.js and dict2.js, both obsolete
+		x note: noam.html uses dict.js and dict2.js, both obsolete
 		noam.html operations 
-			what is voyc.parse()? most like noam.parseString()
-			Test 1 - test voyc.parse() on one word
-			Test 2 - test voyc.parse() on an array of 5 words
+			x what is voyc.parse()? most like noam.parseString()
+			x Test 1 - test voyc.parse() on one word
+			x Test 2 - test voyc.parse() on an array of 5 words
 			Parse Dict - 
-			Parse 
-			Collect 
-			Parse Word - test voyc.parseWord() , probably like parseSyllable()
-				on whatever is in input textbox, 
-				return table including button to show details
-			Special
-			Parse Syllable 
-			Parse Syllable Input 
-			Parse Syllable Dict 
+			x Parse 
+			x Collect 
+			x Parse Word - test voyc.parseWord() , probably like parseSyllable()
+				x on whatever is in input textbox, 
+				x return table including button to show details
+			x Special
+			x Parse Syllable 
+			x Parse Syllable Input 
+			x Parse Syllable Dict 
 			parseSyllable() => compose(), two output formats
 				output format:SQL update statement 
 				output format:JS object
 tests
-	every rule
-		one example word for each rule
-		rule combinations?
+	x every rule
+		x one example word for each rule
+		x rule combinations?
 	every vowel pattern
 		one example word for each vowel pattern
 	whole dictionary for changes in parse algorithms
 		type o
 		type m
+	parse testing
+		compare current parse output to dict.cp and dict.ru
+		do the whole dict, or some subset of search results
 	dictionary where cpm = manual and tlm = manual
 		to test for improvements in parse algorithm
 	how far off is our dict now? do we need sql output?	
 	these tests must be run on the client.  not server. no cron.
 		must be launched by human.
+		sam's internal clock can advise superuser when to run tests
 
-collect or search
+Noam::collectWords(), replace with Dictionary::SearchSpecial() 
+	special dictionary searching
+	search language
+		lc=ก
+		fc=ก
+		has cc or lc.length > 1
+		cc includes ก
+	output can show count, or list 
+	used by user and Sam to create custom drills
 	known glyphs
 	type o
 		vowelPattern
@@ -233,17 +245,11 @@ collect or search
 	type m
 		any rules for type m?
 		redup?
-	special dictionary searching
-	output can show count, or list 
 	include only known words, per vocab
 		(drill option is -new)
 		(search option will e -known)
 	implement via sql or dictionary.iterate
-
-parse testing
-	compare current parse output to dict.cp and dict.ru
-	do the whole dict, or some subset of search results
-
+	
 dictionary
 	rewrite translate() 
 	rewrite translit()

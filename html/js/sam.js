@@ -561,13 +561,21 @@ voyc.Sam.prototype.respond = function(o) { // input o object comes from chat eng
 			break;
 		case 'parse':
 			if (req.adj['syllable']) {
-				var po = voyc.noam.parse(req.object,req.adj);	
-				var s = this.showStory(po,{object:'syllable'});
+				var po = voyc.noam.parseSyllable(req.object);
+				var cp = voyc.dictionary.joinComponents(po);
+				var ru = po.ru.join(',');
+				var s = [cp,ru,po.tl].join('; ');
 				this.dochat(s);
 				break;
 			}
 			voyc.story.original = req.object;
 			voyc.story.parse(voyc.story.id);
+			break;
+		case 'test':
+			var self = this;
+			voyc.noam.test(function(s) {
+				self.dochat(s);
+			});
 			break;
 		case 'replace':
 			voyc.story.replace(req.object);
