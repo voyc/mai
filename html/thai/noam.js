@@ -557,16 +557,12 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 		} 
 	}
 
-	// find the dictionary entry for this syllable
-	//var dic = voyc.dictionary.search(syllable)[0]; // used only to include id in output
-
 	// find matching vowel pattern
 	for (var k in voyc.vowelPatterns) {
 		var pattern = new RegExp(voyc.vowelPatterns[k].syllablePattern, 'g');
 		var m = [];
 		if (m = pattern.exec(syllabl)) {
 			syl.t = syllable;
-		//	syl.id = dic.id;
 			syl.k = k;
 			syl.m = m[0];
 			syl.vp = voyc.vowelPatterns[k].t;
@@ -647,9 +643,14 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	var maidtree = '๊';
 	var maidtawaa = '๋';
 	
-	// tone rules
+	// tone assignment
 	syl.tn = false;
-	if (leadingConsonantMeta.m == 'm' && syl.tm == maiaek) syl.tn = 'L', syl.ru.push('mc1');
+
+	// exceptions to the tone rules
+	if (syllable == 'ก็') syl.tn = 'F', syl.ru.push('excp');
+
+	// tone rules
+	else if (leadingConsonantMeta.m == 'm' && syl.tm == maiaek) syl.tn = 'L', syl.ru.push('mc1');
 	else if (leadingConsonantMeta.m == 'm' && syl.tm == maitoh) syl.tn = 'F', syl.ru.push('mc2');
 	else if (leadingConsonantMeta.m == 'm' && syl.tm == maidtree) syl.tn = 'H', syl.ru.push('mc3');
 	else if (leadingConsonantMeta.m == 'm' && syl.tm == maidtawaa) syl.tn = 'R', syl.ru.push('mc4');
@@ -665,9 +666,11 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	else if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 's') syl.tn = 'H', syl.ru.push('lcds');
 	else if (leadingConsonantMeta.m == 'l' && syl.ending == 'dead' && vowelMeta.l == 'l') syl.tn = 'F', syl.ru.push('lcdl');
 
-	// tone exceptions
-	if (syllable == 'ก็') syl.tn = 'F', syl.ru.push('tnex');
-	if (!syl.tn) debugger;
+	// did we miss any?
+	if (!syl.tn) {
+		console.log('missed tone assignment ' + syl.t);
+		debugger;
+	}
 	
 	// final consonant sound
 	var fs = '';

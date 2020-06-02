@@ -168,7 +168,7 @@ voyc.Editor.prototype.onEditRequested = function(m) {
 	else if (m.act == 'u') {
 		this.populate(m.dict);
 	}
-	voyc.browserhistory.nav('editor');
+	voyc.hist.nav({page:'editor'});
 	this.container.querySelector('#thai').focus();
 }
 
@@ -207,7 +207,7 @@ voyc.Editor.prototype.populate = function(dict) {
 	for (var i=this.numTrans; i<this.maxTrans; i++) {
 		t.querySelector('#trans'+i).classList.add('hidden');
 	}
-	voyc.browserhistory.nav('editor');
+	voyc.hist.nav({page:'editor'});
 	d.focus();
 }
 

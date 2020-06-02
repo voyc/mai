@@ -76,7 +76,7 @@ voyc.vowelPatterns = [
 { t:'เoอะ'	,e:'ö'	,l:'s'	,m:'s'	,d:'s'	,p:'lrr'},
 { t:'เoอ'	,e:'öö'	,l:'l'	,m:'o'	,d:'s'	,p:'lr'	},
 { t:'เoิ'	,e:'ö'	,l:'s'	,m:'s'	,d:'s'	,p:'lo'	},
-{ t:'เoีย'	,e:'ia'	,l:'l'	,m:'o'	,d:'d'	,p:'lor'},
+{ t:'เoีย'	,e:'iia',l:'l'	,m:'o'	,d:'d'	,p:'lor'},
 { t:'เoือ'	,e:'ʉʉa',l:'l'	,m:'o'	,d:'d'	,p:'lor'},
 { t:'oัวะ'	,e:'ua'	,l:'s'	,m:'s'	,d:'d'	,p:'orr'},
 { t:'oัว'	,e:'ua'	,l:'l'	,m:'o'	,d:'d'	,p:'or'	},

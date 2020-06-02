@@ -505,7 +505,7 @@ voyc.ru = [
 	{code:'lcdl', name:'Low-class dead long: F'},
 	{code:'lc1', name:'Low-class mai eak: F'},
 	{code:'lc2', name:'Low-class mai toh: H'},
-	{code:'exp', name:'Exception to the rules.'},
+	{code:'excp', name:'Exception to the rules.'},
 
 	// silent tone mark on ending consonant
 
