@@ -33,10 +33,17 @@ voyc.Noam.testSuiteParseSyllable = [
 
 	// tests for rule cclh, a cluster with leading ห
 	{tw:'หมู', cp:'หม,oู,,,R', ru:'cclh,ovl,hcl', tl:'muuR', tp:'rule', value:'cclh'},
+	{tw:'ไหว', cp:'หว,ไo,,,R', ru:'cclh,ovl,hcl', tl:'waiR', tp:'rule', value:'cclh'},
+	{tw:'หวิว', cp:'หว,oิ,ว,,R', ru:'cclh,fsc,hcl', tl:'wioR', tp:'rule', value:'cclh'},
+	{tw:'แหล่ะ',cp:'หล,แoะ,,่,L',ru:'cclh,ovs,hc1', tl:'laeL', tp:'rule', value:'cclh'},
+	{tw:'ไหม้', cp:'หม,ไo,,้,F', ru:'cclh,ovl,hc2', tl:'maiF', tp:'rule', value:'cclh'},
+	{tw:'ใหม่', cp:'หม,ใo,,่,L', ru:'cclh,ovl,hc1', tl:'maiL', tp:'rule', value:'cclh'},
 
 	// tests for rule cclha, a cluster with leading อ, exactly four cases
-	{tw:'อยาก', cp:'อย,oา,ก,,L', ru:'cclha,fnsc,mcd', tl:'yaakL', tp:'rule', value:'cclha'},
-	// put all four exception cases here
+	{tw:'อย่า',  cp:'อย,oา,,่,L',  ru:'cclha,ovl,hc1', tl:'yaaL', tp:'rule', value:'cclha'},
+	{tw:'อยู่',   cp:'อย,oู,,่,L',   ru:'cclha,ovl,hc1', tl:'yuuL', tp:'rule', value:'cclha'},
+	{tw:'อย่าง', cp:'อย,oา,ง,่,L',  ru:'cclha,fsc,hc1', tl:'yaangL', tp:'rule', value:'cclha'},
+	{tw:'อยาก', cp:'อย,oา,ก,,L', ru:'cclha,fnsc,hcd',tl:'yaakL', tp:'rule', value:'cclha'},
 
 	// tests for rule ccivo, inherent vowel short o
 	{tw:'หมด', cp:'หม,o,ด,,L', ru:'ccivo,cclh,ovs,hcd', tl:'modL', tp:'rule', value:'ccivo'},
@@ -57,9 +64,12 @@ voyc.Noam.testSuiteParseSyllable = [
 	//	 สมุด |    | cciva
 	//	 ชนะ |    | cciva
 	//	{w:'ฉกาจ',m:'ฉกา',vp:'oา',lc:'ฉก',fc:'',tm:'',tn:'R',tl:'chkgaa',ru:'ovl,hcl'}, // cciva faile
+	//	อัศจรรย์
 
 	// tests for rule ccive, inherent vowel enepenthetic, create multiple syllables
+	// any difference between cciva and ccive?
 	{tw:'เกษียณ', cp:'กษ,เoีย,ณ,,R', ru:'ccive,hcl,fsc', tl:'gsianM', tp:'rule', value:'ccive'},
+	// กรกฎาคม cciva
 
 	// tests for rule ccredup, reduplication, creates multiple syllables always fails
 	//	 อัศจรรย์ |    | ccredup
@@ -73,6 +83,10 @@ voyc.Noam.testSuiteParseSyllable = [
 	// tests for interesting combinations
 	//	 ถนน |    | cciva,ccivo
 	//	 ขนม |    | cciva,ccivo
+	// พฤศจิกายน ccredup, cciva  November
+	// พฤษภาคม ccredup, cciva  May
+	// มกราคม ccredup, cciva  January
+
 
 	// one test for each vowel pattern
 	// select '{tw:''' || t || ''', cp:''' || cp || ''', ru:''' || ru || ''', tl:''' || tl || ''', tp:''vp'', value:''' || split_part(cp,',',2) || '''},', id from mai.dict where split_part(cp,',',2) = 'oะ' order by lvl limit 10;
@@ -115,6 +129,10 @@ voyc.Noam.testSuiteParseSyllable = [
 
 	// todo:
 	// tests for exceptions for ร, รร, รรร
+	// สรร - open rr, add n
+	// สรรค์ - open rr, plus silent consonent
+	// กร  excp gaawnM worker  open r add n ?
+	// กรรม normal vowel รร, not a multi syllable กร รม - must be manual, or hardcoded exception in parseString
 	// one test for each leading consonant
 	// one test for each leading consonant cluster
 	//	{w:'ครก',m:'ครก',vp:'o',lc:'คร',fc:'ก',tm:'',tn:'H',tl:'krok',ru:'ccivo,fnsc,lcds'},
@@ -131,6 +149,7 @@ voyc.Noam.testSuiteParseSyllable = [
 	// one test for each tonemark
 	//	{w:'ก๊าก',m:'ก๊า',vp:'oา',lc:'ก',fc:'ก',tm:'๊',tn:'H',tl:'gaak',ru:'fnsc,mc3'},
 	// one test for each example of a silent consonant
+	// กุมภาพันธ์ February
 ];
 
 /*

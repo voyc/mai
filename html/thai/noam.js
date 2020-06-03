@@ -603,9 +603,11 @@ voyc.Noam.prototype.parseSyllable = function(syllable) {
 	
 	// leading h
 	if (syl.lc.length > 1 && firstConsonant == 'ห') {
+		leadingConsonantMeta.m = 'h';
 		syl.ru.push('cclh'); 
 	}
 	else if (syl.lc.length > 1 && firstConsonant == 'อ' && ['อย่า','อยู่','อย่าง','อยาก'].includes(syllable)) {
+		leadingConsonantMeta.m = 'h';
 		syl.ru.push('cclha'); 
 	}
 	else {

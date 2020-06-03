@@ -205,6 +205,7 @@ big infrastructure projects
 				output format:SQL update statement 
 				output format:JS object
 tests
+k
 	x every rule
 		x one example word for each rule
 		x rule combinations?
@@ -222,6 +223,14 @@ tests
 	these tests must be run on the client.  not server. no cron.
 		must be launched by human.
 		sam's internal clock can advise superuser when to run tests
+
+parseSyllable
+	ccredup
+	cciva
+	ccive
+	cct
+	ccf
+	test dict
 
 Noam::collectWords(), replace with Dictionary::SearchSpecial() 
 	special dictionary searching
@@ -317,6 +326,12 @@ embed video conferencing
 coach listing: name, photo, bio, url
 	add, delete, change
 	built into account/user profile
+
+user profile
+	flags
+		student
+		coach
+		superuser
 ====================================
 settings
 	setsize
