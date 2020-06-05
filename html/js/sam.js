@@ -274,7 +274,7 @@ voyc.Sam.prototype.reportScores = function(scores) {
 voyc.Sam.prototype.onDrillRequested = function(note) {
 	var story = note.payload.story;
 	voyc.story = story;
-	voyc.browserhistory.nav('home');
+	voyc.hist.nav({page:'home'});
 	this.cmdDrill(story, {verb:'drill',object:'',adj:{}});
 }
 

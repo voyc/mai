@@ -130,15 +130,34 @@ dictview
 		better display of syllable components
 
 dict/mean
-	phrase and expression are NOT pos ?
-		phrase can be noun, adverb, adj, etc
-		expression can be interjection, phrase, clause or sentence
-	todo
-		m.p, remove expression
-		d.g, as is: s/m/o
-		d.phrase, yes or no, can be grammar with replaceable parts
-		d.expression, yes or no, is stock sentence or interjection
-	phrase-book
+	x phrase, clause, and expression go in grammar, not dictionary
+
+	x pos: 
+	x 	remove x:expression, 
+	x 	remove g:symbol
+	x 	add i:interjection
+	x 	keep s:syllable
+
+	x delete from dictionary, add to grammar
+	x 	1503 | คุณรู้ไหม       | Do you know?
+	x 	1506 | ดีไหม         | Is it good?
+	x 	1508 | ไปกันเถอะ     | Let's go.
+	x 	1501 | กี่ชั่วโมง       | How many hours?
+	x 	1512 | คุณว่าไหม      | You think so?
+	x 	1537 | เต็มเปี่ยมไปด้วย | filled-with
+	x 	1539 | พวกเราส่วนใหญ่ | most-of-us
+	x 	1542 | อันน่าอัศจรรย์   | amazing
+	x 	1543 | พวกเราหลายคน | many-of-us
+
+	x keep in dictionary, change pos
+	x 	pos=v       1516 | ขับรถ         | drive-car
+	x 	pos=v       1517 | ขึ้นเครื่องบิน    | get-on-an-airplane
+	x 	pos=vj      1507 | เห็นด้วย       | I agree
+	x 	pos=j       1597 | ไม่ล่ะ         | No!
+
+edit dict, new, save, the mean record is written with did 0
+
+in editor, if I delete the eng text, the reconstitute function adds tilda blank to the end of the thai string
 
 little infrastructure projects
 	calc level per dict, per story, daily cron
@@ -171,51 +190,21 @@ big infrastructure projects
 			grammar, 
 			sengen, 
 			keyboard
-	noam: cleanup, tests, sam commands, test parse: อกไม้ดอกนี้จะมอบให้คุณนะคะ
-		Test suite, separate file loaded dynamically by Noam.
-		x comment out:
-			x eliminateDupes()
-			x parseWordsToGlyphs()	
-			x parseStoryBySpace()
-			x analyzeWord()
-			x analyzeStory()
-		x delete parse(), 
-			x call parseStory() directly
-			x call parseSyllable() directly
-		x parseSyllable() is used only when editing the dictionary
-		revive collectWords()
-			not needed until we do keyboard drills, ie glyph drills
-			rewrite dictionary.iterate()
-		x note: noam.html uses dict.js and dict2.js, both obsolete
-		noam.html operations 
-			x what is voyc.parse()? most like noam.parseString()
-			x Test 1 - test voyc.parse() on one word
-			x Test 2 - test voyc.parse() on an array of 5 words
-			Parse Dict - 
-			x Parse 
-			x Collect 
-			x Parse Word - test voyc.parseWord() , probably like parseSyllable()
-				x on whatever is in input textbox, 
-				x return table including button to show details
-			x Special
-			x Parse Syllable 
-			x Parse Syllable Input 
-			x Parse Syllable Dict 
-			parseSyllable() => compose(), two output formats
-				output format:SQL update statement 
-				output format:JS object
+revive collectWords()
+	not needed until we do keyboard drills, ie glyph drills
+	rewrite dictionary.iterate()
+
+dict/mean
+	mean: remove s and l (abandon source info)
+	dict: set lvl
+	re-purpose cpm and tlm
+		cpm: manual parse, because the parser fails
+		tlm: test case, used to test and train the parser, used instead of hardcoded test suite
+		both fields govern cp,ru,tl
+
 tests
-k
-	x every rule
-		x one example word for each rule
-		x rule combinations?
-	every vowel pattern
-		one example word for each vowel pattern
-	whole dictionary for changes in parse algorithms
-		type o
-		type m
 	parse testing
-		compare current parse output to dict.cp and dict.ru
+		compare current parse output to dict.cp and dict.ru and dict.tl
 		do the whole dict, or some subset of search results
 	dictionary where cpm = manual and tlm = manual
 		to test for improvements in parse algorithm

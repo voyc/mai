@@ -463,10 +463,8 @@ voyc.pos = {
 	'e':'adverb',
 	'r':'pronoun',
 	'a':'particle',
-	'g':'symbol',
+	'i':'interjection',
 	's':'syllable',
-	'h':'phrase',
-	'x':'expression',
 };
 voyc.strp = {
 	c:"consonant",

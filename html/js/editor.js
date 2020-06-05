@@ -360,9 +360,8 @@ voyc.Editor.template.trans = `
 			<option value='e'>adverb</option>
 			<option value='r'>pronoun</option>
 			<option value='a'>particle</option>
-			<option value='g'>symbol</option>
+			<option value='i'>interjection</option>
 			<option value='s'>syllable</option>
-			<option value='x'>expression</option>
 		</select>
 	</td></tr><tr><td>
 		<label for='eng'>Gloss</label>

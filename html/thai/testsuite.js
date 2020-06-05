@@ -26,6 +26,7 @@ voyc.Noam.testSuiteParseSyllable = [
 
 	// test for rule excp, exceptions to the tone rules	
 	{tw:'ก็', cp:'ก,o็,,,F', ru:'ovl,excp', tl:'gaawF', tp:'rule', value:'excp'},
+	//เสมอ
 	
 	//{ tl:'', tp:'rule', value:'cct'}, // true cluster
 	
@@ -65,6 +66,7 @@ voyc.Noam.testSuiteParseSyllable = [
 	//	 ชนะ |    | cciva
 	//	{w:'ฉกาจ',m:'ฉกา',vp:'oา',lc:'ฉก',fc:'',tm:'',tn:'R',tl:'chkgaa',ru:'ovl,hcl'}, // cciva faile
 	//	อัศจรรย์
+	//	พยายาม
 
 	// tests for rule ccive, inherent vowel enepenthetic, create multiple syllables
 	// any difference between cciva and ccive?
@@ -79,6 +81,7 @@ voyc.Noam.testSuiteParseSyllable = [
 	//		วิทยาลัย  วิท ท ยาลัย
 
 	// tests for exceptions, rule 'exp'
+	// เสมอ
 
 	// tests for interesting combinations
 	//	 ถนน |    | cciva,ccivo
@@ -86,7 +89,12 @@ voyc.Noam.testSuiteParseSyllable = [
 	// พฤศจิกายน ccredup, cciva  November
 	// พฤษภาคม ccredup, cciva  May
 	// มกราคม ccredup, cciva  January
+	// อัศจรรย์  openrr, cciva, redup
+	// สงบ  cciva, ccivo
 
+	// silent r
+	//จริง
+	//อย่างแท้จริง
 
 	// one test for each vowel pattern
 	// select '{tw:''' || t || ''', cp:''' || cp || ''', ru:''' || ru || ''', tl:''' || tl || ''', tp:''vp'', value:''' || split_part(cp,',',2) || '''},', id from mai.dict where split_part(cp,',',2) = 'oะ' order by lvl limit 10;

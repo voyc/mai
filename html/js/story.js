@@ -225,7 +225,9 @@ voyc.Story.prototype.setDefaultEnglishLines = function() {
 				var word = line.words[j];
 				if (word.dict) {
 					s += (s.length) ? ' ' : '';
-					s += word.dict.mean[word.loc[0].n].e;
+					var n = word.loc[0].n;
+					if (n > 0) n--;
+					s += word.dict.mean[n].e;
 				}
 				else {
 					s += (s.length) ? ' ' : '';
