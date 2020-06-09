@@ -129,36 +129,6 @@ dictview
 		allow zoom into multi components
 		better display of syllable components
 
-dict/mean
-	x phrase, clause, and expression go in grammar, not dictionary
-
-	x pos: 
-	x 	remove x:expression, 
-	x 	remove g:symbol
-	x 	add i:interjection
-	x 	keep s:syllable
-
-	x delete from dictionary, add to grammar
-	x 	1503 | คุณรู้ไหม       | Do you know?
-	x 	1506 | ดีไหม         | Is it good?
-	x 	1508 | ไปกันเถอะ     | Let's go.
-	x 	1501 | กี่ชั่วโมง       | How many hours?
-	x 	1512 | คุณว่าไหม      | You think so?
-	x 	1537 | เต็มเปี่ยมไปด้วย | filled-with
-	x 	1539 | พวกเราส่วนใหญ่ | most-of-us
-	x 	1542 | อันน่าอัศจรรย์   | amazing
-	x 	1543 | พวกเราหลายคน | many-of-us
-
-	x keep in dictionary, change pos
-	x 	pos=v       1516 | ขับรถ         | drive-car
-	x 	pos=v       1517 | ขึ้นเครื่องบิน    | get-on-an-airplane
-	x 	pos=vj      1507 | เห็นด้วย       | I agree
-	x 	pos=j       1597 | ไม่ล่ะ         | No!
-
-edit dict, new, save, the mean record is written with did 0
-
-in editor, if I delete the eng text, the reconstitute function adds tilda blank to the end of the thai string
-
 little infrastructure projects
 	calc level per dict, per story, daily cron
 		allows us to build useful drills, and stories
@@ -198,9 +168,10 @@ dict/mean
 	mean: remove s and l (abandon source info)
 	dict: set lvl
 	re-purpose cpm and tlm
-		cpm: manual parse, because the parser fails
-		tlm: test case, used to test and train the parser, used instead of hardcoded test suite
+		pm: parse manual, because the parser fails
+		pf: parse fixed, test case, to test and train the parser
 		both fields govern cp,ru,tl
+		build testsuite by reading dictionary
 
 tests
 	parse testing
@@ -213,55 +184,13 @@ tests
 		must be launched by human.
 		sam's internal clock can advise superuser when to run tests
 
-parseSyllable
-	ccredup
-	cciva
-	ccive
-	cct
-	ccf
-	test dict
+parseSyllable, see github "algorithms=>parse syllable"
 
-Noam::collectWords(), replace with Dictionary::SearchSpecial() 
-	special dictionary searching
-	search language
-		lc=ก
-		fc=ก
-		has cc or lc.length > 1
-		cc includes ก
-	output can show count, or list 
-	used by user and Sam to create custom drills
-	known glyphs
-	type o
-		vowelPattern
-		lc
-		fc
-		tonemark
-		tone
-		each rule
-	manual components
-	manual translit
-	type m
-		any rules for type m?
-		redup?
-	include only known words, per vocab
-		(drill option is -new)
-		(search option will e -known)
-	implement via sql or dictionary.iterate
-	
-dictionary
-	rewrite translate() 
-	rewrite translit()
-	rewrite iterate()
+dictionary updates, see github "dictionary"
 
-launch 1, stories, dictionary and drills
-load stories, one per day
-drill, one per day
+edit dict, new, save, the mean record is written with did 0
 
-launch 2, grammar and sengen and review drills
-
-launch 3, conversation
-
-launch 4, chat amoung coach, student, sam, lee
+in editor, if I delete the eng text, the reconstitute function adds tilda blank to the end of the thai string
 
 ======================
 post-launch

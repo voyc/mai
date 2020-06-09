@@ -1,24 +1,24 @@
 http://www.thai-language.com/ref/consonant-reduplication
-กกุท	gaL gootL thaH	
-กกุธ	gaL gootL thaH	
-กฎนิคหกรรม	gohtL nikH khaH haL gamM	
-กฎอัยการศึก 	gohtL aiM yaH gaanM seukL	
-กตัญญูกตเวทิตา	gaL dtanM yuukF gaL dtaL waehM thiH dtaaM	
-กรม	grohmM maH	
-กรมธรรม์ 	grohmM maH thanM	
-กรรม	gamM maH	
-กรรมกร 	gamM maH gaawnM	
-กรรมการก 	gamM maH gaaM rohkH	
-กริยาสภาวมาลา	griL yaaM saL phaaM waH maaM laaM	
-กฤษฎาภินิหาร	gritL saL daaM phiH niH haanR	
-กฤษฎี	gritL saL deeM	
-กฤษฎีกา 	gritL saL deeM gaaM	
-กฤษณะ	gritL saL naH	
-กล	gohnM laH	
-กลวิธี	gohnM laH wiH theeM	
-กลศาสตร์	gohnM laH saatL	
-กัลบก	ganM laH bohkL	
-กัลปาวสาน	ganM laH bpaaM waH saanR	
+กกุท	gaL gootL thaH	cciva 1ก, redupivat 4ท
+กกุธ	gaL gootL thaH	cciva 1ก, redupivat 4ธ
+กฎนิคหกรรม	gohtL nikH khaH haL gamM	redupiva 5ค, cciva 6ห
+กฎอัยการศึก	gohtL aiM yaH gaanM seukL	redupiva 5ย
+กตัญญูกตเวทิตา	gaL dtanM yuukF gaL dtaL waehM thiH dtaaM	cciva 1ก, redupiva 7ก, cciva 8ต
+กรม	grohmM maH	ccivo 1ก, redupivat 3ม
+กรมธรรม์	grohmM maH thanM	redupiva 3ม
+กรรม	gamM maH	redupivat 4ม
+กรรมกร 	gamM maH gaawnM	redupiva 4ม
+กรรมการก 	gamM maH gaaM rohkH	redupiva 4ม
+กริยาสภาวมาลา	griL yaaM saL phaaM waH maaM laaM	redupiva 6ส,redupiva 9ว
+กฤษฎาภินิหาร	gritL saL daaM phiH niH haanR	redupiva 3ษ
+กฤษฎี	gritL saL deeM	redupiva 3ษ
+กฤษฎีกา 	gritL saL deeM gaaM	redupiva 3ษ
+กฤษณะ	gritL saL naH	redupiva 3ษ
+กล	gohnM laH	ccivo 1ก, redupiva 2ล
+กลวิธี	gohnM laH wiH theeM	ccivo 1ก, redupiva 2ล
+กลศาสตร์	gohnM laH saatL	redupiva 2ล
+กัลบก	ganM laH bohkL	redupiva 2ล
+กัลปาวสาน	ganM laH bpaaM waH saanR	redupiva 3ล, cciva 6ว
 กัลยา 	ganM laH yaaM	
 กัลยาณมิตร	ganM laH yaaM naH mitH	
 กัลยาณี	ganM laH yaaM neeM	
