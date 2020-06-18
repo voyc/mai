@@ -183,7 +183,6 @@ voyc.Lee.prototype.nextCard = function() {
 		return;
 	}
 	var s = this.displayQuestion( this.scores[this.ndxCard].flat);
-	console.log('next card: ' + s);
 }
 
 voyc.Lee.prototype.chooseNextCard = function() {
@@ -282,6 +281,7 @@ voyc.Lee.prototype.displayQuestion = function(flat) {
 	else {
 		var q = this.composeQuestion( flat);
 		voyc.chat.post(this.chatid, q.s, q.o);
+		voyc.speech.speak( s,'t');
 	}
 	console.log('question displayed: ' + q.s);
 }
@@ -289,7 +289,7 @@ voyc.Lee.prototype.displayQuestion = function(flat) {
 voyc.Lee.prototype.composeQuestion = function(flat) {
 	var step = this.stack.steps[this.stack.stepndx];
 	var s = flat.t; //flat.dict.t;
-	var o = ['hint'];
+	var o = ['hint','correct','oops'];
 	switch (step) {
 		case 'class':
 			o = ['low', 'middle', 'high'];
@@ -307,8 +307,8 @@ voyc.Lee.prototype.composeQuestion = function(flat) {
 }
 
 voyc.Lee.prototype.checkAnswer = function(o) {
-	var step = this.stack.steps[this.stack.stepndx];
 	var b = false;
+	var step = this.stack.steps[this.stack.stepndx];
 	switch (step) {
 		case 'class':
 			var lc = this.scores[this.ndxCard].flat.dict.cp[0];
@@ -326,7 +326,8 @@ voyc.Lee.prototype.checkAnswer = function(o) {
 		case 'translate':
 			//var en = this.scores[this.ndxCard].flat.mean.e;
 			var en = this.scores[this.ndxCard].flat.e;
-			b = (o.msg.toLowerCase().replace(/-/g, ' ') == en.toLowerCase().replace(/-/g, ' '));
+			// ignore hyphens, punctuation, case
+			b = (o.msg.toLowerCase().replace(/-/g, ' ').replace(/[.,!?]/g,'') == en.toLowerCase().replace(/-/g, ' ').replace(/[.,!?]/g,''));
 			break;
 		case 'reverse':
 			//var th = this.scores[this.ndxCard].flat.dict.t;
@@ -334,6 +335,8 @@ voyc.Lee.prototype.checkAnswer = function(o) {
 			b = (o.msg == th);
 			break;
 	}
+	if (o.msg == 'correct') b = true;
+	if (o.msg == 'oops') b = false;
 	return b;
 }
 

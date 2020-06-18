@@ -34,7 +34,38 @@ subcomponents
 =======================
 pre-launch
 
+user profile
+	Set superuser flag in user profile.
+	Flags: Student, Coach, Super
+	Sam's internal clock (cron) can remind superuser to run tests, backups, analysis.  Can check results of backups and server-side analysis.
+	build a personality profile on each user.
+		use sengen to ask questions to fill out the profile
+
+Grammar/sengen
+	10 ways to say hello
+	Which we choose is based on personality and mood, both of which depend on history.
+
+Story options
+	Wordlist
+	Headings, subheadings
+	Exposition paragraphs
+	Drill by paragraph
+
+
 drill
+	checkAnswer
+		ignore pronunciation
+	displayAnswer
+		use drawFlat ?
+		remove speaker and pencil
+		add zoom to popupDict
+	draw Hint better
+		same as displayAnswer
+	put sid.line in vocab
+		When a line is mastered, store a vocab for each word in the line, attempt+1, correct+1
+	add buttons: hint, correct, oops, mastered, quit
+	set: pronounce
+
 	allow options
 		new/all, now cannot repeat a drill after mastered
 		choose steps per stacktype
@@ -53,14 +84,6 @@ drill
 		words
 		phrases/expressions
 		lines
-	displayAnswer
-		use drawFlat
-		remove speaker and pencil
-		add zoom to popupDict
-	draw Hint better
-		show hint depending on step
-		like answer
-		use drawFlat
 	speak on every question. which stacks?
 	checkAnswer for consonant class
 		error: อยู่ shows "middle class" should be exception, low raised to high
@@ -191,6 +214,12 @@ dictionary updates, see github "dictionary"
 edit dict, new, save, the mean record is written with did 0
 
 in editor, if I delete the eng text, the reconstitute function adds tilda blank to the end of the thai string
+
+fix dictionary
+ภายนอก  phaaiM naawkF
+ยึดถือ  even though
+
+buttons: hint, speak, correct, oops, mastered
 
 ======================
 post-launch

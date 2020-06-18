@@ -56,6 +56,8 @@ sentence @describePerson > @person {@not} @adjPerson {ไหม} {คะ}
 sentence @describePersonQA > Q:@person @adjPerson ไหม {คะ} A:{ไม่} $refer(2)
 `;
 
+// สูญเสีย....ไป ~ lost 
+
 /*
 expressions deleted from dictionary 4 jun 2020
  1501 | 1402 | กี่ชั่วโมง       | How many hours?

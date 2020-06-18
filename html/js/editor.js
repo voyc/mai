@@ -415,6 +415,7 @@ voyc.Editor.prototype.popupDict = function(id,mode,wid,chosen) {
 			var s = e.currentTarget.getAttribute('text');
 			var l = voyc.dictionary.lang(s);
 			voyc.speech.speak( s,l);
+			console.log('speaking: '+s);
 		}, false);
 	}
 

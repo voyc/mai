@@ -157,7 +157,7 @@ voyc.Dictionary.prototype.search = function(word, lang, typearray) {
 	voyc.comm.request(svcname, data, function(ok, response, xhr) {
 		if (!ok) { response = { 'status':'system-error'}; }
 		voyc.observer.publish(svcname+'-received', 'dictionary', response);
-		console.log(svcname+(response['status'] == 'ok') ? ' success' : ' failed');
+		console.log(svcname+((response['status'] == 'ok') ? ' success' : ' failed'));
 		if (response['status'] == 'ok') {
 			// add new items to the dict
 			//var dictlist = response.dict;
