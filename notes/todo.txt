@@ -51,7 +51,6 @@ Story options
 	Exposition paragraphs
 	Drill by paragraph
 
-
 drill
 	checkAnswer
 		ignore pronunciation
@@ -195,6 +194,7 @@ dict/mean
 		pf: parse fixed, test case, to test and train the parser
 		both fields govern cp,ru,tl
 		build testsuite by reading dictionary
+	dict: add origin: e:english, s:sanskrit, p:pali, f:french
 
 tests
 	parse testing

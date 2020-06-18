@@ -467,19 +467,27 @@ voyc.pos = {
 	's':'syllable',
 };
 voyc.strp = {
-	c:"consonant",
-	v:"vowel",
-	t:"tone mark"
+	c:'consonant',
+	v:'vowel',
+	t:'tone mark'
 }
 voyc.strm = {
-	s:"short",
-	o:"long",
-	m:"middle class",
-	l:"low class",
-	h:"high class"
+	s:'short',
+	o:'long',
+	m:'middle class',
+	l:'low class',
+	h:'high class'
+}
+voyc.origin = {
+	s:'Sanskrit',
+	p:'Pali',
+	m:'Mandarin',
+	c:'Cantonese',
+	e:'English',
+	f:'French'
 }
 
-/* static table of rules */ 
+/* static table of pronunciation rules */ 
 voyc.ru = [
 	// endings
 	{code:'fsc', name:'final sonorant consonant: live'},

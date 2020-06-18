@@ -66,6 +66,7 @@ create table mai.dict (
 	cpm char(1)         /* components method, a:auto, m:manual */
         ru varchar(100),    /* rules, csv */
 	lvl int default 100,/* level 1 to 100  */
+	org char(1),        /* origin, s:sanskrit, etc. */
 );
 create table mai.mean (
 	id serial primary key,

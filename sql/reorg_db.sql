@@ -74,6 +74,10 @@ alter table mai.story
 alter table mai.dict add column lvl int default 100;
 -- ALTER TABLE
 
+/* 18 June 2020 */
+alter table mai.dict add column org char(1);
+-- ALTER TABLE
+
 
 
 
