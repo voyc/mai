@@ -300,11 +300,11 @@ voyc.Sam.prototype.cmdDrill = function(story, r) {
 		stackndx:0,
 		stacks:[],
 	}	
-	var stack = this.prepStack(story,{verb:'drill', object:'syllables', adj:{new:true}});
-	if (stack) {
-		this.drill.stacks.push(stack);
-	}
-	stack = this.prepStack(story,{verb:'drill', object:'words', adj:{new:true}});
+	//var stack = this.prepStack(story,{verb:'drill', object:'syllables', adj:{new:true}});
+	//if (stack) {
+	//	this.drill.stacks.push(stack);
+	//}
+	var stack = this.prepStack(story,{verb:'drill', object:'words', adj:{new:true}});
 	if (stack) {
 		this.drill.stacks.push(stack);
 	}

@@ -221,6 +221,47 @@ fix dictionary
 
 buttons: hint, speak, correct, oops, mastered
 
+
+reset drill
+
+pronounce step
+
+sort stories by most recent, alpha, source, author, tags, subject
+
+keep idiom and literal separate
+
+parse: force type o or m
+
+two words mean affect, overlapping in drill
+
+congen, qagen
+	investigate
+	share
+
+delete story
+
+drill reset
+
+flash message "story saved"
+
+ชั้นประถม   chanH bpraL noun class, missing third syllable
+
+
+===================
+
+dictionary:: translate  (literal word-order)
+
+storyView::reconstitute
+	th + en
+	if en has been modified
+	enidiom
+	enliteral
+
+story::parse
+	noam::parseStory
+
+
+
 ======================
 post-launch
 

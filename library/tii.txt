@@ -1,0 +1,21 @@
+ที่	F	1 prep at
+ที่	F	2 noun location
+ที่	F	3 clf location
+ที่	F	4 clf seat for aahaan
+ที่	F	5	pron	who	relative pronoun
+ที่	F	6	pron	where	relative pronoun
+ที่	F	7	pron	that	relative pronoun
+
+ที่ทำงาน	workplace (at + do + work)
+ไปไหน not need ที่; other verbs, need ที่ ไหน
+เที่ยง 	F	1	n	noon
+ที่สุด	FM	superlative
+ที่ว่าง	n	empty room, vacancy, space, empty space
+เดิน เที่ยว		1	n	walk trip
+ไป เที่ยว		1	n	go trip
+ที่จะ
+ที่จริง actual
+
+
+
+

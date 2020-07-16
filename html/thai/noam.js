@@ -330,6 +330,7 @@ voyc.Noam.prototype.parseStory = function(story) {
 	for (var i=0; i<story.lines.length; i++) {
 		var line = story.lines[i].th;
 		story.lines[i].words = this.parseString(line, i+1, true);
+		story.lines[i].enlit = this.composeEnlit(story.lines[i].words);
 	}
 
 	// reconcile new story.lines.words with old story.words
@@ -402,6 +403,16 @@ voyc.Noam.prototype.parseStory = function(story) {
 		}
 		return disp;
 	}
+}
+
+voyc.Noam.prototype.composeEnlit = function(words) {
+	var s = '';
+	for (var i=0; i<words.length; i++) {
+		var word = words[i];
+		if (s.length) s += ' ';
+		s += word.en;
+	}
+	return s;
 }
 
 /**

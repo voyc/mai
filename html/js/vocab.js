@@ -245,6 +245,9 @@ voyc.Vocab.prototype.get = function(word) {
 	@return {number} count of new entries inserted
 **/	
 voyc.Vocab.prototype.set = function(word, type, state) {
+	if (!word) {
+		//debugger;
+	}
 	var mastery = (state == 'm') ? 1 : 0;
 	var e = this.get(word);
 	if (e) {
