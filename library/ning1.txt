@@ -338,163 +338,200 @@ meta::english source: http://www.oprah.com/spirit/thich-nhat-hanh-fearlessness#i
 
 
 
-    วันหนึ่งในช่วงสงครามเวียดนาม ขณะที่ฉันกำลังนั่งรอเครื่องบินอยู่ในลานบินว่างเปล่าบริเวณที่ราบสูงของเวียดนามเพื่อเดินทางไปภาคเหนือเพื่อลงพื้นที่รับรู้สถานการณ์น้ำท่วมและให้ความช่วยเหลือบรรเทาทุกข์แก่ผู้ประสบภัย เนื่องจากเป็นสถานการณ์เร่งด่วนจึงจำเป็นต้องใช้เครื่องบินของกองทัพึ่งโดยปกติใช้สำหรับการขนส่งสิ่งของต่างๆ อย่างผ้าห่มและเสื้อผ้า ฉันนั่งรอเครื่องบินลำถัดไปอยู่คนเดียวในลานบินนั้นเมื่อเจ้าหน้าที่ชาวอเมริกันคนหนึ่งมาถึง เขาก็นั่งรอเครื่องบินด้วยเช่นกันขณะนั้นอยู่ในช่วงสงครามและมีเพียงเราสองคนที่ลานบินนั้น ฉันมองไปที่เขาและเห็นว่าเขาอายุยังน้อย ทันไดนั้น ฉันรู้สึกเห็นใจเขามาก ทำไมเขาต้องมาอยู่ที่นี่เพื่อฆ่าหรือถูกฆ่าด้วยเล่า ด้วยความเห็นใจเช่นนั้น ฉันจึงพูดกับเขาว่า "เธอคงจะกลัวเวียดกงอย่างมาก" (เวียดกง คือ กลุ่มกองโจรคอมมิวนิสต์ของเวียดนาม) โชคไม่ดีที่ฉันไม่มีทักษะในการพูดที่ดีเท่าไหร่นักสิ่งที่ฉันพูดจึงไปรดน้ำเมล็ดพันธุ์ความกลัวในตัวเขา เขากุมปืนของเขาไว้ทันทีและถามฉันว่า "คุณเป็นเวียดกงใช่ไหม"
+ความกสัวห้า ~ fear 6
+วันหนึ่งในช่วงสงครามเวียดนาม
+ขณะที่ฉันกำลังนั่งรอเครื่องบินอยู่ในลานบินว่างเปล่าบริเวณที่ราบสูงของเวียดนามเพื่อเดินทางไปภาคเหนือเพื่อลงพื้นที่รับรู้สถานการณ์น้ำท่วมและให้ความช่วยเหลือบรรเทาทุกข์แก่ผู้ประสบภัย
+เนื่องจากเป็นสถานการณ์เร่งด่วนจึงจำเป็นต้องใช้เครื่องบินของกองทัพึ่งโดยปกติใช้สำหรับการขนส่งสิ่งของต่างๆ
+อย่างผ้าห่มและเสื้อผ้า
+ฉันนั่งรอเครื่องบินลำถัดไปอยู่คนเดียวในลานบินนั้นเมื่อเจ้าหน้าที่ชาวอเมริกันคนหนึ่งมาถึง
+เขาก็นั่งรอเครื่องบินด้วยเช่นกันขณะนั้นอยู่ในช่วงสงครามและมีเพียงเราสองคนที่ลานบินนั้น
+ฉันมองไปที่เขาและเห็นว่าเขาอายุยังน้อย
+ทันไดนั้น
+ฉันรู้สึกเห็นใจเขามาก
+ทำไมเขาต้องมาอยู่ที่นี่เพื่อฆ่าหรือถูกฆ่าด้วยเล่า
+ด้วยความเห็นใจเช่นนั้น
+ฉันจึงพูดกับเขาว่า
+"เธอคงจะกลัวเวียดกงอย่างมาก"
+(เวียดกง คือ กลุ่มกองโจรคอมมิวนิสต์ของเวียดนาม)
+โชคไม่ดีที่ฉันไม่มีทักษะในการพูดที่ดีเท่าไหร่นักสิ่งที่ฉันพูดจึงไปรดน้ำเมล็ดพันธุ์ความกลัวในตัวเขา
+เขากุมปืนของเขาไว้ทันทีและถามฉันว่า
+"คุณเป็นเวียดกงใช่ไหม"
 
-วันหนึ่ง         one day
-ใน                in
-ช่วง              period
-สงคราม       war
-เวียดนาม     Vietnam
-ขณะที่         while
-ฉัน               I
-กำลัง           am
-นั่งรอ           waiting for
-เครื่องบิน     aircraft
-อยู่ใน           being in
-ลานบิน        airstrip
-ว่างเปล่า      empty
-บริเวณ        area
-ที่ราบสูง      plateau
-ของ             of
-เพื่อ             for
-เดินทาง      traveling
-ไป              go
-ภาคเหนือ   North
-เพื่อ            for
-ลงพื้นที่      go in an area
-รับรู้           get to know
-สถานการณ์    situation
-น้ำท่วม      flood
-และ           and
-ให้             give
-ความช่วยเหลือ    help
-บรรเทาทุกข์        relief
-แก่            to
-ผู้ประสบภัย         victim
-เนื่องจาก  since
-เป็น           is
-สถานการณ์         situation
-เร่งด่วน    urgent
-จึง            therefore
-จำเป็น     necessary
-ต้อง         must
-ใช้           use
-เครื่องบิน  aircraft
-ของ        of
-กองทัพ   army
-ซึ่ง           which
-โดยปกติ normally
-ใช้           use
-สำหรับ   for
-การขนส่ง  transportation
-สิ่งของ   objects
-ต่างๆ      various
-อย่าง     such as
-ผ้าห่ม    blankets
-และ       and
-เสื้อผ้า   clothing
-ฉัน         I
-นั่งรอ     sit and wait
-ลำ          body (aircraft)
-ถัดไป    next
-อยู่คนเดียว  being alone
-ใน         in
-ลานบิน airstrip
-นั้น        that
-เมื่อ       when
-เจ้าหน้าที่  authority
-ชาวอเมริกัน  American
-คนหนึ่ง one person
-มาถึง    arrives
-เขา       he
-ก็          then
-นั่งรอ    sit and wait
-เครื่องบิน   aircraft
-ด้วย      with
-เช่นกัน  as well
-ขณะนั้น at that time
-อยู่ใน     being in
-ช่วง       period
-สงคราม war
-และ       and
-มี           there is
-เพียง     only
-เรา        us
-สอง      two
-คน        persons
-ที่          at
-ลานบิน airstrip
-นั้น        that
-ฉัน        I
-มอง      look
-ไปที่     at
-เขา      him
-และ     and
-เห็นว่า see that
-เขา      he
-อายุ     age
-ยังน้อย young
-ทันไดนั้น  suddenly
-รู้สึก     feel
-เห็นใจ  sympathetic
-เขา      him
-มาก     a lot
-ทำไม  why
-เขา     he
-ต้อง    has to
-มา      come
-อยู่ที่นี่  staying here
-เพื่อ    to
-ฆ่า      kill
-หรือ    or
-ถูกฆ่า be killed
-ด้วยเล่า  aswell
-ด้วย   with
-ความเห็นใจ sympathy
-เช่นนั้น like that
-ฉัน      I
-จึง       therefore
-พูด     speak
-กับ     with
-เขา    him
-ว่า      that
-เธอ    you
-คงจะ probably
-กลัว   afraid
-เวียดกง Vietgong
-อย่างมาก  a lot
-คือ     is
-กลุ่มกองโจร guerrilla group
-คอมมิวนิสต์  communist
-ของ   of
-เวียดนาม       Vietnam
-โชคไม่ดี  bad luck
-ที่ฉัน        that I
-ไม่มี         don't have
-ทักษะ      skills
-ในการพูด  in speaker
-ที่ดี           which is good
-เท่าไรนัก much
-สิ่งที่         the thing which
-ฉัน           I
-พูด          speak
-จึง           therefore
-ไป           go
-รด           watering
-เมล็ดพันธุ์  seed
-ความกลัว   fear
-ใน           in
-ตัวเขา     him
-เขา         he
-กุมปืน     holds a gun
-ของเขา  of his
-ไว้ทันที   immediately
-และ        and
-ถาม       ask
-ฉัน         me
-ว่า          whether
-คุณ       you
-เป็น       are
-เวียดกง Vietgong
-ใช่ไหม  or not
+วันหนึ่ง;one day
+ใน;in
+ช่วง;period
+สงคราม;war
+เวียดนาม;Vietnam
+ขณะที่;while
+ฉัน;I
+กำลัง;am
+นั่งรอ;waiting for
+เครื่องบิน;aircraft
+อยู่ใน;being in
+ลานบิน;airstrip
+ว่างเปล่า;empty
+บริเวณ;area
+ที่ราบสูง;plateau
+ของ;of
+เพื่อ;for
+เดินทาง;traveling
+ไป;go
+ภาคเหนือ;North
+เพื่อ;for
+ลงพื้นที่;go in an area
+รับรู้;get to know
+สถานการณ์;situation
+น้ำท่วม;flood
+และ;and
+ให้;give
+ความช่วยเหลือ;help
+บรรเทาทุกข์;relief
+แก่;to
+ผู้ประสบภัย;victim
+เนื่องจาก;since
+เป็น;is
+สถานการณ์;situation
+เร่งด่วน;urgent
+จึง;therefore
+จำเป็น;necessary
+ต้อง;must
+ใช้;use
+เครื่องบิน;aircraft
+ของ;of
+กองทัพ;army
+ซึ่ง;which
+โดยปกติ;normally
+ใช้;use
+สำหรับ;for
+การขนส่ง;transportation
+สิ่งของ;objects
+ต่างๆ;various
+อย่าง;such as
+ผ้าห่ม;blankets
+และ;and
+เสื้อผ้า;clothing
+ฉัน;I
+นั่งรอ;sit and wait
+ลำ;body (aircraft)
+ถัดไป;next
+อยู่คนเดียว;being alone
+ใน;in
+ลานบิน;airstrip
+นั้น;that
+เมื่อ;when
+เจ้าหน้าที่;authority
+ชาวอเมริกัน;American
+คนหนึ่ง;one person
+มาถึง;arrives
+เขา;he
+ก็;then
+นั่งรอ;sit and wait
+เครื่องบิน;aircraft
+ด้วย;with
+เช่นกัน;as well
+ขณะนั้น;at that time
+อยู่ใน;being in
+ช่วง;period
+สงคราม;war
+และ;and
+มี;there is
+เพียง;only
+เรา;us
+สอง;two
+คน;persons
+ที่;at
+ลานบิน;airstrip
+นั้น;that
+ฉัน;I
+มอง;look
+ไปที่;at
+เขา;him
+และ;and
+เห็นว่า;see that
+เขา;he
+อายุ;age
+ยังน้อย;young
+ทันไดนั้น;suddenly
+รู้สึก;feel
+เห็นใจ;sympathetic
+เขา;him
+มาก;a lot
+ทำไม;why
+เขา;he
+ต้อง;has to
+มา;come
+อยู่ที่นี่;staying here
+เพื่อ;to
+ฆ่า;kill
+หรือ;or
+ถูกฆ่า;be killed
+ด้วยเล่า;aswell
+ด้วย;with
+ความเห็นใจ;sympathy
+เช่นนั้น;like that
+ฉัน;I
+จึง;therefore
+พูด;speak
+กับ;with
+เขา;him
+ว่า;that
+เธอ;you
+คงจะ;probably
+กลัว;afraid
+เวียดกง;Vietgong
+อย่างมาก;a lot
+คือ;is
+กลุ่มกองโจร;guerrilla group
+คอมมิวนิสต์;communist
+ของ;of
+เวียดนาม;Vietnam
+โชคไม่ดี;bad luck
+ที่ฉัน;that I
+ไม่มี;don't have
+ทักษะ;skills
+ในการพูด;in speaker
+ที่ดี;which is good
+เท่าไรนัก;much
+สิ่งที่;the thing which
+ฉัน;I
+พูด;speak
+จึง;therefore
+ไป;go
+รด;watering
+เมล็ดพันธุ์;seed
+ความกลัว;fear
+ใน;in
+ตัวเขา;him
+เขา;he
+กุมปืน;holds a gun
+ของเขา;of his
+ไว้ทันที;immediately
+และ;and
+ถาม;ask
+ฉัน;me
+ว่า;whether
+คุณ;you
+เป็น;are
+เวียดกง;Vietgong
+ใช่ไหม;or not
+
+------------------------
+เวียดนาม;Vietnam
+
+ลานบิน;airstrip
+ว่างเปล่า;empty
+บริเวณ;area
+ที่ราบสูง;plateau
+ภาคเหนือ;North
+ลงพื้นที่;go in an area
+รับรู้;get to know
+สถานการณ์;situation
+น้ำท่วม;flood
+ความช่วยเหลือ;help
+บรรเทาทุกข์;relief
+แก่;to
+ผู้ประสบภัย;victim
+
+เนื่องจาก;since
+เร่งด่วน;urgent
 
