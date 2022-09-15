@@ -8,6 +8,9 @@ import matplotlib.pyplot as plt
 def sortFreq(key):
 	return freqtbl[key]['freq']
 
+def sortLvl(key):
+	return freqtbl[key]['lvl']
+
 # open db
 config = configparser.ConfigParser()
 config.read('../../config.ini')
@@ -31,8 +34,8 @@ for row in rows:
 					freqtbl[t] += 1
 				else:
 					freqtbl[t] = 1
-				if n > 0:
-					print(f"{t} : {n} : {freqtbl[t]}")
+				#if n > 0:
+				#	print(f"{t} : {n} : {freqtbl[t]}")
 cur.close()
 conn.close()
 
@@ -45,7 +48,7 @@ for key in freqtbl:
 		lowfreq = freq
 	if freq > highfreq:
 		highfreq = freq
-print(f'lowfreq:{lowfreq}, highfreq:{highfreq}')
+#print(f'lowfreq:{lowfreq}, highfreq:{highfreq}')
 
 # calc level for each word
 for key in freqtbl:
@@ -56,25 +59,16 @@ for key in freqtbl:
 	freqtbl[key] = {'freq':freq, 'lvl':level}
 
 # print freq table
-sorted = sorted(freqtbl, key=sortFreq, reverse=False)
-for key in sorted:
-	print(f'{key} : {freqtbl[key]}')
+sorted = sorted(freqtbl, key=sortLvl, reverse=False)
+#for key in sorted:
+#	print(f'{key} : {freqtbl[key]}')
 print(f'total words: {len(freqtbl)}')
 
 # plot results
 x = np.array([])
 y = np.array([])
-for key in freqtbl:
+for key in sorted:
 	x = np.append(x, freqtbl[key]['freq'])
 	y = np.append(y, freqtbl[key]['lvl'])
-print(f'x: {x}')
-print(f'y: {y}')
-#plt.plot(x,y)
-plt.figure()
-plt.plot([1, 2, 3, 4], [1, 4, 9, 16])
-plt.show()
-#raw_input('press return to quit')
-print(matplotlib.matplotlib_fname())
-import matplotlib.rcsetup as rcsetup
-print(rcsetup.all_backends)
-
+plt.plot(y)
+plt.savefig('plot.png')

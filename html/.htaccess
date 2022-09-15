@@ -3,7 +3,9 @@ RewriteEngine On
 DirectoryIndex index.php index.html
 # Append .php to each service request.
 RewriteRule ^svc svc.php
-# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION BEGIN
-<IfModule Litespeed>
-</IfModule>
-# DO NOT REMOVE OR MODIFY. CLOUDLINUX ENV VARS CONFIGURATION END
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/voyccom/webprod/mai/mai"
+PassengerBaseURI "/"
+PassengerPython "/home/voyccom/virtualenv/webprod/mai/mai/3.7/bin/python3.7"
+PassengerAppLogFile "/home/voyccom/logs/user/maipy.log"
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
