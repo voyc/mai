@@ -34,6 +34,7 @@ voyc.Hist = function(onNavCallback) {
 
 // public method called by app to navigate to a new page
 voyc.Hist.prototype.nav = function(state) {
+	return;
 	var state = state || this.parseQueryString(this.starturl);
 		
 	if (!(window.location.protocol.indexOf('file') > -1)) {

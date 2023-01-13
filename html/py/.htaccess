@@ -1,0 +1,6 @@
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/voyccom/webprod/mai/mai/py"
+PassengerBaseURI "/py"
+PassengerPython "/home/voyccom/virtualenv/webprod/mai/mai/py/3.7/bin/python"
+PassengerAppLogFile "/home/voyccom/logs/user/mai.py.log"
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
